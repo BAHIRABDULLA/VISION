@@ -1,12 +1,18 @@
 import './index.css'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import SignIn from './pages/user/SignIn'
 function App() {
 
 
   return (
-    <>
-    <h1 className="text-4xl text-blue-600">Vite project</h1>  
-    <h2 className="text-yellow-400">Nee ok alle</h2>
-    </>
+    // <></>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route  path='/signin' element={<SignIn/>}/>
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
