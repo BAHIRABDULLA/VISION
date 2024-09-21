@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
+import { Link ,useNavigate} from 'react-router-dom';
 import Input from '../../../components/Input'
 import Button from '../../../components/Button';
 import google_logo from '../../../assets/auth/google_logo.webp'
-
 import vision_logo from '../../../assets/auth/Screenshot_2024-09-05_145930-removebg-preview 1.svg'
-
-
 import { Box, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { Link,NavLink } from 'react-router-dom';
 // import { signIn } from '../../services/authService'; // Import the sign-in service function
 
-const AuthSignIn: React.FC = () => {
+const AuthSignUP: React.FC = () => {
+    const navigate = useNavigate()
   const [isMentee, setIsMentee] = useState(true); 
+  const [fullName,setFullName] = useState('')
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -23,10 +22,11 @@ const AuthSignIn: React.FC = () => {
     event.preventDefault();
   };
 
-  const handleSignIn = async () => {
+  const handleSignUp = async () => {
     try {
       // await signIn(email, password, isMentee); // Call the sign-in service function
       // Redirect or show success message
+        navigate('/otp-signup')
     } catch (err) {
       setError('Sign in failed. Please check your credentials and try again.');
     }
@@ -41,8 +41,8 @@ const AuthSignIn: React.FC = () => {
       </div>
 
       {/* Right Side with Form */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8">
-        <h2 className="text-3xl font-semibold mb-8">Sign In</h2>
+      <div className="flex-1 flex flex-col items-center justify-center p-8 ">
+        <h2 className="text-3xl font-semibold mb-8">Sign Up</h2>
 
         {/* Tabs for mentee and mentor */}
         <div className="flex justify-center w-full mb-4">
@@ -60,7 +60,16 @@ const AuthSignIn: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex flex-col items-center mt-6 w-full h-screen">
+        <div className="flex flex-col items-center mt-0 w-full h-screen">
+            {/* Fullname input */}
+        <TextField className='w-1/2	'
+            label="Full Name"
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            variant="outlined"
+            margin="normal"
+          />
           {/* Email Input */}
           <TextField className='w-1/2	'
             label="Email"
@@ -97,7 +106,7 @@ const AuthSignIn: React.FC = () => {
         </div>
 
      
-        <Button text="SIGN IN" onClick={handleSignIn}  customClasses="bg-gradient-to-r from-pink-500 to-purple-600 w-1/2 mt-0" />
+        <Button text="SIGN UP" onClick={handleSignUp}  customClasses="bg-gradient-to-r from-pink-500 to-purple-600 w-1/2 mt-3" />
 
         {/* Error Message */}
         {error && <p className="text-red-500 mt-4">{error}</p>}
@@ -112,18 +121,17 @@ const AuthSignIn: React.FC = () => {
         {/* Google Sign In Button */}
         <button className="border border-gray-300 p-1 rounded-md w-1/2	 flex items-center justify-center space-x-2">
           <img src={google_logo} alt="Google" className="w-6 h-6" />
-          <span>Sign in with Google</span>
+          <span>Sign up with Google</span>
         </button>
 
         {/* Forgot Password and Links */}
         <div className="mt-4 text-gray-500 text-sm">
-          <a href="/forgot-password" className="text-blue-500">Forget Password?</a>
+          
           <p className="mt-2">
-            Don’t have an account?{' '}
-            {/* <a href="/signup" className="text-blue-500">Sign up as mentee</a> or{' '}
-            <a href="/apply-mentor" className="text-blue-500">apply to be a mentor</a> */}
-            <Link to='/signup' className='text-blue-500'>Sign up as mentee</Link> or{' '}
-            <Link to='/signup' className='text-blue-500'>apply to be a mentor</Link>
+            Already have an account ?{' '}
+            {/* <a href="/signin" className="text-blue-500">Sign In</a> */}
+            <Link to='/signin' className='text-blue-500'>Sign In</Link>
+            
           </p>
         </div>
       </div>
@@ -132,4 +140,4 @@ const AuthSignIn: React.FC = () => {
   );
 };
 
-export default AuthSignIn;
+export default AuthSignUP;

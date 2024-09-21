@@ -8,7 +8,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ text, onClick, customClasses }) => {
   return (
-    <button onClick={onClick} className={`py-3 px-6 rounded-lg text-white font-semibold ${customClasses}`}>
+    <button onClick={onClick} className={`py-3 px-6  rounded-lg text-white font-semibold ${customClasses}`}>
       {text}
     </button>
   );
