@@ -1,12 +1,12 @@
 import OtpVerification from '@/features/user/auth/OtpVerification'
 import React from 'react'
 
-const SignUpOtp = () => {
+const ForgetPassOtp = () => {
   return (
     <div>
-      <OtpVerification/>
+        <OtpVerification/>
     </div>
   )
 }
 
-export default SignUpOtp
+export default ForgetPassOtp

@@ -3,7 +3,7 @@ import Input from '../../../components/Input'
 import Button from '../../../components/Button';
 import google_logo from '../../../assets/auth/google_logo.webp'
 
-import vision_logo from '../../../assets/auth/Screenshot_2024-09-05_145930-removebg-preview 1.svg'
+import vision_logo from '../../../assets/auth/vision_logo.svg'
 
 
 import { Box, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';

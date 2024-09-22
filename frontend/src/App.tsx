@@ -4,6 +4,8 @@ import SignIn from './pages/user/SignIn'
 import SignUp from './pages/user/SignUp'
 import SignUpOtp from './pages/user/SignUpOtp'
 import ForgetPassEmail from './pages/user/ForgetPassEmail'
+import ForgetPassOtp from './pages/user/ForgetPassOtp'
+import NewPassword from './pages/user/NewPassword'
 function App() {
 
 
@@ -16,6 +18,8 @@ function App() {
           <Route path='/signup' element={<SignUp />} />
           <Route path='/otp-signup' element={<SignUpOtp />} />
           <Route path='/forget-password' element={<ForgetPassEmail />} />
+          <Route path='/forget-otp' element={<ForgetPassOtp/>} />
+          <Route path='/new-password' element={<NewPassword/>} />
         </Routes>
       </div>
     </Router>

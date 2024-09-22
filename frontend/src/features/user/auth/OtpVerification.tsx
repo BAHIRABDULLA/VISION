@@ -1,13 +1,12 @@
+import Otp from '@/components/Otp'
 import React, { useState } from 'react';
 import { Link ,useNavigate} from 'react-router-dom';
-import Button from '../../components/Button'
-import vision_logo from '../../assets/auth/vision_logo.svg'
-import { TextField } from '@mui/material';
+import Button from '@/components/Button';
+import vision_logo from '../../../assets/auth/vision_logo.svg'
 
 
-const ForgetPassEmail: React.FC = () => {
+const OtpVerification: React.FC = () => {
     const navigate = useNavigate()
-    const [email,setEmail] = useState('')
   const [error, setError] = useState<string | null>(null); 
 
 
@@ -29,21 +28,11 @@ const ForgetPassEmail: React.FC = () => {
 
       {/* Right Side with Form */}
       <div className="flex-1 flex flex-col items-center mb-8 p-8 ">
-        <h2 className="text-3xl font-semibold ">Forget Password</h2>
+        <h2 className="text-3xl font-semibold ">OTP</h2>
 
-
-        <div className="mt-4 text-gray-500 text-sm">
-          <p>Enter your email here to receive one-time passcode </p>
-        </div>
         <div className="flex flex-col items-center justify-center mt-0 w-full ">
-        <TextField className='w-1/2	'
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            variant="outlined"
-            margin="normal"
-          />
+          {/* otp */}
+          <Otp/>
         </div>
 
         <Button text="SUBMIT" onClick={handleSubmit}  customClasses="bg-gradient-to-r from-pink-500 to-purple-600 w-1/2 mt-3" />
@@ -51,10 +40,16 @@ const ForgetPassEmail: React.FC = () => {
         {/* Error Message */}
         {error && <p className="text-red-500 mt-4">{error}</p>}
 
-      
+        <div className="mt-4 text-gray-500 text-sm">
+          <p>
+            Didn't get a code ?{' '}
+            {/* <a href="/signin" className="text-blue-500">Sign In</a> */}
+            <Link to='/' className='text-blue-500'>Resend</Link>  
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
-export default ForgetPassEmail;
+export default OtpVerification;
