@@ -11,9 +11,11 @@ export const signInRequest = async(email:string,password:string)=>{
     return response.data
 }
 
-export const signUpRequest = async(fullname:string,email:string,password:string,role:boolean)=>{
-    const response = await api.post('/signup',{fullname,email,password,role})
-    console.log(response,'response');
+export const signUpRequest = async(fullName:string,email:string,password:string,role:string)=>{
+    const response = await api.post('/signup',{fullName,email,password,role})
+    console.log(response.data,'response');
+    console.log(response.config.data,'response.data.config');
+    
     return response.data
     
 }

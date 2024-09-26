@@ -8,12 +8,19 @@ import vision_logo from '../../../assets/auth/vision_logo.svg'
 const OtpVerification: React.FC = () => {
     const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null); 
-
+  const [otp,setOtp] = useState<string>('')
+  
+  const handleOtpChange = (value:string)=>{
+    console.log(otp,'otp in otp verification');
+    
+    setOtp(value)
+  }
 
   const handleSubmit = async () => {
     try {
       
-        navigate('/otp-signup')
+        console.log(otp);
+        
     } catch (err) {
       setError('Sign in failed. Please check your credentials and try again.');
     }

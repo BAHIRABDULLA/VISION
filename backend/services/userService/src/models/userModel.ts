@@ -4,6 +4,7 @@ interface IUser {
     fullName:string;
     email:string;
     password:string;
+    role:'mentee'| 'mentor';
     image:string;
     createAt:Date
 }
@@ -19,6 +20,11 @@ const userSchema = new Schema<IUser>({
     },
     password:{
         type:String,
+        required:true
+    },
+    role:{
+        type:String,
+        enum:['mentee' , 'mentor'],
         required:true
     },
     image:{

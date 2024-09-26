@@ -27,10 +27,21 @@ const AuthSignUP: React.FC = () => {
     try {
       // await signIn(email, password, isMentee); // Call the sign-in service function
       // Redirect or show success message
-      console.log(isMentee,'isMentee');
+      console.log(isMentee, 'isMentee');
+      const role = isMentee ? 'mentee' : 'mentor'
+
+      const response = await signUpRequest(fullName, email, password, role)
+      console.log(response,'response in client side');
       
-       signUpRequest(fullName,email,password,isMentee)
-      // navigate('/otp-signup')
+      if (response.success ) {
+        console.log(response.success,'response success');
+        
+        console.log('$$$$$$$$$$$');
+        
+        navigate('/otp-signup')
+      }else{
+        setError('Sign in failed. Please try again ')
+      }
     } catch (err) {
       setError('Sign in failed. Please check your credentials and try again.');
     }
