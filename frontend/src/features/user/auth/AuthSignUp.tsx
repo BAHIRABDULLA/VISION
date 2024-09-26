@@ -1,45 +1,39 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// import Input from '../../../components/Input'
+import Input from '@/components/Input';
 import Button from '../../../components/Button';
 import google_logo from '../../../assets/auth/google_logo.webp'
 import vision_logo from '../../../assets/auth/vision_logo.svg'
-import { Box, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-// import { signIn } from '../../services/authService'; // Import the sign-in service function
-import { signUpRequest } from '@/services/api';
 
-const AuthSignUP: React.FC = () => {
+
+import { signUpRequest } from '@/services/api';
+import Password from '@/components/Password';
+
+const AuthSignUp: React.FC = () => {
   const navigate = useNavigate()
   const [isMentee, setIsMentee] = useState(true);
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null); // Error state
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
+
+  const [error, setError] = useState<string | null>(null);
 
   const handleSignUp = async () => {
     try {
-      // await signIn(email, password, isMentee); // Call the sign-in service function
-      // Redirect or show success message
+
       console.log(isMentee, 'isMentee');
       const role = isMentee ? 'mentee' : 'mentor'
 
       const response = await signUpRequest(fullName, email, password, role)
-      console.log(response,'response in client side');
-      
-      if (response.success ) {
-        console.log(response.success,'response success');
-        
+      console.log(response, 'response in client side');
+
+      if (response.success) {
+        console.log(response.success, 'response success');
+
         console.log('$$$$$$$$$$$');
-        
+
         navigate('/otp-signup')
-      }else{
+      } else {
         setError('Sign in failed. Please try again ')
       }
     } catch (err) {
@@ -53,10 +47,8 @@ const AuthSignUP: React.FC = () => {
         <img src={vision_logo} alt="vision_logo" className='' />
       </div>
 
-
       <div className="flex-1 flex flex-col items-center justify-center p-8 ">
         <h2 className="text-3xl font-semibold mb-8">Sign Up</h2>
-
 
         <div className="flex justify-center w-full mb-4">
           <button
@@ -74,7 +66,7 @@ const AuthSignUP: React.FC = () => {
         </div>
 
         <div className="flex flex-col items-center mt-0 w-full h-screen">
-          <TextField className='w-1/2	'
+          <Input customClasses='w-1/2	'
             label="Full Name"
             type="text"
             value={fullName}
@@ -83,38 +75,14 @@ const AuthSignUP: React.FC = () => {
             margin="normal"
           />
 
-          <TextField className='w-1/2	'
+          <Input customClasses='w-1/2	'
             label="Email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            variant="outlined"
-            margin="normal"
           />
 
-
-          <FormControl className='w-1/2	' variant="outlined" margin="normal">
-            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              label="Password"
-            />
-          </FormControl>
+          <Password value={password} onChange={(e) => setPassword(e.target.value)} customClasses='w-1/2' />
         </div>
 
 
@@ -142,7 +110,6 @@ const AuthSignUP: React.FC = () => {
           <p className="mt-2">
             Already have an account ?{' '}
             <Link to='/signin' className='text-blue-500'>Sign In</Link>
-
           </p>
         </div>
       </div>
@@ -151,4 +118,4 @@ const AuthSignUP: React.FC = () => {
   );
 };
 
-export default AuthSignUP;
+export default AuthSignUp;

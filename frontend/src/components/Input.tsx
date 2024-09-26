@@ -1,20 +1,27 @@
+import { TextField } from '@mui/material';
 import React from 'react';
 
 interface InputProps {
-  type: string;
-  placeholder: string;
+  label:string;
+  type?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  customClasses?:string;
+  variant?:'filled' | 'outlined' | 'standard';
+  margin?:'none'|'dense'|'normal'
 }
 
-const Input: React.FC<InputProps> = ({ type, placeholder, value, onChange }) => {
+const Input: React.FC<InputProps> = ({label, type='text',value, onChange,
+   customClasses,variant='outlined' ,margin='normal' }) => {
   return (
-    <input
+    <TextField
+      className={customClasses}
+      label={label}
       type={type}
-      placeholder={placeholder}
       value={value}
+      variant={variant}
+      margin={margin}
       onChange={onChange}
-      className="w-full p-3 border rounded mt-2"
     />
   );
 };
