@@ -19,3 +19,9 @@ export const signUpRequest = async(fullName:string,email:string,password:string,
     return response.data
     
 }
+
+export const otpVerify = async(email:string,otp:string)=>{
+    const response = await api.post('/otp',{email,otp})
+    console.log(response);
+    
+}
