@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '@/components/Input';
-import Button from '../../../components/Button';
+import Button from '@/components/Button';
 import google_logo from '../../../assets/auth/google_logo.webp'
 import vision_logo from '../../../assets/auth/vision_logo.svg'
 
@@ -66,21 +66,11 @@ const AuthSignUp: React.FC = () => {
         </div>
 
         <div className="flex flex-col items-center mt-0 w-full h-screen">
-          <Input customClasses='w-1/2	'
-            label="Full Name"
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            variant="outlined"
-            margin="normal"
-          />
+          <Input customClasses='w-1/2	' label="Full Name" type="text"
+            value={fullName} onChange={(e) => setFullName(e.target.value)} />
 
-          <Input customClasses='w-1/2	'
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <Input customClasses='w-1/2	' label="Email" type="email"
+            value={email} onChange={(e) => setEmail(e.target.value)} />
 
           <Password value={password} onChange={(e) => setPassword(e.target.value)} customClasses='w-1/2' />
         </div>

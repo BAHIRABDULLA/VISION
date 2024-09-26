@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link ,useNavigate} from 'react-router-dom';
-import Button from '../../components/Button'
+import Button from '@/components/Button';
 import vision_logo from '../../assets/auth/vision_logo.svg'
-import { TextField } from '@mui/material';
+import Input from '@/components/Input';
 
 
 const ForgetPassEmail: React.FC = () => {
@@ -31,27 +31,19 @@ const ForgetPassEmail: React.FC = () => {
       <div className="flex-1 flex flex-col items-center mb-8 p-8 ">
         <h2 className="text-3xl font-semibold ">Forget Password</h2>
 
-
         <div className="mt-4 text-gray-500 text-sm">
           <p>Enter your email here to receive one-time passcode </p>
         </div>
         <div className="flex flex-col items-center justify-center mt-0 w-full ">
-        <TextField className='w-1/2	'
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            variant="outlined"
-            margin="normal"
-          />
+        
+          <Input customClasses='w-1/2' label='Email' type='email' value={email}
+           onChange={(e)=>setEmail(e.target.value)} />
         </div>
 
         <Button text="SUBMIT" onClick={handleSubmit}  customClasses="bg-gradient-to-r from-pink-500 to-purple-600 w-1/2 mt-3" />
 
         {/* Error Message */}
         {error && <p className="text-red-500 mt-4">{error}</p>}
-
-      
       </div>
     </div>
   );
