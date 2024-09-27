@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Password from '@/components/Password';
-import google_logo from '../../../assets/auth/google_logo.webp'
-import vision_logo from '../../../assets/auth/vision_logo.svg'
+import google_logo from '@/assets/auth/google_logo.webp'
+import vision_logo from '@/assets/auth/vision_logo.svg'
 import { Link, NavLink } from 'react-router-dom';
 
 

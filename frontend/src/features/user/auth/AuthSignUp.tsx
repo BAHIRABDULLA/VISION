@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
-import google_logo from '../../../assets/auth/google_logo.webp'
-import vision_logo from '../../../assets/auth/vision_logo.svg'
+import google_logo from '@/assets/auth/google_logo.webp'
+import vision_logo from '@/assets/auth/vision_logo.svg'
 
 
 import { signUpRequest } from '@/services/api';

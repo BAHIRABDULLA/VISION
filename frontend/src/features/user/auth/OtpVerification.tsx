@@ -2,7 +2,7 @@ import Otp from '@/components/Otp'
 import React, { useState } from 'react';
 import { Link ,useNavigate} from 'react-router-dom';
 import Button from '@/components/Button';
-import vision_logo from '../../../assets/auth/vision_logo.svg'
+import vision_logo from '@/assets/auth/vision_logo.svg'
 import { otpVerify } from '@/services/api';
 
 
