@@ -37,18 +37,13 @@ const
                     <div className='grid grid-cols-2 gap-4'>
                         {/* left side */}
                         <div>
-                            <label className="block text-gray-600">Job Title</label>
-                            <input
-                                className="mt-1 p-2 w-full border rounded-md"
-                                type="text"
-
-                            />
-                            <Input label='Category' />
+                            <Input label='Job Title' customClasses='w-full' />
+                            <Input label='Category'  customClasses='w-full'/>
                         </div>
                         {/* right side */}
                         <div>
-                            <Input label='Location' />
-                            <Input label='Company (Optional)' />
+                            <Input label='Location' customClasses='w-full' />
+                            <Input label='Company (Optional)' customClasses='w-full' />
                         </div>
                         <div className='col-span-2'>
                             <TextField
@@ -67,11 +62,11 @@ const
                             // defaultValue="Default Value"
                             />
                         </div>
-                        <div className='col-span-2 flex items-center'>
+                        {/* <div className='col-span-2 flex items-center'> */}
                             <div>
-                                <Input label='Social Media URL' />
-                            </div>
-                            <button className='ml-4 p-2 bg-gray-200 text-gray-500 rounded-md'>+</button>
+                                <Input label='Social Media URL' customClasses='w-full' />
+                            {/* </div> */}
+                            {/* <button className='ml-4 p-2 bg-gray-200 text-gray-500 rounded-md'>+</button> */}
                         </div>
                     </div>
                 </form>

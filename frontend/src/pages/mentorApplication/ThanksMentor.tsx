@@ -9,7 +9,7 @@ const ThanksMentor = () => {
                 <p className='text-gray-600 mb-2'>We will review your application and get back you soon as possible</p>
 
                 <p className='text-gray-600 mb-8'>You will receive an email at your registered address</p>
-                
+
                 <button className='text-purple-800 outline-rose-900'>Back to home </button>
             </div>
 

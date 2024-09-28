@@ -2,54 +2,65 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
-import google_logo from '@/assets/auth/google_logo.webp'
-import vision_logo from '@/assets/auth/vision_logo.svg'
+import google_logo from '@/assets/auth/google_logo.webp';
+import vision_logo from '@/assets/auth/vision_logo.svg';
 
+import { z } from 'zod';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { signUpRequest } from '@/services/api';
-import Password from '@/components/Password';
+import PasswordInput from '@/components/Password';
+
+// Zod schema validation
+const signUpSchema = z.object({
+  fullName: z.string().min(1, { message: "Name cannot be empty" }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  password: z.string()
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .regex(/[a-zA-Z]/, { message: "Password must contain at least one letter" })
+    .regex(/[0-9]/, { message: "Password must contain at least one number" })
+});
+
+type SignUpSchemaType = z.infer<typeof signUpSchema>;
 
 const AuthSignUp: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [isMentee, setIsMentee] = useState(true);
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSignUp = async () => {
+  const { register, handleSubmit, formState: { errors } } = useForm<SignUpSchemaType>({
+    resolver: zodResolver(signUpSchema),
+  });
+  console.log(register,'register');
+  
+  const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
+    const role = isMentee ? 'mentee' : 'mentor';
     try {
-
-      console.log(isMentee, 'isMentee');
-      const role = isMentee ? 'mentee' : 'mentor'
-
-      const response = await signUpRequest(fullName, email, password, role)
-      console.log(response, 'response in client side');
-
-      if (response.success) {
-        console.log(response.success, 'response success');
-
-        console.log('$$$$$$$$$$$');
-
-        navigate('/otp-signup')
-      } else {
-        setError('Sign in failed. Please try again ')
-      }
-    } catch (err) {
-      setError('Sign in failed. Please check your credentials and try again.');
+      console.log('data:',data);
+      
+      // const response = await signUpRequest({ ...data, role });
+      // if (response.success) {
+      //   navigate('/otp-signup');
+      // } else {
+      //   console.error('Sign up failed');
+      // }
+    } catch (error) {
+      console.error('Error during sign up:', error);
     }
   };
 
   return (
     <div className="flex h-screen">
+      {/* Left side with logo */}
       <div className="flex-1 bg-gray-900 flex items-center justify-center">
-        <img src={vision_logo} alt="vision_logo" className='' />
+        <img src={vision_logo} alt="vision_logo" />
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center p-8 ">
+      {/* Right side with form */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
         <h2 className="text-3xl font-semibold mb-8">Sign Up</h2>
 
+        {/* Role selection buttons */}
         <div className="flex justify-center w-full mb-4">
           <button
             className={`px-4 py-2 ${isMentee ? 'border-b-2 border-purple-500 text-purple-600' : 'text-gray-500'}`}
@@ -65,45 +76,64 @@ const AuthSignUp: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex flex-col items-center mt-0 w-full h-screen">
-          <Input customClasses='w-1/2	' label="Full Name" type="text"
-            value={fullName} onChange={(e) => setFullName(e.target.value)} />
+        {/* Sign up form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col items-center">
+          <div className="w-1/2">
+            <Input
+              customClasses="w-full"
+              label="Full Name"
+              type="text"
+              {...register('fullName')}
+            />
+            
+            {errors.fullName && <p className="text-red-700">{errors.fullName.message}</p>}
 
-          <Input customClasses='w-1/2	' label="Email" type="email"
-            value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              customClasses="w-full"
+              label="Email"
+              type="email"
+              {...register('email')}
+            />
+            {errors.email && <p className="text-red-700">{errors.email.message}</p>}
 
-          <Password value={password} onChange={(e) => setPassword(e.target.value)} customClasses='w-1/2' />
-        </div>
+            <PasswordInput
+              customClasses="w-full"
+              {...register('password')}
+            />
+            {errors.password && <p className="text-red-700">{errors.password.message}</p>}
+          </div>
 
+          <Button
+            type="submit"
+            text="SIGN UP"
+            customClasses="bg-gradient-to-r from-pink-500 to-purple-600 w-1/2 mt-3"
+          />
+        </form>
 
-        <Button text="SIGN UP" onClick={handleSignUp} customClasses="bg-gradient-to-r from-pink-500 to-purple-600 w-1/2 mt-3" />
+        {/* Error messages if needed */}
+        {/* <p className="text-red-500 mt-4">{error}</p> */}
 
-
-        {error && <p className="text-red-500 mt-4">{error}</p>}
-
-
-        <div className="flex items-center justify-between my-4 w-1/2	">
+        {/* Divider with "or" */}
+        <div className="flex items-center justify-between my-4 w-1/2">
           <hr className="flex-1 border-t" />
           <span className="px-2 text-gray-500">or</span>
           <hr className="flex-1 border-t" />
         </div>
 
-
-        <button className="border border-gray-300 p-1 rounded-md w-1/2	 flex items-center justify-center space-x-2">
+        {/* Google Sign up button */}
+        <button className="border border-gray-300 p-1 rounded-md w-1/2 flex items-center justify-center space-x-2">
           <img src={google_logo} alt="Google" className="w-6 h-6" />
           <span>Sign up with Google</span>
         </button>
 
-
+        {/* Redirect to Sign In */}
         <div className="mt-4 text-gray-500 text-sm">
-
-          <p className="mt-2">
-            Already have an account ?{' '}
-            <Link to='/signin' className='text-blue-500'>Sign In</Link>
+          <p>
+            Already have an account?{' '}
+            <Link to='/signin' className="text-blue-500">Sign In</Link>
           </p>
         </div>
       </div>
-
     </div>
   );
 };

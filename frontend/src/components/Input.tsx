@@ -1,18 +1,18 @@
 import { TextField } from '@mui/material';
-import React from 'react';
+import React,{forwardRef} from 'react';
 
 interface InputProps {
   label:string;
   type?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   customClasses?:string;
   variant?:'filled' | 'outlined' | 'standard';
   margin?:'none'|'dense'|'normal'
 }
 
-const Input: React.FC<InputProps> = ({label, type='text',value, onChange,
-   customClasses,variant='outlined' ,margin='normal' }) => {
+const Input =forwardRef<HTMLInputElement,InputProps> ( ({label, type='text',value, onChange,
+   customClasses,variant='outlined' ,margin='normal' },ref) => {
   return (
     <TextField
       className={customClasses}
@@ -22,8 +22,9 @@ const Input: React.FC<InputProps> = ({label, type='text',value, onChange,
       variant={variant}
       margin={margin}
       onChange={onChange}
+      inputRef={ref}
     />
   );
-};
+});
 
 export default Input;
