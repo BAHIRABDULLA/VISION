@@ -12,8 +12,8 @@ interface PasswordInputProps {
 }
 
 const Password= forwardRef<HTMLInputElement,PasswordInputProps> (({
-    value, onChange, label = 'Password', customClasses
-},ref) => {
+    value, onChange, label = 'Password', customClasses,
+...props},ref) => {
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -45,6 +45,7 @@ const Password= forwardRef<HTMLInputElement,PasswordInputProps> (({
                 }
                 label={label}
                 inputRef={ref}
+                {...props}
             />
         </FormControl>
     )

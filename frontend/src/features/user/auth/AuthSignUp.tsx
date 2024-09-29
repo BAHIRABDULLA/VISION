@@ -24,6 +24,7 @@ const signUpSchema = z.object({
 
 type SignUpSchemaType = z.infer<typeof signUpSchema>;
 
+
 const AuthSignUp: React.FC = () => {
   const navigate = useNavigate();
   const [isMentee, setIsMentee] = useState(true);
@@ -31,19 +32,21 @@ const AuthSignUp: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpSchemaType>({
     resolver: zodResolver(signUpSchema),
   });
-  console.log(register,'register');
   
   const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
     const role = isMentee ? 'mentee' : 'mentor';
     try {
       console.log('data:',data);
-      
-      // const response = await signUpRequest({ ...data, role });
-      // if (response.success) {
-      //   navigate('/otp-signup');
-      // } else {
-      //   console.error('Sign up failed');
-      // }
+      let fullName = data.fullName
+      let email = data.email
+      let password = data.password
+
+      const response = await signUpRequest(fullName,email,password , role );
+      if (response.success) {
+        navigate('/otp-signup');
+      } else {
+        console.error('Sign up failed');
+      }
     } catch (error) {
       console.error('Error during sign up:', error);
     }

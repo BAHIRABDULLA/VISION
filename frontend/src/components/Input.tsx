@@ -12,7 +12,7 @@ interface InputProps {
 }
 
 const Input =forwardRef<HTMLInputElement,InputProps> ( ({label, type='text',value, onChange,
-   customClasses,variant='outlined' ,margin='normal' },ref) => {
+   customClasses,variant='outlined' ,margin='normal',...props },ref) => {
   return (
     <TextField
       className={customClasses}
@@ -23,6 +23,7 @@ const Input =forwardRef<HTMLInputElement,InputProps> ( ({label, type='text',valu
       margin={margin}
       onChange={onChange}
       inputRef={ref}
+      {...props}
     />
   );
 });
