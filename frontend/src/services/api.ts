@@ -28,3 +28,9 @@ export const otpVerify = async(email:string,otp:string)=>{
     return response
     
 }
+
+export const resendOtp = async(email:string)=>{
+    const response = await api.post('/otp-resend',{email})
+    console.log(response,'response in resendOtp ');
+    return response
+}

@@ -9,6 +9,6 @@ const {signUp,verifyOtp,resendOtp} = authController
 
 route.post('/signup',signUp)
 route.post('/otp-signup',verifyOtp)
-route.post('/resent-otp',resendOtp)
+route.post('/otp-resend',resendOtp)
 
 export default route

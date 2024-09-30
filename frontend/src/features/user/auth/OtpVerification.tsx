@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link ,useNavigate,useLocation} from 'react-router-dom';
 import Button from '@/components/Button';
 import vision_logo from '@/assets/auth/vision_logo.svg'
-import { otpVerify } from '@/services/api';
+import { otpVerify, resendOtp } from '@/services/api';
 
 
 const OtpVerification: React.FC = () => {
@@ -25,9 +25,13 @@ const OtpVerification: React.FC = () => {
     }
   },[timeRemaining])
 
-  const handleResendOtp =()=>{
+  const handleResendOtp =async()=>{
+    const resend = await resendOtp(email)
+    console.log(resend,'resend in handle resend otp ');
+    
     setTimeRemaining(30)
     setIsResendEnabled(false)
+
   }
 
   const handleSubmit = async () => {
