@@ -44,3 +44,14 @@ export const googleSignIn = async (email:string,name:string,role:string) => {
         throw error
     }
 }
+
+export const sendMail = async(email:string)=>{
+    try {
+        const response = await api.post('/forget-password',{email})
+        console.log(response,'response');
+        return response
+        
+    } catch (error) {
+        console.error('Error founding on send email',error);
+    }
+}

@@ -104,5 +104,21 @@ export const authService = {
         } catch (error) {
             console.error('Error founded in sign in ',error);
         }
+    },
+    sendMail:async(email:string)=>{
+        try {
+        const isUser = await userRepository.findByEmail(email)
+        if(!isUser || isUser.isVerified===false){
+            return {success:false,message:"User not registered"}
+        }
+        const otp = generateOtp()
+        console.log(otp,'otp in sed email');
+        
+        await sentOTPEmail(email, otp)
+        await otpRepository.storeOtp(email, otp)
+        return {success:true,messsage:"OTP send to user email"}
+        } catch (error) {
+            console.error('Error founded in send mail',error);   
+        }
     }
 }
