@@ -1,7 +1,7 @@
 
 import { signUp } from "./signUpController";
-import { verifyOtp } from "./verifyOtp";
+import { verifyOtp,resendOtp } from "./otpController";
 
 export const authController = {
-  signUp,verifyOtp
+  signUp,verifyOtp,resendOtp
 }

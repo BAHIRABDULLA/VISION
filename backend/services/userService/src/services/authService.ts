@@ -51,5 +51,16 @@ export const authService = {
         }else{
             return {success:false,message:'Invalid otp'}
         }
+    },
+    resendOtpWork:async(email:string)=>{
+        try {
+            const otp = generateOtp()
+            console.log(otp,'otp in resend otp work');
+            await sentOTPEmail(email,otp)
+            await otpRepository.storeOtp(email,otp)
+            return {success:true, message:"Resend otp passed to user"}
+        } catch (error) {
+            console.error('Error founding on resentOtp work',error);
+        }
     }
 }

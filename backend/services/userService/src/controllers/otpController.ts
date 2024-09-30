@@ -12,3 +12,14 @@ export const verifyOtp = async(req:Request,res:Response)=>{
         
     }
 }
+
+export const resendOtp = async(req:Request,res:Response)=>{
+    try {
+        const {email} = req.body
+        console.log(email);
+        const otpToService = await authService.resendOtpWork(email)
+        return res.json(otpToService)
+    } catch (error) {
+        
+    }
+}
