@@ -5,7 +5,7 @@ interface IUser {
     email:string;
     password:string;
     role:'mentee'| 'mentor';
-    isVerfied:boolean;
+    isVerified:boolean;
     image:string;
     createAt:Date
 }
@@ -28,7 +28,7 @@ const userSchema = new Schema<IUser>({
         enum:['mentee' , 'mentor'],
         required:true
     },
-    isVerfied:{
+    isVerified:{
         type:Boolean,
         required:true,
         default:false

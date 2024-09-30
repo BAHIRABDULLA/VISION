@@ -5,11 +5,14 @@ import Button from '@/components/Button';
 import google_logo from '@/assets/auth/google_logo.webp';
 import vision_logo from '@/assets/auth/vision_logo.svg';
 
+import { auth, googleProvider } from '@/firebase'
+import { signInWithPopup } from 'firebase/auth'
+
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { signUpRequest } from '@/services/api';
+import { googleSignIn, signUpRequest } from '@/services/api';
 import PasswordInput from '@/components/Password';
 
 // Zod schema validation
@@ -32,15 +35,15 @@ const AuthSignUp: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpSchemaType>({
     resolver: zodResolver(signUpSchema),
   });
-  
+
   const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
     const role = isMentee ? 'mentee' : 'mentor';
     try {
-      console.log('data:',data);
-     const {fullName,email,password} = data
-      const response = await signUpRequest(fullName,email,password , role );
+      console.log('data:', data);
+      const { fullName, email, password } = data
+      const response = await signUpRequest(fullName, email, password, role);
       if (response.success) {
-        navigate('/otp-signup',{state:{email}});
+        navigate('/otp-signup', { state: { email } });
       } else {
         console.error('Sign up failed');
       }
@@ -49,6 +52,31 @@ const AuthSignUp: React.FC = () => {
     }
   };
 
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const role = isMentee ? 'mentee' : 'mentor';
+      console.log('reached handle google sign in ');
+
+      const result = await signInWithPopup(auth, googleProvider)
+      const user = result.user
+      console.log('Google user:', user);
+      if (user.email && user.displayName) {
+        const response = await googleSignIn(user.email, user.displayName,role);
+        console.log(response, 'Response in auth sign up .tsx');
+        if (response.data.success) {
+         navigate('/')
+        } else {
+        
+          console.error(response.data.message);
+        }
+      } else {
+        console.error('User email is null');
+      }
+    } catch (error) {
+      console.error('Error during Google sign-in:', error);
+    }
+  }
   return (
     <div className="flex h-screen">
       {/* Left side with logo */}
@@ -85,7 +113,7 @@ const AuthSignUp: React.FC = () => {
               type="text"
               {...register('fullName')}
             />
-            
+
             {errors.fullName && <p className="text-red-700">{errors.fullName.message}</p>}
 
             <Input
@@ -104,8 +132,7 @@ const AuthSignUp: React.FC = () => {
           </div>
 
           <Button
-            type="submit"
-            text="SIGN UP"
+            type="submit" text="SIGN UP"
             customClasses="bg-gradient-to-r from-pink-500 to-purple-600 w-1/2 mt-3"
           />
         </form>
@@ -121,9 +148,10 @@ const AuthSignUp: React.FC = () => {
         </div>
 
         {/* Google Sign up button */}
-        <button className="border border-gray-300 p-1 rounded-md w-1/2 flex items-center justify-center space-x-2">
+        <button className="border border-gray-300 p-1 rounded-md 
+        w-1/2 flex items-center justify-center space-x-2" onClick={handleGoogleSignIn}>
           <img src={google_logo} alt="Google" className="w-6 h-6" />
-          <span>Sign up with Google</span>
+          <span>Continue with Google</span>
         </button>
 
         {/* Redirect to Sign In */}

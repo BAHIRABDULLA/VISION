@@ -1,30 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, } from 'react';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Password from '@/components/Password';
 import google_logo from '@/assets/auth/google_logo.webp'
 import vision_logo from '@/assets/auth/vision_logo.svg'
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { googleSignIn, signInRequest } from '@/services/api';
+
+import { z } from 'zod';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '@/firebase';
+
+
+
+//zod validtation
+const signInSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address' }),
+  password: z.string()
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .regex(/[a-zA-Z]/, { message: "Password must contain at least one letter" })
+    .regex(/[0-9]/, { message: "Password must contain at least one number" })
+});
+type SignInSchemaType = z.infer<typeof signInSchema>;
 
 
 const AuthSignIn: React.FC = () => {
+  const navigate = useNavigate()
   const [isMentee, setIsMentee] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const handleSignIn = async () => {
+
+  const { register, handleSubmit, formState: { errors } } = useForm<SignInSchemaType>({
+    resolver: zodResolver(signInSchema),
+  });
+
+  const onSubmit: SubmitHandler<SignInSchemaType> = async (data) => {
+    const role = isMentee ? 'mentee' : 'mentor';
     try {
-      // await signIn(email, password, isMentee); // Call the sign-in service function
-      // Redirect or show success message
-    } catch (err) {
-      setError('Sign in failed. Please check your credentials and try again.');
+      console.log('data:', data);
+      const { email, password } = data
+      const response = await signInRequest(email, password, role);
+      
+      if (response.data.success) {
+        // navigate('/');
+      } else {
+        setError(response.data.message)
+      }
+    } catch (error) {
+      console.error('Error during sign in:', error);
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      const role = isMentee ? 'mentee' : 'mentor';
+      console.log('reached handle google sign in ');
+
+      const result = await signInWithPopup(auth, googleProvider)
+      const user = result.user
+      console.log('Google user:', user);
+      if (user.email && user.displayName) {
+        const response = await googleSignIn(user.email, user.displayName,role);
+        console.log(response, 'Response in auth sign in .tsx');
+        if (response.data.success) {
+         navigate('/')
+        } else {
+          console.error(response.data.message);
+        }
+      } else {
+        console.error('User email is null');
+      }
+    } catch (error) {
+      console.error('Error during Google sign-in:', error);
+    }
+  }
+
   return (
     <div className="flex h-screen">
-     
+
       <div className="hidden md:flex md:flex-1 bg-gray-900 items-center justify-center">
         <img src={vision_logo} alt="vision_logo" className="w-3/4 md:w-2/4 lg:w-1/3" />
       </div>
@@ -47,28 +102,28 @@ const AuthSignIn: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex flex-col items-center w-full space-y-4">
-          
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center w-full space-y-4">
+
           <Input
             customClasses="w-full md:w-1/2"
             type="email"
-            value={email}
             label="Email"
-            onChange={(e) => setEmail(e.target.value)}
+            {...register('email')}
           />
+          {errors.email && <p className="text-red-700">{errors.email.message}</p>}
 
           <Password
-            value={password}
             customClasses="w-full md:w-1/2"
-            onChange={(e) => setPassword(e.target.value)}
+            {...register('password')}
           />
+          {errors.password && <p className="text-red-700">{errors.password.message}</p>}
 
           <Button
             text="SIGN IN"
-            onClick={handleSignIn}
+            type='submit'
             customClasses="bg-gradient-to-r from-pink-500 to-purple-600 w-full md:w-1/2"
           />
-        </div>
+        </form>
 
         {error && <p className="text-red-500 mt-4">{error}</p>}
 
@@ -79,9 +134,10 @@ const AuthSignIn: React.FC = () => {
         </div>
 
         {/* Google Sign In Button */}
-        <button className="border border-gray-300 p-2 rounded-md w-full md:w-1/2 flex items-center justify-center space-x-2">
+        <button className="border border-gray-300 p-2 rounded-md
+         w-full md:w-1/2 flex items-center justify-center space-x-2" onClick={handleGoogleSignIn}>
           <img src={google_logo} alt="Google" className="w-6 h-6" />
-          <span>Sign in with Google</span>
+          <span>Continue with Google</span>
         </button>
 
         <div className="mt-4 text-gray-500 text-sm text-center">
