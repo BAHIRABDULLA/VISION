@@ -46,12 +46,12 @@ const App = () => {
           <Route path='/' element={<Home />} />
 
           <Route path='/admin/login' element={<Login />} />
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <AppProvider>
+          {/* <ThemeProvider theme={theme}> */}
+            {/* <CssBaseline /> */}
+            {/* <AppProvider> */}
               <Route path='/admin/dashboard' element={<Dashboard/>} />
-            </AppProvider>
-          </ThemeProvider>
+            {/* </AppProvider> */}
+          {/* </ThemeProvider> */}
         </Routes>
       </div>
     </Router>

@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+
 console.log(import.meta.env.VITE_API_BASE_URL,'IMPORT mete ENV viteapivaseurl');
 
 const api = axios.create({
@@ -21,7 +22,9 @@ export const signUpRequest = async(fullName:string,email:string,password:string,
 }
 
 export const otpVerify = async(email:string,otp:string)=>{
-    const response = await api.post('/otp',{email,otp})
-    console.log(response);
+    const response = await api.post('/otp-signup',{email,otp})
+    console.log(response,'response in otpVerify');
+    
+    return response
     
 }

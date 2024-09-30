@@ -3,10 +3,11 @@ import express from 'express'
 const route = express.Router()
 
 
-console.log('dfkdjfkdfdjfdfiuegodj')
 import { authController } from '../controllers/authController'
-const {signUp} = authController
+
+const {signUp,verifyOtp} = authController
 
 route.post('/signup',signUp)
+route.post('/otp-signup',verifyOtp)
 
 export default route

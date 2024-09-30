@@ -37,13 +37,10 @@ const AuthSignUp: React.FC = () => {
     const role = isMentee ? 'mentee' : 'mentor';
     try {
       console.log('data:',data);
-      let fullName = data.fullName
-      let email = data.email
-      let password = data.password
-
+     const {fullName,email,password} = data
       const response = await signUpRequest(fullName,email,password , role );
       if (response.success) {
-        navigate('/otp-signup');
+        navigate('/otp-signup',{state:{email}});
       } else {
         console.error('Sign up failed');
       }
