@@ -100,7 +100,15 @@ export const authService = {
             if(!checkuser){
                 return {success:false,message:"User not existed"}
             }
-            // const passwordCheck = await bcrypt.compare(password,checkuser.password)
+            if(checkuser.isVerified===false){
+                return {success:false,message:"User not verified"}
+            }
+            const passwordCheck = await bcrypt.compare(password,checkuser.password)
+            console.log(passwordCheck,'passwordCheck in sign in ');
+            if(!passwordCheck){
+                return {success:false,message:"Invalid credentials , please try again"}
+            }
+            return {success:true,message:"Sign in successfully completed"}
         } catch (error) {
             console.error('Error founded in sign in ',error);
         }
@@ -119,6 +127,20 @@ export const authService = {
         return {success:true,messsage:"OTP send to user email"}
         } catch (error) {
             console.error('Error founded in send mail',error);   
+        }
+    },
+    resetPassword:async(email:string,password:string,confirmPassword:string)=>{
+        try {
+            if(password!==confirmPassword){
+                return {success:false,message:"Password do not match"}
+            }
+            const hashedPassword = await hashPassword(password)
+            console.log(hashedPassword,'hashedPassword in resetPassword');
+            
+            const changePassowrd = await userRepository.updatePasswordUser(email,hashedPassword)
+            return {success:true,message:"New password updated"}
+        } catch (error) {
+            console.error('Error founded in reset password',error);
         }
     }
 }

@@ -44,7 +44,7 @@ const AuthSignIn: React.FC = () => {
       const response = await signInRequest(email, password, role);
       
       if (response.data.success) {
-        // navigate('/');
+        navigate('/');
       } else {
         setError(response.data.message)
       }

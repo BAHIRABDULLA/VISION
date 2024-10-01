@@ -42,14 +42,14 @@ const ForgetPassEmail: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen flex-col lg:flex-row">
       {/* Left Side with Logo */}
-      <div className="hidden md:flex md:w-1/2 lg:w-1/4 bg-gray-900 flex items-center justify-center">
-        <img src={vision_logo} alt="Vision Logo" className="" />
+      <div className="flex-1 bg-gray-900 flex items-center justify-center">
+        <img src={vision_logo} alt="Vision Logo" className="w-1/2 max-w-xs lg:w-3/4" />
       </div>
 
       {/* Right Side with Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col items-center justify-center p-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col items-center justify-center mb-8 p-8">
         <h2 className="text-3xl font-semibold">Forget Password</h2>
 
         <div className="mt-4 text-gray-500 text-sm text-center">

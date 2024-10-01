@@ -55,3 +55,13 @@ export const sendMail = async(email:string)=>{
         console.error('Error founding on send email',error);
     }
 }
+export const resetPassword  = async(email:string,password:string,confirmPassword:string)=>{
+    try {
+        const response = await api.post('/reset-password',{email,password,confirmPassword})
+        console.log(response,'response in reset password ');
+        return response
+        
+    } catch (error) {
+        console.error('Error founding in reset password',error); 
+    }
+}

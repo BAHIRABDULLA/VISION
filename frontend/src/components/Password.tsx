@@ -1,7 +1,7 @@
-import React, { useState,forwardRef } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
+import { useId } from 'react';
 
 interface PasswordInputProps {
 
@@ -11,10 +11,11 @@ interface PasswordInputProps {
     customClasses?: string
 }
 
-const Password= forwardRef<HTMLInputElement,PasswordInputProps> (({
+const Password = forwardRef<HTMLInputElement, PasswordInputProps>(({
     value, onChange, label = 'Password', customClasses,
-...props},ref) => {
+    ...props }, ref) => {
 
+    const uniqueId = useId()
     const [showPassword, setShowPassword] = useState(false);
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -25,9 +26,9 @@ const Password= forwardRef<HTMLInputElement,PasswordInputProps> (({
 
     return (
         <FormControl className={customClasses} variant="outlined" margin="normal">
-            <InputLabel htmlFor="outlined-adornment-password" >{label}</InputLabel>
+            <InputLabel htmlFor={uniqueId} >{label}</InputLabel>
             <OutlinedInput
-                id="outlined-adornment-password"
+                id={uniqueId}
                 type={showPassword ? 'text' : 'password'}
                 value={value}
                 onChange={onChange}

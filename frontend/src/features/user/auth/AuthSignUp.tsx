@@ -43,7 +43,7 @@ const AuthSignUp: React.FC = () => {
       const { fullName, email, password } = data
       const response = await signUpRequest(fullName, email, password, role);
       if (response.success) {
-        navigate('/otp-signup', { state: { email } });
+        navigate('/otp-signup', { state: { email,type:'signup' } });
       } else {
         console.error('Sign up failed');
       }

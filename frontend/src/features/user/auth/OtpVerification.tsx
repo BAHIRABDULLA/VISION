@@ -8,7 +8,7 @@ import { otpVerify, resendOtp } from '@/services/api';
 
 const OtpVerification: React.FC = () => {
   const location = useLocation()
-  const email = location.state?.email;
+  const {email,type} = location.state;
 
     const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null); 
@@ -41,7 +41,11 @@ const OtpVerification: React.FC = () => {
         const response = await otpVerify(email,otpString)
         console.log(response,'response in otp verification');
         if(response.data.success===true){
-          navigate('/')
+          if(type==='signup'){
+            navigate('/')
+          }else if(type === 'forgetPassword'){
+            navigate('/new-password',{state:{email}})
+          }
         }else{
           setError(response.data.message)
         }

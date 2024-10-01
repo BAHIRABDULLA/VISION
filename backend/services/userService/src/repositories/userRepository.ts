@@ -11,8 +11,10 @@ export const userRepository ={
     },
     updateUserVerificationStatus:async(email:string,isVerified:boolean)=>{
         return await User.findOneAndUpdate({email},{$set:{isVerified:isVerified}})
+    },
+    updatePasswordUser:async(email:string,password:string)=>{
+        return await User.findOneAndUpdate({email},{$set:{password:password}})
     }
-
     // saveOTP:async(email:string,otp:string)=>{
     //     const user = await User.findOneAndUpdate({email},{otp})
     // }
