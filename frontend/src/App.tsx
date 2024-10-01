@@ -16,6 +16,7 @@ import Login from './pages/admin/Login'
 import { AppProvider } from '@toolpad/core'
 import { CssBaseline, createTheme, ThemeProvider } from '@mui/material'
 import Dashboard from './pages/admin/Dashboard'
+import MentorDashboard from './pages/mentorApplication/MentorDashboard'
 
 const theme = createTheme({
   palette: {
@@ -52,6 +53,8 @@ const App = () => {
               <Route path='/admin/dashboard' element={<Dashboard/>} />
             {/* </AppProvider> */}
           {/* </ThemeProvider> */}
+
+          <Route path='/mentor/dashboard' element={<MentorDashboard/>} />
         </Routes>
       </div>
     </Router>
