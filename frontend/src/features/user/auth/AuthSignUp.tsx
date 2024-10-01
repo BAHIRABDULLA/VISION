@@ -32,6 +32,8 @@ const AuthSignUp: React.FC = () => {
   const navigate = useNavigate();
   const [isMentee, setIsMentee] = useState(true);
 
+  const [error,setError] = useState('')
+
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpSchemaType>({
     resolver: zodResolver(signUpSchema),
   });
@@ -43,7 +45,7 @@ const AuthSignUp: React.FC = () => {
       const { fullName, email, password } = data
       const response = await signUpRequest(fullName, email, password, role);
       if (response.success) {
-        navigate('/otp-signup', { state: { email,type:'signup' } });
+        navigate('/otp-signup', { state: { email, type: 'signup' } });
       } else {
         console.error('Sign up failed');
       }
@@ -62,12 +64,29 @@ const AuthSignUp: React.FC = () => {
       const user = result.user
       console.log('Google user:', user);
       if (user.email && user.displayName) {
-        const response = await googleSignIn(user.email, user.displayName,role);
+        const response = await googleSignIn(user.email, user.displayName, role);
         console.log(response, 'Response in auth sign up .tsx');
         if (response.data.success) {
-         navigate('/')
+          console.log(response.data.success, 'response.data.success')
+          if (response.data.role === 'mentee') {    
+            console.log(response.data.role, 'response.data.role');
+
+            navigate('/')
+          } else {
+            console.log(response.data.exist, 'response.data.exist');
+
+            if (response.data.exist === true) {
+              console.log('its entered in if condition *****');
+
+              navigate('/mentor/dashboard')
+            } else {
+              console.log('its entered in else condition ********');
+
+              navigate('/apply-mentor-1')
+            }
+          }
         } else {
-        
+
           console.error(response.data.message);
         }
       } else {
@@ -138,7 +157,7 @@ const AuthSignUp: React.FC = () => {
         </form>
 
         {/* Error messages if needed */}
-        {/* <p className="text-red-500 mt-4">{error}</p> */}
+        <p className="text-red-500 mt-4">{error}</p>
 
         {/* Divider with "or" */}
         <div className="flex items-center justify-between my-4 w-1/2">

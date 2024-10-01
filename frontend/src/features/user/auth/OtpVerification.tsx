@@ -42,7 +42,11 @@ const OtpVerification: React.FC = () => {
         console.log(response,'response in otp verification');
         if(response.data.success===true){
           if(type==='signup'){
-            navigate('/')
+            if(response.data.role==='mentee'){
+              navigate('/')
+            }else{
+              navigate('/apply-mentor-1')
+            }
           }else if(type === 'forgetPassword'){
             navigate('/new-password',{state:{email}})
           }

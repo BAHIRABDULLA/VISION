@@ -42,9 +42,13 @@ const AuthSignIn: React.FC = () => {
       console.log('data:', data);
       const { email, password } = data
       const response = await signInRequest(email, password, role);
-      
+
       if (response.data.success) {
-        navigate('/');
+        if (role == 'mentee') {
+          navigate('/');
+        }else{
+          
+        }
       } else {
         setError(response.data.message)
       }
@@ -62,10 +66,25 @@ const AuthSignIn: React.FC = () => {
       const user = result.user
       console.log('Google user:', user);
       if (user.email && user.displayName) {
-        const response = await googleSignIn(user.email, user.displayName,role);
+        const response = await googleSignIn(user.email, user.displayName, role);
         console.log(response, 'Response in auth sign in .tsx');
         if (response.data.success) {
-         navigate('/')
+          console.log(response.data.success, 'response.data.success')
+          if (response.data.role === 'mentee') {    
+            console.log(response.data.role, 'response.data.role');
+
+            navigate('/')
+          } else {
+            console.log(response.data.exist, 'response.data.exist');
+
+            if (response.data.exist === true) {
+              console.log('its entered in if condition *****');
+              navigate('/mentor/dashboard')
+            } else {
+              console.log('its entered in else condition ********');
+              navigate('/apply-mentor-1')
+            }
+          }
         } else {
           console.error(response.data.message);
         }

@@ -5,16 +5,15 @@ import { TextField } from '@mui/material'
 import { useForm } from 'react-hook-form'
 
 
-const
-    ApplyMentor1 = () => {
+const ApplyMentor1 = () => {
         return (
             <div className='min-h-screen flex flex-col items-center justify-center bg-gray-50'>
-                <form className='w-full max-w-4xl p-8 bg-white shadow-md rounded-lg'>
+                <form className='w-full max-w-6xl p-8  rounded-lg'>
                     <div>
-                        <div className='ms-8'>
-                            <img src={visionLogo} alt="" />
+                        <div className='ms-2'>
+                            <img src={visionLogo} alt="Vision Logo" />
                         </div>
-                        <div className='flex justify-around'>
+                        <div className='flex justify-between'>
                             <div className=''>
                                 <h1 className='text-3xl font-semiboldbold'>Apply As A Mentor</h1>
                                 <h5 className='m-4'>It will take only few minutes</h5>
@@ -62,11 +61,11 @@ const
                             // defaultValue="Default Value"
                             />
                         </div>
-                        {/* <div className='col-span-2 flex items-center'> */}
+                        <div className='col-span-2 flex items-center'>
                             <div>
                                 <Input label='Social Media URL' customClasses='w-full' />
-                            {/* </div> */}
-                            {/* <button className='ml-4 p-2 bg-gray-200 text-gray-500 rounded-md'>+</button> */}
+                            </div>
+                            <button className='ml-4 p-2 bg-gray-200 text-gray-500 rounded-md'>+</button>
                         </div>
                     </div>
                 </form>

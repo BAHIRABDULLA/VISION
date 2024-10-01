@@ -50,7 +50,7 @@ export const authService = {
 
             console.log(otp, 'otp', getOtp, 'get otp in auth service *******');
 
-            return { success: true, message: 'OTP verified successfully' }
+            return { success: true, message: 'OTP verified successfully' ,role:checkUser.role}
         } else {
             return { success: false, message: 'Invalid otp' }
         }
@@ -73,7 +73,7 @@ export const authService = {
             
             const existingUser = await userRepository.findByEmail(email)
             if(existingUser){
-                return { success: true, message: 'Sign in with google completed' }
+                return { success: true, message: 'Sign in with google completed',role:role,exist:true }
             }
             const password = randomPassword
             console.log(randomPassword,'randomPassword');
@@ -87,7 +87,7 @@ export const authService = {
                 role,
                 isVerified:true
             })
-        return { success: true, message: 'Sign in with google completed' }
+        return { success: true, message: 'Sign in with google completed',role:role,exist:false }
         } catch (error) {
             console.error('Error founded in google with sign in ',error);
         }
