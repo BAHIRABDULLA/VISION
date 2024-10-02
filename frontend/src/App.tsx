@@ -15,7 +15,9 @@ import Login from './pages/admin/Login'
 
 import { AppProvider } from '@toolpad/core'
 import { CssBaseline, createTheme, ThemeProvider } from '@mui/material'
-import Dashboard from './pages/admin/Dashboard'
+import Admin from './pages/admin/Admin'
+import Dashboard from './features/admin/Dashboard'
+import Users from './features/admin/Users'
 import MentorDashboard from './pages/mentorApplication/MentorDashboard'
 
 const theme = createTheme({
@@ -46,15 +48,15 @@ const App = () => {
 
           <Route path='/' element={<Home />} />
 
-          <Route path='/admin/login' element={<Login />} />
-          {/* <ThemeProvider theme={theme}> */}
-            {/* <CssBaseline /> */}
-            {/* <AppProvider> */}
-              <Route path='/admin/dashboard' element={<Dashboard/>} />
-            {/* </AppProvider> */}
-          {/* </ThemeProvider> */}
 
-          <Route path='/mentor/dashboard' element={<MentorDashboard/>} />
+          <Route path='/admin' element={<Admin/>}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users" element={<Users />} />
+          </Route>
+          <Route path='/admin/login' element={<Login />} />
+         
+
+          <Route path='/mentor/dashboard' element={<MentorDashboard />} />
         </Routes>
       </div>
     </Router>
