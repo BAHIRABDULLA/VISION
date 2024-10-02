@@ -6,6 +6,7 @@ import { hashPassword, randomPassword } from "../utils/hashPassword"
 import { generateOtp, sentOTPEmail } from "../utils/otpGenerator";
 import bcrypt from 'bcryptjs'
 import admin from 'firebase-admin'
+import { generateAccessToken, generateRefreshToken } from "../utils/token";
 
 
 
@@ -45,12 +46,20 @@ export const authService = {
             return { success: false, message: 'OTP expired or invalid' }
         }
         if (otp === getOtp?.otp) {
+            console.log(otp, 'otp', getOtp, 'get otp in auth service *******');
+            
             await userRepository.updateUserVerificationStatus(email, true)
             await otpRepository.deleteOtp(email)
-
-            console.log(otp, 'otp', getOtp, 'get otp in auth service *******');
-
-            return { success: true, message: 'OTP verified successfully' ,role:checkUser.role}
+            const accessToken = generateAccessToken({id:checkUser._id.toString(),role:checkUser.role})
+            console.log(accessToken,'access token in auth service ');
+            const refreshToken = generateRefreshToken({id:checkUser._id.toString(),role:checkUser.role})
+            console.log(refreshToken,'refresh token in auth service');
+            
+            if(checkUser.role==='mentee'){
+                return { success: true, message: 'OTP verified successfully' ,role:checkUser.role ,accessToken,refreshToken}
+            }else{
+                return {success:true,message:'OTP verified successfully' ,role:checkUser.role }
+            }
         } else {
             return { success: false, message: 'Invalid otp' }
         }
@@ -108,6 +117,10 @@ export const authService = {
             if(!passwordCheck){
                 return {success:false,message:"Invalid credentials , please try again"}
             }
+            if(checkuser.role==='mentor' && !checkuser.isApproved){
+                return {success:false,message:"Mentor approval pending. Please wait for admin approval"}
+            }
+            const accessToken = generateAccessToken({id:checkuser._id.toString(),role:checkuser.role})
             return {success:true,message:"Sign in successfully completed"}
         } catch (error) {
             console.error('Error founded in sign in ',error);

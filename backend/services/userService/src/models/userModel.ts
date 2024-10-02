@@ -8,6 +8,7 @@ interface IUser {
     isVerified:boolean;
     image:string;
     createAt:Date
+    isApproved:boolean
 }
 
 const userSchema = new Schema<IUser>({
@@ -39,6 +40,9 @@ const userSchema = new Schema<IUser>({
     createAt:{
         type:Date,
         default:Date.now()
+    },
+    isApproved:{
+        type:Boolean
     }
 })
 
