@@ -4,7 +4,7 @@ import Button from '@/components/Button';
 import vision_logo from '@/assets/auth/vision_logo.svg'
 import Input from '@/components/Input';
 
-import {sendMail} from '@/services/api'
+import {sendMail} from '@/services/userApi'
 
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';

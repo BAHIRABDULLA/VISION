@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link ,useNavigate,useLocation} from 'react-router-dom';
 import Button from '@/components/Button';
 import vision_logo from '@/assets/auth/vision_logo.svg'
-import { otpVerify, resendOtp } from '@/services/api';
+import { otpVerify, resendOtp } from '@/services/userApi';
 
 
 const OtpVerification: React.FC = () => {
@@ -43,6 +43,7 @@ const OtpVerification: React.FC = () => {
         if(response.data.success===true){
           if(type==='signup'){
             if(response.data.role==='mentee'){
+              
               navigate('/')
             }else{
               navigate('/apply-mentor-1')

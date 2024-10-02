@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { googleSignIn, signUpRequest } from '@/services/api';
+import { googleSignIn, signUpRequest } from '@/services/userApi';
 import PasswordInput from '@/components/Password';
 
 // Zod schema validation

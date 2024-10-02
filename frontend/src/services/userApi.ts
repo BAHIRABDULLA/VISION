@@ -1,10 +1,10 @@
 import axios from 'axios'
 
 
-console.log(import.meta.env.VITE_API_BASE_URL, 'IMPORT mete ENV viteapivaseurl');
+console.log(import.meta.env.VITE_USER_API_BASE_URL, 'IMPORT mete ENV viteapivaseurl');
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL
+    baseURL: import.meta.env.VITE_USER_API_BASE_URL
 })
 export const signInRequest = async (email: string, password: string,role:string) => {
     const response = await api.post('/signin', { email, password ,role})

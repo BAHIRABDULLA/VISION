@@ -9,7 +9,7 @@ import Password from '@/components/Password';
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { resetPassword } from '@/services/api';
+import { resetPassword } from '@/services/userApi';
 
 
 //zod validtation

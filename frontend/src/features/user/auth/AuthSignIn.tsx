@@ -5,7 +5,7 @@ import Password from '@/components/Password';
 import google_logo from '@/assets/auth/google_logo.webp'
 import vision_logo from '@/assets/auth/vision_logo.svg'
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { googleSignIn, signInRequest } from '@/services/api';
+import { googleSignIn, signInRequest } from '@/services/userApi';
 
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
