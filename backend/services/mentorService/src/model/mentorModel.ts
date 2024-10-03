@@ -1,12 +1,12 @@
 import mongoose, { Schema, Types } from "mongoose";
 
-interface IMentor {
+export interface IMentor {
     mentor:Schema.Types.ObjectId;
     fullName: string;
     email: string;
     jobTitle: string;
     location: string
-    category: string;
+    category: string
     company?: string;
     skills: string[];
     bio: string;
@@ -26,17 +26,17 @@ const mentorSchema = new Schema<IMentor>({
     jobTitle: { type: String, required: true },
     category: { type: String, required: true },
     location: { type: String, required: true },
-    company: { type: String, default: null },
+    company: { type: String , default: null },
     skills: { type: [String], required: true },
     bio: { type: String, required: true },
     socialMediaUrls: { type: [String], default: [] },
     introductionVideoUrl: { type: String, default: null },
     featuredArticleUrl: { type: String, default: null },
-    whyBecomeMentor: { type: String, required: true },
-    greatestAchievement: {type: String,required: true },
+    whyBecomeMentor: { type: String },
+    greatestAchievement: {type: String },
     profileImageUrl: {type: String,default: null },
     createdAt: {type: Date,default: Date.now },
     status: {type: String,enum: ['pending', 'approved', 'rejected'],default: 'pending' },
 })
 
-module.exports = mongoose.model('Mentor', mentorSchema);
+export const Mentor = mongoose.model('Mentor', mentorSchema);

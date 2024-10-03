@@ -46,7 +46,7 @@ const OtpVerification: React.FC = () => {
               
               navigate('/')
             }else{
-              navigate('/apply-mentor-1')
+              navigate('/apply-mentor-1',{state:{email}})
             }
           }else if(type === 'forgetPassword'){
             navigate('/new-password',{state:{email}})

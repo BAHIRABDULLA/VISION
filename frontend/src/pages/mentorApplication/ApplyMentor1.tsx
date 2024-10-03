@@ -2,13 +2,47 @@ import React from 'react'
 import visionLogo from '../../assets/auth/vison_logo_black.svg'
 import Input from '@/components/Input'
 import { TextField } from '@mui/material'
-import { useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { applyMentor1 } from '@/services/mentorApi';
+import { useLocation,useNavigate } from 'react-router-dom';
 
+
+const applyMentorSchema = z.object({
+    jobTitle: z.string().min(1, { message: "Job Title is required" }),
+    category: z.string().min(1, { message: "Category is required" }),
+    location: z.string().min(1, { message: "Location is required" }),
+    company: z.string().optional(),
+    skills: z.string().min(1, { message: "Skills are required" }),
+    bio: z.string().min(1, { message: "Bio is required" }),
+    socialMediaUrl: z.string().url({ message: "Invalid URL" }).optional(),
+  });
+
+type applyMentorSchemaType = z.infer<typeof applyMentorSchema>;
 
 const ApplyMentor1 = () => {
+    const location = useLocation()
+    const {email}= location.state
+    console.log(email,'email in apply mentor1 ');
+
+    const navigate = useNavigate()
+    
+    const {register,handleSubmit,formState:{errors},} = useForm<applyMentorSchemaType>({resolver:zodResolver(applyMentorSchema)})
+
+    const onSubmit = async(data:any)=>{
+        console.log(data);
+        const response =await applyMentor1(data,email)
+        console.log(response,'response in apply mentro 1');
+        if(response.data.success){
+            navigate('/apply-mentor-2',{state:{email}})
+        }else{
+            navigate('/')
+        }
+    }
         return (
             <div className='min-h-screen flex flex-col items-center justify-center bg-gray-50'>
-                <form className='w-full max-w-6xl p-8  rounded-lg'>
+                <form onSubmit={handleSubmit(onSubmit)} className='w-full max-w-6xl p-8  rounded-lg'>
                     <div>
                         <div className='ms-2'>
                             <img src={visionLogo} alt="Vision Logo" />
@@ -36,38 +70,45 @@ const ApplyMentor1 = () => {
                     <div className='grid grid-cols-2 gap-4'>
                         {/* left side */}
                         <div>
-                            <Input label='Job Title' customClasses='w-full' />
-                            <Input label='Category'  customClasses='w-full'/>
+                            <Input label='Job Title' customClasses='w-full' {...register('jobTitle')} />
+                            {errors.jobTitle && <p className="text-red-500">{errors.jobTitle.message}</p>}
+                            <Input label='Category'  customClasses='w-full' {...register('category')} />
+                            {errors.category && <p className="text-red-500">{errors.category.message}</p>}
                         </div>
                         {/* right side */}
                         <div>
-                            <Input label='Location' customClasses='w-full' />
-                            <Input label='Company (Optional)' customClasses='w-full' />
+                            <Input label='Location' customClasses='w-full' {...register('location')} />
+                            {errors.location && <p className="text-red-500">{errors.location.message}</p>}
+                            <Input label='Company (Optional)' customClasses='w-full' {...register('company')} />
                         </div>
                         <div className='col-span-2'>
                             <TextField
                                 id="outlined-multiline-flexible"
                                 label="Skills"
                                 multiline
-                                maxRows={3} fullWidth
+                                maxRows={3} fullWidth {...register('skills')}
                             />
+                            {errors.skills && <p className="text-red-500">{errors.skills.message}</p>}
                         </div>
                         <div className='col-span-2'>
                             <TextField
                                 id="outlined-multiline-static"
                                 label="Bio"
                                 multiline
-                                rows={3} fullWidth
+                                rows={3} fullWidth {...register('bio')}
                             // defaultValue="Default Value"
                             />
+                            {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
                         </div>
                         <div className='col-span-2 flex items-center'>
                             <div>
-                                <Input label='Social Media URL' customClasses='w-full' />
+                                <Input label='Social Media URL' customClasses='w-full' {...register('socialMediaUrl')} />
+                                {errors.socialMediaUrl && <p className="text-red-500">{errors.socialMediaUrl.message}</p>}
                             </div>
                             <button className='ml-4 p-2 bg-gray-200 text-gray-500 rounded-md'>+</button>
                         </div>
                     </div>
+                    <button type='submit' className=' py-1 mt-2 px-5 text-purple-800 outline outline-offset-2 outline-purple-500 rounded-lg  '>Next</button>
                 </form>
             </div>
         )
