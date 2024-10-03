@@ -7,6 +7,7 @@ import { generateOtp, sentOTPEmail } from "../utils/otpGenerator";
 import bcrypt from 'bcryptjs'
 import admin from 'firebase-admin'
 import { generateAccessToken, generateRefreshToken } from "../utils/token";
+import { sendMentorData } from "../events/rabbitmq/publisher";
 
 
 
@@ -58,6 +59,7 @@ export const authService = {
             if(checkUser.role==='mentee'){
                 return { success: true, message: 'OTP verified successfully' ,role:checkUser.role ,accessToken,refreshToken}
             }else{
+                await sendMentorData(checkUser)
                 return {success:true,message:'OTP verified successfully' ,role:checkUser.role }
             }
         } else {

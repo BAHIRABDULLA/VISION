@@ -1,6 +1,7 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 interface IMentor {
+    mentor:Schema.Types.ObjectId;
     fullName: string;
     email: string;
     jobTitle: string;
@@ -20,8 +21,8 @@ interface IMentor {
 }
 
 const mentorSchema = new Schema<IMentor>({
-    fullName: { type: String, required: true },
-    email: { type: String, required: true },
+    
+    mentor: {type:Schema.Types.ObjectId , ref:'User' ,required:true},
     jobTitle: { type: String, required: true },
     category: { type: String, required: true },
     location: { type: String, required: true },
@@ -32,23 +33,10 @@ const mentorSchema = new Schema<IMentor>({
     introductionVideoUrl: { type: String, default: null },
     featuredArticleUrl: { type: String, default: null },
     whyBecomeMentor: { type: String, required: true },
-    greatestAchievement: {
-        type: String,
-        required: true,
-    },
-    profileImageUrl: {
-        type: String,
-        default: null,
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    status: {
-        type: String,
-        enum: ['pending', 'approved', 'rejected'],
-        default: 'pending',
-    },
+    greatestAchievement: {type: String,required: true },
+    profileImageUrl: {type: String,default: null },
+    createdAt: {type: Date,default: Date.now },
+    status: {type: String,enum: ['pending', 'approved', 'rejected'],default: 'pending' },
 })
 
 module.exports = mongoose.model('Mentor', mentorSchema);

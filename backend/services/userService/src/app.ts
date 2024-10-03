@@ -1,10 +1,13 @@
 import express,{Request,Response} from 'express'
 import cors from 'cors'
+import { rabbitmqConnect } from './config/rabbitmq'
 
 import dotenv from 'dotenv'
 dotenv.config()
 
 const app = express()
+rabbitmqConnect()
+
 
 app.use(cors())
 app.use(express.json())
