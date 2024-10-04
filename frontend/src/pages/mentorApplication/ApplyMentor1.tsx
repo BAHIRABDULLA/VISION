@@ -16,7 +16,10 @@ const applyMentorSchema = z.object({
     company: z.string().optional(),
     skills: z.string().min(1, { message: "Skills are required" }),
     bio: z.string().min(1, { message: "Bio is required" }),
-    socialMediaUrl: z.string().url({ message: "Invalid URL" }).optional(),
+    socialMediaUrl:z.preprocess(
+        (val)=>(val===''?undefined:val),
+        z.string().url({ message: "Invalid URL" }).optional()
+    ) 
   });
 
 type applyMentorSchemaType = z.infer<typeof applyMentorSchema>;

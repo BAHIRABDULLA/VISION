@@ -13,18 +13,13 @@ import ThanksMentor from './pages/mentorApplication/ThanksMentor'
 import AllMentors from './pages/mentorApplication/AllMentors'
 import Login from './pages/admin/Login'
 
-import { AppProvider } from '@toolpad/core'
-import { CssBaseline, createTheme, ThemeProvider } from '@mui/material'
 import Admin from './pages/admin/Admin'
 import Dashboard from './features/admin/Dashboard'
 import Users from './features/admin/Users'
 import MentorDashboard from './pages/mentorApplication/MentorDashboard'
 
-const theme = createTheme({
-  palette: {
-    mode: 'light'
-  }
-})
+import { getAccessToken } from './utils/authHelper'
+
 
 const App = () => {
 

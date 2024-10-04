@@ -37,7 +37,7 @@ const ApplyMentor2 = () => {
         const response = await applyMentor2(data,email)
         console.log(response,);
         if(response.data.success){
-            navigate('/mentor/dashboard')
+            navigate('/thanks-mentor')
         }else{
             navigate('/signup')
         }

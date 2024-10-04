@@ -42,12 +42,14 @@ const AuthSignIn: React.FC = () => {
       console.log('data:', data);
       const { email, password } = data
       const response = await signInRequest(email, password, role);
-
+      if (response.data.accessToken) {
+        localStorage.setItem('accessToken', response.data.accessToken);
+    }
       if (response.data.success) {
         if (role == 'mentee') {
           navigate('/');
         }else{
-          
+          navigate('/mentor/dashboard')
         }
       } else {
         setError(response.data.message)

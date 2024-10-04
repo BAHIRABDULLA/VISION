@@ -5,9 +5,17 @@ import { userRepository } from "../repositories/userRepository"
 import { hashPassword, randomPassword } from "../utils/hashPassword"
 import { generateOtp, sentOTPEmail } from "../utils/otpGenerator";
 import bcrypt from 'bcryptjs'
-import admin from 'firebase-admin'
 import { generateAccessToken, generateRefreshToken } from "../utils/token";
 import { sendMentorData } from "../events/rabbitmq/publisher";
+
+
+type SignInResult = {
+    success: boolean;
+    message: string;
+    accessToken?: string;
+    refreshToken?: string;
+};
+
 
 
 
@@ -103,7 +111,7 @@ export const authService = {
             console.error('Error founded in google with sign in ',error);
         }
     },
-    signIn:async(email:string,password:string,role:string)=>{
+    signIn:async(email:string,password:string,role:string):Promise<SignInResult | undefined>=>{
         try {
             const checkuser =await userRepository.findByEmail(email)
             console.log(checkuser,'check user in sign in ');
@@ -123,7 +131,9 @@ export const authService = {
                 return {success:false,message:"Mentor approval pending. Please wait for admin approval"}
             }
             const accessToken = generateAccessToken({id:checkuser._id.toString(),role:checkuser.role})
-            return {success:true,message:"Sign in successfully completed"}
+            const refreshToken = generateRefreshToken({id:checkuser._id.toString(),role:checkuser.role})
+
+            return { success: true, message: "Sign in successfully completed", accessToken, refreshToken };
         } catch (error) {
             console.error('Error founded in sign in ',error);
         }

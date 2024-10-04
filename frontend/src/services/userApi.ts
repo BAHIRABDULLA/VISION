@@ -65,3 +65,11 @@ export const resetPassword  = async(email:string,password:string,confirmPassword
         console.error('Error founding in reset password',error); 
     }
 }
+
+export const refreshToken = async()=>{
+    const response = await api.post('/refresh-token')
+    const newAccessToken = response.data.accessToken
+
+    localStorage.setItem('acessToken',newAccessToken)
+    return newAccessToken
+}

@@ -10,6 +10,8 @@ export const mentorService = {
             console.log(jobTitle, category, location, skills, bio, '%%%%%%');
 
             const checkUser = await mentorRepository.isMentor(email)
+            console.log(checkUser,'check user ');
+            
             if (!checkUser) {
                 return { success: false, message: "Mentor does not existed " }
             }
