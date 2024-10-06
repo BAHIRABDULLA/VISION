@@ -4,8 +4,11 @@ import Button from '@/components/Button';
 import Password from '@/components/Password';
 import google_logo from '@/assets/auth/google_logo.webp'
 import vision_logo from '@/assets/auth/vision_logo.svg'
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { googleSignIn, signInRequest } from '@/services/userApi';
+
+import { useDispatch } from 'react-redux';
+import { login } from '@/store/authSlice';
 
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -32,11 +35,14 @@ const AuthSignIn: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
 
+  const dispatch = useDispatch()
+
   const { register, handleSubmit, formState: { errors } } = useForm<SignInSchemaType>({
     resolver: zodResolver(signInSchema),
   });
 
   const onSubmit: SubmitHandler<SignInSchemaType> = async (data) => {
+
     const role = isMentee ? 'mentee' : 'mentor';
     try {
       console.log('data:', data);
@@ -47,6 +53,7 @@ const AuthSignIn: React.FC = () => {
     }
       if (response.data.success) {
         if (role == 'mentee') {
+          dispatch(login(response.data.checkuser));
           navigate('/');
         }else{
           navigate('/mentor/dashboard')

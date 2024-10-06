@@ -14,6 +14,7 @@ type SignInResult = {
     message: string;
     accessToken?: string;
     refreshToken?: string;
+    checkuser?:object
 };
 
 
@@ -133,7 +134,7 @@ export const authService = {
             const accessToken = generateAccessToken({id:checkuser._id.toString(),role:checkuser.role})
             const refreshToken = generateRefreshToken({id:checkuser._id.toString(),role:checkuser.role})
 
-            return { success: true, message: "Sign in successfully completed", accessToken, refreshToken };
+            return { success: true, message: "Sign in successfully completed",checkuser, accessToken, refreshToken };
         } catch (error) {
             console.error('Error founded in sign in ',error);
         }
