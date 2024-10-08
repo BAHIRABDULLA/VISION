@@ -2,10 +2,10 @@ import React, { useState, } from 'react';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Password from '@/components/Password';
-import google_logo from '@/assets/auth/google_logo.webp'
+
 import vision_logo from '@/assets/auth/vision_logo.svg'
 import { Link, useNavigate } from 'react-router-dom';
-import { googleSignIn, signInRequest } from '@/services/userApi';
+import { signInRequest } from '@/services/userApi';
 
 import { useDispatch } from 'react-redux';
 import { login } from '@/store/authSlice';
@@ -13,8 +13,8 @@ import { login } from '@/store/authSlice';
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from '@/firebase';
+
+import Google from '@/components/Google';
 
 
 
@@ -65,45 +65,6 @@ const AuthSignIn: React.FC = () => {
       console.error('Error during sign in:', error);
     }
   };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      const role = isMentee ? 'mentee' : 'mentor';
-      console.log('reached handle google sign in ');
-
-      const result = await signInWithPopup(auth, googleProvider)
-      const user = result.user
-      console.log('Google user:', user);
-      if (user.email && user.displayName) {
-        const response = await googleSignIn(user.email, user.displayName, role);
-        console.log(response, 'Response in auth sign in .tsx');
-        if (response.data.success) {
-          console.log(response.data.success, 'response.data.success')
-          if (response.data.role === 'mentee') {    
-            console.log(response.data.role, 'response.data.role');
-
-            navigate('/')
-          } else {
-            console.log(response.data.exist, 'response.data.exist');
-
-            if (response.data.exist === true) {
-              console.log('its entered in if condition *****');
-              navigate('/mentor/dashboard')
-            } else {
-              console.log('its entered in else condition ********');
-              navigate('/apply-mentor-1')
-            }
-          }
-        } else {
-          console.error(response.data.message);
-        }
-      } else {
-        console.error('User email is null');
-      }
-    } catch (error) {
-      console.error('Error during Google sign-in:', error);
-    }
-  }
 
   return (
     <div className="flex h-screen">
@@ -162,11 +123,8 @@ const AuthSignIn: React.FC = () => {
         </div>
 
         {/* Google Sign In Button */}
-        <button className="border border-gray-300 p-2 rounded-md
-         w-full md:w-1/2 flex items-center justify-center space-x-2" onClick={handleGoogleSignIn}>
-          <img src={google_logo} alt="Google" className="w-6 h-6" />
-          <span>Continue with Google</span>
-        </button>
+        <Google type={isMentee?'mentee':'mentor'}/>
+
 
         <div className="mt-4 text-gray-500 text-sm text-center">
           <Link to="/forget-password" className="text-blue-500">Forgot Password?</Link>
