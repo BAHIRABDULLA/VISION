@@ -13,7 +13,7 @@ const targets = {
     course:process.env.COURSE_API_BASE_URL
 }
 
-app.use('/',createProxyMiddleware({
+app.use('/user',createProxyMiddleware({
     target:'http://localhost:4001',
     changeOrigin:true
 }))

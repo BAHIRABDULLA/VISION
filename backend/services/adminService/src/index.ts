@@ -6,11 +6,14 @@ import cors from 'cors'
 
 dotenv.config()
 
+console.log('this is in admin service');
+
 
 const app = express()
 
 app.use(express.json())
 app.use(cors())
+app.use('/',router)
 const connectMongodb = async () => {
     try {
         await mongoose.connect('mongodb://localhost:27017/vision_admin')
@@ -20,7 +23,10 @@ const connectMongodb = async () => {
     }
 }
 connectMongodb()
-app.use('/admin',router)
 
-const port = process.env.PORT
+app.get('/',(req,res)=>{
+    res.send('request sented ')
+})
+
+const port = 4003
 app.listen(port,()=>console.log(`server running on http://localhost:${port}`))
