@@ -46,5 +46,9 @@ export const mentorRepository = {
             console.log(updateMentor,'update mentor');
             return updateMentor
             
-        }
+    },
+    getAllMentors:async()=>{
+        const mentors = await Mentor.find()
+        return mentors
+    }
 }

@@ -18,7 +18,11 @@ export const userRepository = {
     },
     updatePasswordUser: async (email: string, password: string) => {
         return await User.findOneAndUpdate({ email }, { $set: { password: password } })
+    },
+    getAllUsers:async()=>{
+        return await User.find()
     }
+
     // saveOTP:async(email:string,otp:string)=>{
     //     const user = await User.findOneAndUpdate({email},{otp})
     // }

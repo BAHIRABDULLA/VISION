@@ -1,4 +1,5 @@
-import React from 'react';
+import { getAllUsers } from '@/services/adminApi';
+import React, { useEffect } from 'react';
 
 
 interface User {
@@ -10,12 +11,22 @@ interface User {
   status: string;
 }
 
-const users: User[] = [
+const userss: User[] = [
   { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Mentor', applicationStatus: 'Approved', status: 'Active' },
   { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Mentee', applicationStatus: 'Pending', status: 'Inactive' },
 ];
 
 const Users: React.FC = () => {
+
+  const users = async()=>{
+    const response = await getAllUsers()
+    console.log(response,'response in Users in admin side ');
+  }
+  useEffect(()=>{
+    users()
+  })
+   
+    
   return (
     <div className="p-6">
       <h2 className="text-3xl font-semibold mb-6">Users List</h2>
@@ -32,7 +43,7 @@ const Users: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => (
+          {userss.map((user, index) => (
             <tr key={user.id} className="border-b">
               <td className="py-3 px-4">{index + 1}</td>
               <td className="py-3 px-4">{user.name}</td>

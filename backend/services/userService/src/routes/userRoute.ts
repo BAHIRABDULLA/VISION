@@ -6,7 +6,7 @@ const route = express.Router()
 import { authController } from '../controllers/authController'
 
 const {signUp,verifyOtp,resendOtp,googleSignIn,signIn,
-    forgetPassword,resetPassword , setNewAccessToken} = authController
+    forgetPassword,resetPassword , setNewAccessToken,getAllUsers} = authController
 
 route.post('/signup',signUp)
 route.post('/otp-signup',verifyOtp)
@@ -16,4 +16,5 @@ route.post('/signin',signIn)
 route.post('/forget-password',forgetPassword)
 route.post('/reset-password',resetPassword)
 route.post('/refresh-token',setNewAccessToken)
+route.get('/users',getAllUsers)
 export default route

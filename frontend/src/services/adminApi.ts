@@ -11,3 +11,8 @@ export const login = async(email:string,password:string)=>{
     const response = await api.post('/login',{email,password})
     return response
 }
+
+export const getAllUsers = async()=>{
+    const response = await api.get('/users')
+    return response
+}
