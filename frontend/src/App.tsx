@@ -19,6 +19,9 @@ import Users from './features/admin/Users'
 import MentorDashboard from './pages/mentorApplication/MentorDashboard'
 
 import { getAccessToken } from './utils/authHelper'
+import Courses from './features/admin/Courses'
+import Resource from './features/admin/Resource'
+// import PrivateRoute from './components/PrivateRoute'
 
 
 const App = () => {
@@ -47,11 +50,14 @@ const App = () => {
           <Route path='/admin' element={<Admin/>}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<Users />} />
+            <Route path='courses' element={<Courses/>} />
+            <Route path='resources' element={<Resource/>} />
           </Route>
           <Route path='/admin/login' element={<Login />} />
          
-
+          {/* <PrivateRoute></PrivateRoute> */}
           <Route path='/mentor/dashboard' element={<MentorDashboard />} />
+          
         </Routes>
       </div>
     </Router>
