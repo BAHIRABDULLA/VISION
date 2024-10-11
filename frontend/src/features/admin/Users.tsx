@@ -1,70 +1,87 @@
 import { getAllUsers } from '@/services/adminApi';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 
 interface User {
   id: number;
-  name: string;
+  fullName: string;
   email: string;
   role: string;
-  applicationStatus: string;
-  status: string;
+  isApproved: boolean;
+  isActive: boolean;
 }
 
-const userss: User[] = [
-  { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Mentor', applicationStatus: 'Approved', status: 'Active' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Mentee', applicationStatus: 'Pending', status: 'Inactive' },
-];
 
 const Users: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([])
 
-  const users = async()=>{
-    const response = await getAllUsers()
-    console.log(response,'response in Users in admin side ');
+  const allUsers = async () => {
+    try {
+      const response = await getAllUsers()
+      console.log(response, 'response in Users in admin side ');
+      if (response && Array.isArray(response.data.users)) {
+        setUsers(response.data.users)
+      } else {
+        console.error('Api response is not an array:', response);
+        setUsers([])
+      }
+    } catch (error) {
+      console.log('errror during fetching data', error);
+      setUsers([])
+    }
   }
-  useEffect(()=>{
-    users()
-  })
-   
-    
+  useEffect(() => {
+    allUsers()
+
+    // console.log(users[users.length-1].isApproved,'users[users.length-1].isApproved');
+
+  }, [])
+
+
   return (
     <div className="p-6">
       <h2 className="text-3xl font-semibold mb-6">Users List</h2>
-      <table className="w-full table-auto bg-white rounded-lg shadow">
-        <thead>
-          <tr className="bg-gray-200 text-gray-700">
-            <th className="py-3 px-4 text-left">SL No</th>
-            <th className="py-3 px-4 text-left">Name</th>
-            <th className="py-3 px-4 text-left">Email</th>
-            <th className="py-3 px-4 text-left">Role</th>
-            <th className="py-3 px-4 text-left">Application Status</th>
-            <th className="py-3 px-4 text-left">Status</th>
-            <th className="py-3 px-4 text-left">Action</th>
+      <table className="min-w-full border border-gray-300">
+        <thead className='bg-gray-100'>
+          <tr >
+            <th className="px-4 py-2">SL No</th>
+            <th className="px-4 py-2">Name</th>
+            <th className="px-4 py-2">Email</th>
+            <th className="px-4 py-2">Role</th>
+            <th className="px-4 py-2">Application Status</th>
+            <th className="px-4 py-2">Status</th>
+            <th className="px-4 py-2">Action</th>
           </tr>
         </thead>
         <tbody>
-          {userss.map((user, index) => (
-            <tr key={user.id} className="border-b">
-              <td className="py-3 px-4">{index + 1}</td>
-              <td className="py-3 px-4">{user.name}</td>
-              <td className="py-3 px-4">{user.email}</td>
-              <td className="py-3 px-4">{user.role}</td>
-              <td className="py-3 px-4">{user.applicationStatus}</td>
-              <td className="py-3 px-4">
-                <span className={`px-2 py-1 text-sm rounded ${user.status === 'Active' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
-                  {user.status}
-                </span>
-              </td>
-              <td className="py-3 px-4">
-                <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                  View
-                </button>
-                <button className="ml-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                  Delete
-                </button>
-              </td>
+          {users && users.length > 0 ? (
+
+            users.map((user, index) => (
+              <tr key={index} className="hover:bg-gray-50 border-b">
+                <td className="px-4 py-2">{index + 1}</td>
+                <td className="px-4 py-2">{user.fullName}</td>
+                <td className="px-4 py-2">{user.email}</td>
+                <td className="px-4 py-2">{user.role}</td>
+                <td className="px-4 py-2">{user.isApproved}</td>
+
+                <td className="px-4 py-2">
+                  <span className={`px-2 py-1 text-sm rounded ${user.isActive == true ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                    {user.isActive.toString()}
+                  </span>
+                </td>
+                <td className="px-4 py-2">
+                  <button className="px-3 py-1 hover:text-blue-600 hover:no-underline  underline">View</button>
+                  <button className="px-3 py-1 hover:text-red-600 hover:no-underline  underline">Delete</button>
+                </td>
+              </tr>
+            ))
+
+          ) : (
+            <tr>
+              <td colSpan={7} className=' text-center font-semibold px-4 py-2 '>Users not found</td>
             </tr>
-          ))}
+          )}
+
         </tbody>
       </table>
     </div>

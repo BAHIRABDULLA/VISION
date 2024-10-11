@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 const Courses = () => {
     // Placeholder data for courses, this can come from a state or props in a real application
     const courses = [
@@ -11,9 +12,9 @@ const Courses = () => {
         <div className='p-6'>
             <div className="flex justify-between items-center mb-4">
                 <h2 className='text-2xl font-bold'>Courses</h2>
-                <button className='px-4 py-2 bg-blue-500 text-white rounded-lg'>Add Course</button>
+                <Link to='/admin/courses/add' className='px-4 py-2 hover:font-semibold border border-gray-500 shadow-lg text-black rounded-lg'>Add Course</Link>
             </div>
-            <table className='min-w-full border border-gray-300'>
+            <table className='min-w-full border shadow-lg border-gray-300 '>
                 <thead className='bg-gray-100'>
                     <tr>
                         <th className=' px-4 py-2'>Sl No</th>
@@ -33,8 +34,8 @@ const Courses = () => {
                             <td className=' px-4 py-2'>{course.price}</td>
                             <td className=' px-4 py-2'>{course.status}</td>
                             <td className=' px-4 py-2'>
-                                <button className='px-3 py-1 mr-2 text-white bg-yellow-400 rounded-lg hover:bg-yellow-500'>Edit</button>
-                                <button className='px-3 py-1 text-white bg-red-500 rounded-lg hover:bg-red-600'>Delete</button>
+                                <button className='px-3 py-1 hover:no-underline hover:text-yellow-600 underline'>Edit</button>
+                                <button className='px-3 py-1 hover:no-underline hover:text-red-600 underline'>Delete</button>
                             </td>
                         </tr>
                     ))}
