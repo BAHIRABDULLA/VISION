@@ -1,4 +1,4 @@
-import Otp from "../../models/otpModel"
+import Otp from "../../models/otp.model"
 
 export const otpRepository = {
     storeOtp: async (email: string, otp: string) => {

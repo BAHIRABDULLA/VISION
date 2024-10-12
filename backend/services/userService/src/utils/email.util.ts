@@ -1,14 +1,5 @@
 import nodemailer from 'nodemailer'
-import otpGenerator from 'otp-generator'
 
-
-export const generateOtp = () => {
-    // const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false })
-    const otp = Math.floor(100000+Math.random()*900000).toString()
-    console.log(otp,'otp in otp generator ');
-    
-    return otp
-}
 
 
 // console.log(process.env.NODEMAILER_EMAIL,'PROCRESS ENV NODEMAILER');

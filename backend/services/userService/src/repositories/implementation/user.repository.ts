@@ -1,4 +1,4 @@
-import { User } from "../../models/userModel";
+import { User } from "../../models/user.model";
 
 export const userRepository = {
     findByEmail: async (email: string) => {
@@ -6,9 +6,9 @@ export const userRepository = {
     },
 
     createUser: async (userData: { fullName: string, email: string, password: string, role: string,isApproved?:boolean, isVerified?: boolean }) => {
-        if (userData.role === 'mentor') {
-            userData.isApproved = false;
-        }
+        // if (userData.role === 'mentor') {
+        //     userData.isApproved = false;
+        // }
         const user = new User(userData);
         return user.save();
     },

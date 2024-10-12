@@ -4,7 +4,8 @@ interface IUser{
     _id:Types.ObjectId
     fullName:string;
     email:string;
-    password:string
+    password:string;
+    isApproved: 'pending' | 'approved' | 'rejected'
 }
 
 const userSchema=new Schema<IUser>({
@@ -23,7 +24,8 @@ const userSchema=new Schema<IUser>({
     password:{
         type:String,
         required:true
-    }
+    },
+    isApproved: {type: String,enum: ['pending', 'approved', 'rejected'],default: 'pending' }
 }) 
 
 export const User = mongoose.model<IUser>('User',userSchema)
