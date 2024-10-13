@@ -5,7 +5,6 @@ import visionLogo from '../../assets/auth/vison_logo_black.svg'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { applyMentor2 } from '@/services/mentorApi';
 
 import {useLocation,useNavigate} from 'react-router-dom'
 
@@ -23,7 +22,12 @@ const applyMentorSchema = z.object({
 });
 
 type applyMentorSchemaType = z.infer<typeof applyMentorSchema>
-const ApplyMentor2 = () => {
+
+type applyMentor2Props = {
+    onFinish:(data:any)=>void;
+    prevStep:()=>void;
+}
+const ApplyMentor2:React.FC<applyMentor2Props> = ({prevStep,onFinish}) => {
 
     const location = useLocation()
     const {email} = location?.state
@@ -32,20 +36,20 @@ const ApplyMentor2 = () => {
     const navigate = useNavigate()
 
     const { register, handleSubmit, formState: { errors } } = useForm<applyMentorSchemaType>({ resolver: zodResolver(applyMentorSchema) })
-    const onSubmit = async (data: any) => {
-        console.log(data, 'data');
-        const response = await applyMentor2(data,email)
-        console.log(response,);
-        if(response.data.success){
-            navigate('/thanks-mentor')
-        }else{
-            navigate('/signup')
-        }
-    }
+    // const onSubmit = async (data: any) => {
+    //     console.log(data, 'data');
+    //     const response = await applyMentor2(data,email)
+    //     console.log(response,);
+    //     if(response.data.success){
+    //         navigate('/thanks-mentor')
+    //     }else{
+    //         navigate('/signup')
+    //     }
+    // }
     return (
 
         <div className='min-h-screen flex flex-col items-center justify-center bg-gray-50'>
-            <form onSubmit={(handleSubmit(onSubmit))} className='w-full max-w-4xl p-8   rounded-lg'>
+            <form onSubmit={(handleSubmit(onFinish))} className='w-full max-w-4xl p-8   rounded-lg'>
                 <div>
                     <div className='ms-2'>
                         <img src={visionLogo} alt="Vision logo" />
@@ -106,6 +110,8 @@ const ApplyMentor2 = () => {
                     {/* <div className='col-span-2 flex items-center'> */}
 
                 </div>
+
+                <button type='button' onClick={prevStep} className='py-1 mt-2 px-5 text-gray-800 outline outline-offset-2 outline-gray-500 rounded-lg'>Back</button>
                 <button type='submit' className=' py-1 mt-5 px-5  outline outline-offset-2 outline-gray-300 rounded-lg  '>Finish</button>
             </form>
         </div>

@@ -1,6 +1,7 @@
 import { getChannel } from "../../config/rabbitmq";
-import { mentorService } from "../../services/mentorService";
+import { MentorService } from "../../services/mentor.service";
 
+const mentorService=  new MentorService()
 export const consumerMentorQueue = async()=>{
     try {
         console.log('its here consumerMentor queue ');
@@ -8,7 +9,7 @@ export const consumerMentorQueue = async()=>{
         const channel = getChannel()
         const queue  = 'mentorQueue'
         console.log(queue,'queue in counsumer mentor queue ');
-        console.log(channel,'channer in consumer ');
+        // console.log(channel,'channer in consumer ');
         
         await channel.assertQueue(queue,{durable:true})
         channel.consume(queue,async(msg)=>{

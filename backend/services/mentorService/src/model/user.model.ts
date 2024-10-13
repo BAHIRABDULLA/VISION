@@ -1,6 +1,6 @@
 import mongoose,{Schema,Document, Types}  from "mongoose";
 
-interface IUser{
+export interface IUser extends Document{
     _id:Types.ObjectId
     fullName:string;
     email:string;
