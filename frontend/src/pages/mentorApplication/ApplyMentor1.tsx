@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import visionLogo from '../../assets/auth/vison_logo_black.svg'
 import Input from '@/components/Input'
 import { TextField } from '@mui/material'
@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 
 const applyMentorSchema = z.object({
+    file: z.optional(z.any()),
     jobTitle: z.string().min(1, { message: "Job Title is required" }),
     category: z.string().min(1, { message: "Category is required" }),
     location: z.string().min(1, { message: "Location is required" }),
@@ -24,10 +25,23 @@ const applyMentorSchema = z.object({
 type applyMentorSchemaType = z.infer<typeof applyMentorSchema>;
 
 type applyMentor1Props = {
-    onNext:(data:any)=>void;
+    onNext: (data: any) => void;
 }
 
-const ApplyMentor1:React.FC<applyMentor1Props>= ({ onNext }) => {
+const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
+    const [imagePreview,setImagePreview] = useState<string | null>(null)
+    
+    const handleFileChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        const file = e.target.files?.[0]
+        if(file){
+            const reader = new FileReader()
+            reader.onloadend = ()=>{
+                setImagePreview(reader.result as string)
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+
     const location = useLocation()
     const { email } = location.state
     console.log(email, 'email in apply mentor1 ');
@@ -49,7 +63,7 @@ const ApplyMentor1:React.FC<applyMentor1Props>= ({ onNext }) => {
 
     return (
         <div className='min-h-screen flex flex-col items-center justify-center bg-gray-50'>
-            <form onSubmit={handleSubmit(onNext)} className='w-full max-w-6xl p-8  rounded-lg'>
+            <form onSubmit={handleSubmit(onNext)} encType='multipart/form-data' className='w-full max-w-6xl p-8  rounded-lg'>
                 <div>
                     <div className='ms-2'>
                         <img src={visionLogo} alt="Vision Logo" />
@@ -67,22 +81,27 @@ const ApplyMentor1:React.FC<applyMentor1Props>= ({ onNext }) => {
 
                 <div className='flex items-center justify-center mb-8'>
                     <div className='w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center'>
-                        <span className='text-gray-400'>Image</span>
+                        {imagePreview ? (
+                            <img src={imagePreview} alt='Preview' className='w-full h-full rounded-full object-cover' />
+                        ) : (
+                            <span className='text-gray-400'>Image</span>
+                        )}
                     </div>
-                    <button className='ml-4 px-4 py-2 text-sm border rounded-md'>Upload Photo</button>
+                    <input type='file' className='ml-4 px-4 py-2 text-sm border rounded-md'{...register("file")} 
+                    onChange={handleFileChange} />
                 </div>
 
 
-                {/* input fields */}
+
                 <div className='grid grid-cols-2 gap-4'>
-                    {/* left side */}
+
                     <div>
                         <Input label='Job Title *' customClasses='w-full' {...register('jobTitle')} />
                         {errors.jobTitle && <p className="text-red-500">{errors.jobTitle.message}</p>}
                         <Input label='Category *' customClasses='w-full' {...register('category')} />
                         {errors.category && <p className="text-red-500">{errors.category.message}</p>}
                     </div>
-                    {/* right side */}
+
                     <div>
                         <Input label='Location *' customClasses='w-full' {...register('location')} />
                         {errors.location && <p className="text-red-500">{errors.location.message}</p>}

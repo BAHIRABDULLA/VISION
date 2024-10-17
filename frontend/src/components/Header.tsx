@@ -2,8 +2,8 @@ import React from 'react'
 import vision_logo from '../assets/auth/vision_logo.svg'
 import { Link, NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { logout } from '@/store/authSlice'
-import { RootState } from '@/store/store'
+import { logout } from '@/redux/store/authSlice'
+import { RootState } from '@/redux/store/store'
 
 
 
@@ -24,9 +24,9 @@ const Header: React.FC = () => {
         <Link to='' className="text-white hover:text-purple-400  font-medium mx-9">Resources</Link>
         <NavLink to='/courses' className="text-white hover:text-purple-400  font-medium mx-9">Community</NavLink>
         {isAuthenticated ? (
-          <button onClick={handleLogout} className="text-white hover:text-purple-400 font-medium mx-9">
-            Logout
-          </button>
+          <NavLink to='/profile' className="text-white hover:text-purple-400 font-medium mx-9">
+            Profile
+          </NavLink>
         ) : (<NavLink to='/signin' className="text-white
          hover:text-purple-400  font-medium mx-9">Sign In</NavLink>)}
       </nav>

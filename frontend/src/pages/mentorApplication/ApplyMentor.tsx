@@ -12,7 +12,7 @@ const ApplyMentor = () => {
 
     const navigate = useNavigate()
 
-    const handleNextstep = (data:any)=>{
+    const handleNextstep = (data:any)=>{  
         setFormData({...formData,...data})
         setStep(step+1)
     }
@@ -21,8 +21,22 @@ const ApplyMentor = () => {
     }
     const handleFinish =async (data:any)=>{
         const finalData = {...formData,...data}
-        const response = await applyMentor(finalData,email)
+        const formDataObj = new FormData()
+        for (const key in finalData) {
+            if (key === 'file') {
+                if (finalData.file.length > 0) {
+                    formDataObj.append(key, finalData.file[0])
+                }
+            } else {
+                formDataObj.append(key, finalData[key]);
+            }
+        }
+        formDataObj.append('email',email)
+        
+        const response = await applyMentor(formDataObj)
         if(response.data.success){
+            console.log(response.data,'response datae');
+            
             navigate('/thanks-mentor')
         }else{
             navigate('/signup')

@@ -6,7 +6,7 @@ console.log(import.meta.env.VITE_MENTOR_API_BASE_URL,'import meta env vite mento
 const api = axios.create({
     baseURL:import.meta.env.VITE_MENTOR_API_BASE_URL
 })
-export const applyMentor = async(data:object,email:string)=>{
-    const response = await api.post('/apply-mentor',{data,email})
+export const applyMentor = async(data:object)=>{
+    const response = await api.post('/apply-mentor',data)
     return response
 }

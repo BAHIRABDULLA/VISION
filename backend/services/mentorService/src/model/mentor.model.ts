@@ -15,7 +15,7 @@ export interface IMentor extends Document {
     featuredArticleUrl?: string;
     whyBecomeMentor: string;
     greatestAchievement: string;
-    profileImageUrl: string;
+    profilePhoto: string;
     createdAt: Date;
     // status: 'pending' | 'approved' | 'rejected'
 }
@@ -34,7 +34,7 @@ const mentorSchema = new Schema<IMentor>({
     featuredArticleUrl: { type: String },
     whyBecomeMentor: { type: String },
     greatestAchievement: {type: String },
-    profileImageUrl: {type: String,default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'},
+    profilePhoto: {type: String,default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'},
     createdAt: {type: Date,default: Date.now },
     // status: {type: String,enum: ['pending', 'approved', 'rejected'],default: 'pending' },
 })

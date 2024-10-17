@@ -7,17 +7,16 @@ import { rabbitmqConnect } from './config/rabbitmq'
 import { consumerMentorQueue } from './events/rabbitmq/consumer'
 import morgan from 'morgan'
 
+dotenv.config()
 const app = express()
 
 app.use(express.json())
 
-dotenv.config()
 rabbitmqConnect()
-    .then(()=>{
-        console.log('error herer  bro ....');
-        
-        consumerMentorQueue()
-    }).catch((error)=>console.error('Failed to connect rabbitmq '))
+.then(()=>{    
+    consumerMentorQueue()
+}).catch((error)=>console.error('Failed to connect rabbitmq '))
+
 
 connectDb()
 app.use(cors())

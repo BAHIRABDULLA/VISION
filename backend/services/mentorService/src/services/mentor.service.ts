@@ -76,33 +76,28 @@ export class MentorService {
         this.mentorRepoistory = new MentorRepository(Mentor)
         this.userRepository = new UserRepository(User)
     }
-    async mentorDetails(data: IMentor, email: string) {
-        try {
-            const {
-                jobTitle, location, category, company, skills, bio,
-                socialMediaUrls, introductionVideoUrl, featuredArticleUrl,
-                whyBecomeMentor, greatestAchievement, profileImageUrl
-            } = data;
-
-            const checkUser = await this.mentorRepoistory.isMentor(email)
+    async mentorDetails(email: string,jobTitle: string, location: string,category:string,  skills: string[], bio: string, 
+         whyBecomeMentor: string, greatestAchievement: string,company?: string, profilePhoto?: any ,socialMediaUrls?: string[], introductionVideoUrl?: string, featuredArticleUrl?: string,) {
+        try {   
+            const checkUser = await this.userRepository.isMentor(email)
             console.log(checkUser, 'check user ');
 
             if (!checkUser) {
-                return { success: false, message: "Mentor does not existed " }
+                return { success: false, message: "User does not existed " }
             }
 
             const newMentor = await this.mentorRepoistory.create({
                 mentor:checkUser._id,
                 jobTitle, location, category,company,skills,bio,socialMediaUrls,
                 introductionVideoUrl,featuredArticleUrl,whyBecomeMentor,
-                greatestAchievement,profileImageUrl
+                greatestAchievement,profilePhoto
             });
             if(!newMentor){
                 return {success:false,message:'Mentor details not updated'}
             }
             return {success:true,message:'Mentor details updated ',newMentor}
         } catch (error) {
-            console.error('Error founded saving mentor data');
+            console.error('Error founded saving mentor data',error);
         }
     }
     async registerMentor(mentorData: any){
@@ -128,6 +123,17 @@ export class MentorService {
             return mentors
         } catch (error) {
             console.error('Error founded in fetching all mentors',error);
+        }
+    }
+    async getMentor(id:string){
+        try {
+            const findMentor = await this.mentorRepoistory.findMentor(id)
+            console.log(findMentor,'findMentor ,______________________');
+            
+            return findMentor
+        } catch (error) {
+            console.error('Error founded in get mentor',error);
+            
         }
     }
 }
