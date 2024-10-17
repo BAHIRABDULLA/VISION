@@ -6,11 +6,13 @@ import AdminNavbar from '@/components/admin/AdminNavbar';
 const Dashboard = () => {
   const [isSidebarCollapsed,setIsSidebarCollapsed] = useState(false)
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex ">
     <AdminSidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
-    <div className={`flex-1  transition-all duration-300 `}>
-      <AdminNavbar />
-      <div className="p-6 bg-white h-full shadow-lg">
+    <div className={`flex-grow min-h-screen bg-gray-100  transition-all duration-300 
+      ${isSidebarCollapsed ? 'ml-16' : 'ml-72'}`}>
+        
+      <AdminNavbar  isCollapsed={isSidebarCollapsed} />
+      <div className="pt-20 p-8 min-h-screen">
        
         <Outlet />
       </div>

@@ -14,15 +14,15 @@ const targets = {
 }
 
 app.use('/user',createProxyMiddleware({
-    target:'http://localhost:4001',
+    target:process.env.USER_API_BASE_URL,
     changeOrigin:true
 }))
 app.use('/mentor',createProxyMiddleware({
-    target:'http://localhost:4002',
+    target:process.env.MENTOR_API_BASE_URL,
     changeOrigin:true
 }))
 app.use('/admin',createProxyMiddleware({
-    target:'http://localhost:4003',
+    target:process.env.ADMIN_API_BASE_URL,
     changeOrigin:true
 }))
 app.use('/course',createProxyMiddleware({

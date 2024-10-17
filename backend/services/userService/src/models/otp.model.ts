@@ -12,5 +12,5 @@ const otpSchema:Schema = new Schema({
     createdAt:{type:Date,default:Date.now,expires:'60s'}
 })
 
-const otpModel = mongoose.model<IOtp>('Otp',otpSchema)
-export default otpModel
+const Otp = mongoose.model<IOtp>('Otp',otpSchema)
+export default Otp

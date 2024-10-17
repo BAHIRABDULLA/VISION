@@ -1,7 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-import router from './routes/adminRoute'
+import router from './routes/admin.route'
 import cors from 'cors'
 
 dotenv.config()
