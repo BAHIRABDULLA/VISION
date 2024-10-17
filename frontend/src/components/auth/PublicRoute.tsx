@@ -2,7 +2,7 @@ import React from "react";
 
 import { useSelector, UseSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { RootState } from "@/store/store";
+import { RootState } from "@/redux/store/store";
 
 const PublicRoute = ({children}:any)=>{
     const isAuthenticated = useSelector((state:RootState)=>state.auth.isAuthenticated)

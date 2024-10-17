@@ -11,63 +11,63 @@ import SignUpOtp from '@/pages/user/SignUpOtp'
 import Home from '@/pages/home&course/Home'
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import PublicRoute from '@/components/PublicRoute'
+import PublicRoute from '@/components/auth/PublicRoute'
+import MenteeDashboard from '@/pages/user/MenteeDashboard'
+import PrivateRoute from '@/components/auth/PrivateRoute'
+import MentorPrivateRoute from '@/components/auth/MentorPrivateRoute'
+
 
 const UserRoute = () => {
     return (
         <Routes>
             <Route path='/' element={<Home />} />
-            
+
             <Route path='/signin'
                 element={
-                    <PublicRoute>
-                        <SignIn />
-                    </PublicRoute>
+                    <PublicRoute> <SignIn /> </PublicRoute>
                 }
             />
             <Route path='/signup'
                 element={
-                    <PublicRoute>
-                        <SignUp />
-                    </PublicRoute>
+                    <PublicRoute> <SignUp /> </PublicRoute>
                 }
             />
             <Route path='/otp-signup'
                 element={
-                    <PublicRoute>
-                        <SignUpOtp />
-                    </PublicRoute>
+                    <PublicRoute> <SignUpOtp /> </PublicRoute>
                 }
             />
             <Route path='/forget-password'
                 element={
-                    <PublicRoute>
-                        <ForgetPassEmail />
-                    </PublicRoute>
+                    <PublicRoute> <ForgetPassEmail /> </PublicRoute>
                 }
             />
             <Route path='/forget-otp'
                 element={
-                    <PublicRoute>
-                        <ForgetPassOtp />
-                    </PublicRoute>
+                    <PublicRoute> <ForgetPassOtp /> </PublicRoute>
                 }
             />
             <Route path='/new-password'
                 element={
-                    <PublicRoute>
-                        <NewPassword />
-                    </PublicRoute>
+                    <PublicRoute> <NewPassword /> </PublicRoute>
+                }
+            />
+
+            <Route path="/profile"
+                element={<PrivateRoute><MenteeDashboard /></PrivateRoute>
+                }
+            />
+            <Route path="/mentor/dashboard"
+                element={<MentorPrivateRoute><MentorDashboard /></MentorPrivateRoute>
                 }
             />
 
 
 
+            <Route path='/apply-mentor' element={<PublicRoute><ApplyMentor /></PublicRoute>} />
+            <Route path='/thanks-mentor' element={<PublicRoute><ThanksMentor /></PublicRoute>} />
+            <Route path='/mentors' element={<PublicRoute><AllMentors /></PublicRoute>} />
 
-            <Route path='/apply-mentor' element={<ApplyMentor />} />
-            <Route path='/thanks-mentor' element={<ThanksMentor />} />
-            <Route path='/mentors' element={<AllMentors />} />
-            <Route path='/mentor/dashboard' element={<MentorDashboard />} />
         </Routes>
     )
 }
