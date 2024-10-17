@@ -61,9 +61,11 @@ export class MentorRepository extends BaseRepository<IMentor> {
         return await Mentor.findOne({ email })
     }
 
-    async isMentor(email: string) {
-        return await User.findOne({ email })
+    async findMentor(id:string){
+        return await Mentor.findOne({mentor:id})
     }
+
+  
 
     // async saveData(_id: Types.ObjectId, jobTitle: string, category: string, location: string,
     //     skills: string[], bio: string, whyBecomeMentor: string, greatestAchievement: string, company?: string, socialMediaUrls?: string[]

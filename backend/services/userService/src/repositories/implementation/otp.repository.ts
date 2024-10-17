@@ -1,7 +1,7 @@
 import Otp from "../../models/otp.model"
 
-export const otpRepository = {
-    storeOtp: async (email: string, otp: string) => {
+export class OtpRepository {
+    async storeOtp (email: string, otp: string)  {
         try {
             console.log('&&&&&&   its here store otp');
 
@@ -16,14 +16,14 @@ export const otpRepository = {
 
         }
 
-    },
-    findOtpByEmail: async (email: string) => {
+    }
+    async findOtpByEmail  (email: string)  {
         const otpRecord = await Otp.findOne({ email })
         
         return otpRecord
-    },
+    }
 
-    deleteOtp: async (email: string) => {
+    async deleteOtp  (email: string)  {
         await Otp.deleteOne({ email })
     }
 }

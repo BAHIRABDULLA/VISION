@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, {  useState } from 'react'
 
 import google_logo from '@/assets/auth/google_logo.webp';
 import { auth, googleProvider } from '@/firebase';
 import { googleSignIn } from '@/services/userApi';
 import { signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, UseDispatch } from 'react-redux';
+import { login } from '@/redux/store/authSlice';
 
 
 interface GoogleProps {
@@ -13,6 +15,7 @@ interface GoogleProps {
 
 const Google: React.FC<GoogleProps> = ({ type }) => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const handleGoogleSignIn = async () => {
         try {
@@ -30,8 +33,10 @@ const Google: React.FC<GoogleProps> = ({ type }) => {
                 if (response.data.success) {
                     console.log(response.data.success, 'response.data.success')
                     localStorage.setItem('accessToken', response.data.accessToken)
-
+                    console.log(localStorage.getItem('accessToken'),'localstorage access token ');
+                    
                     if (response.data.role === 'mentee') {
+                        dispatch(login(response.data.user))
                         console.log(response.data.role, 'response.data.role');
 
                         navigate('/')
@@ -40,12 +45,12 @@ const Google: React.FC<GoogleProps> = ({ type }) => {
 
                         if (response.data.exist === true) {
                             console.log('its entered in if condition *****');
-
+                            dispatch(login(response.data.user))
                             navigate('/mentor/dashboard')
                         } else {
                             console.log('its entered in else condition ********');
 
-                            navigate('/apply-mentor-1')
+                            navigate('/apply-mentor-1',{state:{email:user.email}})
                         }
                     }
                 } else {

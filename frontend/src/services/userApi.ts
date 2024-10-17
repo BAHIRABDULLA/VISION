@@ -23,8 +23,6 @@ export const signUpRequest = async (fullName: string, email: string, password: s
 
 export const otpVerify = async (email: string, otp: string) => {
     const response = await api.post('/otp-signup', { email, otp })
-    console.log(response, 'response in otpVerify');
-
     return response
 
 }
@@ -72,4 +70,9 @@ export const refreshToken = async()=>{
 
     localStorage.setItem('acessToken',newAccessToken)
     return newAccessToken
+}
+
+export const updateUserStatus = async(id: string, updateData: { isActive?: boolean, isApproved?: string })=>{
+    const response = await api.patch(`/users/${id}`, updateData)
+    return response
 }

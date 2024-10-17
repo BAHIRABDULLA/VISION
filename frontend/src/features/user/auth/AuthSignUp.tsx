@@ -95,14 +95,14 @@ const AuthSignUp: React.FC = () => {
             <Input
               customClasses="w-full"
               label="Email"
-              type="email"
+              type="text"
               {...register('email')}
             />
             {errors.email && <p className="text-red-700">{errors.email.message}</p>}
 
             <PasswordInput
               customClasses="w-full"
-              {...register('password')}
+              {...register('password')} 
             />
             {errors.password && <p className="text-red-700">{errors.password.message}</p>}
           </div>

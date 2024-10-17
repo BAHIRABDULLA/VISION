@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { authService } from "../services/auth.service";
+import { AuthService } from "../services/auth.service";
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import { HttpStatus } from "../enums/http.status";
 
-
+const authService = new AuthService()
 class AuthController {
     async signup(req: Request, res: Response) {
         console.log('here is first');
@@ -14,7 +15,7 @@ class AuthController {
             return res.json(user)
         } catch (error) {
             console.error('error showing in auth controller signup', error);
-            return res.status(500).json({ success: false, message: 'Internal server error' })
+            return res.status(HttpStatus.InternalServerError).json({ success: false, message: 'Internal server error' })
         }
     }
 
@@ -73,7 +74,7 @@ class AuthController {
                 })
                 return res.json({
                     success: true, message: result?.message, accessToken: result?.accessToken,
-                    role, exist: result.exist
+                    role, exist: result.exist , user:result.user
                 })
             } else {
                 return res.json({ success: false, message: result?.message })
@@ -112,7 +113,7 @@ class AuthController {
                     })
                     return res.json({
                         success: true, message: result?.message, accessToken: result?.accessToken,
-                        role: result.role,
+                        role: result.role,user:result.user
                     })
                 } else {
                     res.json(result)
@@ -144,7 +145,7 @@ class AuthController {
     async setNewAccessToken(req: Request, res: Response) {
         const refreshToken = req.cookies.refreshToken
 
-        if (!refreshToken) return res.status(403).json({ message: "No refresh token provided" })
+        if (!refreshToken) return res.status(HttpStatus.Forbidden).json({ message: "No refresh token provided" })
         try {
             const secret = process.env.REFRESH_TOKEN_SECRET
             if (!secret) {
@@ -158,7 +159,7 @@ class AuthController {
                 });
                 return res.json({ accessToken: newAccessToken });
             } else {
-                return res.status(403).json({ message: "Invalid token payload" });
+                return res.status(HttpStatus.Forbidden).json({ message: "Invalid token payload" });
             }
         } catch (error) {
             console.error("Error verifying refresh token:", error);

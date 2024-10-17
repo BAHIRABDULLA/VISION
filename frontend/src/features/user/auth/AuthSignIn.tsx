@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signInRequest } from '@/services/userApi';
 
 import { useDispatch } from 'react-redux';
-import { login } from '@/store/authSlice';
+import { login } from '@/redux/store/authSlice';
 
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -50,12 +50,16 @@ const AuthSignIn: React.FC = () => {
       const response = await signInRequest(email, password, role);
       if (response.data.accessToken) {
         localStorage.setItem('accessToken', response.data.accessToken);
-    }
+      }
+
       if (response.data.success) {
+        dispatch(login(response.data.user));
         if (role == 'mentee') {
-          dispatch(login(response.data.checkuser));
+          console.log('mentee');
+
           navigate('/');
-        }else{
+        } else {
+          console.log('mentor kjkjkjkjkjk');
           navigate('/mentor/dashboard')
         }
       } else {
@@ -95,7 +99,7 @@ const AuthSignIn: React.FC = () => {
 
           <Input
             customClasses="w-full md:w-1/2"
-            type="email"
+            type="text"
             label="Email"
             {...register('email')}
           />
@@ -123,7 +127,7 @@ const AuthSignIn: React.FC = () => {
         </div>
 
         {/* Google Sign In Button */}
-        <Google type={isMentee?'mentee':'mentor'}/>
+        <Google type={isMentee ? 'mentee' : 'mentor'} />
 
 
         <div className="mt-4 text-gray-500 text-sm text-center">
