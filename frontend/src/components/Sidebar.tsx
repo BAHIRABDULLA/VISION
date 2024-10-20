@@ -5,7 +5,8 @@ import SidebarItem from './SidebarItem';
 
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '@/redux/store/authSlice';
+import { logout as menteeLogout} from '@/redux/slices/menteeAuthSlice';
+import { logout as mentorLogout} from '@/redux/slices/mentorAuthSlice';
 
 
 interface SidebarProps {
@@ -18,7 +19,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role, activePage, setActivePage }) =>
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const logoutUser = () =>{
-    dispatch(logout())
+    if(role=='mentee'){
+      dispatch(menteeLogout())
+    }else{
+      dispatch(mentorLogout())
+    }
     localStorage.removeItem('accessToken')
     navigate('/')
   }

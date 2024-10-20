@@ -1,4 +1,4 @@
-import React, {  useState } from 'react'
+import React from 'react'
 
 import google_logo from '@/assets/auth/google_logo.webp';
 import { auth, googleProvider } from '@/firebase';
@@ -6,8 +6,8 @@ import { googleSignIn } from '@/services/userApi';
 import { signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, UseDispatch } from 'react-redux';
-import { login } from '@/redux/store/authSlice';
-
+import { login as menteeLogin} from '@/redux/slices/menteeAuthSlice';
+import { login as mentorLogin} from '@/redux/slices/mentorAuthSlice';
 
 interface GoogleProps {
     type: 'mentee' | 'mentor';
@@ -36,16 +36,16 @@ const Google: React.FC<GoogleProps> = ({ type }) => {
                     console.log(localStorage.getItem('accessToken'),'localstorage access token ');
                     
                     if (response.data.role === 'mentee') {
-                        dispatch(login(response.data.user))
+                        dispatch(menteeLogin({token:response.data.accessToken,user:response.data.user}))
                         console.log(response.data.role, 'response.data.role');
 
                         navigate('/')
                     } else {
                         console.log(response.data.exist, 'response.data.exist');
+                        dispatch(mentorLogin({token:response.data.accessToken,user:response.data.user}))
 
                         if (response.data.exist === true) {
                             console.log('its entered in if condition *****');
-                            dispatch(login(response.data.user))
                             navigate('/mentor/dashboard')
                         } else {
                             console.log('its entered in else condition ********');

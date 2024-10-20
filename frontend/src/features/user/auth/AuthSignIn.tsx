@@ -8,7 +8,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signInRequest } from '@/services/userApi';
 
 import { useDispatch } from 'react-redux';
-import { login } from '@/redux/store/authSlice';
+import { login } from '@/redux/slices/menteeAuthSlice';
+import { login as mentorLogin } from '@/redux/slices/mentorAuthSlice';
 
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -53,13 +54,15 @@ const AuthSignIn: React.FC = () => {
       }
 
       if (response.data.success) {
-        dispatch(login(response.data.user));
         if (role == 'mentee') {
+          dispatch(login({token:response.data.accessToken,user:{email,role}}));
           console.log('mentee');
 
           navigate('/');
         } else {
           console.log('mentor kjkjkjkjkjk');
+          dispatch(mentorLogin({token:response.data.accessToken,user:{email,role}}));
+
           navigate('/mentor/dashboard')
         }
       } else {

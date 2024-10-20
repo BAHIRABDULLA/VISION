@@ -9,8 +9,13 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
   const [activePage, setActivePage] = useState('Dashboard');
-  
-  const user = useSelector((state:RootState)=>state.auth.user)
+  let user 
+  if(role=='mentee'){
+    user = useSelector((state:RootState)=>state.menteeAuth.user) 
+  }else{
+    user = useSelector((state:RootState)=>state.mentorAuth.user)
+  }
+   
   console.log(user,'users');
   
   const renderPageContent = () => {

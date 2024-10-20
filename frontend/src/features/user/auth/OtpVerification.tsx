@@ -5,12 +5,12 @@ import Button from '@/components/Button';
 import vision_logo from '@/assets/auth/vision_logo.svg'
 import { otpVerify, resendOtp } from '@/services/userApi';
 import { useDispatch, UseDispatch } from 'react-redux';
-import { login } from '@/redux/store/authSlice';
-
+import { login as menteeLogin } from '@/redux/slices/menteeAuthSlice';
+import { login as mentorLogin} from '@/redux/slices/mentorAuthSlice';
 
 const OtpVerification: React.FC = () => {
   const location = useLocation()
-  const { email, type } = location.state;
+  const { fullName, email, password, role, type } = location.state;
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -41,17 +41,20 @@ const OtpVerification: React.FC = () => {
     try {
       const otpString = otp.join('')
       console.log(otpString, 'otpstrijng in otp verification ');
-      const response = await otpVerify(email, otpString)
+      const response = await otpVerify(fullName, email, password, role, otpString)
+      const reduxData = {fullName,email,role}
       console.log(response, 'response in otp verification');
       if (response.data.success === true) {
         if (type === 'signup') {
+          localStorage.setItem('accessToken', response.data.accessToken)
           if (response.data.role === 'mentee') {
-            dispatch(login(response.data.user))
-            localStorage.setItem('accessToken', response.data.accessToken)
+            dispatch(menteeLogin({token:response.data.accessToken,user:reduxData}))
             console.log(localStorage.getItem('accessToken'), 'access token in localstorage');
 
             navigate('/')
           } else {
+            dispatch(mentorLogin({token:response.data.accessToken,user:reduxData}))
+
             navigate('/apply-mentor', { state: { email } })
           }
         } else if (type === 'forgetPassword') {

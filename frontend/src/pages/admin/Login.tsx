@@ -10,7 +10,7 @@ import { zodResolver, } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import loginPhoto from '@/assets/auth/3d-isometric-flat-of-mentoring-vector-50068473.jpg'
 import { useDispatch } from 'react-redux'
-import { login } from '@/redux/store/authSlice'
+import { login } from '@/redux/slices/adminAuthSlice'
 
 
 const loginSchema = z.object({
@@ -35,10 +35,7 @@ const AdminLogin = () => {
         if(response.data.token){
             console.log(response,'response');
             localStorage.setItem('token',response.data.token)
-            dispatch(login({
-                token: response.data.token,
-                user:response.data.user
-            }))
+            dispatch(login({token: response.data.token,admin: response.data}))
             navigate('/admin/dashboard')
         }else{
             setError(response.data.message)

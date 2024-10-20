@@ -2,17 +2,19 @@ import React from 'react'
 import vision_logo from '../assets/auth/vision_logo.svg'
 import { Link, NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { logout } from '@/redux/store/authSlice'
+import { logout as menteeLogout} from '@/redux/slices/menteeAuthSlice'
+import { logout as mentorLogout} from '@/redux/slices/mentorAuthSlice'
 import { RootState } from '@/redux/store/store'
 
 
 
 const Header: React.FC = () => {
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
+  // const role = useSelector((state: RootState) => state.auth.isAuthenticated)
+  const isAuthenticated = useSelector((state: RootState) => state.menteeAuth.isAuthenticated)
   const dispatch = useDispatch()
 
   const handleLogout = () => {
-    dispatch(logout())
+    dispatch(menteeLogout())
   }
   return (
     <header className='flex  justify-center items-center px-10 py-4'>

@@ -7,7 +7,7 @@ import { Navigate } from 'react-router-dom'
 const MentorPrivateRoute= ({children}:any) => {
    console.log('its here bro btro bro bro ');
    
-  const isAuthenticated = useSelector((state:RootState)=>state.auth.isAuthenticated)
+  const isAuthenticated = useSelector((state:RootState)=>state.mentorAuth.isAuthenticated)
   return isAuthenticated?children:<Navigate to='/mentor/dashboard'/>;
 }
 

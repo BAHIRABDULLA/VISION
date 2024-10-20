@@ -7,8 +7,8 @@ import { Navigate } from 'react-router-dom'
 const PrivateRoute= ({children}:any) => {
   console.log( 'its not no tnot not not not ');
   
-  const isAuthenticated = useSelector((state:RootState)=>state.auth.isAuthenticated)
-  return isAuthenticated?children:<Navigate to='/'/>;
+  const isAuthenticated = useSelector((state:RootState)=>state.menteeAuth.isAuthenticated)
+  return isAuthenticated ?children:<Navigate to='/'/>;
 }
 
 export default PrivateRoute

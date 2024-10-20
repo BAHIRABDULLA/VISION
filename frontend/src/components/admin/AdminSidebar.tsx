@@ -4,7 +4,7 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { SiCoursera } from "react-icons/si";
 import { GrResources,GrTransaction  } from "react-icons/gr";
 
-import { logout } from '@/redux/store/authSlice';
+import { logout } from '@/redux/slices/adminAuthSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
