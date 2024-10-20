@@ -10,7 +10,7 @@ export const rabbitmqConnect=  async()=>{
         console.log('Connected to rabbitmq');
         
     } catch (error) {
-        console.error('Failed to connect rabbitmq ',error);
+        console.error('Failed to connect rabbitmq ',error); 
         
     }
 }

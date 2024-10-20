@@ -15,7 +15,9 @@ app.use(express.json())
 rabbitmqConnect()
 .then(()=>{    
     consumerMentorQueue()
-}).catch((error)=>console.error('Failed to connect rabbitmq '))
+    console.log('consumer mentor detains in index.ts in mentorService');
+    
+}).catch((error)=>console.error('Failed to connect rabbitmq ',error))
 
 
 connectDb()

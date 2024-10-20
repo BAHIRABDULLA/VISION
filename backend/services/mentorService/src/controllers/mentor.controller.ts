@@ -5,38 +5,18 @@ import fs from 'fs'
 
 const mentorService = new MentorService()
 
-// export const mentorController = {
-//     applyMentor1: async (req: Request, res: any) => {
-//         const { data, email } = req.body;
-//         console.log(data, email, 'data email');
-//         // const {jobTitle,category,location,company,skills,bio,socialMediaUrls} =data
 
-
-//         const response = await mentorService.mentorDetails(data, email)
-//         return res.json(response)
-//     },
-//     applyMentor2: async (req: Request, res: any) => {
-//         const { data, email } = req.body
-//         console.log(data, email, 'data , email ');
-//         const response = await mentorService.mentorDetails2(data, email)
-//         return res.json(response)
-//     },
-//     getAllMentors: async (req: Request, res: Response) => {
-//         const response = await mentorRepository.getAllMentors()
-//         res.json(response)
-//     }
-// }
 
 export class MentorController {
+
+
     async applyMentor(req: Request, res: Response) {
         try {
-            console.log(req.file, 'req.file dkfdkfjdkjf');
-            const {email, jobTitle, location, category, skills, bio,
+            const { email, jobTitle, location, category, skills, bio,
                 whyBecomeMentor, greatestAchievement, company, profilePhoto,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl,
             } = req.body;
 
-            console.log(email, jobTitle, 'data data data data data adta');
             let s3FileUrl = ''
             if (req.file) {
 
@@ -56,31 +36,41 @@ export class MentorController {
                 console.log('No file received');
             }
             console.log(s3FileUrl, 's3FileUrl');
-
+            
 
             const response = await mentorService.mentorDetails(email, jobTitle, location, category, skills, bio,
                 whyBecomeMentor, greatestAchievement, company, s3FileUrl,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl)
+
+            console.log(response, 'response in mentor controller');
+
             res.json(response)
         } catch (error) {
+            console.error('Error founded in apply mentor form ', error);
+        }
+    }
+
+
+    async getAllMentors(req: Request, res: Response) {
+        try {
+            const response = await mentorService.getAllMentors()
+            res.json(response)
+        } catch (error) {
+            console.error('Error founded in get all mentors ');
+        }
+
+    }
+
+
+    async getMentor(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+            const response = await mentorService.getMentor(id)
+
+            res.json({ success: true, mentor: response })
+        } catch (error) {
+            console.error('Error founded in mentor.controller getMentor', error);
 
         }
-    }
-    async getAllMentors(req: Request, res: Response) {
-        const response = await mentorService.getAllMentors()
-        res.json(response)
-    }
-    async getMentor(req:Request,res:Response){
-        try {
-            const {id} = req.params
-            const response = await mentorService.getMentor(id)
-            console.log(response,'response in mentro controller getmentor');
-            
-            res.json({success:true,mentor:response})
-        } catch (error) {
-            console.error('Error founded in mentor.controller getMentor',error);
-            
-        }
-  
     }
 }

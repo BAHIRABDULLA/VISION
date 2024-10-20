@@ -1,10 +1,6 @@
-import mongoose,{Document,Schema} from "mongoose";
+import mongoose,{Schema} from "mongoose";
+import IOtp from "../interfaces/IOtp";
 
-interface IOtp extends Document{
-    email:string;
-    otp:string;
-    createdAt:Date,
-}
 
 const otpSchema:Schema = new Schema({
     email:{type:String,required:true},

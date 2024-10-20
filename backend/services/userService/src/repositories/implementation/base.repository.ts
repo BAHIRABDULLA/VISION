@@ -1,7 +1,7 @@
 import { IBaseRepository } from "../interface/IBase.repository";
 import { Model,Document } from "mongoose";
 
-export class BaseRepository<T extends Document>  implements IBaseRepository<T>{
+ class BaseRepository<T extends Document>  implements IBaseRepository<T>{
     private model:Model<T>
 
     constructor(model:Model<T>){
@@ -23,3 +23,5 @@ export class BaseRepository<T extends Document>  implements IBaseRepository<T>{
         return this.model.findByIdAndDelete(id)
     }
 }
+
+export default BaseRepository

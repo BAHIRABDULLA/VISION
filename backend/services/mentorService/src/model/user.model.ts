@@ -1,12 +1,6 @@
-import mongoose,{Schema,Document, Types}  from "mongoose";
+import mongoose,{Schema}  from "mongoose";
+import { IUser } from "../interface/IUser";
 
-export interface IUser extends Document{
-    _id:Types.ObjectId
-    fullName:string;
-    email:string;
-    password:string;
-    isApproved: 'pending' | 'approved' | 'rejected'
-}
 
 const userSchema=new Schema<IUser>({
     _id:{
