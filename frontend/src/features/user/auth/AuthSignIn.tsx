@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signInRequest } from '@/services/userApi';
 
 import { useDispatch } from 'react-redux';
-import { login } from '@/redux/slices/menteeAuthSlice';
+import { login as menteeLogin} from '@/redux/slices/menteeAuthSlice';
 import { login as mentorLogin } from '@/redux/slices/mentorAuthSlice';
 
 import { z } from 'zod';
@@ -55,7 +55,7 @@ const AuthSignIn: React.FC = () => {
 
       if (response.data.success) {
         if (role == 'mentee') {
-          dispatch(login({token:response.data.accessToken,user:{email,role}}));
+          dispatch(menteeLogin({token:response.data.accessToken,user:{email,role}}));
           console.log('mentee');
 
           navigate('/');
