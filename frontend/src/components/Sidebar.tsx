@@ -5,32 +5,37 @@ import SidebarItem from './SidebarItem';
 
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout as menteeLogout} from '@/redux/slices/menteeAuthSlice';
-import { logout as mentorLogout} from '@/redux/slices/mentorAuthSlice';
+import { logout as menteeLogout } from '@/redux/slices/menteeAuthSlice';
+import { logout as mentorLogout } from '@/redux/slices/mentorAuthSlice';
 
 
 interface SidebarProps {
   role: 'mentor' | 'mentee';
   activePage: string;
   setActivePage: (page: string) => void;
+  isCollapsed:boolean;
+  toggleSidebar:()=>void
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ role, activePage, setActivePage }) => {
+const Sidebar: React.FC<SidebarProps> = ({ role, activePage, setActivePage,isCollapsed,toggleSidebar }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const logoutUser = () =>{
-    if(role=='mentee'){
+  const logoutUser = () => {
+    if (role == 'mentee') {
       dispatch(menteeLogout())
-    }else{
+      navigate('/')
+
+    } else {
       dispatch(mentorLogout())
+      navigate('/signin')
+
     }
     localStorage.removeItem('accessToken')
-    navigate('/')
-  }
+  } 
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  
-  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+  // const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   const items = [
     { label: 'Dashboard', icon: <MdSpaceDashboard /> },
@@ -40,11 +45,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role, activePage, setActivePage }) =>
     { label: 'Billing History', icon: <FaHistory /> },
     { label: 'Notification', icon: <FaBell /> },
     ...(role === 'mentor' ? [{ label: 'Mentees', icon: <FaUsers /> }] : [{ label: 'Mentors', icon: <FaUsers /> }]),
-    { label: 'Log out', icon: <FaSignOutAlt /> ,onClick:logoutUser},
+    { label: 'Log out', icon: <FaSignOutAlt />, onClick: logoutUser },
   ];
 
   return (
-    <div className={`h-screen bg-gray-900 ${isCollapsed ? 'w-20' : 'w-64'} transition-width duration-300 text-white flex flex-col`}>
+    <div className={`min-h-screen fixed bg-gray-900 ${isCollapsed ? 'w-20' : 'w-64'} transition-width duration-300 text-white flex flex-col`}>
       <div className="flex items-center justify-between p-4 bg-gray-800">
         <h1 className={`text-xl font-semibold tracking-widest text-purple-400 ${isCollapsed ? 'hidden' : ''}`}>
           VISION
@@ -63,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, activePage, setActivePage }) =>
             isCollapsed={isCollapsed}
             isActive={activePage === item.label}
             badge={item.badge}
-            onClick={item.onClick?item.onClick:() => setActivePage(item.label)}
+            onClick={item.onClick ? item.onClick : () => setActivePage(item.label)}
           />
         ))}
       </nav>

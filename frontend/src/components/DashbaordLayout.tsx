@@ -2,22 +2,31 @@ import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
+import Profile from '@/features/user/dashboard/Profile';
 
 interface DashboardLayoutProps {
   role: 'mentor' | 'mentee';
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
-  const [activePage, setActivePage] = useState('Dashboard');
-  let user 
-  if(role=='mentee'){
-    user = useSelector((state:RootState)=>state.menteeAuth.user) 
-  }else{
-    user = useSelector((state:RootState)=>state.mentorAuth.user)
-  }
-   
-  console.log(user,'users');
   
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+
+  const [activePage, setActivePage] = useState('Dashboard');
+  let user
+  if (role == 'mentee') {
+    user = useSelector((state: RootState) => state.menteeAuth.user)
+  } else {
+    user = useSelector((state: RootState) => state.mentorAuth.user)
+  }
+
+  console.log(user, 'users');
+
   const renderPageContent = () => {
     switch (activePage) {
       case 'Dashboard':
@@ -30,18 +39,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
           </div>
         );
       case 'Personal Information':
-        return  (
-          <div className="text-white">
-            <h3 className="text-xl font-bold">Personal Information</h3>
-            {user ? (
-              <div>
-                <p><strong>Name:</strong> {user.fullName}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-              </div>
-            ) : (
-              <p>Loading user data...</p>
-            )}
-          </div>
+        return (
+          <Profile role={role}/>
+          // <div className="text-white">
+          //   <h3 className="text-xl font-bold">Personal Information</h3>
+          //   {user ? (
+          //     <div>
+          //       <p><strong>Name:</strong> {user.fullName}</p>
+          //       <p><strong>Email:</strong> {user.email}</p>
+          //     </div>
+          //   ) : (
+          //     <p>Loading user data...</p>
+          //   )}
+          // </div>
         );
       case 'Chat':
         return <div className="text-white">Chat Content</div>;
@@ -60,9 +70,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
   };
 
   return (
-    <div className="flex h-screen">
-      <Sidebar role={role} activePage={activePage} setActivePage={setActivePage} />
-      <main className="flex-1 p-6 bg-gray-900">
+    <div className="flex min-h-screen">
+      <Sidebar role={role} activePage={activePage} setActivePage={setActivePage}
+      isCollapsed={isCollapsed}  toggleSidebar={toggleSidebar} />
+      <main className={`flex-1 p-6 bg-gray-900 transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         {renderPageContent()}
       </main>
     </div>
