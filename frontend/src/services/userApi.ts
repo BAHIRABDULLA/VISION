@@ -86,7 +86,7 @@ export const getUserDetails = async()=>{
         return response
     } catch (error) {
         console.log(error,'error ()()()()()()()()()()()()');
-        return error
+        return error.response
     }
    
 }

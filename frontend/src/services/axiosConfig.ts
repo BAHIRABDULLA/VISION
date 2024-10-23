@@ -1,14 +1,16 @@
 
 import axios from "axios";
+import { logout as menteeLogout } from "@/redux/slices/menteeAuthSlice";
+import { logout as mentorLogout } from "@/redux/slices/mentorAuthSlice";
+import { store } from "@/redux/store/store";
 
 
 // import { refreshToken } from "./userApi";
 
 
-
 export const privateApi = axios.create({
     baseURL: import.meta.env.VITE_USER_API_BASE_URL,
-    withCredentials:true
+    withCredentials: true
 })
 
 privateApi.interceptors.request.use((config) => {
@@ -30,31 +32,32 @@ privateApi.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true; 
+            originalRequest._retry = true;
             try {
                 const response = await privateApi.get('/refresh-token');
-                console.log(response,'response in axios config file');
-                
+                console.log(response, 'response in axios config file');
+
                 if (response.status === 200) {
                     const newAccessToken = response.data.accessToken;
                     localStorage.setItem('accessToken', newAccessToken);
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-                    return privateApi(originalRequest); 
+                    return privateApi(originalRequest);
                 }
-            } catch (refreshError) {
-                // if (refreshError instanceof AxiosError && refreshError.response?.status === 403) {
-                //     console.log('Refresh token expired',refreshError);
-                //     localStorage.removeItem('accessToken')
-                //     if(menteeRole){
-                //         dispatch(menteeLogout())
-                //     }else if(mentorRole){
-                //         dispatch(mentorLogout())
-                //     }
-                // }
+            } catch (refreshError: any) {
+                if (refreshError.response?.status === 403) {
+                    localStorage.removeItem('accessToken')
+                    const state = store.getState()
+                    const userRole = state.menteeAuth.user?.role || state.mentorAuth.user?.role
+                    if (userRole === 'mentee') {
+                        store.dispatch(menteeLogout())
+                    } else if (userRole === 'mentor') {
+                        store.dispatch(mentorLogout())
+                    }
+                }
+
                 console.error('Refresh token failed:', refreshError);
-                
             }
         }
-        return Promise.reject(error); 
+        return Promise.reject(error);
     }
 );

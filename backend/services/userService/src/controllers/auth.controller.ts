@@ -171,9 +171,9 @@ class AuthController {
                 return res.status(HttpStatus.FORBIDDEN).json({ message: "Invalid token payload" });
             }
         } catch (error) {
-            // if(error instanceof jwt.TokenExpiredError){
-            //     return res.status(HttpStatus.FORBIDDEN).json({message:"Refresh token expired, please log in again"})
-            // }
+            if(error instanceof jwt.TokenExpiredError){
+                return res.status(HttpStatus.FORBIDDEN).json({message:"Refresh token expired, please log in again"})
+            }
             console.error("Error verifying refresh token:", error);
         }
     }
