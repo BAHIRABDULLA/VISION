@@ -1,11 +1,20 @@
 import { Request,Response } from "express";
 import { UserService } from "../services/user.service";
 import { User } from "../models/user.model";
+import { JwtPayload } from "jsonwebtoken";
+import { HttpStatus } from "../enums/http.status";
+
+
+
+interface CustomeRequest extends Request{
+    user?:string| JwtPayload
+}
 
 const userService  = new UserService()
 
 
 class UserController {
+
     async getAllUsers(req:Request,res:Response){
         try {
             const response = await userService.getAllUsers()
@@ -14,15 +23,15 @@ class UserController {
             console.error('Error founded fetching all users',error);
         }
     }
+
+
     async getUserById (req:Request,res:Response){
         const {id}= req.params
-        console.log(id,'id in get user by id user service');
-        
         const user  = await userService.getUser(id)
-        console.log(user,'user user ');
-        
         res.json(user)
     }
+
+
     async updateUserStatus(req:Request,res:Response){
         const { id } = req.params;
         const { isApproved } = req.body;
@@ -31,24 +40,43 @@ class UserController {
                 return res.status(400).json({ message: 'Invalid approval status' });
               }
           
-              // Find the user by ID and update the approval status
               const updatedUser = await User.findByIdAndUpdate(
                 id,
-                { isApproved },  // Update the isApproved field
-                { new: true }    // Return the updated document
+                { isApproved }, 
+                { new: true }    
               );
-          
-              // If user not found
+              
               if (!updatedUser) {
                 return res.status(404).json({ message: 'User not found' });
               }
           
-              // Send the updated user as a response
               res.status(200).json({ success: true, user: updatedUser });
         } catch (error) {
             
         }
     }
+
+    async getUser(req:CustomeRequest,res:Response){
+        try {
+            console.log('------------');
+            const user = req.user as JwtPayload
+            console.log(user,'user, ===========');
+            
+            if(!user){
+                return res.json({message:'dkf'})
+            } 
+            console.log(user,'user s');
+            
+            const response = await userService.getUser(user.id)
+            console.log(response,'response in user controller get user');
+            
+            return res.status(HttpStatus.OK).json(response)
+        } catch (error) {
+            console.error('Error founded in get user',error);
+        }
+    }
+
+   
 }
 
 

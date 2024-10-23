@@ -27,7 +27,8 @@ const AddCourse = () => {
 
       <h1 className='text-3xl font-semibold'>Add new Course</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-
+        <input type="upload" />
+        <div className='px-3 py-3'></div>
         <Input label='Course Name' customClasses='w-full' {...register('name')} />
         {errors.name && <p className='text-red-500'>{errors.name.message}</p>}
         <Input label='Duration' customClasses='w-full' {...register('duration')} />

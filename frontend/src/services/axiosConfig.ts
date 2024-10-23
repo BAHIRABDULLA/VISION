@@ -1,14 +1,17 @@
-import axios from "axios";
-import { refreshToken } from "./userApi";
 
-const api = axios.create({
+import axios from "axios";
+
+
+// import { refreshToken } from "./userApi";
+
+
+
+export const privateApi = axios.create({
     baseURL: import.meta.env.VITE_USER_API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json'
-    }
+    withCredentials:true
 })
 
-api.interceptors.request.use((config) => {
+privateApi.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
     console.log(token, 'token in api interceptor ');
 
@@ -20,24 +23,38 @@ api.interceptors.request.use((config) => {
     return Promise.reject(error)
 })
 
-
-api.interceptors.response.use((response) => {
-    return response;
-}, async (error) => {
-    const originalRequest = error.config;
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true
-        try {
-            const response = await api.get('/refresh-token', { withCredentials: true })
-            if (response.status == 200) {
-                const newAccessToken = response.data.accessToken
-                localStorage.setItem('accessToken', newAccessToken)
-                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-                return api(originalRequest)
+privateApi.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true; 
+            try {
+                const response = await privateApi.get('/refresh-token');
+                console.log(response,'response in axios config file');
+                
+                if (response.status === 200) {
+                    const newAccessToken = response.data.accessToken;
+                    localStorage.setItem('accessToken', newAccessToken);
+                    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                    return privateApi(originalRequest); 
+                }
+            } catch (refreshError) {
+                // if (refreshError instanceof AxiosError && refreshError.response?.status === 403) {
+                //     console.log('Refresh token expired',refreshError);
+                //     localStorage.removeItem('accessToken')
+                //     if(menteeRole){
+                //         dispatch(menteeLogout())
+                //     }else if(mentorRole){
+                //         dispatch(mentorLogout())
+                //     }
+                // }
+                console.error('Refresh token failed:', refreshError);
+                
             }
-        } catch (error) {
-            console.error('Refresh token failed:', error);
         }
+        return Promise.reject(error); 
     }
-    return Promise.reject(error)
-})
+);

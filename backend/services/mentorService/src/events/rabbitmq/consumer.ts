@@ -13,6 +13,8 @@ export const consumerMentorQueue = async()=>{
             console.log(msg,'msg in consumer mentor queue');
             if(msg!==null){
                 const mentorData = JSON.parse(msg.content.toString())
+                console.log(mentorData,'mentorData , , , ');
+                
                 await mentorService.registerMentor(mentorData)
                 channel.ack(msg)
                 console.log('Listening to mentorQueue...');

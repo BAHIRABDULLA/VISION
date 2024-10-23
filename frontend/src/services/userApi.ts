@@ -1,10 +1,12 @@
 import axios from 'axios'
+import { privateApi } from './axiosConfig';
 
 
 console.log(import.meta.env.VITE_USER_API_BASE_URL, 'IMPORT mete ENV viteapivaseurl');
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_USER_API_BASE_URL
+    baseURL: import.meta.env.VITE_USER_API_BASE_URL,
+    withCredentials:true
 })
 export const signInRequest = async (email: string, password: string,role:string) => {
     const response = await api.post('/signin', { email, password ,role})
@@ -12,8 +14,8 @@ export const signInRequest = async (email: string, password: string,role:string)
     return response
 }
 
-export const signUpRequest = async (fullName: string, email: string, password: string, role: string) => {
-    const response = await api.post('/signup', { fullName, email, password, role })
+export const signUpRequest = async ( email: string) => {
+    const response = await api.post('/signup', {email})
     console.log(response.data, 'response');
     console.log(response.config.data, 'response.data.config');
 
@@ -21,8 +23,8 @@ export const signUpRequest = async (fullName: string, email: string, password: s
 
 }
 
-export const otpVerify = async (email: string, otp: string) => {
-    const response = await api.post('/otp-signup', { email, otp })
+export const otpVerify = async (fullName:string,email: string,password:string,role:string, otp: string) => {
+    const response = await api.post('/otp-signup', { fullName,email,password,role, otp })
     return response
 
 }
@@ -64,15 +66,27 @@ export const resetPassword  = async(email:string,password:string,confirmPassword
     }
 }
 
-export const refreshToken = async()=>{
-    const response = await api.post('/refresh-token')
-    const newAccessToken = response.data.accessToken
+// export const refreshToken = async()=>{
+//     const response = await api.post('/refresh-token')
+//     const newAccessToken = response.data.accessToken
 
-    localStorage.setItem('acessToken',newAccessToken)
-    return newAccessToken
-}
+//     localStorage.setItem('acessToken',newAccessToken)
+//     return newAccessToken
+// }
 
 export const updateUserStatus = async(id: string, updateData: { isActive?: boolean, isApproved?: string })=>{
     const response = await api.patch(`/users/${id}`, updateData)
     return response
+}
+
+export const getUserDetails = async()=>{
+    try {
+        const response = await privateApi.get('/user')
+        console.log(response,'response in !!!!!!!!!! user Api ');
+        return response
+    } catch (error) {
+        console.log(error,'error ()()()()()()()()()()()()');
+        return error
+    }
+   
 }

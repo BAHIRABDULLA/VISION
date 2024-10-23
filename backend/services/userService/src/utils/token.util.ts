@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 
 interface IUser {
     id: string;
+    email:string
     role: 'mentee' | 'mentor';
 }
 
@@ -11,15 +12,15 @@ const generateAccessToken= (user:IUser )=>{
     if(!secret){
         throw new Error('Access token secret is not defined')
     }
-    return jwt.sign(user,secret,{expiresIn:'15m'})
+    return jwt.sign(user,secret,{expiresIn:'4s'})
 }
 
-const generateRefreshToken = (user: {id:string,role:string})=>{
+const generateRefreshToken = (user: IUser)=>{
     const secret = process.env.REFRESH_TOKEN_SECRET
     if(!secret){
         throw new Error('Refrsesh token secret in not defined')
     }
-    return jwt.sign(user,secret,{expiresIn:'7d'})
+    return jwt.sign(user,secret,{expiresIn:'1m'})
 }
 
 export {generateAccessToken,generateRefreshToken}
