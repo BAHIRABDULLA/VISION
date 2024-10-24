@@ -1,13 +1,14 @@
 import { Request, response, Response } from "express";
-import { AuthService } from "../services/auth.service";
+// import { AuthService } from "../services/auth.service";
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { HttpStatus } from "../enums/http.status";
 import { setRefreshTokenCookie } from "../utils/tokenCookie.util";
 import { createResponse, sendResponse } from "../utils/response.handler";
 import { generateAccessToken } from "../utils/token.util";
+import { authService } from "..";
 
 
-const authService = new AuthService()
+
 class AuthController {
 
 
@@ -168,10 +169,12 @@ class AuthController {
 
                 return res.json({ accessToken: newAccessToken });
             } else {
+                res.clearCookie('refreshToken')
                 return res.status(HttpStatus.FORBIDDEN).json({ message: "Invalid token payload" });
             }
         } catch (error) {
             if(error instanceof jwt.TokenExpiredError){
+                res.clearCookie('refreshToken')
                 return res.status(HttpStatus.FORBIDDEN).json({message:"Refresh token expired, please log in again"})
             }
             console.error("Error verifying refresh token:", error);
@@ -179,14 +182,25 @@ class AuthController {
     }
 
 
-    async updateMentorForm(req: Request, res: Response) {
-        try {
-            const { id } = req.body
+    // async updateMentorForm(req: Request, res: Response) {
+    //     try {
+    //         const { id } = req.body
 
-            const response = await authService.updateMentorField(id)
-            return res.json(response)
+    //         const response = await authService.updateMentorField(id)
+    //         return res.json(response)
+    //     } catch (error) {
+    //         console.error('Error founded in update mentor form filed', error);
+    //     }
+    // }
+
+    async logout(req:Request,res:Response) {
+        try {
+            console.log('logot here - - - - - - - ');
+            
+            res.clearCookie('refreshToken')
+            return res.json({message:"Logged out successfully"})
         } catch (error) {
-            console.error('Error founded in update mentor form filed', error);
+            console.error('Error founded in logout',error);
         }
     }
 }

@@ -14,7 +14,7 @@ authRoute.post('/google-signin',authController.googleLogin)
 authRoute.post('/forget-password',authController.forgetPassword)
 authRoute.post('/reset-password',authController.resetPassword)
 authRoute.get('/refresh-token',authController.setNewAccessToken)
-authRoute.post('/update-mentor-form',authController.updateMentorForm)
-
+// authRoute.post('/update-mentor-form',authController.updateMentorForm)
+authRoute.post('/logout',authController.logout)
 
 export default authRoute

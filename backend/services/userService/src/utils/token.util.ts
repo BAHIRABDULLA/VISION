@@ -12,7 +12,7 @@ const generateAccessToken= (user:IUser )=>{
     if(!secret){
         throw new Error('Access token secret is not defined')
     }
-    return jwt.sign(user,secret,{expiresIn:'4s'})
+    return jwt.sign(user,secret,{expiresIn:'2m'})
 }
 
 const generateRefreshToken = (user: IUser)=>{
@@ -20,7 +20,7 @@ const generateRefreshToken = (user: IUser)=>{
     if(!secret){
         throw new Error('Refrsesh token secret in not defined')
     }
-    return jwt.sign(user,secret,{expiresIn:'1m'})
+    return jwt.sign(user,secret,{expiresIn:'7m'})
 }
 
 export {generateAccessToken,generateRefreshToken}

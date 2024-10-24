@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout as menteeLogout } from '@/redux/slices/menteeAuthSlice';
 import { logout as mentorLogout } from '@/redux/slices/mentorAuthSlice';
+import { logout} from '@/services/userApi';
 
 
 interface SidebarProps {
@@ -20,7 +21,8 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ role, activePage, setActivePage,isCollapsed,toggleSidebar }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const logoutUser = () => {
+  const logoutUser =async () => {
+    const apiLogout = await logout()
     if (role == 'mentee') {
       dispatch(menteeLogout())
       navigate('/')

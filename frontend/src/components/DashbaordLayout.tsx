@@ -41,17 +41,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
       case 'Personal Information':
         return (
           <Profile role={role}/>
-          // <div className="text-white">
-          //   <h3 className="text-xl font-bold">Personal Information</h3>
-          //   {user ? (
-          //     <div>
-          //       <p><strong>Name:</strong> {user.fullName}</p>
-          //       <p><strong>Email:</strong> {user.email}</p>
-          //     </div>
-          //   ) : (
-          //     <p>Loading user data...</p>
-          //   )}
-          // </div>
         );
       case 'Chat':
         return <div className="text-white">Chat Content</div>;

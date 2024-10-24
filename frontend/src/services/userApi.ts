@@ -82,11 +82,21 @@ export const updateUserStatus = async(id: string, updateData: { isActive?: boole
 export const getUserDetails = async()=>{
     try {
         const response = await privateApi.get('/user')
-        console.log(response,'response in !!!!!!!!!! user Api ');
         return response
     } catch (error) {
         console.log(error,'error ()()()()()()()()()()()()');
         return error.response
     }
-   
+}
+
+
+export const logout = async()=>{
+    try {
+        console.log('its herer');
+        
+        const response = await api.post('/logout')
+        return response
+    } catch (error) {
+          console.error('Error in logout',error);
+    }
 }
