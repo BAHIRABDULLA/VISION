@@ -4,8 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
 
-import { TextField } from '@mui/material';
+import { Avatar, Skeleton, TextField } from '@mui/material';
 import { getUserDetails } from '@/services/userApi';
+import { CommonDetails } from '@/interfaces/UserList';
+import { MentorDetails } from '@/interfaces/UserList';
+import { MenteeDetails } from '@/interfaces/UserList';
+import Loading from '@/components/Loading';
 
 
 interface PersonalInformationProps {
@@ -14,13 +18,26 @@ interface PersonalInformationProps {
 
 const Profile: React.FC<PersonalInformationProps> = ({ role }) => {
 
+    const [userData, setUserData] = useState<CommonDetails | MenteeDetails | MentorDetails | null>(null)
+    const [loading, setLoading] = useState(true)
+    console.log(userData, 'userData ');
 
     useEffect(() => {
-        
+
         const userDetails = async () => {
-           const response =  await getUserDetails()
-           console.log(response,'Profile session response +++++++++');
-           
+            try {
+                const userDetails = await getUserDetails()
+                // setTimeout(() => {
+                    setUserData(userDetails.data)
+                    // setLoading(false)
+                // }, 2000);
+
+                console.log(userDetails, 'Profile session response +++++++++');
+            } catch (error) {
+                console.error('Error founded in user details',error);
+            }finally{
+                setLoading(false)
+            }
         }
         userDetails()
     }, [])
@@ -37,11 +54,18 @@ const Profile: React.FC<PersonalInformationProps> = ({ role }) => {
     const toggleEditNameEmail = () => setIsEditingNameEmail(!isEditingNameEmail);
     const toggleEditJobToWebsite = () => setIsEditingJobToWebsite(!isEditingJobToWebsite);
     const togglePasswordChange = () => setShowPasswordChange(!showPasswordChange);
+
+    if (loading) {
+        console.log('fdklfdkjfdkjfdk');
+      
+        return <Loading />
+    }
     return (
         <div className="p-6 bg-gray-600 rounded-lg shadow-md text-white max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold mb-4 text-center">Personal Information</h2>
 
             {/* Profile Picture Section */}
+
             <div className="flex flex-col items-center mb-6">
                 <div className="w-32 h-32 bg-white rounded-full mb-4 flex items-center justify-center text-gray-400">
                     No Image
@@ -53,23 +77,28 @@ const Profile: React.FC<PersonalInformationProps> = ({ role }) => {
                 />
             </div>
 
+
+
             {/* Full Name & Email Section */}
+
             <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
 
                     <TextField
-                        label="Full Name" defaultValue="John Doe" variant="filled" fullWidth
+                        label="Full Name" defaultValue={userData?.fullName} variant="filled" fullWidth
                         sx={{ backgroundColor: "white", borderRadius: "8px" }}
                     />
                 </div>
                 <div>
                     <TextField
-                        label="Email" defaultValue="john.doe@example.com" variant="filled" fullWidth
+                        label="Email" defaultValue={userData?.email} disabled variant="filled" fullWidth
                         sx={{ backgroundColor: "white", borderRadius: "8px" }}
                     />
 
                 </div>
             </div>
+
+
 
             <button
                 className="bg-slate-400 px-7 py-1 rounded-md text-white mb-6"
@@ -154,17 +183,6 @@ const Profile: React.FC<PersonalInformationProps> = ({ role }) => {
                     </button>
                 </>
             )}
-
-
-
-
-
-
-
-
-
-
-
 
 
             {/* Password Change Section */}
