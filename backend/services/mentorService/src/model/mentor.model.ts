@@ -16,9 +16,8 @@ const mentorSchema = new Schema<IMentor>({
     featuredArticleUrl: { type: String },
     whyBecomeMentor: { type: String },
     greatestAchievement: {type: String },
-    profilePhoto: {type: String},
+    // profilePhoto: {type: String},
     createdAt: {type: Date,default: Date.now },
-    // status: {type: String,enum: ['pending', 'approved', 'rejected'],default: 'pending' },
 })
 
 export const Mentor = mongoose.model('Mentor', mentorSchema);

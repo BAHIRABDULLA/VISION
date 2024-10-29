@@ -9,7 +9,7 @@ import { store } from "@/redux/store/store";
 
 
 export const privateApi = axios.create({
-    baseURL: import.meta.env.VITE_USER_API_BASE_URL,
+    baseURL: import.meta.env.VITE_COMMON_API_BASE_URL,
     withCredentials: true
 })
 
@@ -34,7 +34,7 @@ privateApi.interceptors.response.use(
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-                const response = await privateApi.get('/refresh-token');
+                const response = await privateApi.get('/user/refresh-token');
                 console.log(response, 'response in axios config file');
 
                 if (response.status === 200) {

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { MentorService } from "../services/mentor.service";
 import { uploadFile } from "../utils/upload";
 import fs from 'fs'
+import { HttpStatus } from "../enums/http.status";
 
 const mentorService = new MentorService()
 
@@ -71,6 +72,20 @@ export class MentorController {
         } catch (error) {
             console.error('Error founded in mentor.controller getMentor', error);
 
+        }
+    }
+
+    async updateMentor(req:Request,res:Response){
+        try {
+            const {id} = req.params
+            console.log(id,'req.params  . . . . ');
+            
+            const data = req.body
+            const response = await mentorService.updateMentorData(id,data)
+            console.log(response,'response in conttroller updatementor');
+            return res.status(HttpStatus.OK).json(response)
+        } catch (error) {
+            console.error('Error founded in update mentor',error);
         }
     }
 }

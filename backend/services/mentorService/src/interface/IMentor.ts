@@ -14,7 +14,7 @@ export interface IMentor extends Document {
     featuredArticleUrl?: string;
     whyBecomeMentor: string;
     greatestAchievement: string;
-    profilePhoto: string;
+    // profilePhoto: string;
     createdAt: Date;
 }
 

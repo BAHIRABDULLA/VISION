@@ -7,7 +7,7 @@ export interface CommonDetails {
     accountCreated: string;
     isActive: boolean;
     isApproved: string;
-
+    profile:string
     profilePictureUrl?: string;
 }
 
@@ -24,7 +24,8 @@ export interface MentorDetails extends CommonDetails {
     skills: string[];
     socialMediaUrls: { [key: string]: string };
     introVideoUrl: string;
-    featuredArticleUrl: string;
+    featuredArticleUrl?: string;
+    introductionVideoUrl:string;
     bio: string;
     whyBecomeMentor: string;
     greatestAchievement: string;

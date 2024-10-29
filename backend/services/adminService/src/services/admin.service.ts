@@ -84,4 +84,14 @@ export class AdminService {
             console.error('Error founded in get user in mentor service', error);
         }
     }
+
+
+    
+    async registerUser(data:any){
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
 }

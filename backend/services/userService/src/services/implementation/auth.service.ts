@@ -1,18 +1,19 @@
 
 
-import { OtpRepository } from "../repositories/implementation/otp.repository";
-import { UserRepository } from "../repositories/implementation/user.repository"
-import { hashPassword, randomPassword } from "../utils/hash.util"
-import { sentOTPEmail } from "../utils/email.util";
+import { OtpRepository } from "../../repositories/implementation/otp.repository";
+import { UserRepository } from "../../repositories/implementation/user.repository"
+import { hashPassword, randomPassword } from "../../utils/hash.util"
+import { sentOTPEmail } from "../../utils/email.util";
 import bcrypt from 'bcryptjs'
-import { generateAccessToken, generateRefreshToken } from "../utils/token.util";
-import { sendMentorData } from "../events/rabbitmq/publisher";
-import { generateOtp } from "../utils/otp.util";
-import { User } from "../models/user.model";
-import IUserRepository from "../repositories/interface/IUser.repository";
-import IUser from "../interfaces/IUser";
-import Otp from "../models/otp.model";
-import { createResponse } from "../utils/response.handler";
+import { generateAccessToken, generateRefreshToken } from "../../utils/token.util";
+import { sendMentorData } from "../../events/rabbitmq/producers/producer";
+import { generateOtp } from "../../utils/otp.util";
+import { User } from "../../models/user.model";
+import IUserRepository from "../../repositories/interface/IUser.repository";
+import IUser from "../../interfaces/IUser";
+import Otp from "../../models/otp.model";
+import { createResponse } from "../../utils/response.handler";
+import { IAuthService } from "../interface/IAuth.service";
 
 
 type SignInResult = {
@@ -24,68 +25,26 @@ type SignInResult = {
 };
 
 
-export class AuthService {
-    private userRepository: UserRepository
+interface PasswordUpdate{
+    currentPassword:string;
+    newPassword:string;
+    confirmPassword:string
+}
+
+export class AuthService  implements IAuthService{
+    private userRepository: IUserRepository
     private otpRepository: OtpRepository
-    constructor() {
-        this.userRepository = new UserRepository(User)
-        this.otpRepository = new OtpRepository(Otp)
+    // constructor() {
+    //     this.userRepository = new UserRepository(User)
+    //     this.otpRepository = new OtpRepository(Otp)
+    // }
+    constructor(userRepository:IUserRepository,otpRepository:OtpRepository){
+        this.userRepository = userRepository;
+        this.otpRepository = otpRepository
     }
 
 
-    // async signUp(fullName: string, email: string, password: string, role: string) {
-    //     try {
-    //         const existingUser = await this.userRepository.findByEmail(email)
-    //         const hashedPassword = await hashPassword(password)
-    //         if (existingUser && existingUser.isVerified && !existingUser.isMentorFormFilled) {
-    //             await this.userRepository.update(existingUser._id.toString(),
-    //                 {
-    //                     fullName,
-    //                     password: hashedPassword,
-    //                     role: role as 'mentee' | 'mentor'
-    //                 })
-
-    //             const otp = generateOtp()
-    //             await sentOTPEmail(email, otp)
-    //             await this.otpRepository.create({ email, otp })
-    //             return { success: true, message: "User application form is pending" }
-    //         }
-    //         if (existingUser && existingUser.isVerified) {
-
-    //             return { success: false, message: 'User already existed' }
-    //         } else if (existingUser && !existingUser.isVerified) {
-    //             await this.userRepository.update(existingUser._id.toString(),
-    //                 {
-    //                     fullName,
-    //                     password: hashedPassword,
-    //                     role: role as 'mentee' | 'mentor'
-    //                 })
-
-    //             const otp = generateOtp()
-    //             await sentOTPEmail(email, otp)
-    //             await this.otpRepository.create({ email, otp })
-    //             return { success: true, message: "User verification pending,please complete verification" }
-    //         }
-    //         const userData: any = {
-    //             fullName,
-    //             email,
-    //             password: hashedPassword,
-    //             role: role as 'mentee' | 'mentor'
-    //         }
-    //         if (role === 'mentor') {
-    //             userData.isApproved = 'pending';
-    //             userData.isMentorFormFilled = false
-    //         }
-    //         await this.userRepository.create(userData)
-    //         const otp = generateOtp()
-    //         await sentOTPEmail(email, otp)
-    //         await this.otpRepository.create({ email, otp })
-
-    //         return { success: true, message: 'User registration successfully' }
-    //     } catch (error) {
-    //         console.error('Error founded in sign up', error);
-    //     }
-    // }
+    
 
     async signUp(email: string) {
         try {
@@ -117,15 +76,15 @@ export class AuthService {
             if (!getOtp) {
                 return { success: false, message: 'OTP expired or invalid' }
             }
-            const findOtp= getOtp.find(x=>x.otp==otp)
-            
+            const findOtp = getOtp.find(x => x.otp == otp)
+
             if (findOtp) {
                 const userData: any = {
                     fullName,
                     email,
                     password: hashedPassword,
                     role: role as 'mentee' | 'mentor',
-                    isVerified:true
+                    isVerified: true
                 }
                 if (role === 'mentor') {
                     userData.isApproved = 'pending';
@@ -133,18 +92,18 @@ export class AuthService {
                 }
                 const newUser = await this.userRepository.create(userData)
                 console.log(newUser, ' new User in auth service ');
-                
+
                 // await this.userRepository.updateUserField(email, 'isVerified', true)
                 await this.otpRepository.deleteOtp(email)
-                const accessToken = generateAccessToken({ id: newUser._id.toString(),email, role: newUser.role })
-                const refreshToken = generateRefreshToken({ id: newUser._id.toString(),email, role: newUser.role })
+                const accessToken = generateAccessToken({ id: newUser._id.toString(), email, role: newUser.role })
+                const refreshToken = generateRefreshToken({ id: newUser._id.toString(), email, role: newUser.role })
 
                 if (newUser.role === 'mentee') {
-                    return createResponse(true,'OTP verified successfully',{role: newUser.role, accessToken, refreshToken})
+                    return createResponse(true, 'OTP verified successfully', { role: newUser.role, accessToken, refreshToken })
                     // return { success: true, message: 'OTP verified successfully', role: newUser.role, accessToken, refreshToken}
                 } else {
-                    await sendMentorData(newUser)
-                    return createResponse(true,'OTP verified successfully',{role:newUser.role})
+                    await sendMentorData('mentorQueue', newUser)
+                    return createResponse(true, 'OTP verified successfully', { role: newUser.role })
                     // return { success: true, message: 'OTP verified successfully', role: newUser.role }
                 }
             } else {
@@ -173,8 +132,8 @@ export class AuthService {
 
             let userData = await this.userRepository.findByEmail(email)
             if (userData) {
-                const accessToken = generateAccessToken({ id: userData._id.toString(),email, role: userData.role })
-                const refreshToken = generateRefreshToken({ id: userData._id.toString(),email, role: userData.role })
+                const accessToken = generateAccessToken({ id: userData._id.toString(), email, role: userData.role })
+                const refreshToken = generateRefreshToken({ id: userData._id.toString(), email, role: userData.role })
                 return {
                     success: true, message: 'Sign in with google completed', role: role, exist: true,
                     accessToken, refreshToken, user: userData
@@ -192,10 +151,10 @@ export class AuthService {
                 isVerified: true
             })
             if (role === 'mentor') {
-                await sendMentorData(userData)
+                await sendMentorData('mentorQueue', userData)
             }
-            const accessToken = generateAccessToken({ id: userData._id.toString(), email,role: userData.role })
-            const refreshToken = generateRefreshToken({ id: userData._id.toString(),email, role: userData.role })
+            const accessToken = generateAccessToken({ id: userData._id.toString(), email, role: userData.role })
+            const refreshToken = generateRefreshToken({ id: userData._id.toString(), email, role: userData.role })
             return {
                 success: true, message: 'Sign in with google completed', role: role, exist: false,
                 accessToken, refreshToken, user: userData
@@ -209,7 +168,7 @@ export class AuthService {
     async signIn(email: string, password: string, role: string): Promise<SignInResult | undefined> {
         try {
             const checkuser = await this.userRepository.findByEmail(email)
-            if (!checkuser) {
+            if (!checkuser || role!==checkuser.role) {
                 return { success: false, message: "User not existed" }
             }
             if (checkuser.isVerified === false) {
@@ -225,10 +184,10 @@ export class AuthService {
             // if (checkuser.role === 'mentor' && checkuser.isApproved == 'rejected') {
             //     return { success: false, message: "Mentor approval rejected." }
             // }
-            const accessToken = generateAccessToken({ id: checkuser._id.toString(),email, role: checkuser.role })
-            const refreshToken = generateRefreshToken({ id: checkuser._id.toString(),email, role: checkuser.role })
-            console.log(refreshToken,'refresh token in auth.service');
-            
+            const accessToken = generateAccessToken({ id: checkuser._id.toString(), email, role: checkuser.role })
+            const refreshToken = generateRefreshToken({ id: checkuser._id.toString(), email, role: checkuser.role })
+            console.log(refreshToken, 'refresh token in auth.service');
+
             return { success: true, message: "Sign in successfully completed", checkuser, accessToken, refreshToken };
         } catch (error) {
             console.error('Error founded in sign in ', error);
@@ -270,15 +229,52 @@ export class AuthService {
         }
     }
 
-    async updateMentorField(id: string) {
+    async updateFormFieldAndPhoto(id: string, profile: string) {
         try {
             const updateData = {
-                isMentorFormFilled: true
+                isMentorFormFilled: true,
+                profile
             }
+            
             const updateMentor = await this.userRepository.update(id, updateData)
+            console.log(updateMentor,'update mentor ');
+            
             return { updateMentor }
         } catch (error) {
             console.error('Error founded in updating updateMentorField', error);
+        }
+    }
+
+
+
+    async passwordUpdate(id:string,data:PasswordUpdate){
+        try {
+            const {currentPassword,newPassword,confirmPassword} = data
+            console.log(currentPassword,newPassword,confirmPassword,'))))');
+            const checkUser = await this.userRepository.findById(id)
+            if(!checkUser){
+                return {success:false,message:'not user'}
+            }
+          const checkPassword = await bcrypt.compare(currentPassword,checkUser.password)
+          console.log(checkPassword,'checkPassword');
+          
+          if(!checkPassword){
+              return {success:false,message:'wrong password'}
+          }
+          if(newPassword !== confirmPassword){
+              return {success:false,message:'password do not match'}
+          }
+          const hashedPassword = await hashPassword(newPassword)
+          const updatePassword = await this.userRepository.update(id,{password:hashedPassword})
+          console.log(updatePassword,'update password');
+          if(!updatePassword){
+              return {success:false,message:'not updated'}
+          }
+          return {success:true,message:'updated'}
+
+        } catch (error) {
+            console.error('Error founded in password update',error);
+            return {success:false,message:'error'}
         }
     }
 }

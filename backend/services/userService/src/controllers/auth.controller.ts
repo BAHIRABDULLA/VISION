@@ -1,16 +1,23 @@
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 // import { AuthService } from "../services/auth.service";
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { HttpStatus } from "../enums/http.status";
 import { setRefreshTokenCookie } from "../utils/tokenCookie.util";
 import { createResponse, sendResponse } from "../utils/response.handler";
 import { generateAccessToken } from "../utils/token.util";
-import { authService } from "..";
+import { IAuthService } from "../services/interface/IAuth.service";
+interface CustomeRequest extends Request {
+    user?: string | JwtPayload,
+}
 
+export class AuthController {
+    private authService: IAuthService
 
-
-class AuthController {
-
+    
+    constructor(authService: IAuthService) {
+        console.log('AuthController constructed:', !!authService);
+        this.authService = authService
+    }
 
     async signup(req: Request, res: Response) {
         try {
@@ -19,7 +26,7 @@ class AuthController {
             console.log(req.body, 'reqq.   bbbbooodyddydy');
 
 
-            const user = await authService.signUp(email)
+            const user = await this.authService.signUp(email)
             return res.json(user)
         } catch (error) {
             console.error('error showing in auth controller signup', error);
@@ -34,15 +41,15 @@ class AuthController {
 
             const { fullName, email, password, role, otp } = req.body
             console.log(req.body, 'rq.body ');
-            console.log(fullName, 'fullnam e', email, 'email', password, 'passowrd', role, 'role', otp, 'otp');
+            console.log(fullName, 'fullname', email, 'email', password, 'passowrd', role, 'role', otp, 'otp');
 
 
-            const result = await authService.verifySignUpOtp(fullName, email, password, role, otp)
+            const result = await this.authService.verifySignUpOtp(fullName, email, password, role, otp)
             console.log(result, 'result in otp verification controller ');
 
             if (result?.success) {
 
-                if (result.data.role === 'mentee') {
+                if (result.data?.role === 'mentee') {
                     setRefreshTokenCookie(res, result.data.refreshToken!)
 
                     return res.status(HttpStatus.OK).json({
@@ -64,7 +71,7 @@ class AuthController {
     async resendOtp(req: Request, res: Response) {
         try {
             const { email } = req.body
-            const otpToService = await authService.resendOtpWork(email)
+            const otpToService = await this.authService.resendOtpWork(email)
             return res.json(otpToService)
         } catch (error) {
             console.error('Error founded in resend otp', error);
@@ -73,9 +80,10 @@ class AuthController {
 
 
     async signin(req: Request, res: Response) {
+        console.log('Signin called:', !!this.authService);
         try {
             const { email, password, role } = req.body
-            const result = await authService.signIn(email, password, role)
+            const result = await this.authService.signIn(email, password, role)
             if (result?.success) {
                 // setRefreshTokenCookie(res, result.refreshToken!)
 
@@ -103,7 +111,7 @@ class AuthController {
         try {
             const { email, name, role } = req.body
 
-            const result = await authService.signInWithGoogle(email, name, role)
+            const result = await this.authService.signInWithGoogle(email, name, role)
             if (result?.success) {
                 res.cookie('refreshToken', result.refreshToken, {
                     httpOnly: true,
@@ -126,7 +134,7 @@ class AuthController {
     async forgetPassword(req: Request, res: Response) {
         try {
             const { email } = req.body
-            const response = await authService.sendMail(email)
+            const response = await this.authService.sendMail(email)
             return res.json(response)
         } catch (error) {
             console.error('Error founded in forget password', error);
@@ -137,7 +145,7 @@ class AuthController {
     async resetPassword(req: Request, res: Response) {
         try {
             const { email, password, confirmPassword } = req.body
-            const response = await authService.resetPassword(email, password, confirmPassword)
+            const response = await this.authService.resetPassword(email, password, confirmPassword)
             return res.json(response)
         } catch (error) {
             console.error('Error founded in reset password', error);
@@ -173,36 +181,49 @@ class AuthController {
                 return res.status(HttpStatus.FORBIDDEN).json({ message: "Invalid token payload" });
             }
         } catch (error) {
-            if(error instanceof jwt.TokenExpiredError){
+            if (error instanceof jwt.TokenExpiredError) {
                 res.clearCookie('refreshToken')
-                return res.status(HttpStatus.FORBIDDEN).json({message:"Refresh token expired, please log in again"})
+                return res.status(HttpStatus.FORBIDDEN).json({ message: "Refresh token expired, please log in again" })
             }
             console.error("Error verifying refresh token:", error);
         }
     }
 
 
-    // async updateMentorForm(req: Request, res: Response) {
-    //     try {
-    //         const { id } = req.body
 
-    //         const response = await authService.updateMentorField(id)
-    //         return res.json(response)
-    //     } catch (error) {
-    //         console.error('Error founded in update mentor form filed', error);
-    //     }
-    // }
+    async changePassowrd(req:CustomeRequest,res:Response){
+        try {
+            const user = req.user as JwtPayload
+            if(!user){
+                res.json({success:false,message:"user does not existed"})
+            }
+            const data= req.body
+            console.log(data,'data in change password controller ');
+            
+            const passwordUpdate = await this.authService.passwordUpdate(user.id,data)
+            if(passwordUpdate?.success){
+                res.status(HttpStatus.OK).json({success:true,message:passwordUpdate?.message})
+            }else{
+                res.status(HttpStatus.OK).json({success:false,message:passwordUpdate?.message})
+            }
+            
+        } catch (error) {
+            console.error('Error founded in chagne password',error);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({success:false,message:'Internal server error'})
+        }
+    }
 
-    async logout(req:Request,res:Response) {
+
+    async logout(req: Request, res: Response) {
         try {
             console.log('logot here - - - - - - - ');
-            
+
             res.clearCookie('refreshToken')
-            return res.json({message:"Logged out successfully"})
+            return res.json({ message: "Logged out successfully" })
         } catch (error) {
-            console.error('Error founded in logout',error);
+            console.error('Error founded in logout', error);
         }
     }
 }
 
-export default new AuthController()
+// export default new AuthController(this.authService)

@@ -7,7 +7,7 @@ import  {Document, ObjectId} from "mongoose";
     password: string;
     role: 'mentee' | 'mentor';
     isVerified: boolean;
-    image: string;
+    profile: string;
     createAt: Date
     isApproved: 'pending'|'approved'|'rejected';
     isActive: boolean

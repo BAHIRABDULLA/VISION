@@ -50,16 +50,6 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
 
     const { register, handleSubmit, formState: { errors }, } = useForm<applyMentorSchemaType>({ resolver: zodResolver(applyMentorSchema) })
 
-    // const onSubmit = async (data: any) => {
-    //     console.log(data);
-    //     const response = await applyMentor1(data, email)
-    //     console.log(response, 'response in apply mentro 1');
-    //     if (response.data.success) {
-    //         navigate('/apply-mentor-2', { state: { email } })
-    //     } else {
-    //         navigate('/')
-    //     }
-    // }
 
     return (
         <div className='min-h-screen flex flex-col items-center justify-center bg-gray-50'>
