@@ -4,5 +4,10 @@ export const courseSchema = z.object({
   duration:z.string().min(1,{message:"Course duration is required"}),
   overview:z.string().min(1,{message:"Course overview is required"}),
   curriculum:z.string().min(1,{message:"Course curriculum ius required"}),
-  price:z.string().min(1,{message:"Course price is required"})
+  // price:z.number().min(1,{message:"Course price is required"}),
+  price: z.string()
+  .regex(/^\d+(\.\d{1,2})?$/, { message: "Course price must be a valid positive number" })
+  .transform((val) => parseFloat(val)),
+
+  image: z.instanceof(File).optional(),
 })

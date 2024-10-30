@@ -10,10 +10,9 @@ const app = express()
 
 app.use(cookieParser())
 app.use(cors({
-    origin:'http://localhost:5173',
-    credentials:true
+    origin: 'http://localhost:5173',
+    credentials: true
 }))
-
 
 const targets = {
     user: process.env.USER_API_BASE_URL,
@@ -21,6 +20,7 @@ const targets = {
     admin: process.env.ADMIN_API_BASE_URL,
     course: process.env.COURSE_API_BASE_URL
 }
+console.log(targets.course, 'target course ');
 
 app.use('/user', createProxyMiddleware({
     target: targets.user,
@@ -37,6 +37,6 @@ app.use('/admin', createProxyMiddleware({
 app.use('/course', createProxyMiddleware({
     target: targets.course,
     changeOrigin: true
-}))
+}));
 const port = process.env.GATEWAY_PORT
 app.listen(port, () => console.log(`server running on http://localhost:${port}`))

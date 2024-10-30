@@ -1,9 +1,9 @@
-export enum HttpStatus {
+export enum HttpStatus{
     OK = 200,
-    Created = 201,
-    BadRequest = 400,
-    Unauthorized = 401,
-    Forbidden = 403,
-    NotFound = 404,
-    InternalServerError = 500
+    CREATED = 201,
+    BAD_REQUEST = 400,
+    UNAUTHORIZED = 401,
+    FORBIDDEN = 403,
+    NOTFOUND = 404,
+    INTERNAL_SERVER_ERROR = 500
 }

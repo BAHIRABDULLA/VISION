@@ -1,12 +1,34 @@
-import React from 'react';
+import { getAllCourses } from '@/services/courseApi';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+interface CourseType {
+ 
+    id: number;
+    name: string;
+    duration: string;
+    overview: string;
+    curriculum: string;
+    price: number;
+    image?: string;
+    isActive: boolean;
+}
+
+
 const Courses = () => {
-    const courses = [
-        { id: 1, name: 'Python', duration: '9 Months', price: '$99', status: 'Active' },
-        { id: 2, name: 'JavaScript', duration: '6 Months', price: '$89', status: 'Active' },
-        { id: 3, name: 'Java', duration: '12 Months', price: '$120', status: 'Inactive' }
-    ];
+    const [courses, setCourses] = useState<CourseType[] | undefined>([]);
+    useEffect(()=>{
+        const fetchCourseData = async ()=>{
+            const response = await getAllCourses()
+            setCourses(response?.data.data)
+        }
+        fetchCourseData()
+    },[])
+    // const courses = [
+    //     { id: 1, name: 'Python', duration: '9 Months', price: '$99', status: 'Active' },
+    //     { id: 2, name: 'JavaScript', duration: '6 Months', price: '$89', status: 'Active' },
+    //     { id: 3, name: 'Java', duration: '12 Months', price: '$120', status: 'Inactive' }
+    // ];
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
@@ -47,12 +69,12 @@ const Courses = () => {
                                     <td className="py-3 px-5 text-gray-700">{course.price}</td>
                                     <td className="py-3 px-5">
                                         <span
-                                            className={`px-3 py-1 inline-block text-sm rounded-full ${course.status === 'Active'
+                                            className={`px-3 py-1 inline-block text-sm rounded-full ${course.isActive === true
                                                 ? 'bg-green-100 text-green-800'
                                                 : 'bg-red-100 text-red-800'
                                                 }`}
                                         >
-                                            {course.status}
+                                            {course.isActive ? 'Active' : 'Inactive'}
                                         </span>
                                     </td>
                                     <td className="py-3 px-5 flex items-center gap-4">
