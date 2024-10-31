@@ -22,7 +22,7 @@ const Header: React.FC = () => {
         <img src={vision_logo} alt="vision_logo" className='w-32 h-14 object-cover' />
       </div>
       <nav className=''>
-        <Link to='' className="text-white hover:text-purple-400   font-medium mx-9">Home</Link>
+        <Link to='/' className="text-white hover:text-purple-400   font-medium mx-9">Home</Link>
         <Link to='' className="text-white hover:text-purple-400  font-medium mx-9">Resources</Link>
         <NavLink to='/courses' className="text-white hover:text-purple-400  font-medium mx-9">Community</NavLink>
         {isAuthenticated ? (

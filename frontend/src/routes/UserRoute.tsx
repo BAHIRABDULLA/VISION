@@ -15,6 +15,7 @@ import PublicRoute from '@/components/auth/PublicRoute'
 import MenteeDashboard from '@/pages/user/MenteeDashboard'
 import PrivateRoute from '@/components/auth/PrivateRoute'
 import MentorPrivateRoute from '@/components/auth/MentorPrivateRoute'
+import CourseDetails from '@/pages/home&course/CourseDetails'
 
 
 const UserRoute = () => {
@@ -59,6 +60,12 @@ const UserRoute = () => {
             />
             <Route path="/mentor/dashboard"
                 element={<MentorPrivateRoute><MentorDashboard /></MentorPrivateRoute>
+                }
+            />
+
+
+            <Route path="/course/:id"
+                element={<PublicRoute>< CourseDetails /></PublicRoute>
                 }
             />
 

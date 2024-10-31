@@ -29,3 +29,14 @@ export const getAllCourses = async () => {
         console.error('Error founed in get all courses', error);
     }
 }
+
+
+export const getCourseDetails = async(id:string) => {
+    try {
+        const response = await api.get(`/${id}`)
+        return response
+    } catch (error) {
+        console.error('Error founded in get course details ',error);
+        
+    }
+}

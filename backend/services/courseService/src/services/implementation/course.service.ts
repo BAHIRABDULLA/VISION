@@ -49,4 +49,20 @@ export class CourseService implements ICourseService {
         }
     }
 
+
+    async getCourseById(id:string){
+        try {
+            const findCourse = await this.courseRepository.findById(id)
+            console.log(findCourse,'find course ');
+            
+            if(!findCourse){
+                return {success:false,message:"Course not founded "}
+            }
+            return {success:true,message:"Course founded",course:findCourse}
+        } catch (error) {
+            console.error('Error founded in get course details in service',error);
+            return {success:false,message:"Error retrieving course details"}
+        }
+    }
+
 }

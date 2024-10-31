@@ -63,4 +63,16 @@ export class CourseController {
             console.error('Error founded in get all courses',error);
         }
     }
+
+
+    async getCourseDetails(req:Request,res:Response) {
+        try {
+            const {id} = req.params
+            console.log(id,'id in course controller ')
+            const response = await this.courseService.getCourseById(id)
+            return res.json(response)
+        } catch (error) {
+            console.error('Error founded in get course details',error);
+        }
+    }
 }

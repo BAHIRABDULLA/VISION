@@ -1,4 +1,5 @@
 import CourseCard from '@/components/CourseCard'
+import CourseList from '@/components/CourseList'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import Hero from '@/features/user/home/Hero'
@@ -14,10 +15,8 @@ const Home: React.FC = () => {
 
       <div className='py-10'>
         <h2 className='text-4xl text-center  font-bold text-white'>Our Courses</h2>
-        <div className='grid grid-cols-3 gap-6 rounded-lg px-10 mt-8'>
-          <CourseCard title='Python' image={''} price='$45.99' rating='4.9' />
-          <CourseCard title='Python' image={''} price='$45.99' rating='4.9' />
-          <CourseCard title='Python' image={''} price='$45.99' rating='4.9' />
+        <div className='rounded-lg px-10 mt-8'>
+          <CourseList />
         </div>
       </div>
 

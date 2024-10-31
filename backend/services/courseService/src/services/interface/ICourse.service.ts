@@ -5,4 +5,5 @@ export interface ICourseService {
 
     createCourse(data: object): Promise<{success:boolean,message:string}>
     getAllCourses(): Promise<{success:boolean,message:string,data?:any}>
+    getCourseById(id:string):Promise<{success:boolean,message:string,data?:object}>
 }
