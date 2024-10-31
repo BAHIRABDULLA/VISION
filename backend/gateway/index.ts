@@ -18,7 +18,8 @@ const targets = {
     user: process.env.USER_API_BASE_URL,
     mentor: process.env.MENTOR_API_BASE_URL,
     admin: process.env.ADMIN_API_BASE_URL,
-    course: process.env.COURSE_API_BASE_URL
+    course: process.env.COURSE_API_BASE_URL,
+    payment: process.env.PAYMENT_API_BASE_URL
 }
 console.log(targets.course, 'target course ');
 
@@ -36,6 +37,10 @@ app.use('/admin', createProxyMiddleware({
 }))
 app.use('/course', createProxyMiddleware({
     target: targets.course,
+    changeOrigin: true
+}));
+app.use('/course', createProxyMiddleware({
+    target: targets.payment,
     changeOrigin: true
 }));
 const port = process.env.GATEWAY_PORT
