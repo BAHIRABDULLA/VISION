@@ -17,20 +17,51 @@ const Header: React.FC = () => {
     dispatch(menteeLogout())
   }
   return (
-    <header className='flex  justify-center items-center px-10 py-4'>
-      <div className=''>
-        <img src={vision_logo} alt="vision_logo" className='w-32 h-14 object-cover' />
+    <header className='flex items-center justify-between px-4 md:px-10 py-6 max-w-7xl mx-auto'>
+      {/* Logo container */}
+      <div className='flex-shrink-0'>
+        <img 
+          src={vision_logo} 
+          alt="vision_logo" 
+          className='w-48 md:w-56 h-auto object-contain' 
+        />
       </div>
-      <nav className=''>
-        <Link to='/' className="text-white hover:text-purple-400   font-medium mx-9">Home</Link>
-        <Link to='' className="text-white hover:text-purple-400  font-medium mx-9">Resources</Link>
-        <NavLink to='/courses' className="text-white hover:text-purple-400  font-medium mx-9">Community</NavLink>
+
+      {/* Navigation items */}
+      <nav className='hidden md:flex items-center space-x-12'>
+        <Link 
+          to='/' 
+          className="text-white text-lg hover:text-purple-400 font-medium transition-colors"
+        >
+          Home
+        </Link>
+        <NavLink 
+          to='/courses' 
+          className="text-white text-lg hover:text-purple-400 font-medium transition-colors"
+        >
+          Courses
+        </NavLink>
+        <Link 
+          to='' 
+          className="text-white text-lg hover:text-purple-400 font-medium transition-colors"
+        >
+          Mentors
+        </Link>
         {isAuthenticated ? (
-          <NavLink to='/profile' className="text-white hover:text-purple-400 font-medium mx-9">
+          <NavLink 
+            to='/profile' 
+            className="text-white text-lg hover:text-purple-400 font-medium transition-colors"
+          >
             Profile
           </NavLink>
-        ) : (<NavLink to='/signin' className="text-white
-         hover:text-purple-400  font-medium mx-9">Sign In</NavLink>)}
+        ) : (
+          <NavLink 
+            to='/signin' 
+            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors text-lg font-medium"
+          >
+            Sign In
+          </NavLink>
+        )}
       </nav>
     </header>
   )

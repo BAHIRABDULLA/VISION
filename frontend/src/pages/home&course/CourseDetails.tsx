@@ -6,7 +6,14 @@ import { getCourseDetails } from '@/services/courseApi';
 import Loading from '@/components/Loading';
 import toast from 'react-hot-toast';
 import Footer from '@/components/Footer';
+import {loadStripe} from '@stripe/stripe-js'
+import { createCheckoutSession } from '@/services/paymentApi';
 
+
+const publicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+console.log(publicKey,'public key');
+
+const stripePromise = loadStripe(publicKey)
 
 interface CourseDetailProps {
     name: string;
@@ -17,6 +24,25 @@ interface CourseDetailProps {
     price: number;
 }
 const CourseDetails = () => {
+
+
+    const handleEnroll = async () =>{
+        const stripe = await stripePromise
+        try {
+            console.log(id,'id in handelenrolle');
+            
+            const response = await createCheckoutSession({price:course?.price,id})
+            const  result = await stripe?.redirectToCheckout({
+                sessionId:response?.data.id
+            })
+            if(result?.error){
+                toast.error(result.error.message)
+            }
+        } catch (error) {
+            console.error('Error creating cehckout session',error);
+        }
+    }
+
 
     const { id } = useParams<{ id: string }>()
     console.log(id, 'id is here bro  . . . ');
@@ -58,7 +84,8 @@ const CourseDetails = () => {
                     </div>
                     <div className="bg-slate-800 p-4 rounded-lg text-center">
                         <div className="text-2xl text-white font-bold mb-2">$ {course?.price}</div>
-                        <button className="bg-pink-600 text-white px-6 py-2 rounded-lg font-bold mb-2">
+                        <button className="bg-pink-600 text-white px-6 py-2 rounded-lg font-bold mb-2"
+                        onClick={handleEnroll}>
                             ENROLL!
                         </button>
                         <div className="flex justify-center">
@@ -67,7 +94,7 @@ const CourseDetails = () => {
                             ))}
                         </div>
                     </div>
-                </div>
+                </div> 
 
                 {/* Course Overview */}
                 <section className="mb-12">
