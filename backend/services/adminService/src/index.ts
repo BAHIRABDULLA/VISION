@@ -4,7 +4,7 @@ import router from './routes/admin.route'
 import cors from 'cors'
 import connectMongodb from './config/db.config'
 import { rabbitmqConnect } from './config/rabbitmq'
-import { AdminService } from './services/admin.service'
+import errorHandler from './middleware/error.handler'
 
 dotenv.config()
 
@@ -16,8 +16,8 @@ app.use(express.json())
 app.use(cors())
 
 
-export const adminService = new AdminService()
 app.use('/', router)
+app.use(errorHandler)
 
 connectMongodb()
 
