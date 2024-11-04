@@ -11,7 +11,7 @@ import React from 'react'
 
 const Home: React.FC = () => {
   return (
-    <div className='bg-slate-950 min-h-screen'>
+    <div className='bg-slate-800 min-h-screen'>
     <Header />
     <Hero />
 

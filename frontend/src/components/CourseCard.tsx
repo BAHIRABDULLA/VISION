@@ -21,7 +21,7 @@ const CourseCard: React.FC<CourseCardProps> = memo(({ id, name, image, price, ra
     navigate(`/course/${id}`)
   }
   return (
-    <div className="bg-gray-800 p-6 rounded-md shadow-md hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-gray-700/50 p-6 rounded-md shadow-md hover:shadow-lg transition-shadow duration-300">
       <img src={image} className="w-full h-40 object-cover rounded-md mb-4" alt="" />
       <h3 className="text-xl text-white font-bold mb-2">{name}</h3>
       <p className="text-purple-400 mb-2">Price: {price}</p>

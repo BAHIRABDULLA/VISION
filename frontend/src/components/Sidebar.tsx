@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout as menteeLogout } from '@/redux/slices/menteeAuthSlice';
 import { logout as mentorLogout } from '@/redux/slices/mentorAuthSlice';
 import { logout} from '@/services/userApi';
+import { Link } from 'react-router-dom';
 
 
 interface SidebarProps {
@@ -51,11 +52,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role, activePage, setActivePage,isCol
   ];
 
   return (
-    <div className={`min-h-screen fixed bg-gray-900 ${isCollapsed ? 'w-20' : 'w-64'} transition-width duration-300 text-white flex flex-col`}>
-      <div className="flex items-center justify-between p-4 bg-gray-800">
-        <h1 className={`text-xl font-semibold tracking-widest text-purple-400 ${isCollapsed ? 'hidden' : ''}`}>
+    <div className={`min-h-screen fixed bg-gray-700 ${isCollapsed ? 'w-20' : 'w-64'} transition-width duration-300 text-white flex flex-col`}>
+      <div className="flex items-center justify-between p-4 ">
+        <Link to='/' className={`text-xl ml-14 font-semibold tracking-widest text-purple-400 ${isCollapsed ? 'hidden' : ''}`}>
           VISION
-        </h1>
+        </Link>
         <button onClick={toggleSidebar} className="text-white">
           <FaBars />
         </button>

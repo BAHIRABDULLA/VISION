@@ -62,7 +62,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
     <div className="flex min-h-screen">
       <Sidebar role={role} activePage={activePage} setActivePage={setActivePage}
       isCollapsed={isCollapsed}  toggleSidebar={toggleSidebar} />
-      <main className={`flex-1 p-6 bg-gray-900 transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <main className={`flex-1 p-6 bg-slate-800 transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         {renderPageContent()}
       </main>
     </div>

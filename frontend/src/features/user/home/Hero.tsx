@@ -27,7 +27,7 @@ const Hero = () => {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
             {/* Left Content */}
             <div className="flex-1 max-w-xl">
-              <h1 className="text-5xl lg:text-6xl font-bold mb-6">
+              <h1 className="text-5xl text-white lg:text-6xl font-bold mb-6">
                 <span className="text-purple-500">Transform</span> Your
                 <br />
                 Career Path Today

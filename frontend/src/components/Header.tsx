@@ -35,14 +35,14 @@ const Header: React.FC = () => {
         >
           Home
         </Link>
-        <NavLink 
+        <Link 
           to='/courses' 
           className="text-white text-lg hover:text-purple-400 font-medium transition-colors"
         >
           Courses
-        </NavLink>
+        </Link>
         <Link 
-          to='' 
+          to='/mentors' 
           className="text-white text-lg hover:text-purple-400 font-medium transition-colors"
         >
           Mentors
