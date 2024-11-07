@@ -16,6 +16,10 @@ import MenteeDashboard from '@/pages/user/MenteeDashboard'
 import PrivateRoute from '@/components/auth/PrivateRoute'
 import MentorPrivateRoute from '@/components/auth/MentorPrivateRoute'
 import CourseDetails from '@/pages/home&course/CourseDetails'
+import Success from '@/pages/home&course/Success'
+import Cancel from '@/pages/home&course/Cancel'
+import MentorDetails from '@/pages/mentorApplication/MentorDetails'
+import Courses from '@/pages/home&course/Courses'
 
 
 const UserRoute = () => {
@@ -63,17 +67,16 @@ const UserRoute = () => {
                 }
             />
 
+            <Route path='/Courses' element={<Courses />} />
+            <Route path="/course/:id" element={< CourseDetails />} />
+            <Route path='/success' element={<Success />} />
+            <Route path='/cancel' element={<Cancel />} />
 
-            <Route path="/course/:id"
-                element={<PublicRoute>< CourseDetails /></PublicRoute>
-                }
-            />
-
-
+            <Route path='/mentorDetails' element={<MentorDetails />} />
 
             <Route path='/apply-mentor' element={<PublicRoute><ApplyMentor /></PublicRoute>} />
             <Route path='/thanks-mentor' element={<PublicRoute><ThanksMentor /></PublicRoute>} />
-            <Route path='/mentors' element={<PublicRoute><AllMentors /></PublicRoute>} />
+            <Route path='/mentors' element={<AllMentors />} />
 
         </Routes>
     )

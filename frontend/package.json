@@ -19,6 +19,7 @@
     "@radix-ui/react-primitive": "^2.0.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@reduxjs/toolkit": "^2.2.7",
+    "@stripe/stripe-js": "^4.9.0",
     "@toolpad/core": "^0.7.0",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.7.7",
