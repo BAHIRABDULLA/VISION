@@ -3,8 +3,9 @@ import { inject, injectable } from 'inversify'
 import axios from 'axios'
 import { AdminRepository } from "../../repositories/implementation/admin.repository"
 import { TYPES } from '../../types'
-import { accessToken } from '../../utils/token'
+import {  generateAccessToken } from '../../utils/token'
 import { IAdminService } from '../interface/IAdmin.service'
+import { IAdminRepository } from '../../repositories/interface/IAdmin.repository'
 
 
 
@@ -17,22 +18,25 @@ const mentorApi = axios.create({
 
 @injectable()
 export class AdminService implements IAdminService {
-    private adminRepository: AdminRepository;
-    constructor(@inject(TYPES.AdminRepository) adminRepository: AdminRepository) {
+    private adminRepository: IAdminRepository;
+    constructor(@inject(TYPES.AdminRepository) adminRepository: IAdminRepository) {
         this.adminRepository = adminRepository
     }
 
     async login(email: string, password: string): Promise<{ token: string } | null> {
         try {
             const admin = await this.adminRepository.findByEmail(email)
+            
             if (!admin) return null
             // return errorResponse('Admin not found')
 
-            const passwordCheck = await bcrypt.compare(password, admin.password)
+            const passwordCheck = await bcrypt.compare(password, admin.password);
+            
             if (!passwordCheck) return null
             // return errorResponse("Invalid credentials, Please try again")
-            const token = accessToken(admin.id, email)
-
+            const token = generateAccessToken(email)
+            console.log(token,'token token token ');
+            
             // return successResponse("Login successful", { token:getAccessToken })
             return { token }
         } catch (error) {

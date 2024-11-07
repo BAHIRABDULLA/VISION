@@ -1,42 +1,53 @@
 import { NextFunction, Request, Response } from 'express'
 import { AdminService } from "../services/implementation/admin.service";
-import { inject,injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import { errorResponse, successResponse } from '../utils/response.helper';
 import { HttpStatus } from '../enums/http.status';
+import { IAdminService } from '../services/interface/IAdmin.service';
+import jwt, { JwtPayload } from 'jsonwebtoken'
+import {  generateAccessToken, generateRefreshToken } from '../utils/token';
+import { setRefreshTokenCookie } from '../utils/tokenSetCookie';
 
 
 @injectable()
 export class AdminController {
 
-    private adminService:AdminService;
-    constructor(@inject(TYPES.AdminService) adminService:AdminService){
+    private adminService: IAdminService;
+    constructor(@inject(TYPES.AdminService) adminService: IAdminService) {
         this.adminService = adminService
     }
 
-    async loginControl(req: Request, res: Response,next:NextFunction){
+
+    async loginControl(req: Request, res: Response, next: NextFunction) {
         try {
             const { email, password } = req.body;
             const response = await this.adminService.login(email, password);
-            if(!response?.token){
-                return errorResponse(res,HttpStatus.Unauthorized,'Invalid credential')
+            console.log(response, 'response in respn');
+
+            if (!response?.token) {
+                return errorResponse(res, HttpStatus.UNAUTHORIZED, 'Invalid credentials')
             }
-            return successResponse(res,HttpStatus.OK,"Login successful",{token:response.token,user:email})
+            const refreshToken = generateRefreshToken(email)
+            console.log(refreshToken,'admin refresh token ');
+            
+            setRefreshTokenCookie(res,refreshToken)
+            return successResponse(res, HttpStatus.OK, "Login successful", { token: response.token, user: email })
         } catch (error) {
-            console.error('Error founded in login adminController ');
+            console.error('Error founded in login adminController ', error);
             next(error)
         }
     }
 
 
-    async getAllUsers(req: Request, res: Response,next:NextFunction) {
+    async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.adminService.users()
-            if(!response){
-                return errorResponse(res,HttpStatus.NotFound,'Users not founded')
+            if (!response) {
+                return errorResponse(res, HttpStatus.NOTFOUND, 'Users not founded')
             }
-            res.json(response)
-            return successResponse(res,HttpStatus.OK,'Users sent',response.users)
+            // res.json(response)
+            return successResponse(res, HttpStatus.OK, 'Users sent', {users:response.users})
         } catch (error) {
             console.error("Error fetching all users", error);
             next(error)
@@ -44,18 +55,61 @@ export class AdminController {
     }
 
 
-    async getUserById(req: Request, res: Response ,next:NextFunction) {
+    async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
             // console.log(id,'id in admin controller ');
             const response = await this.adminService.getUser(id)
-            if(!response?.user){
-                return errorResponse(res,HttpStatus.NotFound,"User data not found")
+            if (!response?.user) {
+                return errorResponse(res, HttpStatus.NOTFOUND, "User data not found")
             }
-            return successResponse(res,HttpStatus.OK,"User data successfully sent",response.user)
+            return successResponse(res, HttpStatus.OK, "User data successfully sent", response.user)
         } catch (error) {
             console.error('Error founded in get user', error);
             next(error)
+        }
+    }
+
+
+    async logout(req:Request,res:Response){
+        try {
+            res.clearCookie('refreshToken-a')
+            return successResponse(res,HttpStatus.OK,'Logged out successfully')
+        } catch (error) {
+            console.error('Error founded in admin logout',error);
+        }
+    }
+
+    
+    
+    async setNewAccessToken(req: Request, res: Response) {
+        try {
+            const refreshToken = req.cookies['refreshToken-a']
+            console.log(refreshToken, '= = = = =');
+
+            if (!refreshToken) return res.status(HttpStatus.FORBIDDEN).json({ message: "No refresh token provided" })
+            const secret = process.env.REFRESH_TOKEN_SECRET
+            if (!secret) {
+                return res.json({ message: "internal server error" })
+            }
+            const decoded = jwt.verify(refreshToken, secret)
+            console.log(decoded, 'decoded in refresh token ');
+
+            if (typeof decoded === 'object' && decoded !== null && 'email' in decoded ) {
+                
+                const newAccessToken = generateAccessToken( (decoded as JwtPayload).email )
+
+                return res.json({ accessToken: newAccessToken });
+            } else {
+                res.clearCookie('refreshToken-a')
+                return res.status(HttpStatus.FORBIDDEN).json({ message: "Invalid token payload" });
+            }
+        } catch (error) {
+            if (error instanceof jwt.TokenExpiredError) {
+                res.clearCookie('refreshToken-a')
+                return res.status(HttpStatus.FORBIDDEN).json({ message: "Refresh token expired, please log in again" })
+            }
+            console.error("Error verifying refresh token:", error);
         }
     }
 }

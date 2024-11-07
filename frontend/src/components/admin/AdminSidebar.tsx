@@ -4,11 +4,12 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { SiCoursera } from "react-icons/si";
 import { GrResources,GrTransaction  } from "react-icons/gr";
 
-import { logout } from '@/redux/slices/adminAuthSlice';
+import { logout as adminLogout} from '@/redux/slices/adminAuthSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import SideBarLink from './SideBarLink';
+import { logout } from '@/services/adminApi';
 
 const links = [
   { to: '/admin/dashboard', text: 'Dashboard'  ,icon:<MdSpaceDashboard/> },
@@ -28,9 +29,14 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, setIsCollapsed
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const handleLogout = () => {
-    dispatch(logout());  
-    navigate('/admin/login');   
+  const handleLogout = async() => {
+    dispatch(adminLogout());
+    localStorage.removeItem('accessToken-a')
+    const response = await logout()
+    console.log(response,'response in admin logout');
+    if(response){
+      navigate('/admin/login');   
+    }
   };
   return (
     <div

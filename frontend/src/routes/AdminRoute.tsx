@@ -10,6 +10,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import AdminPublicRoute from '@/components/auth/AdminPublicRoute'
 import AdminPrivateRoute from '@/components/auth/AdminPrivateRoute'
+import EditCourse from '@/features/admin/EditCourse'
 
 const AdminRoute = () => {
     return (
@@ -20,6 +21,7 @@ const AdminRoute = () => {
                 <Route path='users/:id' element={<ViewUser />} />
                 <Route path='courses' element={<Courses />} />
                 <Route path='courses/add' element={<AddCourse />} />
+                <Route path='courses/:id' element={<EditCourse/>} />
                 <Route path='resources' element={<Resource />} />
             </Route>
             <Route path='/admin/login' element={<AdminPublicRoute><Login /></AdminPublicRoute>} />

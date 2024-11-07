@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express'
+import express from 'express'
 import cors from 'cors'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import dotenv from 'dotenv'
@@ -39,7 +39,7 @@ app.use('/course', createProxyMiddleware({
     target: targets.course,
     changeOrigin: true
 }));
-app.use('/course', createProxyMiddleware({
+app.use('/payment', createProxyMiddleware({
     target: targets.payment,
     changeOrigin: true
 }));
