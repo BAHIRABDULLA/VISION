@@ -10,7 +10,7 @@ const upload = multer({
 
 
 
-router.post('/',upload.single('image'),courseController.createCourse.bind(courseController));
+router.post('/admin/',upload.single('image'),courseController.createCourse.bind(courseController));
 router.get('/',courseController.getAllCourses.bind(courseController));
 router.get('/:id',courseController.getCourseDetails.bind(courseController))
 

@@ -4,14 +4,14 @@ import Header from '@/components/Header';
 import { useParams } from 'react-router-dom';
 import { getCourseDetails } from '@/services/courseApi';
 import Loading from '@/components/Loading';
-import toast from 'react-hot-toast';
+import toast,{Toaster} from 'react-hot-toast';
 import Footer from '@/components/Footer';
-import {loadStripe} from '@stripe/stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
 import { createCheckoutSession } from '@/services/paymentApi';
 
 
 const publicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
-console.log(publicKey,'public key');
+console.log(publicKey, 'public key');
 
 const stripePromise = loadStripe(publicKey)
 
@@ -26,20 +26,21 @@ interface CourseDetailProps {
 const CourseDetails = () => {
 
 
-    const handleEnroll = async () =>{
+    const handleEnroll = async () => {
         const stripe = await stripePromise
         try {
-            console.log(id,'id in handelenrolle');
-            
-            const response = await createCheckoutSession({price:course?.price,id})
-            const  result = await stripe?.redirectToCheckout({
-                sessionId:response?.data.id
+            console.log(id, 'id in handelenrolle');
+
+            const response = await createCheckoutSession({ price: course?.price, id })
+            const result = await stripe?.redirectToCheckout({
+                sessionId: response?.data.id
             })
-            if(result?.error){
-                toast.error(result.error.message)
+            if (result?.error) {
+                toast.error('Payment failed')
             }
         } catch (error) {
-            console.error('Error creating cehckout session',error);
+            toast.error('Please sign in your account')
+            console.error('Error creating cehckout session', error);
         }
     }
 
@@ -62,6 +63,7 @@ const CourseDetails = () => {
                         toast.error('Course didnt get')
                     }
                 } catch (error) {
+                    toast.error('Payment failed')
                     console.error('Error founded in fething details', error);
                 } finally {
                     setLoading(false)
@@ -71,6 +73,9 @@ const CourseDetails = () => {
         fetchCourseDetails()
     }, [id])
 
+    console.log(course?.curriculum[0].topics, 'course curriculum detailed here');
+
+
     if (loading) return <Loading />
     return (
         <>
@@ -78,14 +83,15 @@ const CourseDetails = () => {
             <div className='bg-slate-800 min-h-screen  px-6 md:px-20'>
                 <Header />
                 <div className="flex justify-between items-start mb-12">
+                    <Toaster/>
                     <div>
                         <h1 className="text-3xl text-white font-bold mb-2">{course?.name}</h1>
                         <p className="text-gray-400">Course Duration: Estimate {course?.duration}</p>
                     </div>
                     <div className="bg-slate-500 p-4 rounded-lg text-center">
-                        <div className="text-2xl text-white font-bold mb-2">$ {course?.price}</div>
+                        <div className="text-2xl text-white font-bold mb-2">₹ {course?.price}</div>
                         <button className="bg-pink-600 text-white px-6 py-2 rounded-lg font-bold mb-2"
-                        onClick={handleEnroll}>
+                            onClick={handleEnroll}>
                             ENROLL!
                         </button>
                         <div className="flex justify-center">
@@ -94,7 +100,7 @@ const CourseDetails = () => {
                             ))}
                         </div>
                     </div>
-                </div> 
+                </div>
 
                 {/* Course Overview */}
                 <section className="mb-12">
@@ -102,14 +108,14 @@ const CourseDetails = () => {
                     <div className="bg-slate-500/50 p-6 rounded-lg">
                         <p className="text-gray-300 mb-4">
                             {course?.overview}
-                            Embark On The Most Intensely Active-In-Demand Programming Language Today. This Course Is Designed For Those Looking To Python Programming To Advance In Computing Taking You Build The Skills Necessary For Software Development, Data Analysis, Automation, And Web Applications.
+                            {/* Embark On The Most Intensely Active-In-Demand Programming Language Today. This Course Is Designed For Those Looking To Python Programming To Advance In Computing Taking You Build The Skills Necessary For Software Development, Data Analysis, Automation, And Web Applications. */}
                         </p>
-                        <ul className="list-disc pl-6 text-gray-300">
+                        {/* <ul className="list-disc pl-6 text-gray-300">
                             <li className="mb-2">Write Efficient Python Code And Build Real-Own Projects</li>
                             <li className="mb-2">Learn Core Python Programming Concepts And Data Structures</li>
                             <li className="mb-2">Develop Web Applications Using Python Frameworks</li>
                             <li className="mb-2">Whether You're New To Programming Or Looking To Expand Your Skills, This Course Provides The Tools And Resources To Excel In Python And Beyond</li>
-                        </ul>
+                        </ul> */}
                     </div>
                 </section>
 
@@ -117,31 +123,41 @@ const CourseDetails = () => {
                 <section className="mb-12">
                     <h2 className="text-xl text-white font-bold mb-4">Course Curriculum</h2>
                     <div className="bg-slate-500/50 p-6 rounded-lg">
+                        {/* <h3 className='font-bold text-white'>{course?.curriculum}</h3><br /> */}
                         <div className="grid grid-cols-2 gap-6">
                             <div>
-                                <h3 className="font-bold mb-4">Basic Topics (Beginner)</h3>
+                                <h3 className="font-bold text-white mb-4">Basic Topics (Beginner)</h3>
                                 <ul className="space-y-2 text-gray-300">
-                                    <li>Introduction To Python And Setup</li>
+                                    {/* <h4>{course?.curriculum[0].topics}</h4> */}
+                                    {course?.curriculum[0].topics?.map((topic, index) => (
+                                        <li key={index}>{topic}</li>
+                                    ))}
+                                    {/* <li>Introduction To Python And Setup</li>
                                     <li>Control Structure Of This Course</li>
                                     <li>Functions And Modules</li>
-                                    <li>Test</li>
+                                    <li>Test</li> */}
                                 </ul>
                             </div>
                             <div>
-                                <h3 className="font-bold mb-4">Intermediate Topics</h3>
+                                <h3 className="font-bold text-white mb-4">Intermediate Topics</h3>
                                 <ul className="space-y-2 text-gray-300">
-                                    <li>Object-Oriented Programming (OOP) In Python</li>
+                                    {/* <h4>{course?.curriculum[1].topics}</h4> */}
+                                    {course?.curriculum[1].topics?.map((topic, index) => (
+                                        <li key={index}>{topic}</li>
+                                    ))}
+                                    {/* <li>Object-Oriented Programming (OOP) In Python</li>
                                     <li>Working With Dynamic Memory Parsers</li>
-                                    <li>Test</li>
+                                    <li>Test</li> */}
                                 </ul>
                             </div>
                             <div>
-                                <h3 className="font-bold mb-4">Advanced Topics</h3>
+                                <h3 className="font-bold text-white mb-4">Advanced Topics</h3>
                                 <ul className="space-y-2 text-gray-300">
-                                    <li>Advanced OOP Concepts (Inheritance, Polymorphism)</li>
-                                    <li>Multithreading And Concurrency</li>
-                                    <li>Testing And Debugging</li>
-                                    <li>Test</li>
+                                    {/* <h4>{course?.curriculum[2].topics}</h4> */}
+
+                                    {course?.curriculum[2].topics?.map((topic, index) => (
+                                        <li key={index}>{topic}</li>
+                                    ))}
                                 </ul>
                             </div>
                         </div>
@@ -174,7 +190,7 @@ const CourseDetails = () => {
                 </section>
                 <div className='mt-5'>
 
-                <Footer/>
+                    <Footer />
                 </div>
             </div>
         </>

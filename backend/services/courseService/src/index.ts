@@ -4,6 +4,7 @@ import router from './routes/course.route';
 import cors from 'cors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
+import errorHandler from './middleware/error.handler';
 dotenv.config()
 
 const app = express()
@@ -22,7 +23,7 @@ connectDb()
 
 
 app.use('/',router)
-
+app.use(errorHandler)
 
 const port = process.env.PORT
 app.listen(port,()=>console.log(`server listening on http://localhost:4004`))

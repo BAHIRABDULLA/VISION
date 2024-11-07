@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface CourseType {
- 
-    id: number;
+
+    _id: number;
     name: string;
     duration: string;
     overview: string;
@@ -17,13 +17,15 @@ interface CourseType {
 
 const Courses = () => {
     const [courses, setCourses] = useState<CourseType[] | undefined>([]);
-    useEffect(()=>{
-        const fetchCourseData = async ()=>{
+    console.log(courses,'courses');
+    useEffect(() => {
+        const fetchCourseData = async () => {
             const response = await getAllCourses()
             setCourses(response?.data.data)
+            
         }
         fetchCourseData()
-    },[])
+    }, [])
     // const courses = [
     //     { id: 1, name: 'Python', duration: '9 Months', price: '$99', status: 'Active' },
     //     { id: 2, name: 'JavaScript', duration: '6 Months', price: '$89', status: 'Active' },
@@ -59,8 +61,8 @@ const Courses = () => {
                     <tbody>
                         {courses && courses.length > 0 ? (
                             courses.map((course, index) => (
-                                <tr
-                                    key={course.id}
+                                <tr 
+                                    key={course._id}
                                     className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}
                                 >
                                     <td className="py-3 px-5 text-gray-700">{index + 1}</td>
@@ -79,7 +81,7 @@ const Courses = () => {
                                     </td>
                                     <td className="py-3 px-5 flex items-center gap-4">
                                         <Link
-                                            to={`/admin/courses/edit/${course.id}`}
+                                            to={`/admin/courses/${course._id}`}
                                             className="text-blue-500 hover:text-blue-700"
                                         >
                                             Edit
