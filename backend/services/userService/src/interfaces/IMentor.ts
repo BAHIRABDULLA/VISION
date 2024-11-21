@@ -8,9 +8,15 @@ export interface IMentor extends Document {
     location: string
     category: string
     company?: string;
+    experience?:number;
     skills: string[];
     bio: string;
-    socialMediaUrls?: string[];
+    socialMediaUrls?: {
+        github?:string;
+        linkedin?:string;
+        x?:string;
+        portfolio?:string
+    }
     introductionVideoUrl?: string;
     featuredArticleUrl?: string;
     whyBecomeMentor: string;

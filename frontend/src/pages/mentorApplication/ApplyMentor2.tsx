@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-import {useLocation,useNavigate} from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const applyMentorSchema = z.object({
     introductionVideoUrl: z.preprocess(
@@ -24,15 +24,15 @@ const applyMentorSchema = z.object({
 type applyMentorSchemaType = z.infer<typeof applyMentorSchema>
 
 type applyMentor2Props = {
-    onFinish:(data:any)=>void;
-    prevStep:()=>void;
+    onFinish: (data: any) => void;
+    prevStep: () => void;
 }
-const ApplyMentor2:React.FC<applyMentor2Props> = ({prevStep,onFinish}) => {
+const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
 
     const location = useLocation()
-    const {email} = location?.state
-    console.log(email,'email in location ');
-    
+    const { email } = location?.state
+    console.log(email, 'email in location ');
+
     const navigate = useNavigate()
 
     const { register, handleSubmit, formState: { errors } } = useForm<applyMentorSchemaType>({ resolver: zodResolver(applyMentorSchema) })
@@ -82,7 +82,7 @@ const ApplyMentor2:React.FC<applyMentor2Props> = ({prevStep,onFinish}) => {
                         <TextField
                             helperText="Link an interview / podcast / piece of writing you are proud of or were featured in."
                             id="demo-helper-text-aligned" placeholder='http://blog-url' {...register('featuredArticleUrl')}
-                            label="Featured Article (Optional)" fullWidth 
+                            label="Featured Article (Optional)" fullWidth
                         />
                         {errors.featuredArticleUrl && <p className='text-sm text-red-700'>{errors.featuredArticleUrl.message}</p>}
 
@@ -110,9 +110,11 @@ const ApplyMentor2:React.FC<applyMentor2Props> = ({prevStep,onFinish}) => {
                     {/* <div className='col-span-2 flex items-center'> */}
 
                 </div>
+                <div className='flex gap-5  py-1 mt-2 px-5'>
+                    <button type='button' onClick={prevStep} className=' text-gray-800 outline outline-offset-2 outline-gray-300 rounded-lg'>Back</button>
+                    <button type='submit' className='outline outline-offset-2 text-gray-800 outline-gray-300 rounded-lg  '>Finish</button>
+                </div>
 
-                <button type='button' onClick={prevStep} className='py-1 mt-2 px-5 text-gray-800 outline outline-offset-2 outline-gray-500 rounded-lg'>Back</button>
-                <button type='submit' className=' py-1 mt-5 px-5  outline outline-offset-2 outline-gray-300 rounded-lg  '>Finish</button>
             </form>
         </div>
     )

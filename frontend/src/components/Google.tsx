@@ -6,8 +6,8 @@ import { googleSignIn } from '@/services/userApi';
 import { signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, UseDispatch } from 'react-redux';
-import { login as menteeLogin} from '@/redux/slices/menteeAuthSlice';
-import { login as mentorLogin} from '@/redux/slices/mentorAuthSlice';
+import { login as menteeLogin } from '@/redux/slices/menteeAuthSlice';
+import { login as mentorLogin } from '@/redux/slices/mentorAuthSlice';
 
 interface GoogleProps {
     type: 'mentee' | 'mentor';
@@ -32,17 +32,18 @@ const Google: React.FC<GoogleProps> = ({ type }) => {
                 console.log(response, 'Response in auth sign up .tsx');
                 if (response.data.success) {
                     console.log(response.data.success, 'response.data.success')
-                    localStorage.setItem('accessToken', response.data.accessToken)
-                    console.log(localStorage.getItem('accessToken'),'localstorage access token ');
-                    
+                    console.log(localStorage.getItem('accessToken'), 'localstorage access token ');
+
                     if (response.data.role === 'mentee') {
-                        dispatch(menteeLogin({token:response.data.accessToken,user:response.data.user}))
+                        localStorage.setItem('accessToken', response.data.accessToken)
+                        dispatch(menteeLogin({ token: response.data.accessToken, user: response.data.user }))
                         console.log(response.data.role, 'response.data.role');
 
                         navigate('/')
                     } else {
+                        localStorage.setItem('accessToken', response.data.accessToken)
                         console.log(response.data.exist, 'response.data.exist');
-                        dispatch(mentorLogin({token:response.data.accessToken,user:response.data.user}))
+                        dispatch(mentorLogin({ token: response.data.accessToken, user: response.data.user }))
 
                         if (response.data.exist === true) {
                             console.log('its entered in if condition *****');
@@ -50,7 +51,7 @@ const Google: React.FC<GoogleProps> = ({ type }) => {
                         } else {
                             console.log('its entered in else condition ********');
 
-                            navigate('/apply-mentor-1',{state:{email:user.email}})
+                            navigate('/apply-mentor-1', { state: { email: user.email } })
                         }
                     }
                 } else {

@@ -49,17 +49,19 @@ const AuthSignIn: React.FC = () => {
       console.log('data:', data);
       const { email, password } = data
       const response = await signInRequest(email, password, role);
-      if (response.data.accessToken) {
-        localStorage.setItem('accessToken', response.data.accessToken);
-      }
-
+     console.log(response,'response');
+     
+      
       if (response.data.success) {
         if (role == 'mentee') {
-          dispatch(menteeLogin({token:response.data.accessToken,user:{email,role}}));
+          localStorage.setItem('accessToken', response.data.accessToken);
+          const id = response.data.user._id
+          dispatch(menteeLogin({token:response.data.accessToken,user:{email,role,id}}));
           console.log('mentee');
 
           navigate('/');
         } else {
+          localStorage.setItem('accessToken', response.data.accessToken);
           console.log('mentor kjkjkjkjkjk');
           dispatch(mentorLogin({token:response.data.accessToken,user:{email,role}}));
 

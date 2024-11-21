@@ -23,7 +23,7 @@ const Hero = () => {
     <>
       {/* Hero Section */}
       <section className="min-h-[calc(100vh-88px)] flex items-center">
-        <div className="container mx-auto px-4 lg:px-10">
+        <div className="container mx-auto px-4 lg:px-24">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
             {/* Left Content */}
             <div className="flex-1 max-w-xl">
@@ -66,7 +66,7 @@ const Hero = () => {
 
       {/* Features Section */}
       <div ref={middleSectionRef} className="py-20">
-        <div className="container mx-auto px-4 lg:px-10">
+        <div className="container mx-auto px-4 lg:px-24">
           {/* Left Feature */}
           <div className="mb-20">
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-10 max-w-2xl">

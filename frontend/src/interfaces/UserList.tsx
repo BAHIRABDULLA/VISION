@@ -4,10 +4,11 @@ export interface CommonDetails {
     id: string;
     role: 'mentor' | 'mentee';
     isVerified: boolean;
-    accountCreated: string;
+    createAt: string;
     isActive: boolean;
     isApproved: string;
-    profile:string
+    profile:string;
+    isMentorFormFilled:boolean;
     profilePictureUrl?: string;
 }
 

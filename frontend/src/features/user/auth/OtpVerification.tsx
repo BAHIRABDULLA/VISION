@@ -6,11 +6,12 @@ import vision_logo from '@/assets/auth/vision_logo.svg'
 import { otpVerify, resendOtp } from '@/services/userApi';
 import { useDispatch, UseDispatch } from 'react-redux';
 import { login as menteeLogin } from '@/redux/slices/menteeAuthSlice';
-import { login as mentorLogin} from '@/redux/slices/mentorAuthSlice';
+import { login as mentorLogin } from '@/redux/slices/mentorAuthSlice';
 
 const OtpVerification: React.FC = () => {
   const location = useLocation()
   const { fullName, email, password, role, type } = location.state;
+  console.log(type, 'type in otp verification');
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -26,7 +27,7 @@ const OtpVerification: React.FC = () => {
     } else {
       setIsResendEnabled(true)
     }
-  }, [timeRemaining])
+  }, [])
 
   const handleResendOtp = async () => {
     const resend = await resendOtp(email)
@@ -41,19 +42,21 @@ const OtpVerification: React.FC = () => {
     try {
       const otpString = otp.join('')
       console.log(otpString, 'otpstrijng in otp verification ');
-      const response = await otpVerify(fullName, email, password, role, otpString)
-      const reduxData = {fullName,email,role}
+      const response = await otpVerify(fullName, email, password, role, otpString, type)
       console.log(response, 'response in otp verification');
       if (response.data.success === true) {
         if (type === 'signup') {
-          localStorage.setItem('accessToken', response.data.accessToken)
+          const reduxData = { fullName, email, role }
           if (response.data.role === 'mentee') {
-            dispatch(menteeLogin({token:response.data.accessToken,user:reduxData}))
+            localStorage.setItem('accessToken', response.data.accessToken)
+            const id = response.data.user._id
+            dispatch(menteeLogin({ token: response.data.accessToken, user: { ...reduxData, id } }))
             console.log(localStorage.getItem('accessToken'), 'access token in localstorage');
 
             navigate('/')
           } else {
-            dispatch(mentorLogin({token:response.data.accessToken,user:reduxData}))
+            localStorage.setItem('accessToken', response.data.accessToken)
+            dispatch(mentorLogin({ token: response.data.accessToken, user: reduxData }))
 
             navigate('/apply-mentor', { state: { email } })
           }

@@ -12,14 +12,26 @@ export const mentorSchema = z.object({
     category: z.string().min(1, { message: "Category is required" }),
     location: z.string().min(1, { message: "Location is required" }),
     company: z.string().optional(),
-    skills: z.array(z.string().min(1, { message: "Each skill must be at least 1 character long" })).nonempty({
-        message: "At least one skill is required",
-    }),
+    // skills: z.array(z.string().min(1, { message: "Each skill must be at least 1 character long" })).nonempty({
+    //     message: "At least one skill is required",
+    // }),
+    skills: z.string().min(1, { message: "Skills are required" }),
+
     bio: z.string().min(1, { message: "Bio is required" }),
-    socialMediaUrl: z.preprocess(
-        (val) => (val === '' ? undefined : val),
-        z.string().url({ message: "Invalid URL" }).optional()
-    ),
+    socialMediaUrls: z.object({
+        github: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid Github URL" }).optional()),
+        linkedin: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid Linkedin URL" }).optional()),
+        x: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid X URL" }).optional()),
+        portfolio: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid Portfolio URL" }).optional()),
+    }),
     introductionVideoUrl: z.string().optional(),
     featuredArticleUrl: z.string().optional(),
     whyBecomeMentor: z.string().min(1, { message: "Why become mentor is required" }),
@@ -27,7 +39,7 @@ export const mentorSchema = z.object({
     _id: z.any()
 })
 
-export  type mentorSchemaType = z.infer<typeof mentorSchema>
+export type mentorSchemaType = z.infer<typeof mentorSchema>
 
 export const userSchema = z.object({
     fullName: z.string().min(1, { message: "Name cannot be empty" }),
@@ -42,14 +54,25 @@ export const userSchema = z.object({
     category: z.string().min(1, { message: "Category is required" }),
     location: z.string().min(1, { message: "Location is required" }),
     company: z.string().optional(),
-    skills: z.array(z.string().min(1, { message: "Each skill must be at least 1 character long" })).nonempty({
-        message: "At least one skill is required",
-    }),
+    // skills: z.array(z.string().min(1, { message: "Each skill must be at least 1 character long" })).nonempty({
+    //     message: "At least one skill is required",
+    // }),
+    skills: z.string().min(1, { message: "Skills are required" }),
     bio: z.string().min(1, { message: "Bio is required" }),
-    socialMediaUrl: z.preprocess(
-        (val) => (val === '' ? undefined : val),
-        z.string().url({ message: "Invalid URL" }).optional()
-    ),
+    socialMediaUrls: z.object({
+        github: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid Github URL" }).optional()),
+        linkedin: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid Linkedin URL" }).optional()),
+        x: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid X URL" }).optional()),
+        portfolio: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid Portfolio URL" }).optional()),
+    }),
     introductionVideoUrl: z.string().optional(),
     featuredArticleUrl: z.string().optional(),
     whyBecomeMentor: z.string().min(1, { message: "Why become mentor is required" }),

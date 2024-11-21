@@ -5,6 +5,7 @@ import { Avatar, Skeleton, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast, { Toaster } from 'react-hot-toast'
+import Input from '@/components/Input';
 
 
 
@@ -26,10 +27,21 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
             bio: userData?.bio,
             whyBecomeMentor: userData?.whyBecomeMentor,
             greatestAchievement: userData?.greatestAchievement,
-            socialMediaUrl: userData?.socialMediaUrl
+            socialMediaUrls: {
+                github: userData?.socialMediaUrls?.github,
+                linkedin: userData?.socialMediaUrls?.linkedin,
+                x: userData?.socialMediaUrls?.x,
+                portfolio: userData?.socialMediaUrls?.portfolio,
+            }
+            // userData?.socialMediaUrls
 
         }
     })
+    useEffect(() => {
+        console.log(errors, 'errors');
+
+    },[])
+
     const [isEditingMentorData, setIsEditingMentorData] = useState(false);
 
     const toggleEditJobToWebsite = () => {
@@ -44,10 +56,10 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
         console.log('submiting mentor data ');
         try {
             const response = await updateMentorData(userData?._id!, data)
-            if(response?.data.sucess){
+            if (response?.data.success) {
                 toast.success(response.data.message)
                 setIsEditingMentorData(false);
-            }else{
+            } else {
                 toast.error(response?.data.message)
             }
         } catch (error) {
@@ -93,7 +105,7 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                     </div>
                     <div>
                         <TextField
-                            label="Company:" defaultValue={userData?.company || ""} variant="filled" fullWidth
+                            label="Company  (optional):" defaultValue={userData?.company || ""} variant="filled" fullWidth
                             sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData} {...register('company')}
                         />
                         {errors?.company && <p className='text-red-500'>{errors?.company.message}</p>}
@@ -121,6 +133,16 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                     </div>
                     {errors?.introductionVideoUrl && <p className='text-red-500'>{errors?.introductionVideoUrl.message}</p>}
 
+                </div>
+
+                {/* skills */}
+                <div className='mb-3'>
+                    <TextField
+                        label="Skills:" defaultValue={userData?.skills || ''} variant="filled" fullWidth multiline
+                        sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
+                        {...register('skills')}
+                    />
+                    {errors.skills && <p className="text-red-500">{errors.skills.message}</p>}
                 </div>
 
                 {/* Bio and Other Mentor-Specific Fields */}
@@ -151,6 +173,53 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                     {errors.greatestAchievement && <p className='text-red-500'>{errors.greatestAchievement.message}</p>}
 
                 </div>
+
+                <div className='grid grid-cols-2 gap-4 mt-3'>
+                    <div>
+                        <TextField
+                            label="GitHub URL (optional):" defaultValue={userData?.socialMediaUrls?.github || ''} variant="filled" fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
+                            {...register('socialMediaUrls.github')}
+                        />
+                        {errors?.socialMediaUrls?.github && (
+                            <p className="text-red-500">{errors.socialMediaUrls.github.message}</p>
+                        )}
+                    </div>
+                    <div>
+                        <TextField
+                            label="LinkedIn URL (optional):" defaultValue={userData?.socialMediaUrls?.linkedin || ''} variant="filled" fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
+                            {...register('socialMediaUrls.linkedin')}
+                        />
+                        {errors?.socialMediaUrls?.linkedin && (
+                            <p className="text-red-500">{errors.socialMediaUrls.linkedin.message}</p>
+                        )}
+                    </div>
+
+                </div>
+                <div className='grid grid-cols-2 gap-4 mt-3'>
+                    <div>
+                        <TextField
+                            label="Twitter/X URL (optional):" defaultValue={userData?.socialMediaUrls?.x || ''} variant="filled" fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
+                            {...register('socialMediaUrls.x')}
+                        />
+                        {errors?.socialMediaUrls?.x && (
+                            <p className="text-red-500">{errors.socialMediaUrls.x.message}</p>
+                        )}
+                    </div>
+                    <div>
+                        <TextField
+                            label="Portfolio URL (optional):" defaultValue={userData?.socialMediaUrls?.portfolio || ''} variant="filled" fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
+                            {...register('socialMediaUrls.portfolio')}
+                        />
+                        {errors?.socialMediaUrls?.portfolio && (
+                            <p className="text-red-500">{errors.socialMediaUrls.portfolio.message}</p>
+                        )}
+                    </div>
+                </div>
+
                 {/* <button
                     className={`px-7 py-1 rounded-md text-white mt-6 ${isEditingMentorData ? 'bg-blue-500' :'bg-slate-400' 
                         }`}

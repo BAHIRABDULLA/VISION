@@ -9,9 +9,18 @@ const mentorSchema = new Schema<IMentor>({
     category: { type: String, required: true },
     location: { type: String, required: true },
     company: { type: String },
+    experience : {type:Number},
     skills: { type: [String], required: true },
     bio: { type: String, required: true },
-    socialMediaUrls: { type: [String], default: [] },
+    socialMediaUrls: { 
+        type:{
+            github:{type:String,default:null},
+            linkedin:{type:String,default:null},
+            x:{type:String,default:null},
+            portfolio:{type:String,default:null},
+        },
+        default:{}
+     },
     introductionVideoUrl: { type: String},
     featuredArticleUrl: { type: String },
     whyBecomeMentor: { type: String },

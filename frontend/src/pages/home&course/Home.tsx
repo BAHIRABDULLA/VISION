@@ -6,7 +6,7 @@ import Hero from '@/features/user/home/Hero'
 import MentorSlider from '@/features/user/home/MentorSlider'
 import PopularCourses from '@/features/user/home/PopularCourse'
 import Testimonial from '@/features/user/home/Testimonial'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 
 const Home: React.FC = () => {

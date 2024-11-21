@@ -8,21 +8,23 @@ interface InputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   customClasses?:string;
   variant?:'filled' | 'outlined' | 'standard';
-  margin?:'none'|'dense'|'normal'
+  margin?:'none'|'dense'|'normal',
+  defaultValue?:string | number
 }
 
-const Input =forwardRef<HTMLInputElement,InputProps> ( ({label, type='text',value, onChange,
-   customClasses,variant='outlined' ,margin='normal',...props },ref) => {
+const Input =forwardRef<HTMLInputElement,InputProps> ( ({label, type='text', onChange, 
+   customClasses,variant='outlined' ,value,margin='normal',defaultValue,...props },ref) => {
   return (
     <TextField
       className={customClasses}
       label={label}
       type={type}
-      value={value}
+      // value={value}
       variant={variant}
       margin={margin}
       onChange={onChange}
       inputRef={ref}
+      {...(value !== undefined ?{value}:{defaultValue})}
       {...props}
     />
   );

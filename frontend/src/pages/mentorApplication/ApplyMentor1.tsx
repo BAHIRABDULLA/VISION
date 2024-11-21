@@ -16,10 +16,20 @@ const applyMentorSchema = z.object({
     company: z.string().optional(),
     skills: z.string().min(1, { message: "Skills are required" }),
     bio: z.string().min(1, { message: "Bio is required" }),
-    socialMediaUrl: z.preprocess(
-        (val) => (val === '' ? undefined : val),
-        z.string().url({ message: "Invalid URL" }).optional()
-    )
+    socialMediaUrls: z.object({
+        github: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid Github URL" }).optional()),
+        linkedin: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid Linkedin URL" }).optional()),
+        x: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid X URL" }).optional()),
+        portfolio: z.preprocess(
+            (val) => (val === '' ? undefined : val),
+            z.string().url({ message: "Invalid Portfolio URL" }).optional()),
+    }),
 });
 
 type applyMentorSchemaType = z.infer<typeof applyMentorSchema>;
@@ -29,13 +39,13 @@ type applyMentor1Props = {
 }
 
 const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
-    const [imagePreview,setImagePreview] = useState<string | null>(null)
-    
-    const handleFileChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    const [imagePreview, setImagePreview] = useState<string | null>(null)
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if(file){
+        if (file) {
             const reader = new FileReader()
-            reader.onloadend = ()=>{
+            reader.onloadend = () => {
                 setImagePreview(reader.result as string)
             }
             reader.readAsDataURL(file)
@@ -77,8 +87,8 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
                             <span className='text-gray-400'>Image</span>
                         )}
                     </div>
-                    <input type='file' className='ml-4 px-4 py-2 text-sm border rounded-md'{...register("file")} 
-                    onChange={handleFileChange} />
+                    <input type='file' className='ml-4 px-4 py-2 text-sm border rounded-md'{...register("file")}
+                        onChange={handleFileChange} />
                 </div>
 
 
@@ -116,12 +126,31 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
                         />
                         {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
                     </div>
-                    <div className='col-span-2 flex items-center'>
+                    <div className='col-span-2 flex gap-8 items-center'>
                         <div>
-                            <Input label='Social Media URL' customClasses='w-full' {...register('socialMediaUrl')} />
-                            {errors.socialMediaUrl && <p className="text-red-500">{errors.socialMediaUrl.message}</p>}
+                            <Input label="GitHub URL" customClasses="w-full" {...register('socialMediaUrls.github')} />
+                            {errors?.socialMediaUrls?.github && (
+                                <p className="text-red-500">{errors.socialMediaUrls.github.message}</p>
+                            )}
                         </div>
-                        <button className='ml-4 p-2 bg-gray-200 text-gray-500 rounded-md'>+</button>
+                        <div>
+                            <Input label="LinkedIn URL" customClasses="w-full" {...register('socialMediaUrls.linkedin')} />
+                            {errors?.socialMediaUrls?.linkedin && (
+                                <p className="text-red-500">{errors.socialMediaUrls.linkedin.message}</p>
+                            )}
+                        </div>
+                        <div>
+                            <Input label="Twitter/X URL" customClasses="w-full" {...register('socialMediaUrls.x')} />
+                            {errors?.socialMediaUrls?.x && (
+                                <p className="text-red-500">{errors.socialMediaUrls.x.message}</p>
+                            )}
+                        </div>
+                        <div>
+                            <Input label="Portfolio URL" customClasses="w-full" {...register('socialMediaUrls.portfolio')} />
+                            {errors?.socialMediaUrls?.portfolio && (
+                                <p className="text-red-500">{errors.socialMediaUrls.portfolio.message}</p>
+                            )}
+                        </div>
                     </div>
                 </div>
                 <button type='submit' className=' py-1 mt-2 px-5 text-purple-800 outline outline-offset-2 outline-purple-500 rounded-lg  '>Next</button>
