@@ -3,13 +3,14 @@ import Sidebar from './Sidebar';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
 import Profile from '@/features/user/dashboard/Profile';
+import SlotManagement from '@/pages/mentorApplication/SlotManagement';
 
 interface DashboardLayoutProps {
   role: 'mentor' | 'mentee';
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
-  
+
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleSidebar = () => {
@@ -40,7 +41,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
         );
       case 'Personal Information':
         return (
-          <Profile role={role}/>
+          <Profile role={role} />
         );
       case 'Chat':
         return <div className="text-white">Chat Content</div>;
@@ -53,6 +54,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
       case 'Mentees':
       case 'Mentors':
         return <div className="text-white">{role === 'mentor' ? 'Mentees' : 'Mentors'} Content</div>;
+      case 'Slot Management' :
+        return (
+          <SlotManagement/>
+        )
       default:
         return <div className="text-white">Page Not Found</div>;
     }
@@ -61,7 +66,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
   return (
     <div className="flex min-h-screen">
       <Sidebar role={role} activePage={activePage} setActivePage={setActivePage}
-      isCollapsed={isCollapsed}  toggleSidebar={toggleSidebar} />
+        isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
       <main className={`flex-1 p-6 bg-slate-800 transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         {renderPageContent()}
       </main>

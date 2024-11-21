@@ -61,23 +61,27 @@ export class AuthService  implements IAuthService{
         } catch (error) {
             console.error('Error founded in sign up', error);
         }
+
     }
 
 
-    async verifySignUpOtp(fullName: string, email: string, password: string, role: string, otp: string) {
+    async verifySignUpOtp(fullName: string, email: string, password: string, role: string, otp: string,type:string) {
         try {
             const checkUser = await this.userRepository.findByEmail(email)
-            if (checkUser && checkUser.isVerified) {
+            if (checkUser && checkUser.isVerified&&type!=='forgetPassword') {
                 return { success: false, message: "User already existed" }
             }
-            const hashedPassword = await hashPassword(password)
 
+            
             const getOtp = await this.otpRepository.findOtpByEmail(email)
             if (!getOtp) {
                 return { success: false, message: 'OTP expired or invalid' }
             }
             const findOtp = getOtp.find(x => x.otp == otp)
-
+            if(findOtp&& type==='forgetPassword'){
+                return createResponse(true,'OTP verified successfully',checkUser?.role)
+            }
+            const hashedPassword = await hashPassword(password)
             if (findOtp) {
                 const userData: any = {
                     fullName,
@@ -99,7 +103,7 @@ export class AuthService  implements IAuthService{
                 const refreshToken = generateRefreshToken({ id: newUser._id.toString(), email, role: newUser.role })
 
                 if (newUser.role === 'mentee') {
-                    return createResponse(true, 'OTP verified successfully', { role: newUser.role, accessToken, refreshToken })
+                    return createResponse(true, 'OTP verified successfully', { role: newUser.role, accessToken, refreshToken,user:newUser })
                     // return { success: true, message: 'OTP verified successfully', role: newUser.role, accessToken, refreshToken}
                 } else {
                     await sendMentorData('mentorQueue', newUser)

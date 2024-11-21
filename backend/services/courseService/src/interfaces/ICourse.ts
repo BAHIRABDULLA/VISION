@@ -11,9 +11,10 @@ interface ICourse extends Document {
     overview: string;
     curriculum: ICurriculum[];
     price: number;
-    image?: string,
+    image: string,
     createAt: Date;
-    isActive: boolean;
+    // isActive: boolean;
+    status:'active'|'block'
 }
 
 export default ICourse

@@ -32,15 +32,15 @@ const AddCourse = () => {
     try {
       console.log(data, 'data in onsubmt');
       const curriculumData = [
-        {level:'Basic',topics:data.curriculum.basic.split(',')},
-        {level:'Intermediate',topics:data.curriculum.intermediate.split(',')},
-        {level:'Advanced',topics:data.curriculum.advanced.split(',')}
+        { level: 'Basic', topics: data.curriculum.basic.split(',') },
+        { level: 'Intermediate', topics: data.curriculum.intermediate.split(',') },
+        { level: 'Advanced', topics: data.curriculum.advanced.split(',') }
       ]
       const formData = new FormData()
       formData.append('name', data.name)
       formData.append('duration', data.duration)
       formData.append('overview', data.overview)
-      
+
       formData.append('curriculum', JSON.stringify(curriculumData))
       formData.append('price', data.price.toString())
       if (selectedImage) {
@@ -85,13 +85,36 @@ const AddCourse = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         <div className="px-3 py-3">
-          <input
-            type="file"
-            onChange={handleImageChange}
-            className="w-full bg-red-400 rounded-lg border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500"
-            id="dropzone-file"
-            accept="image/*"
-          />
+          <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-32 rounded-lg
+            border-2 border-dashed border-gray-300 text-gray-900 text-sm cursor-pointer hover:bg-zinc-200 transition duration-300"
+            >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg
+                aria-hidden="true"
+                className="w-10 h-10 mb-3 text-gray-600"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M19.5 10a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4.5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h15zm-15-2A3.5 3.5 0 0 1 8 4.5h8A3.5 3.5 0 0 1 19.5 8h.5a2.5 2.5 0 0 1 2.5 2.5v9a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 19.5v-9A2.5 2.5 0 0 1 4.5 8h.5z"
+                />
+              </svg>
+              <p className="mb-2 text-sm text-gray-600">
+                <span className="font-semibold">Click to upload</span> or drag and drop
+              </p>
+              <p className="text-xs text-gray-500">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+            </div>
+            <input
+              id="dropzone-file"
+              type="file"
+              onChange={handleImageChange}
+              className="hidden"
+              accept="image/*"
+            />
+          </label>
+          {errors.image && <p className='text-red-500'>{errors.image.message as string}</p>}
           {selectedImage && (
             <div className="mt-4 mb-4 w-32 h-32 rounded-lg overflow-hidden border">
               <img

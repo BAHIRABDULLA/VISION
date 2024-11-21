@@ -4,6 +4,7 @@ type common = {
     success: boolean;
     message: string;
     data?: {
+        user?: IUser;
         role?: string;
         accessToken?: string;
         refreshToken?: string;
@@ -17,7 +18,7 @@ type common = {
 
 export interface IAuthService {
     signUp(email:string):Promise<common | undefined >
-    verifySignUpOtp(fullName:string,email:string,password:string,role:string,otp:string):Promise<common | undefined>
+    verifySignUpOtp(fullName:string,email:string,password:string,role:string,otp:string,type:string):Promise<common | undefined>
     resendOtpWork(email:string):Promise<common | undefined>
     signInWithGoogle(email:string,name:string,role:string):Promise<common| undefined>
     signIn(email:string,password:string,role:string):Promise<any>

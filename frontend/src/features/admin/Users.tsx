@@ -20,6 +20,7 @@ interface User {
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
+  console.log(users, 'useras, use s user');
 
   const allUsers = async () => {
     try {
@@ -78,14 +79,17 @@ const Users: React.FC = () => {
                     </span>
                   </td>
                   <td className="py-3 px-5 flex items-center gap-4">
-                    {
-                     user.role === 'mentor' ? (<Link to={`/admin/users/${user.role}-${user.mentor}`} className="text-blue-500 hover:text-blue-700">
-                      <LuView className='w-6 h-6' /></Link>)
-                        :  
+                    <Link to={`/admin/users/${user.role}-${user._id}`} className="text-blue-500 hover:text-blue-700">
+                      <LuView className='w-6 h-6' />
+                    </Link>
+                    {/* {
+                      user.role === 'mentor' ? (<Link to={`/admin/users/${user.role}-${user.mentor}`} className="text-blue-500 hover:text-blue-700">
+                        <LuView className='w-6 h-6' /></Link>)
+                        :
                         (<Link to={`/admin/users/${user.role}-${user._id}`} className="text-blue-500 hover:text-blue-700">
                           <LuView className='w-6 h-6' />
                         </Link>)
-                     }
+                    } */}
 
                     <button className="text-red-500 hover:text-red-700">
                       <MdDelete className='w-6 h-6' />

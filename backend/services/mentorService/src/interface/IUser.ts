@@ -5,5 +5,6 @@ export interface IUser extends Document{
     fullName:string;
     email:string;
     password:string;
-    isApproved: 'pending' | 'approved' | 'rejected'
+    isApproved: 'pending' | 'approved' | 'rejected',
+    isMentorFormFilled:boolean
 }

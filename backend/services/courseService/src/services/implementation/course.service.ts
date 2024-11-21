@@ -86,4 +86,60 @@ export class CourseService implements ICourseService {
         }
     }
 
+
+    async editCourseData(data: courseData,id:string, imageFile?: Express.Multer.File): Promise<ICourse | null>{
+        try {
+            const checkCourse = await this.courseRepository.findById(id)
+            console.log(checkCourse, 'check cour se ');
+
+            if (!checkCourse) {
+                return null
+            }
+            console.log(imageFile,'image file file file ifle ');
+            
+            console.log(data.curriculum,'data.curriculum');
+            
+            let s3FileUrl = ''
+            if (imageFile) {
+                const fileContent = imageFile.buffer;
+                const fileType = imageFile.mimetype;
+                const fileName = `uploads/${Date.now()}_${imageFile.originalname}`;
+                console.log(fileName, 'fileName');
+                const result = await uploadFile(fileContent, fileName, fileType);
+
+                if (!result) {
+                    throw new Error('File upload failed');
+                }
+                s3FileUrl = result.Location
+                console.log('Uploaded file URL:', s3FileUrl);
+
+                data.image = s3FileUrl
+            }
+            console.log(data,'data data data in course service ');
+            
+            const response = await this.courseRepository.update(id,data)
+            console.log(response, 'response in edit course service ');
+            return response
+        } catch (error) {
+            console.error('Error founded in edit course data',error);
+            return null
+
+        }
+    }
+
+    async courseStatusUpdate(id:string,status:'active' | 'block'):Promise<ICourse | null>{
+        try {
+            console.log(status.toLowerCase(),id,'status,    id')
+            const response = await this.courseRepository.update(id,{status})
+            console.log(response,'response ');
+            if(!response?.isModified){
+                return null
+            }
+            return response
+        } catch (error) {
+            console.error('Error founded in course update service',error);
+            return null
+        }
+    }
+
 }

@@ -13,6 +13,16 @@ export class UserRepository extends BaseRepository<IUser> {
         } catch (error) {
             console.error('Error founded in finding emial',error);
         }
-        
     }
+
+    async findAllApprovedMentors(){
+        try {
+            const response  = await User.find({isApproved:'approved'})
+            return response
+        } catch (error) {
+            console.error('Error founded in find all approved mentors',error);
+        }
+    }
+
+    
 }

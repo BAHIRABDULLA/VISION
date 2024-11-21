@@ -19,9 +19,10 @@ const courseSchema = new mongoose.Schema<ICourse>({
     overview: { type: String, required: true },
     curriculum: { type: [curriculumSchema], required: true },
     price: { type: Number, required: true },
-    image: { type: String },
+    image: { type: String , required:true },
     createAt: { type: Date, default: Date.now() },
-    isActive: { type: Boolean, required: true, default: true },
+    // isActive: { type: Boolean, required: true, default: true },
+    status:{type:String,enum:['active','block'],required:true ,default:'active'}
 })
 
 export const Course = mongoose.model('Course', courseSchema)

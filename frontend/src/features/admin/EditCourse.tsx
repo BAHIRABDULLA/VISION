@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { TextField,  Container } from '@mui/material';
+import React, { useEffect, useState } from 'react'
+import { TextField, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import Input from '@/components/Input';
@@ -10,47 +10,104 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { courseSchema } from '@/utils/courseValidator';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { editCourse } from '@/services/courseApi';
+import { editCourse, getCourseDetails } from '@/services/courseApi';
 
 
 type courseShemaType = z.infer<typeof courseSchema>
 
 const EditCourse = () => {
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [existingImage, setExistingImage] = useState<string | null>(null)
+
+  const [course, setCourse] = useState<courseShemaType | null>(null)
+  console.log(course, 'course course couirse');
+  console.log(typeof course?.curriculum.basic, 'typeof course curriculum',course?.curriculum.basic);
 
   const navigate = useNavigate()
   const params = useParams()
   console.log(params, 'params');
+  console.log(params.id, 'params.id');
 
-  const { register, handleSubmit, formState: { errors } } = useForm<courseShemaType>({
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<courseShemaType>({
     resolver: zodResolver(courseSchema)
   });
+  useEffect(() => {
+    console.log(errors, 'errorrrrr');
+  })
 
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        console.log('its here bro in use effecgt');
+        
+        if(params.id){
+        console.log('its here bro in use effecgt - - - -  -');
+
+          const response = await getCourseDetails(params.id )
+          console.log(response, 'response here eee');
+          console.log(response?.data.course, 'response here eee');
+          const courseData = response?.data.course
+          setExistingImage(courseData.image)
+          const formData = {
+            ...courseData,
+            price: courseData.price.toString(),
+            curriculum: {
+              basic: courseData?.curriculum[0]?.topics.join(','),
+              intermediate: courseData?.curriculum[1]?.topics.join(','),
+              advanced: courseData?.curriculum[2]?.topics.join(',')
+            }
+          }
+          setCourse(formData)
+          reset(formData);
+          // setSelectedImage(response?.data.course.image)
+        }else{
+          toast.error('Course id is missing')
+        }
+      } catch (error) {
+        console.error('Error founded in fetch course', error);
+      }
+    }
+    fetchCourse()
+  }, [])
 
 
   const onSubmit = async (data: courseShemaType) => {
     try {
+
       console.log(data, 'data in onsubmt');
+      const curriculumData = [
+        { level: 'Basic', topics: data.curriculum.basic.split(',') },
+        { level: 'Intermediate', topics: data.curriculum.intermediate.split(',') },
+        { level: 'Advanced', topics: data.curriculum.advanced.split(',') }
+      ]
       const formData = new FormData()
       formData.append('name', data.name)
       formData.append('duration', data.duration)
       formData.append('overview', data.overview)
-      formData.append('curriculum', JSON.stringify(data.curriculum))
-      formData.append('price', data.price.toString())
+      console.log(JSON.stringify(data.curriculum),'data . curriculum  . ');
+      
+      formData.append('curriculum', JSON.stringify(curriculumData))
+      formData.append('price', String(data.price))
       if (selectedImage) {
         formData.append('image', selectedImage)
       }
       for (let key of formData.keys()) {
-        console.log(key, '}}}}}}}}');
+        console.log(key,formData.get(key), '}}}}}}}}');
       }
-      const response = await editCourse(formData,params)
-      console.log(response, 'response in add couirse .tsx');
-      if (response?.data.success) {
-        toast.success("Course added");
-        navigate('/admin/courses')
-      } else {
-        toast.error("Failed to add course");
+      if(params.id){
+        const response = await editCourse(formData, params.id)
+        console.log(response, 'response in add couirse .tsx');
+        if (response?.data) {
+          toast.success("Course added");
+          navigate('/admin/courses')
+        } else {
+          toast.error("Failed to add course");
+        }
+      }else{
+        toast.error('Course id is missing')
       }
+      
     } catch (error) {
       toast.error("Failed to add course");
       console.error('Error founded in on submti add course', error);
@@ -79,14 +136,39 @@ const EditCourse = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         <div className="px-3 py-3">
-          <input
-            type="file"
-            onChange={handleImageChange}
-            className="w-full bg-red-400 rounded-lg border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500"
-            id="dropzone-file"
-            accept="image/*"
-          />
-          {selectedImage && (
+          <label
+            htmlFor="dropzone-file"
+            className="flex flex-col items-center justify-center w-full h-32  rounded-lg border-2 border-dashed border-gray-300 text-gray-900 text-sm cursor-pointer hover:bg-zinc-200 transition duration-300"
+          >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg
+                aria-hidden="true"
+                className="w-10 h-10 mb-3 text-gray-600"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M19.5 10a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4.5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h15zm-15-2A3.5 3.5 0 0 1 8 4.5h8A3.5 3.5 0 0 1 19.5 8h.5a2.5 2.5 0 0 1 2.5 2.5v9a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 19.5v-9A2.5 2.5 0 0 1 4.5 8h.5z"
+                />
+              </svg>
+              <p className="mb-2 text-sm text-gray-600">
+                <span className="font-semibold">Click to upload</span> or drag and drop
+              </p>
+              <p className="text-xs text-gray-500">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+            </div>
+            <input
+              id="dropzone-file"
+              type="file"
+              onChange={handleImageChange}
+              className="hidden"
+              accept="image/*"
+            />
+          </label>
+          {errors.image && <p className='text-red-500'>{errors.image.message as string}</p>}
+
+          {selectedImage ? (
             <div className="mt-4 mb-4 w-32 h-32 rounded-lg overflow-hidden border">
               <img
                 src={URL.createObjectURL(selectedImage)}
@@ -94,16 +176,29 @@ const EditCourse = () => {
                 className="object-cover w-full h-full"
               />
             </div>
+          ) : existingImage && (
+            <div className="mt-4 mb-4 w-32 h-32 rounded-lg overflow-hidden border">
+              <img
+                src={existingImage}
+                alt="Existing course image"
+                className="object-cover w-full h-full"
+              />
+            </div>
           )}
 
-          <Input label="Course Name" customClasses="w-full" {...register("name")} />
+          {/* <Input label="Course Name"   customClasses="w-full" {...register("name")} defaultValue={course?.name} /> */}
+          <TextField label="Name"
+            {...register("name")}
+            fullWidth defaultValue={course?.name}
+            margin="normal" />
           {errors.name && <p className="text-red-500">{errors.name.message}</p>}
 
           <TextField
             label="Overview"
             multiline
             rows={3}
-            fullWidth
+            autoFocus
+            fullWidth defaultValue={course?.overview}
             margin="normal"
             {...register("overview")}
           />
@@ -117,7 +212,7 @@ const EditCourse = () => {
             <TextField
               label="Basic Topics (comma-separated)"
               multiline
-              rows={2}
+              rows={2} defaultValue={course?.curriculum.basic}
               fullWidth
               margin="normal"
               {...register("curriculum.basic")}
@@ -132,7 +227,7 @@ const EditCourse = () => {
             <TextField
               label="Intermediate Topics (comma-separated)"
               multiline
-              rows={2}
+              rows={2} defaultValue={course?.curriculum.intermediate}
               fullWidth
               margin="normal"
               {...register("curriculum.intermediate")}
@@ -147,7 +242,7 @@ const EditCourse = () => {
             <TextField
               label="Advanced Topics (comma-separated)"
               multiline
-              rows={2}
+              rows={2} defaultValue={course?.curriculum.advanced}
               fullWidth
               margin="normal"
               {...register("curriculum.advanced")}
@@ -158,13 +253,15 @@ const EditCourse = () => {
           </div>
 
           <div className='flex gap-4'>
-            <Input label="Duration" customClasses="w-full" {...register("duration")} />
-            {errors.duration && <p className="text-red-500">{errors.duration.message}</p>}
-
-            <Input label="Price" customClasses="w-full" {...register("price")} />
-            {errors.price && <p className="text-red-500">{errors.price.message}</p>}
+            <div>
+              <TextField label="Duration" {...register("duration")} fullWidth defaultValue={course?.duration} margin="normal" />
+              {errors.duration && <p className="text-red-500">{errors.duration.message}</p>}
+            </div>
+            <div>
+              <TextField label="Price" {...register("price")} fullWidth defaultValue={course?.price} margin="normal" />
+              {errors.price && <p className="text-red-500">{errors.price.message}</p>}
+            </div>
           </div>
-
 
           <Button text="Edit Course" type="submit" customClasses="bg-blue-400" />
 

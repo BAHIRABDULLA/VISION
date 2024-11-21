@@ -4,17 +4,8 @@ import multer from 'multer'
 
 import { userController } from '../config/container'
 
-
-// const upload = multer({dest:'src/uploads/'})
-
-
 const userRoute = express.Router()
 
-// const storage = multer.memoryStorage(); // Store files in memory
-// const upload = multer({ storage });
-
-
-// const upload = multer({dest:'src/uploads/'})
 const upload = multer({
     storage: multer.memoryStorage(),
 });
