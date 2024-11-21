@@ -21,7 +21,7 @@ export const loginApi = async(data:object)=>{
 }
 
 export const getAllUsers = async()=>{
-    const response = await adminPrivateApi.get('/users')
+    const response = await api.get('/users')
     return response
 }
 
@@ -29,7 +29,7 @@ export const userData = async(id:string)=>{
     console.log('its here ',id);
     console.log(api);
     
-    const response = await api.get(`/users/${id}`)
+    const response = await adminPrivateApi.get(`/admin/users/${id}`)
     console.log(response,'response in response ');
     
     return response
@@ -43,4 +43,17 @@ export const logout = async()=>{
     } catch (error) {
         console.error('Error founded in admin logout',error);
     }
+}
+
+
+export const updateMentorApproveStatus = async (id: string,  isApproved: string ) => {
+    try {
+        const response = await adminPrivateApi.patch(`/admin/${id}/approval`, {isApproved})
+        console.log(response,'resposne');
+        
+        return response
+    } catch (error) {
+        console.error('Error founded in update mentor approve status ',error);
+    }
+   
 }

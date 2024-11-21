@@ -48,17 +48,22 @@ export class AdminService implements IAdminService {
 
     async users(): Promise<{ users: object[] } | null> {
         try {
-            const usersFromUserService = await userApi.get('/users')
-            const usersFromMentorService = await mentorApi.get('/mentors')
+            const users = await userApi.get('/users')
+            // const usersFromMentorService = await mentorApi.get('/mentors')
 
-            let dataFromUserService = usersFromUserService.data
-            let dataFromMentorService = usersFromMentorService.data
-            const mergedUsers = dataFromUserService.map((x: any) => {
-                const findMentor = dataFromMentorService.find((y: { mentor: any }) => y.mentor === x._id);
-                return findMentor ? { ...x, ...findMentor } : x;
-            });
+            let userData  = users.data        
+            console.log(userData,'data from suer service');
+                
+            // let dataFromMentorService = usersFromMentorService.data
+            // console.log(dataFromUserService,'data from mentor service');
+
+            // const mergedUsers = dataFromUserService.map((x: any) => {
+            //     const findMentor = dataFromMentorService.find((y: { mentor: any }) => y.mentor === x._id);
+            //     return findMentor ? { ...x, ...findMentor } : x;
+            // });
     
-            return { users: mergedUsers };
+            // return { users: mergedUsers };
+            return {users:userData}
         } catch (error) {
             console.error('Error founding on find users', error);
             return null
@@ -68,11 +73,12 @@ export class AdminService implements IAdminService {
 
     async getUser(id: string): Promise<{ user: object } | null> {
         try {
-            const commonData = await userApi.get(`/users/${id}`)
+            const commonData = await userApi.get(`/users/${id}`)            
             if (!commonData) {
                 return null
             }
-            if (commonData.data.role === 'mentor') {
+            
+            if (commonData.data.role === 'mentor' && commonData.data.isMentorFormFilled===true) {
                 const mentorData = await mentorApi.get(`/users/${id}`)
 
                 const mergedData = {
@@ -86,6 +92,17 @@ export class AdminService implements IAdminService {
         } catch (error) {
             console.error('Error founded in get user in mentor service', error);
             return null
+        }
+    }
+
+    async updateApproval(id:string,isApproved:string){
+        try {
+            const sentRequestToUserService = await userApi.patch(`${id}/approval`,{isApproved})
+            // console.log(sentRequestToUserService);
+            
+            return sentRequestToUserService.data
+        } catch (error) {
+            console.error('Error founded in udpated approval adminservice',error);
         }
     }
 

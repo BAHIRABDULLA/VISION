@@ -1,11 +1,14 @@
-import express,{Request,Response} from 'express'
+import express from 'express'
 import dotenv from 'dotenv'
 import connectDb from './config/db.config'
-import router from './routes/mentor.route'
+import mentorRoute from './routes/mentor.route'
+import slotRoute from './routes/slot.route'
 import cors from 'cors'
 import { rabbitmqConnect } from './config/rabbitmq'
-import { consumerMentorQueue } from './events/rabbitmq/consumer'
+import { consumerMentorQueue } from './events/rabbitmq/consumers/consumer'
 import morgan from 'morgan'
+import errorHandler from './middleware/error.handler'
+import { consumerMentorApprovalQueue } from './events/rabbitmq/consumers/mentorApproval'
 
 dotenv.config()
 const app = express()
@@ -15,16 +18,22 @@ app.use(express.json())
 rabbitmqConnect()
 .then(()=>{    
     consumerMentorQueue()
+    consumerMentorApprovalQueue()
     console.log('consumer mentor detains in index.ts in mentorService');
     
 }).catch((error)=>console.error('Failed to connect rabbitmq ',error))
 
 
 connectDb()
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}))
 app.use(morgan('dev'))
 
-app.use('/',router)
+app.use('/slots',slotRoute)
+app.use('/',mentorRoute)
+app.use(errorHandler)
 const port = process.env.PORT
 
 app.listen(port,()=>console.log(`server running on http://localhost:${port}`))

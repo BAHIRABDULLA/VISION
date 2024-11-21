@@ -29,7 +29,7 @@ adminPrivateApi.interceptors.response.use(
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-                const response = await adminPrivateApi.get('/refresh-token');
+                const response = await adminPrivateApi.get('admin/refresh-token');
                 console.log(response, 'response in axios config file');
 
                 if (response.status === 200) {

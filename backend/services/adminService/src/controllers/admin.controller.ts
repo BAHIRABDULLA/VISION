@@ -112,4 +112,20 @@ export class AdminController {
             console.error("Error verifying refresh token:", error);
         }
     }
+
+    async mentorApproval(req:Request,res:Response){
+        const { id } = req.params;
+        const { isApproved } = req.body;
+        try {
+            if (!['pending', 'approved', 'rejected'].includes(isApproved)) {
+                return res.status(400).json({ message: 'Invalid approval status' });
+            }
+            const updateMentorApproval = await this.adminService.updateApproval(id,isApproved)
+            console.log(updateMentorApproval,'upate mentor approval in admin side');
+            
+           return successResponse(res,HttpStatus.OK,"Mentor approval done",successResponse)
+        } catch (error) {
+            console.error('Error founded in mentor approval');
+        }
+    }
 }
