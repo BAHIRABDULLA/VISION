@@ -18,4 +18,5 @@ router.get('/refresh-token/', adminController.setNewAccessToken.bind(adminContro
 router.post('/logout',  adminController.logout.bind(adminController))
 
 router.patch('/:id/approval',authenticateToken,adminController.mentorApproval.bind(adminController))
+router.patch('/:id/status',authenticateToken,adminController.updateUserActiveStatus.bind(adminController))
 export default router

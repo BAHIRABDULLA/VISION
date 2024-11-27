@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/implementation/user.service";
 import { User } from "../models/user.model";
 import { Jwt, JwtPayload } from "jsonwebtoken";
@@ -26,17 +26,18 @@ export class UserController {
     constructor(userService: IUserService) {
         this.userService = userService
     }
-    async getAllUsers(req: Request, res: Response) {
+    async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.userService.getAllUsers()
             res.json(response)
         } catch (error) {
             console.error('Error founded fetching all users', error);
+            next(error)
         }
     }
 
 
-    async getUserById(req: Request, res: Response) {
+    async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
             console.log('here is error', id);
@@ -45,49 +46,26 @@ export class UserController {
             res.json(user)
         } catch (error) {
             console.error('Error founded in get user', error);
+            next(error)
         }
     }
 
 
-    async updateUserStatus(req: Request, res: Response) {
+    async updateUserApprovalStatus(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params;
         const { isApproved } = req.body;
         console.log(req.body, 'req.body in update user status in user controlelr');
         console.log(id, isApproved, 'id is approved');
         try {
-            if (!['pending', 'approved', 'rejected'].includes(isApproved)) {
-                return res.status(400).json({ message: 'Invalid approval status' });
-            }
-            const updatedUser = await User.findByIdAndUpdate(
-                id,
-                { isApproved },
-                { new: true }
-            );
-            console.log(updatedUser, 'update  user ');
-
-            if (!updatedUser) {
-                return res.status(HttpStatus.NOTFOUND).json({ message: 'User not found' });
-            }
-            await sendMentorData('mentorApproval',{id,isApproved})
-            await sendEmail(updatedUser?.email,
-                'Your Mentor Application is Approved!',
-                `
-                    <h1>Congratulations</h1>
-                    <p>We are excited to inform you that your application to become a mentor on Vision has been approved.</p>
-                    <p>You can now log in and start mentoring to make a difference in the lives of our mentees.</p>
-                    <p>Thank you for joining Vision!</p>
-                    <br>
-                    <p>Best Regards,<br>The Vision Team</p>
-                ` ,
-                true
-            )
-            res.status(200).json({ success: true, user: updatedUser });
+            const response = await this.userService.updateUserApproval(id, isApproved)
+            return res.status(200).json({ success: true, response })
         } catch (error) {
-
+            console.error('Error founded in update user approval status',error);
+            next(error)
         }
     }
 
-    async getUser(req: CustomeRequest, res: Response) {
+    async getUser(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user as JwtPayload
             console.log(user, 'user, ===========');
@@ -100,11 +78,12 @@ export class UserController {
             return res.status(HttpStatus.OK).json(response)
         } catch (error) {
             console.error('Error founded in get user', error);
+            next(error)
         }
     }
 
 
-    async profileUpdate(req: CustomeRequest, res: Response) {
+    async profileUpdate(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user as JwtPayload
             if (!user) {
@@ -136,8 +115,21 @@ export class UserController {
             res.status(HttpStatus.OK).json({ success: true, message: "update successfully", updateUser })
         } catch (error) {
             console.error('Error founded in profile update', error);
+            next(error)
         }
     }
 
+    async updateUserStatus(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { isActive } = req.body
+            const { id } = req.params
+            console.log(id, 'id in update use status ');
+            const response = await this.userService.updateUserStatus(id, isActive)
+            return res.status(HttpStatus.OK).json(response)
+        } catch (error) {
+            console.error('Error founded in update user status', error);
+            next(error)
+        }
+    }
 }
 

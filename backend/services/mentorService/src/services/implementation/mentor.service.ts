@@ -1,16 +1,14 @@
-import { HttpStatus } from "../enums/http.status";
-import { sendMentorData } from "../events/rabbitmq/publisher";
-import { Mentor } from "../model/mentor.model";
-import { User } from "../model/user.model";
-import { MentorRepository } from "../repositories/implementation/mentor.repository";
-import { UserRepository } from "../repositories/implementation/user.repository";
+import { HttpStatus } from "../../enums/http.status";
+import { sendMentorData } from "../../events/rabbitmq/publisher";
 import axios from "axios";
-import CustomError from "../utils/custom.error";
-import { SlotRepository } from "../repositories/implementation/slot.repository";
-import Slot from "../model/slot.model";
-import { IUser } from "../interface/IUser";
-import { IMentor } from "../interface/IMentor";
-import mongoose,{ObjectId} from 'mongoose'
+import CustomError from "../../utils/custom.error";
+import { IUser } from "../../interface/IUser";
+import { IMentor } from "../../interface/IMentor";
+import mongoose, { ObjectId } from 'mongoose'
+import { IMentorService, socialMediaUrl } from "../interface/IMentor.service";
+import { IMentorRepository } from "../../repositories/interface/IMentor.repository";
+import { IUserRepository } from "../../repositories/interface/IUser.repository";
+import { ISlotRepository } from "../../repositories/interface/ISlot.repository";
 
 
 interface ParamsData {
@@ -28,45 +26,32 @@ const userApi = axios.create({
     baseURL: 'http://localhost:4001/'
 })
 
-export class MentorService {
-    private mentorRepoistory
-    private userRepository
-    private slotRepository
-    constructor() {
-        this.mentorRepoistory = new MentorRepository(Mentor)
-        this.userRepository = new UserRepository(User)
-        this.slotRepository = new SlotRepository(Slot)
+export class MentorService implements IMentorService {
+    private mentorRepoistory: IMentorRepository
+    private userRepository: IUserRepository
+    private slotRepository: ISlotRepository
+    constructor(mentorRepository: IMentorRepository, userRepository: IUserRepository, slotRepository: ISlotRepository) {
+        this.mentorRepoistory = mentorRepository
+        this.userRepository = userRepository
+        this.slotRepository = slotRepository
     }
 
 
     async mentorDetails(email: string, jobTitle: string, location: string, category: string, skills: string[], bio: string,
-        whyBecomeMentor: string, greatestAchievement: string, company?: string, profilePhoto?: any, socialMediaUrls?: string[], introductionVideoUrl?: string, featuredArticleUrl?: string,) {
+        whyBecomeMentor: string, greatestAchievement: string, company?: string, profilePhoto?: any, socialMediaUrls?: socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string,) {
         try {
-            console.log(socialMediaUrls, 'social media urls')
-            const socialMedia = socialMediaUrls?.reduce((acc, url, index) => {
-                const keys: (keyof { github?: string; linkedin?: string; x?: string; portfolio?: string })[] = [
-                    "github",
-                    "linkedin",
-                    "x",
-                    "portfolio",
-                ];
-                if (index < keys.length) {
-                    acc[keys[index]] = url;
-                }
-                return acc;
-            }, {} as { github?: string; linkedin?: string; x?: string; portfolio?: string });
-
+            console.log(socialMediaUrls,'social medial urls +++++++++++',category,jobTitle,'category ,jobtitle');
 
             const checkUser = await this.userRepository.isMentor(email)
 
             if (!checkUser) {
-                return { success: false, message: "User does not existed " }
+                throw new CustomError("User does not existed", HttpStatus.UNAUTHORIZED)
             }
 
 
             const mentorData = {
                 mentor: checkUser._id,
-                jobTitle, location, category, company, skills, bio, socialMediaUrls: socialMedia,
+                jobTitle, location, category, company, skills, bio, socialMediaUrls,
                 introductionVideoUrl, featuredArticleUrl, whyBecomeMentor,
                 greatestAchievement
             }
@@ -84,15 +69,15 @@ export class MentorService {
                 profilePhoto = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'
             }
             await sendMentorData(newMentor.toObject(), profilePhoto)
-            // const updateMentorForm = await userApi.post('/update-mentor-form', data)
-            // console.log(updateMentorForm.data, 'lala la l ala la la ');
 
             if (!newMentor) {
-                return { success: false, message: 'Mentor details not updated' }
+                throw new CustomError("Mentor details not updated", HttpStatus.UNAUTHORIZED)
             }
-            return { success: true, message: 'Mentor details updated ', newMentor }
+
+            return newMentor
         } catch (error) {
             console.error('Error founded saving mentor data', error);
+            throw error
         }
     }
 
@@ -102,6 +87,7 @@ export class MentorService {
             const mentor = this.userRepository.create(mentorData)
         } catch (error) {
             console.log('Error registering mentor', error);
+            throw error
         }
     }
 
@@ -112,6 +98,7 @@ export class MentorService {
             return mentors
         } catch (error) {
             console.error('Error founded in fetching all mentors', error);
+            throw error
         }
     }
 
@@ -122,6 +109,7 @@ export class MentorService {
             return findMentor
         } catch (error) {
             console.error('Error founded in get mentor', error);
+            throw error
         }
     }
 
@@ -129,35 +117,43 @@ export class MentorService {
         try {
             console.log(data, 'data in updata ++++++++++++++++++++++++++++++');
             const findUser = await this.userRepository.findById(id)
-            console.log(findUser,'find user update mentor data')
+            console.log(findUser, 'find user update mentor data')
             if (findUser) {
-                data.mentor= new mongoose.Types.ObjectId(id)
+                data.mentor = new mongoose.Types.ObjectId(id)
                 const newMentor = await this.mentorRepoistory.create(data)
                 if (!newMentor) {
-                    return { success: false, message: 'Mentor details not created' }
+                    throw new CustomError("Error facing to update mentor", HttpStatus.UNAUTHORIZED)
                 }
                 await sendMentorData(newMentor.toObject())
-                await this.userRepository.update(id,{isMentorFormFilled:true})
-                return {success:true,message:"Mentor details is created"}
-            }else{
+                await this.userRepository.update(id, { isMentorFormFilled: true })
+                // return { success: true, message: "Mentor details is created" }
+                return newMentor
+
+            } else {
                 const updatingMentor = await this.mentorRepoistory.update(id, data)
                 console.log(updatingMentor, 'respon in service in update mentor data ');
                 if (!updatingMentor) {
-                    return { success: false, message: 'Mentor details not updated' }
+                    // return { success: false, message: 'Mentor details not updated' }
+                    throw new CustomError("Error facing to update mentor", HttpStatus.UNAUTHORIZED)
                 }
                 await sendMentorData(updatingMentor.toObject())
-                await this.userRepository.update(updatingMentor.mentor.toString(),{isMentorFormFilled:true})
-                return { success: true, message: "Mentor details is updated" }
-    
-            }            
+                await this.userRepository.update(updatingMentor.mentor.toString(), { isMentorFormFilled: true })
+                // return { success: true, message: "Mentor details is updated" }
+                return updatingMentor
+            }
         } catch (error) {
             console.error('Error founed in update mentor data', error);
+            throw error
         }
     }
 
-    async updateSessionPrice(id: string, data: object) {
+    async updateSessionPrice(id: string, data: {singleSessionPrice:number,monthlySubscriptionPrice:number}) {
         try {
             console.log(id, 'id in update session price service', data, 'data update ses_____')
+            const {singleSessionPrice,monthlySubscriptionPrice} = data
+            if((singleSessionPrice||monthlySubscriptionPrice)<50){
+                throw new CustomError("session price must be at least ₹ 50 to meet minimum requirement",HttpStatus.UNAUTHORIZED)
+            }
             const findMentorFormFilled = await this.userRepository.findById(id)
             console.log(findMentorFormFilled, 'find mentor form fillecdf');
 
@@ -171,7 +167,6 @@ export class MentorService {
             console.log(response, 'response in update session price in serviced')
             return response
         } catch (error) {
-            console.error('Error founded in update session price', error);
             throw error
         }
     }
@@ -193,20 +188,13 @@ export class MentorService {
         try {
             const { search, priceRange, experience, expertise, rating, location, page, limit } = params;
 
-            // const users = await this.userRepository.findAllApprovedMentors() 
 
-            // console.log(users, 'users in getAllmentorWithMergedUserData')
             const mentors = await this.mentorRepoistory.findAllWithUserData()
-            // console.log(mentors, 'mentors in getAllmentorWithMergedUserData')
-            const approvedMentors = mentors?.filter(mentor => mentor.mentor !== null)
-            // console.log(approvedMentors,'approved mentors')
+            const approvedMentors = mentors?.filter((mentor: { mentor: null; }) => mentor.mentor !== null)
 
             const slots = await this.slotRepository.findAll()
-            // console.log(slots, 'slots in getAllmentorWithMergedUserData');
-            const mentorsWithSlots = approvedMentors?.map(mentor => {
-                // console.log(mentor.mentor._id,'mentor._id *********');
+            const mentorsWithSlots = approvedMentors?.map((mentor: { mentor: { _id: { toString: () => string; }; }; toObject: () => any; }) => {
                 const mentorSlots = slots.filter(slot => slot.mentorId.toString() === mentor.mentor._id.toString());
-                // console.log(mentorSlots,'mentorslots'); 
 
                 return {
                     ...mentor.toObject(),
@@ -214,7 +202,7 @@ export class MentorService {
                 }
             })
             console.log(mentorsWithSlots, 'mentors with slots');
-            const filteredMentors = mentorsWithSlots?.filter((mentor) => {
+            const filteredMentors = mentorsWithSlots?.filter((mentor: { mentor: IUser; singleSessionPrice: number; experience: any; location: string; }) => {
                 if (typeof mentor.mentor !== 'string') {
                     const user = mentor.mentor as IUser;
                     const mentorSearch = !search || user.fullName.toLowerCase().includes(search.toLowerCase())
@@ -241,6 +229,7 @@ export class MentorService {
             return { data: paginatedMentors, pagination: { totalResult, totalPages: Math.ceil(totalResult / pageSize), currentPage } }
         } catch (error) {
             console.error('Error founded in getAllmentorWithMergedUserData service', error);
+            throw error
         }
     }
 
@@ -262,6 +251,7 @@ export class MentorService {
             }
         } catch (error) {
             console.error('Error founded in getMentorSpecificData service', error);
+            throw error
         }
     }
 

@@ -99,6 +99,7 @@ export class AdminService implements IAdminService {
         try {
             const sentRequestToUserService = await userApi.patch(`${id}/approval`,{isApproved})
             // console.log(sentRequestToUserService);
+
             
             return sentRequestToUserService.data
         } catch (error) {
@@ -106,6 +107,15 @@ export class AdminService implements IAdminService {
         }
     }
 
+
+    async updateUserStatus(id:string,isActive:boolean){
+        try {
+            const sentRequestToUserService = await userApi.patch(`${id}/status`,{isActive})
+            return sentRequestToUserService.data
+        } catch (error) {
+            console.error('ERror founded in update user status',error);
+        }
+    }
 
 
     // async registerUser(data: any) {

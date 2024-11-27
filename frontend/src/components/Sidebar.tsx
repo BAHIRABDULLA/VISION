@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FaUserCircle, FaComments, FaVideo, FaHistory, FaBell, FaUsers, FaSignOutAlt, FaBars } from 'react-icons/fa';
 import { MdSpaceDashboard } from 'react-icons/md';
+import { FaCheckToSlot } from "react-icons/fa6";
+
 import SidebarItem from './SidebarItem';
 
 import { useDispatch } from 'react-redux';
@@ -25,10 +27,12 @@ const Sidebar: React.FC<SidebarProps> = ({ role, activePage, setActivePage,isCol
   const logoutUser =async () => {
     const apiLogout = await logout()
     if (role == 'mentee') {
+      localStorage.removeItem('accessToken')
       dispatch(menteeLogout())
       navigate('/')
 
     } else {
+      localStorage.removeItem('accessToken')
       dispatch(mentorLogout())
       navigate('/signin')
 
@@ -48,6 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, activePage, setActivePage,isCol
     { label: 'Billing History', icon: <FaHistory /> },
     { label: 'Notification', icon: <FaBell /> },
     ...(role === 'mentor' ? [{ label: 'Mentees', icon: <FaUsers /> }] : [{ label: 'Mentors', icon: <FaUsers /> }]),
+    ...(role === 'mentor' ? [{ label: 'Slot Management', icon: <FaCheckToSlot /> }] : []), 
     { label: 'Log out', icon: <FaSignOutAlt />, onClick: logoutUser },
   ];
 

@@ -10,7 +10,7 @@ import {
   Mail, User, Shield, Check, X, Calendar, Book, Users, Award, Building2,
   MapPin, ChartBarStacked, Briefcase, Play, Newspaper, ListTodo
 } from 'lucide-react';
-import { updateUserStatus } from '@/services/userApi';
+import { updateUserActiveStatus } from '@/services/adminApi';
 
 const ViewUser = () => {
   const [userDetails, setUserDetails] = useState<CommonDetails | MentorDetails | MenteeDetails | null>(null);
@@ -45,7 +45,10 @@ const ViewUser = () => {
 
     try {
       const updatedUser = { ...userDetails, isActive: !userDetails.isActive };
-      await updateUserStatus(userId, { isActive: updatedUser.isActive });
+      console.log(updatedUser.isActive,'update user . is active ');
+      
+      const response = await updateUserActiveStatus(userId,updatedUser.isActive );
+      
       setUserDetails(updatedUser);
     } catch (error) {
       console.error('Error updating user status:', error);
@@ -155,7 +158,7 @@ const ViewUser = () => {
               </div>
             </div>
 
-            <button
+            <button onClick={handleToggleActiveStatus}
               className={`w-full mt-6 px-4 py-2 rounded-lg font-medium transition-colors ${userDetails.isActive
                 ? 'bg-red-100 text-red-700 hover:bg-red-200'
                 : 'bg-green-100 text-green-700 hover:bg-green-200'

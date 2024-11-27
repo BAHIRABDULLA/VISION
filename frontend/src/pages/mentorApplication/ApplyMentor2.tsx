@@ -36,16 +36,7 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
     const navigate = useNavigate()
 
     const { register, handleSubmit, formState: { errors } } = useForm<applyMentorSchemaType>({ resolver: zodResolver(applyMentorSchema) })
-    // const onSubmit = async (data: any) => {
-    //     console.log(data, 'data');
-    //     const response = await applyMentor2(data,email)
-    //     console.log(response,);
-    //     if(response.data.success){
-    //         navigate('/thanks-mentor')
-    //     }else{
-    //         navigate('/signup')
-    //     }
-    // }
+ 
     return (
 
         <div className='min-h-screen flex flex-col items-center justify-center bg-gray-50'>

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { privateApi } from "./axiosConfig";
 import { Try } from "@mui/icons-material";
 
@@ -8,6 +8,8 @@ console.log(import.meta.env.VITE_MENTOR_API_BASE_URL, 'import meta env vite ment
 const api = axios.create({
     baseURL: import.meta.env.VITE_MENTOR_API_BASE_URL
 })
+
+
 export const applyMentor = async (data: object) => {
     const response = await api.post('/apply-mentor', data)
     return response
@@ -33,7 +35,9 @@ export const updateMentorSessionPrice  = async( data:object)=>{
         return response
     } catch (error) {
         console.error('Error founded in update mentor price',error);
-        return error
+        if(error instanceof AxiosError){
+            return error.response
+        }
     }
 }
 

@@ -5,4 +5,5 @@ export interface IAdminService {
     users():Promise<{users:object[]}| null>
     getUser(email:string):Promise<{user:object}|null>
     updateApproval(id:string,isApproved:string):Promise<null>
+    updateUserStatus(id:string,isActive:boolean):Promise<any>
 }

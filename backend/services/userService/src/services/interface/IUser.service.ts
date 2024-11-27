@@ -7,6 +7,6 @@ export interface IUserService {
     getUser(id:string):Promise<IUser | IMentor | undefined>;
     uploadMentorData(data:IMentor):Promise<void>
     updateUser(id:string,userData:{fullName:string,profile:string}):Promise<IUser |null>
-        
-    
+    updateUserApproval(id:string,isApproved:string):Promise<any>
+    updateUserStatus(id:string,isActive:boolean):Promise<any>
 }

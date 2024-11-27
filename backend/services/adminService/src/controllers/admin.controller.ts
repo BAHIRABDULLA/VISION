@@ -128,4 +128,20 @@ export class AdminController {
             console.error('Error founded in mentor approval');
         }
     }
+
+
+    async updateUserActiveStatus(req:Request,res:Response){
+        try {
+            console.log('udpate4 usert active status *********');
+            
+            const {id}  = req.params
+            const {isActive} = req.body
+            console.log(req.body,'req.body in udpatea user active status',isActive)
+            console.log(id,'id in updatea user active status')
+            const response = await this.adminService.updateUserStatus(id,isActive)
+            return successResponse(res,HttpStatus.OK,"status updated")
+        } catch (error) {
+            console.error('Error founded in update user active status',error);
+        }
+    }
 }

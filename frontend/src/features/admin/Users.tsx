@@ -78,7 +78,7 @@ const Users: React.FC = () => {
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="py-3 px-5 flex items-center gap-4">
+                  <td className="py-3 px-9">
                     <Link to={`/admin/users/${user.role}-${user._id}`} className="text-blue-500 hover:text-blue-700">
                       <LuView className='w-6 h-6' />
                     </Link>
@@ -91,9 +91,7 @@ const Users: React.FC = () => {
                         </Link>)
                     } */}
 
-                    <button className="text-red-500 hover:text-red-700">
-                      <MdDelete className='w-6 h-6' />
-                    </button>
+                 
                   </td>
                 </tr>
               ))

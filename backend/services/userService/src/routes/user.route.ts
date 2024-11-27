@@ -12,8 +12,10 @@ const upload = multer({
 
 userRoute.get('/users', userController.getAllUsers.bind(userController))
 userRoute.get('/users/:id', userController.getUserById.bind(userController))
-userRoute.patch('/:id/approval', userController.updateUserStatus.bind(userController));
-userRoute.get('/', authenticateToken,(req,res)=> userController.getUser(req,res))
+userRoute.patch('/:id/approval', userController.updateUserApprovalStatus.bind(userController));
+userRoute.get('/', authenticateToken, userController.getUser.bind(userController))
 userRoute.post('/', authenticateToken,upload.single('file'),userController.profileUpdate.bind(userController))
+
+userRoute.patch('/:id/status',userController.updateUserStatus.bind(userController))
 
 export default userRoute

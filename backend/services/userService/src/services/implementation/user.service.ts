@@ -1,15 +1,17 @@
+import { HttpStatus } from "../../enums/http.status";
+import { sendMentorData } from "../../events/rabbitmq/producers/producer";
 import { IMentor } from "../../interfaces/IMentor";
-import { Mentor } from "../../models/mentor.model";
 import { User } from "../../models/user.model";
 import { MentorRepository } from "../../repositories/implementation/mentor.repository";
-import { UserRepository } from "../../repositories/implementation/user.repository";
 import IUserRepository from "../../repositories/interface/IUser.repository";
+import CustomError from "../../utils/custom.error";
+import { sendEmail } from "../../utils/email.util";
 import { IUserService } from "../interface/IUser.service";
 
-export class UserService implements IUserService{
+export class UserService implements IUserService {
     private userRepository: IUserRepository
-    private mentorRepository:MentorRepository
-    constructor(userRepository:IUserRepository,mentorRepository:MentorRepository) {
+    private mentorRepository: MentorRepository
+    constructor(userRepository: IUserRepository, mentorRepository: MentorRepository) {
         this.userRepository = userRepository
         this.mentorRepository = mentorRepository
     }
@@ -18,51 +20,97 @@ export class UserService implements IUserService{
         try {
             return await this.userRepository.findAll()
         } catch (error) {
-            console.error('Error founded in get all users',error);
+            console.error('Error founded in get all users', error);
+            throw error
         }
     }
 
 
     async getUser(id: string) {
         try {
-            const user =  await this.userRepository.findById(id)
-            console.log(user,'user, = = = = = = = ');
-            
-            if(user?.role==='mentor'){
+            const user = await this.userRepository.findById(id)
+            console.log(user, 'user, = = = = = = = ');
+
+            if (user?.role === 'mentor') {
                 const mentorData = await this.mentorRepository.findMentor(id)
-                console.log(mentorData,'this is mentordata ');
+                console.log(mentorData, 'this is mentordata ');
                 const mergedData = {
-                    ...user.toObject(),...mentorData?.toObject()
+                    ...user.toObject(), ...mentorData?.toObject()
                 }
-                console.log(mergedData,'///////////////////');
-                
+                console.log(mergedData, '///////////////////');
+
                 return mergedData
             }
             return user
         } catch (error) {
             console.error('Error founded in get user', error);
+            throw error
         }
     }
 
-    async uploadMentorData(data:IMentor){
+    async uploadMentorData(data: IMentor) {
         try {
-            const response = await this.mentorRepository.updateOrInsert(data._id.toString(),data)
-            console.log(response,'response ');
-            
-            // await this.mentorRepository.create(data)
+            const response = await this.mentorRepository.updateOrInsert(data._id.toString(), data)
+            console.log(response, 'response ');
         } catch (error) {
-            console.error('error fonded in upload mentor data',error);
+            console.error('error fonded in upload mentor data', error);
+            throw error
         }
     }
-    async updateUser(id:string,userData:{fullName:string,profile:string}){
+    async updateUser(id: string, userData: { fullName: string, profile: string }) {
         try {
-            return await this.userRepository.update(id,userData)
+            return await this.userRepository.update(id, userData)
         } catch (error) {
-            console.error('Error founded in updating user',error);
-            return null
+            console.error('Error founded in updating user', error);
+            throw error
         }
     }
 
+
+    async updateUserApproval(id: string, isApproved: string) {
+        try {
+            if (!['pending', 'approved', 'rejected'].includes(isApproved)) {
+                throw new CustomError("Invalid approval status",HttpStatus.BAD_REQUEST)
+            }
+            const updatedUser = await User.findByIdAndUpdate(
+                id, { isApproved }, { new: true });
+            console.log(updatedUser, 'update  user ');
+
+            if (!updatedUser) {
+                throw new CustomError("User not founded",HttpStatus.BAD_REQUEST)
+            }
+            await sendMentorData('mentorApproval', { id, isApproved })
+            await sendEmail(updatedUser?.email,
+                'Your Mentor Application is Approved!',
+                `
+                    <h1>Congratulations</h1>
+                    <p>We are excited to inform you that your application to become a mentor on Vision has been approved.</p>
+                    <p>You can now log in and start mentoring to make a difference in the lives of our mentees.</p>
+                    <p>Thank you for joining Vision!</p>
+                    <br>
+                    <p>Best Regards,<br>The Vision Team</p>
+                ` ,
+                true
+            )
+            return updatedUser
+        } catch (error) {
+            console.error('Error founded in update user approval', error);
+            throw error
+        }
+    }
+
+
+    async updateUserStatus(id:string,isActive:boolean){
+        try {
+            const response = await this.userRepository.update(id,{isActive:isActive})
+             console.log(response,'response in update use status');
+             
+            return response
+        } catch (error) {
+            console.error("Error founded in update user status",error);
+            throw error
+        }
+    }
 
 
 }
