@@ -57,7 +57,7 @@ const SlotManagement = () => {
     try {
       const response = await updateMentorSessionPrice(parsed.data)
       console.log(response, 'response')
-
+      
       if (response?.status >= 400) {
         toast.error(response?.data.message)
       } else {
@@ -65,7 +65,7 @@ const SlotManagement = () => {
         setIsEditPrice(false);
       }
     } catch (error) {
-      toast.error('An unexpected error occurred. Please try again later.');
+      toast.error('Unauthorized error');
     }
   }
 

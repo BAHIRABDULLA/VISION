@@ -9,4 +9,7 @@ const route = express.Router()
 route.post('/create-checkout-session',authenticateToken,paymentController.createSessionForStripe.bind(paymentController))
 // route.post('/webhook',express.raw({type:'application/json'}),paymentController.webhookHandle.bind(paymentController))
 
+
+route.post('/mentorship-plan',authenticateToken,paymentController.mentorshipCheckoutSession.bind(paymentController))
+
 export default route

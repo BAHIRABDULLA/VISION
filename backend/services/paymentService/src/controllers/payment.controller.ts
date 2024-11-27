@@ -1,5 +1,5 @@
 import { IPaymentService } from "../services/interface/IPayment.service";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Stripe from "stripe";
 
@@ -24,12 +24,14 @@ export class PaymentController {
             console.log(user, 'user as jwt payload');
 
             const userEmail = user.email
+            const menteeId = user.id 
             console.log(userEmail, 'user email');
+            console.log(req.body,'reb.qody');
+            
+            const { price, courseId } = req.body
+            console.log(price, courseId, 'price , course i d');
 
-            const { price, id } = req.body
-            console.log(price, id, 'price , course i d');
-
-            const response = await this.paymentService.createSession(price, id, userEmail)
+            const response = await this.paymentService.createSession(price, courseId, userEmail,menteeId)
             res.json(response)
         } catch (error) {
             console.error('ERror founded in create session in contro paymenservice', error);
@@ -51,6 +53,7 @@ export class PaymentController {
             console.log(process.env.STRIPE_WEBHOOK_SIGNIN_SECRET, 'process.env.STRIPE_WEBHOOK_SIGNIN_SECRET');
 
             // const event = await this.paymentService.constructWebhookEvent(req.body, sig);
+            
             event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SIGNIN_SECRET!);
             if (event) {
                 console.log(`its so simple bro , don't worry `);
@@ -66,5 +69,19 @@ export class PaymentController {
         }
     }
 
+
+    async mentorshipCheckoutSession(req:CustomeRequest,res:Response){
+        try {
+            const user = req.user as JwtPayload
+            console.log(user, 'user as jwt payload');
+
+            const userEmail = user.email
+            const {planType,price,menteeId,mentorId}  = req.body
+            const response = await this.paymentService.commonSession(userEmail,planType,menteeId,mentorId,price)
+            return res.status(200).json(response)
+        } catch (error) {
+            console.error('Error founded in common checkout session',error);
+        }
+    }
 
 }

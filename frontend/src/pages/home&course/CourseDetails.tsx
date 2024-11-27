@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Star } from 'lucide-react';
+import { ChevronLeft, Star } from 'lucide-react';
 import Header from '@/components/Header';
 import { useParams } from 'react-router-dom';
 import { getCourseDetails } from '@/services/courseApi';
 import Loading from '@/components/Loading';
-import toast,{Toaster} from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import Footer from '@/components/Footer';
 import { loadStripe } from '@stripe/stripe-js'
 import { createCheckoutSession } from '@/services/paymentApi';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store/store';
 
 
 const publicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
@@ -24,25 +26,6 @@ interface CourseDetailProps {
     price: number;
 }
 const CourseDetails = () => {
-
-
-    const handleEnroll = async () => {
-        const stripe = await stripePromise
-        try {
-            console.log(id, 'id in handelenrolle');
-
-            const response = await createCheckoutSession({ price: course?.price, id })
-            const result = await stripe?.redirectToCheckout({
-                sessionId: response?.data.id
-            })
-            if (result?.error) {
-                toast.error('Payment failed')
-            }
-        } catch (error) {
-            toast.error('Please sign in your account')
-            console.error('Error creating cehckout session', error);
-        }
-    }
 
 
     const { id } = useParams<{ id: string }>()
@@ -73,6 +56,37 @@ const CourseDetails = () => {
         fetchCourseDetails()
     }, [id])
 
+    const handleEnroll = async () => {
+        const stripe = await stripePromise
+        try {
+            console.log(id, 'id in handelenrolle');
+            if (!course?.price) {
+                console.error('Price is not defined for the course.');
+                return;
+            }
+            if(!id) {
+                toast.error('Cannot process ,some error occured')
+                return
+            }
+            if (!course?.price) toast.error('Price is not defined for the course.')
+            
+            const response = await createCheckoutSession({ price: course?.price,courseId: id })
+            console.log(response, 'response ')
+            const result = await stripe?.redirectToCheckout({
+                sessionId: response?.data.id
+            })
+            if (result?.error) {
+                toast.error('Payment failed')
+            }
+        } catch (error) {
+            toast.error('Please sign in your account')
+            console.error('Error creating cehckout session', error);
+        }
+    }
+
+
+    
+
     console.log(course?.curriculum[0].topics, 'course curriculum detailed here');
 
 
@@ -82,8 +96,15 @@ const CourseDetails = () => {
 
             <div className='bg-slate-800 min-h-screen  px-6 md:px-20'>
                 <Header />
+                {/* Back Navigation */}
+                <div className="container mx-auto px-8 py-4">
+                    <button onClick={() => window.history.back()} className="flex items-center text-gray-400 hover:text-white">
+                        <ChevronLeft className="w-5 h-5" />
+                        <span>Back to Courses</span>
+                    </button>
+                </div>
                 <div className="flex justify-between items-start mb-12">
-                    <Toaster/>
+                    <Toaster />
                     <div>
                         <h1 className="text-3xl text-white font-bold mb-2">{course?.name}</h1>
                         <p className="text-gray-400">Course Duration: Estimate {course?.duration}</p>

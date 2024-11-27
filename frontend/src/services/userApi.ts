@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { privateApi } from './axiosConfig';
+import { adminPrivateApi } from './instance/adminInstance';
 
 
 console.log(import.meta.env.VITE_USER_API_BASE_URL, 'IMPORT mete ENV viteapivaseurl');
@@ -21,8 +22,8 @@ export const signUpRequest = async (email: string) => {
 }
 
 
-export const otpVerify = async (fullName: string, email: string, password: string, role: string, otp: string) => {
-    const response = await api.post('/otp-signup', { fullName, email, password, role, otp })
+export const otpVerify = async (fullName: string, email: string, password: string, role: string, otp: string,type:string) => {
+    const response = await api.post('/otp-signup', { fullName, email, password, role, otp ,type})
     return response
 
 }
@@ -66,11 +67,6 @@ export const resetPassword = async (email: string, password: string, confirmPass
 }
 
 
-
-export const updateUserStatus = async (id: string, updateData: { isActive?: boolean, isApproved?: string }) => {
-    const response = await api.patch(`/${id}/approval`, updateData)
-    return response
-}
 
 
 export const getUserDetails = async () => {
