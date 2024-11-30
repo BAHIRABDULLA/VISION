@@ -1,57 +1,104 @@
 import Header from '@/components/Header';
-import React, { useState } from 'react';
+// import Pagination from '@/components/Pagination';
+import Pagination from '@mui/material/Pagination';
+import { getAllMentors } from '@/services/mentorApi';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Loading from '@/components/Loading';
 
 const MentorPage: React.FC = () => {
+    const [currentPage, setCurrentPage] = useState(1)
+    console.log(currentPage, 'current page ')
+    const [totalPages,setTotalPages]=useState(0)
+    console.log(totalPages,'total pages')
     const [searchQuery, setSearchQuery] = useState('');
+    const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState({
         priceRange: 200,
-        availability: 'any',
         experience: 'any',
         expertise: 'any',
         rating: 'any',
         location: 'any'
     });
-
+    // const totalPages = 10
+    // const handlePageChange = (page: number) => {
+    //     console.log(`Navigated to page ${page}`);
+    //     setCurrentPage(page);
+    // };
     const [mentors, setMentors] = useState([
-        {
-            id: 1,
-            fullName: 'John Doe',
-            countryCode: 'US',
-            jobTitle: 'Senior Software Engineer',
-            description: 'Experienced mentor in full-stack development and cloud computing.',
-            slotsAvailable: 5,
-            pricePerMonth: '$200',
-            rating: 4.5,
-            image: 'https://via.placeholder.com/150',
-            experience: '10+ years',
-            expertise: ['Full Stack', 'Cloud Computing']
-        },
-        {
-            id: 2,
-            fullName: 'Jane Smith',
-            countryCode: 'UK',
-            jobTitle: 'Product Manager',
-            description: 'Specializes in product management and business strategy.',
-            slotsAvailable: 3,
-            pricePerMonth: '$180',
-            rating: 4.8,
-            image: 'https://via.placeholder.com/150',
-            experience: '8 years',
-            expertise: ['Product Management', 'Strategy']
-        },
+        // {
+        //     id: 1,
+        //     fullName: 'John Doe',
+        //     countryCode: 'US',
+        //     jobTitle: 'Senior Software Engineer',
+        //     description: 'Experienced mentor in full-stack development and cloud computing.',
+        //     slotsAvailable: 5,
+        //     pricePerMonth: '$200',
+        //     rating: 4.5,
+        //     image: 'https://via.placeholder.com/150',
+        //     experience: '10+ years',
+        //     expertise: ['Full Stack', 'Cloud Computing']
+        // },
+        // {
+        //     id: 2,
+        //     fullName: 'Jane Smith',
+        //     countryCode: 'UK',
+        //     jobTitle: 'Product Manager',
+        //     description: 'Specializes in product management and business strategy.',
+        //     slotsAvailable: 3,
+        //     pricePerMonth: '$180',
+        //     rating: 4.8,
+        //     image: 'https://via.placeholder.com/150',
+        //     experience: '8 years',
+        //     expertise: ['Product Management', 'Strategy']
+        // },
     ]);
+    console.log(mentors,'mentros in all mentors ')
 
+    useEffect(() => {
+        const fetchMentors = async () => {
+            try {
+                setLoading(true)
+                const paramsData = {
+                    search: searchQuery,
+                    priceRange: filters.priceRange,
+                    experience: filters.experience,
+                    expertise: filters.expertise,
+                    rating: filters.rating,
+                    location: filters.location,
+                    page: currentPage,
+                    limit: 10
+                }
+                console.log(paramsData, 'params data');
+
+                const resposne = await getAllMentors(paramsData)
+                console.log(resposne, 'response - - -  in useeffetct mentors');
+                if(resposne?.data){
+                    setMentors(resposne.data.data)
+                    setTotalPages(resposne?.data.pagination.totalPages)
+                }
+            } catch (error) {
+                console.error('Error fetching mentors',error);
+                
+            }finally{
+                setLoading(false)
+            }
+        }
+        fetchMentors()
+    }, [searchQuery, filters, currentPage])
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
     };
-
+    if(loading){
+        <Loading/>
+    }
     const handleFilterChange = (name: string, value: string | number) => {
         setFilters(prev => ({ ...prev, [name]: value }));
     };
 
     const filteredMentors = mentors.filter((mentor) =>
-        mentor.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+        // mentor.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+    mentor.mentor.fullName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
@@ -79,7 +126,7 @@ const MentorPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <label className="block mb-2 font-medium">Availability</label>
                                 <select
                                     className="w-full p-2 border border-gray-300 rounded"
@@ -91,7 +138,7 @@ const MentorPage: React.FC = () => {
                                     <option value="3-5">3-5 slots</option>
                                     <option value="5+">5+ slots</option>
                                 </select>
-                            </div>
+                            </div> */}
 
                             <div>
                                 <label className="block mb-2 font-medium">Experience Level</label>
@@ -168,24 +215,26 @@ const MentorPage: React.FC = () => {
                     </div>
 
                     {filteredMentors.map((mentor) => (
-                        <div key={mentor.id} className="bg-gray-700 rounded-lg shadow-lg overflow-hidden flex">
+                        <div key={mentor._id} className="bg-gray-700 rounded-lg shadow-lg overflow-hidden flex">
                             {/* Mentor Image */}
                             <div className="w-1/4">
-                                <img
+                                {/* <img
                                     src={mentor.image}
                                     alt={mentor.fullName}
                                     className="w-full h-full object-cover"
-                                />
+                                /> */}
                             </div>
 
                             {/* Mentor Details */}
                             <div className="text-white w-3/4 p-6">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h3 className="text-xl font-semibold">{mentor.fullName}</h3>
-                                        <p className="text-sm text-gray-400">{mentor.countryCode}</p>
+                                        <h3 className="text-xl font-semibold">{mentor.mentor.fullName}</h3>
+                                        {/* <p className="text-sm text-gray-400">{mentor.countryCode}</p> */}
+                                        <p className="text-sm text-gray-400">{mentor.location}</p>
                                     </div>
-                                    <p className="text-xl font-bold">{mentor.pricePerMonth}/month</p>
+                                    {/* <p className="text-xl font-bold">{mentor.pricePerMonth}/month</p> */}
+                                    <p className="text-xl font-bold">₹ {mentor.singleSessionPrice}</p>
                                 </div>
 
                                 <p className="mt-2 text-lg text-gray-300">{mentor.jobTitle}</p>
@@ -199,32 +248,53 @@ const MentorPage: React.FC = () => {
                                     <span className="ml-2 text-gray-400">({mentor.rating})</span>
                                 </div>
 
-                                <p className="mt-3 text-gray-300">{mentor.description}</p>
+                                {/* <p className="mt-3 text-gray-300">{mentor.description}</p> */}
+                                <p className="mt-3 text-gray-300">{mentor.bio}</p>
 
                                 <div className="mt-4 flex items-center gap-4">
                                     <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">
-                                        {mentor.slotsAvailable} slots available
+                                        {/* {mentor.slotsAvailable} slots available */}
                                     </span>
                                     <span className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">
-                                        {mentor.experience}
+                                        {mentor?.experience}
                                     </span>
                                 </div>
 
                                 <div className="mt-4 flex items-center gap-2">
-                                    {mentor.expertise.map((exp, index) => (
+                                    {/* {mentor.expertise.map((exp, index) => (
                                         <span key={index} className="bg-gray-700  text-gray-300 px-3 py-1 rounded-full text-sm">
                                             {exp}
                                         </span>
-                                    ))}
+                                    ))} */}
                                 </div>
 
-                                <Link  to='/mentorDetails' className="mt-6 bg-purple-500 text-center text-white py-2 px-6 rounded-full hover:bg-purple-600 transition-colors block">
+                                <Link to={`/mentor/${mentor._id}`} className="mt-6 bg-purple-500 text-center text-white py-2 px-6 rounded-full hover:bg-purple-600 transition-colors block">
                                     View Profile
                                 </Link>
                             </div>
                         </div>
                     ))}
                 </div>
+            </div>
+            {/* <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} /> */}
+            <div className='flex justify-center'>
+                <Pagination count={10} variant="outlined" size='large'
+                    page={currentPage}
+                    onChange={(event, value) => setCurrentPage(value)}
+                    sx={{
+                        "& .MuiPaginationItem-root": {
+                            color: "white", // Change text color
+                            borderColor: "white", // Change border color
+                        },
+                        "& .MuiPaginationItem-root:hover": {
+                            backgroundColor: "rgba(255, 255, 255, 0.1)", // Hover effect
+                        },
+                        "& .Mui-selected": {
+                            backgroundColor: "white", // Selected page background
+                            color: "darkblue", // Selected page text color
+                        },
+                    }}
+                />
             </div>
         </div>
     );

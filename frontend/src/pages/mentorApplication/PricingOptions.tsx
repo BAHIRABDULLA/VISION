@@ -40,11 +40,14 @@ const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentor
             }
             const response = await mentorshipPayment(data)
             console.log(response,'response in handlebooking');
+            
             if(response?.data.url){
                 console.log(response.data.url,'response data url')
                 window.location.href = response.data.url
             }else{
-                toast.error('Unable to process payment')
+                // toast.error('Unable to process payment')
+                toast.error(response?.data.message)
+
             }
         } catch (error) {
             console.error('Error founded in handlebooking',error);

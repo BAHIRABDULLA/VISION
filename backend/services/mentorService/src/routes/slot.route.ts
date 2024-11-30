@@ -1,12 +1,12 @@
 import express from 'express'
 import authenticateToken from '../middleware/token.middleware'
-import { SlotController } from '../controllers/slot.controller'
 
 const router = express.Router()
 
-const slotController = new SlotController()
+import { slotController } from '../config/container'
 
-router.post('/',authenticateToken,slotController.createSlot)
-router.get('/',slotController.getSlots)
-router.delete('/:id',authenticateToken,slotController.deleteSlot)
+router.post('/booking',authenticateToken,slotController.bookingSlot.bind(slotController))
+router.post('/',authenticateToken,slotController.createSlot.bind(slotController))
+router.get('/',slotController.getSlots.bind(slotController))
+router.delete('/:id',authenticateToken,slotController.deleteSlot.bind(slotController))
 export default router

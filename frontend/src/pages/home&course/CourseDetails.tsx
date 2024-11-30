@@ -72,6 +72,12 @@ const CourseDetails = () => {
             
             const response = await createCheckoutSession({ price: course?.price,courseId: id })
             console.log(response, 'response ')
+
+            if(response?.status>=400){
+                toast.error(response?.data.message)
+                return
+            }
+
             const result = await stripe?.redirectToCheckout({
                 sessionId: response?.data.id
             })
