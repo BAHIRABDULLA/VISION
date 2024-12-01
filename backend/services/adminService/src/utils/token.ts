@@ -11,7 +11,7 @@ export const generateAccessToken = (email:string):string=>{
     return jwt.sign(
         { email },
         secret_key,
-        { expiresIn: '1h' }
+        { expiresIn: '2m' }
     )  
 } 
 export const generateRefreshToken = (email:string)=>{

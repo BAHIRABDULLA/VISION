@@ -1,7 +1,6 @@
 import { getChannel } from "../../../config/rabbitmq";
-import { MentorService } from "../../../services/mentor.service";
+import { mentorService } from "../../../config/container";
 
-const mentorService=  new MentorService()
 export const consumerMentorApprovalQueue = async()=>{
     try {  
         const channel = getChannel()

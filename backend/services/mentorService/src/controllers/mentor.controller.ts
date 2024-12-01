@@ -1,23 +1,45 @@
-import { Request, Response } from "express";
-import { MentorService } from "../services/mentor.service";
+import { NextFunction, Request, Response } from "express";
+import { MentorService } from "../services/implementation/mentor.service";
 import { uploadFile } from "../utils/upload";
 import fs from 'fs'
 import { HttpStatus } from "../enums/http.status";
+import { JwtPayload } from "jsonwebtoken";
+import { errorResponse, successResponse } from "../utils/response.handler";
+import CustomError from "../utils/custom.error";
 
-const mentorService = new MentorService()
 
+interface ParamsData {
+    search: string;
+    priceRange: number;
+    experience: string;
+    expertise: string;
+    rating: number;
+    location: string;
+    page: number;
+    limit: number
+}
 
+interface customRequest extends Request {
+    user?: string | JwtPayload
+}
 
 export class MentorController {
 
+    private mentorService: MentorService
+    constructor(mentorService: MentorService) {
+        this.mentorService = mentorService
+    }
 
-    async applyMentor(req: Request, res: Response) {
+    async applyMentor(req: Request, res: Response, next: NextFunction) {
         try {
-            const { email, jobTitle, location, category, skills, bio,
+            let { email, jobTitle, location, category, skills, bio,
                 whyBecomeMentor, greatestAchievement, company, profilePhoto,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl,
             } = req.body;
-
+            console.log(req.body,'req.body ()()()()()()');
+            if(socialMediaUrls){
+                socialMediaUrls = JSON.parse(socialMediaUrls)
+            }
             let s3FileUrl = ''
             if (req.file) {
 
@@ -37,55 +59,125 @@ export class MentorController {
                 console.log('No file received');
             }
             console.log(s3FileUrl, 's3FileUrl');
-            
 
-            const response = await mentorService.mentorDetails(email, jobTitle, location, category, skills, bio,
+
+            const response = await this.mentorService.mentorDetails(email, jobTitle, location, category, skills, bio,
                 whyBecomeMentor, greatestAchievement, company, s3FileUrl,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl)
 
             console.log(response, 'response in mentor controller');
 
-            res.json(response)
+            return successResponse(res,HttpStatus.OK,"Mentor details updated",response)
         } catch (error) {
             console.error('Error founded in apply mentor form ', error);
+            next(error)
         }
     }
 
 
-    async getAllMentors(req: Request, res: Response) {
+    async getAllMentors(req: Request, res: Response, next: NextFunction) {
         try {
-            const response = await mentorService.getAllMentors()
-            res.json(response)
+            const response = await this.mentorService.getAllMentors()
+            return successResponse(res,HttpStatus.OK,"Sent all mentors",response)
         } catch (error) {
             console.error('Error founded in get all mentors ');
+            next(error)
         }
-
     }
 
 
-    async getMentor(req: Request, res: Response) {
+    async getMentor(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
-            const response = await mentorService.getMentor(id)
-
-            res.json({ success: true, mentor: response })
+            const response = await this.mentorService.getMentor(id)
+            return successResponse(res,HttpStatus.OK,"Sent mentor",{mentor:response})
         } catch (error) {
             console.error('Error founded in mentor.controller getMentor', error);
-
+            next(error)
         }
     }
 
-    async updateMentor(req:Request,res:Response){
+    async updateMentor(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params
-            console.log(id,'req.params  . . . . ');
-            
+            const { id } = req.params
+            console.log(id, 'req.params  . . . . ');
+
             const data = req.body
-            const response = await mentorService.updateMentorData(id,data)
-            console.log(response,'response in conttroller updatementor');
-            return res.status(HttpStatus.OK).json(response)
+            const response = await this.mentorService.updateMentorData(id, data)
+            console.log(response, 'response in conttroller updatementor');
+            return successResponse(res,HttpStatus.OK,"Mentor updation successfully done",response)
         } catch (error) {
-            console.error('Error founded in update mentor',error);
+            console.error('Error founded in update mentor', error);
+            next(error)
+        }
+    }
+
+
+    async updateMentorSessionPrice(req: customRequest, res: Response, next: NextFunction) {
+        try {
+            console.log('=====    ========    =================    ');
+            const user = req.user as JwtPayload
+            console.log(user, 'user id updater mentor session price')
+            const data = req.body
+            console.log(req.body, 'req.body')
+            const response = await this.mentorService.updateSessionPrice(user.id, data)
+            console.log(response, 'respoe');
+            return successResponse(res, HttpStatus.OK, "Session price updated", response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getMentorDetails(req: customRequest, res: Response, next: NextFunction) {
+        try {
+            const user = req.user as JwtPayload
+            const response = await this.mentorService.getMentor(user.id)
+            return successResponse(res, HttpStatus.OK, "mentor data sent", response)
+        } catch (error) {
+            console.error('Error founded in get mentor details', error);
+        }
+    }
+
+    async getAllmentorWithMergedUserData(req: Request, res: Response, next: NextFunction) {
+        try {
+            console.log('kfjkdjfdkfjdkjfdkfjdkfjdkjfk');
+            const { search = '', priceRange = '0', experience = '', expertise = '', rating = '0', location = '', page = '1', limit = '' } = req.query;
+            // const params = req.query
+            const params: ParamsData = {
+                search: search as string,
+                priceRange: parseInt(priceRange as string, 10),
+                experience: experience as string,
+                expertise: expertise as string,
+                rating: parseFloat(rating as string),
+                location: location as string,
+                page: parseInt(page as string, 10),
+                limit: parseInt(limit as string, 10),
+            }
+
+            console.log(search, priceRange, experience, expertise, rating, location, page, limit, 'params ')
+            const response = await this.mentorService.getAllmentorWithMergedUserData(params)
+            return successResponse(res, HttpStatus.OK, "Mentors with filtered data sent", response)
+        } catch (error) {
+            console.error('Error founded in getAllmentorWithMergedUserData', error);
+            next(error)
+        }
+    }
+
+    async getMentorSpecificData(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params
+            console.log(id, 'id getMentorSpecificData -----')
+            const response = await this.mentorService.getMentorSpecificData(id)
+            if (!response) {
+                return errorResponse(res, HttpStatus.NOT_FOUND, "Not founded mentor details")
+            }
+            console.log(response, 'response getMentorSpecificData');
+
+            return successResponse(res, HttpStatus.OK, "Mentor data send", response)
+        } catch (error) {
+            console.error('Error founded in get mentor specific data controller', error);
+            next(error)
         }
     }
 }
+

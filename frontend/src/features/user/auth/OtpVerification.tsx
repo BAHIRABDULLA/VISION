@@ -27,7 +27,7 @@ const OtpVerification: React.FC = () => {
     } else {
       setIsResendEnabled(true)
     }
-  }, [])
+  },[timeRemaining])
 
   const handleResendOtp = async () => {
     const resend = await resendOtp(email)
@@ -102,7 +102,6 @@ const OtpVerification: React.FC = () => {
             {/* <a href="/signin" className="text-blue-500">Sign In</a> */}
             {!isResendEnabled ? (<span>Resend</span>) :
               (<span onClick={handleResendOtp} className='cursor-pointer text-blue-500'>Resend</span>)}
-
           </p>
         </div>
       </div>
