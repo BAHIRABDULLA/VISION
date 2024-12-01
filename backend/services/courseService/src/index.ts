@@ -1,6 +1,5 @@
 import express from 'express'
 import { connectDb } from './config/db';
-import router from './routes/course.route';
 import cors from 'cors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
@@ -22,8 +21,11 @@ app.use(morgan('combined'))
 
 connectDb()
 
+import resourceRoute from './routes/resource.route';
+import courseRoute from './routes/course.route';
 
-app.use('/',router)
+app.use('/',resourceRoute)
+app.use('/',courseRoute)
 app.use(errorHandler)
 
 const port = process.env.PORT

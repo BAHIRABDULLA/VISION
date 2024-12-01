@@ -5,9 +5,9 @@ import { ICourseRepository } from "../interface/ICourse.repository"
 import { BaseRepository } from "./base.repository"
 
 class CourseRepository extends BaseRepository<ICourse> implements ICourseRepository {
-    findByName(name: string): Promise<ICourse | null> {
+    async findByName(name: string): Promise<ICourse | null> {
         try {
-            const course = Course.findOne({ name })
+            const course = await Course.findOne({ name })
             return course
         } catch (error) {
             console.error('Error founded in findbyname in repository',error);

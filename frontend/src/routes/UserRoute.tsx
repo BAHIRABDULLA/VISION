@@ -9,7 +9,6 @@ import SignIn from '@/pages/user/SignIn'
 import SignUp from '@/pages/user/SignUp'
 import SignUpOtp from '@/pages/user/SignUpOtp'
 import Home from '@/pages/home&course/Home'
-import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import PublicRoute from '@/components/auth/PublicRoute'
 import MenteeDashboard from '@/pages/user/MenteeDashboard'
@@ -20,6 +19,7 @@ import Success from '@/pages/home&course/Success'
 import Cancel from '@/pages/home&course/Cancel'
 import MentorDetails from '@/pages/mentorApplication/MentorDetails'
 import Courses from '@/pages/home&course/Courses'
+import Resources from '@/pages/home&course/Resources'
 
 
 const UserRoute = () => {
@@ -69,10 +69,13 @@ const UserRoute = () => {
 
             <Route path='/Courses' element={<Courses />} />
             <Route path="/course/:id" element={< CourseDetails />} />
+
+            <Route path='/resource' element={<Resources />} />
+
             <Route path='/success' element={<Success />} />
             <Route path='/cancel' element={<Cancel />} />
 
-            <Route path='/mentorDetails' element={<MentorDetails />} />
+            <Route path='/mentor/:id' element={<MentorDetails />} />
 
             <Route path='/apply-mentor' element={<PublicRoute><ApplyMentor /></PublicRoute>} />
             <Route path='/thanks-mentor' element={<PublicRoute><ThanksMentor /></PublicRoute>} />

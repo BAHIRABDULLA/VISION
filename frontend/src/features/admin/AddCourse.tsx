@@ -76,7 +76,7 @@ const AddCourse = () => {
   }
 
   return (
-    <Container maxWidth="lg" className="bg-white p-6 rounded-lg shadow-lg">
+    <Container maxWidth="lg" className=" p-6 rounded-lg ">
       <h1 className="text-3xl font-semibold">Add New Course</h1>
 
       <div className="mt-4">

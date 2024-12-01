@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 const Resource = () => {
 
@@ -9,8 +10,17 @@ const Resource = () => {
   ];
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
-      <h2 className="text-4xl font-bold mb-8 text-gray-800">Resources List</h2>
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-4xl font-bold text-gray-800">Resources List</h2>
+        <Link
+          to="/admin/resources/add"
+          className="px-4 py-2 hover:font-semibold border border-gray-500 shadow-lg text-black rounded-lg"
+        >
+          Add Resources
+        </Link>
+      </div>
       <div className="shadow-lg rounded-lg overflow-hidden">
+        
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 text-white">
             <tr>
