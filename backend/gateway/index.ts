@@ -19,7 +19,8 @@ const targets = {
     mentor: process.env.MENTOR_API_BASE_URL,
     admin: process.env.ADMIN_API_BASE_URL,
     course: process.env.COURSE_API_BASE_URL,
-    payment: process.env.PAYMENT_API_BASE_URL
+    payment: process.env.PAYMENT_API_BASE_URL,
+    messaging: process.env.MESSAGING_API_BASE_URL
 }
 console.log(targets.course, 'target course ');
 
@@ -43,5 +44,11 @@ app.use('/payment', createProxyMiddleware({
     target: targets.payment,
     changeOrigin: true
 }));
+app.use('/messages', createProxyMiddleware({
+    target: targets.messaging,
+    changeOrigin: true,
+    ws: true,
+    pathRewrite: { '^/messages': '/messages' }
+}))
 const port = process.env.GATEWAY_PORT
 app.listen(port, () => console.log(`server running on http://localhost:${port}`))
