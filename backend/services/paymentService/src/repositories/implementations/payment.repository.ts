@@ -12,4 +12,47 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
             return null
         }
     }
+
+    async findOne(filter:FilterQuery<IPayment>):Promise<IPayment | null>{
+        try {
+            
+            const response =  await Payment.findOne(filter)
+            return response
+        } catch (error) {
+            console.error('Error founded IN find one ',error);
+            return null
+        }
+    }
+
+    async findUserBoughtSession(menteeId:string):Promise<IPayment | null>{
+        try {
+            const response  = await Payment.findOne({
+                menteeId,
+                $or:[
+                    {type:'one_time_payment'},
+                    {type:'mentorship_subscription'}
+                ],
+                status:'completed'
+            })
+            return response
+        } catch (error) {
+            console.error('Error founded in find user bouth session',error);
+            return null
+        }
+    }
+
+    async findIsUserBoughtCourse(courseId:string,menteeId:string){
+        try {
+            const response = await Payment.findOne({
+                menteeId,
+                type:'course_purchase',
+                courseId,
+                status:'completed'
+            })
+            return response
+        } catch (error) {
+            console.error('Error founded in find is use boughht course',error);
+            return null
+        }
+    }
 }

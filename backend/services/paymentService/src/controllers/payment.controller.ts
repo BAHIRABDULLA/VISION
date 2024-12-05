@@ -2,6 +2,8 @@ import { IPaymentService } from "../services/interface/IPayment.service";
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Stripe from "stripe";
+import { successResponse } from "../utils/response.helper";
+import { HttpStatus } from "../enums/http.status";
 
 
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-09-30.acacia' })
@@ -17,7 +19,7 @@ export class PaymentController {
         this.paymentService = paymentService
     }
 
-    async createSessionForStripe(req: CustomeRequest, res: Response) {
+    async createSessionForStripe(req: CustomeRequest, res: Response , next : NextFunction) {
         try {
 
             const user = req.user as JwtPayload
@@ -35,10 +37,11 @@ export class PaymentController {
             res.json(response)
         } catch (error) {
             console.error('ERror founded in create session in contro paymenservice', error);
+            next(error)
         }
     }
 
-    async webhookHandle(req: Request, res: Response) {
+    async webhookHandle(req: Request, res: Response ) {
         console.log('its here webhook handler');
         let event
         const sig = req.headers['stripe-signature'] as string;
@@ -70,7 +73,7 @@ export class PaymentController {
     }
 
 
-    async mentorshipCheckoutSession(req:CustomeRequest,res:Response){
+    async mentorshipCheckoutSession(req:CustomeRequest,res:Response ,next:NextFunction){
         try {
             const user = req.user as JwtPayload
             console.log(user, 'user as jwt payload');
@@ -81,6 +84,20 @@ export class PaymentController {
             return res.status(200).json(response)
         } catch (error) {
             console.error('Error founded in common checkout session',error);
+            next(error)
+        }
+    }
+
+    async findCoursePayment(req:CustomeRequest,res:Response , next:NextFunction){
+        try {
+            const user = req.user as JwtPayload
+            const {id} = req.params
+            console.log(id,'id in find course payment')
+            const response = await this.paymentService.findCoursePayment(id,user.id)
+            return successResponse(res,HttpStatus.OK,"Founded course",response)
+        } catch (error) {
+            console.error('Error founded in find course payment',error);
+            next(error)
         }
     }
 

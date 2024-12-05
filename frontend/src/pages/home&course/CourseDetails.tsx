@@ -7,9 +7,10 @@ import Loading from '@/components/Loading';
 import toast, { Toaster } from 'react-hot-toast';
 import Footer from '@/components/Footer';
 import { loadStripe } from '@stripe/stripe-js'
-import { createCheckoutSession } from '@/services/paymentApi';
+import { createCheckoutSession, getCoursePaymentDetails } from '@/services/paymentApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
+import { Link } from 'react-router-dom';
 
 
 const publicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
@@ -32,6 +33,21 @@ const CourseDetails = () => {
     console.log(id, 'id is here bro  . . . ');
     const [course, setCourse] = useState<CourseDetailProps | null>(null)
     const [loading, setLoading] = useState(true)
+    const [isPurchase, setIsPurchase] = useState(true)
+    useEffect(() => {
+        const fetchPaymentDetails = async () => {
+            if (id) {
+                const response = await getCoursePaymentDetails(id)
+                console.log(response, 'response in fetch payment details');
+                if (response?.status === 200) {
+                    setIsPurchase(false)
+                }else{
+                    setIsPurchase(true)
+                }
+            }
+        }
+        fetchPaymentDetails()
+    }, [])
 
     useEffect(() => {
         const fetchCourseDetails = async () => {
@@ -64,16 +80,16 @@ const CourseDetails = () => {
                 console.error('Price is not defined for the course.');
                 return;
             }
-            if(!id) {
+            if (!id) {
                 toast.error('Cannot process ,some error occured')
                 return
             }
             if (!course?.price) toast.error('Price is not defined for the course.')
-            
-            const response = await createCheckoutSession({ price: course?.price,courseId: id })
+
+            const response = await createCheckoutSession({ price: course?.price, courseId: id })
             console.log(response, 'response ')
 
-            if(response?.status>=400){
+            if (response?.status >= 400) {
                 toast.error(response?.data.message)
                 return
             }
@@ -91,7 +107,7 @@ const CourseDetails = () => {
     }
 
 
-    
+
 
     console.log(course?.curriculum[0].topics, 'course curriculum detailed here');
 
@@ -109,24 +125,32 @@ const CourseDetails = () => {
                         <span>Back to Courses</span>
                     </button>
                 </div>
+                <Toaster />
                 <div className="flex justify-between items-start mb-12">
-                    <Toaster />
+
                     <div>
                         <h1 className="text-3xl text-white font-bold mb-2">{course?.name}</h1>
                         <p className="text-gray-400">Course Duration: Estimate {course?.duration}</p>
                     </div>
-                    <div className="bg-slate-500 p-4 rounded-lg text-center">
-                        <div className="text-2xl text-white font-bold mb-2">₹ {course?.price}</div>
-                        <button className="bg-pink-600 text-white px-6 py-2 rounded-lg font-bold mb-2"
-                            onClick={handleEnroll}>
-                            ENROLL!
-                        </button>
-                        <div className="flex justify-center">
-                            {[...Array(5)].map((_, i) => (
-                                <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            ))}
+                    {isPurchase ? (
+                        <div className="bg-slate-500 p-4 rounded-lg text-center">
+                            <div className="text-2xl text-white font-bold mb-2">₹ {course?.price}</div>
+                            <button className="bg-purple-600 text-white px-6 py-2 rounded-lg font-bold mb-2"
+                                onClick={handleEnroll}>
+                                ENROLL!
+                            </button>
+                            <div className="flex justify-center">
+                                {[...Array(5)].map((_, i) => (
+                                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className="bg-slate-500 p-4 rounded-lg text-center">
+                            <Link className='text-white font-bold' to='/resource'>Open the Course</Link>
+                        </div>
+                    )}
+
                 </div>
 
                 {/* Course Overview */}

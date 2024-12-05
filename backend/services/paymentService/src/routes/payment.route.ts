@@ -12,4 +12,6 @@ route.post('/create-checkout-session',authenticateToken,paymentController.create
 
 route.post('/mentorship-plan',authenticateToken,paymentController.mentorshipCheckoutSession.bind(paymentController))
 
+route.get('/course/:id',authenticateToken,paymentController.findCoursePayment.bind(paymentController))
+
 export default route

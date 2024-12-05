@@ -5,8 +5,10 @@ import connectMongodb from './config/db.config'
 dotenv.config()
 
 const app = express()
+
 import webhookRoute from './routes/webhook.route'
 app.use('/webhook',express.raw({type:'application/json'}),webhookRoute)
+
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
@@ -16,9 +18,14 @@ app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true
 }))
+
 import paymentRoute from './routes/payment.route'
+import errorHandler from './middleware/error.handler'
 
 
 app.use('/',paymentRoute)
+
+app.use(errorHandler)
+
 const port = 4005
 app.listen(port,()=>console.log('server running on http://localhost:4005'))
