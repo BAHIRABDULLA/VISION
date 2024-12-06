@@ -49,10 +49,10 @@ const Header: React.FC = () => {
         </Link>
         {isAuthenticated ? (
           <NavLink 
-            to='/profile' 
+            to='/dashboard' 
             className="text-white text-lg hover:text-purple-400 font-medium transition-colors"
           >
-            Profile
+            Dashboard
           </NavLink>
         ) : (
           <NavLink 

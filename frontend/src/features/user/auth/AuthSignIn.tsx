@@ -64,8 +64,8 @@ const AuthSignIn: React.FC = () => {
           localStorage.setItem('accessToken', response.data.accessToken);
           console.log('mentor kjkjkjkjkjk');
           dispatch(mentorLogin({token:response.data.accessToken,user:{email,role}}));
-
-          navigate('/mentor/dashboard')
+          
+          navigate('/dashboard/')
         }
       } else {
         setError(response.data.message)

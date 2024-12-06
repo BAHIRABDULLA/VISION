@@ -20,6 +20,12 @@ import Cancel from '@/pages/home&course/Cancel'
 import MentorDetails from '@/pages/mentorApplication/MentorDetails'
 import Courses from '@/pages/home&course/Courses'
 import Resources from '@/pages/home&course/Resources'
+import Profile from '@/features/user/dashboard/Profile'
+import Chat from '@/components/Chat'
+import SlotManagement from '@/pages/mentorApplication/SlotManagement'
+import DashboardLayout from '@/components/DashbaordLayout'
+import Dashboard from '@/components/Dashboard'
+import VideoCall from '@/components/VideoCall'
 
 
 const UserRoute = () => {
@@ -58,16 +64,24 @@ const UserRoute = () => {
                 }
             />
 
-            <Route path="/profile"
-                element={<PrivateRoute><MenteeDashboard /></PrivateRoute>
-                }
-            />
-            <Route path="/mentor/dashboard"
+            <Route path="/dashboard/*" element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
+                <Route path='' element={<Dashboard />} />
+                <Route path='profile' element={<Profile />} />
+                <Route path='chat' element={<Chat />} />
+                <Route path='video-call' element={<VideoCall/>} />
+                <Route path='billing' element={<div>billing history content</div>} />
+                <Route path='notification' element={<div>notification content</div>} />
+                <Route path='slot-manage' element={<SlotManagement />} />
+            </Route>
+
+
+
+            {/* <Route path="/mentor/dashboard"
                 element={<MentorPrivateRoute><MentorDashboard /></MentorPrivateRoute>
                 }
-            />
+            /> */}
 
-            <Route path='/Courses' element={<Courses />} />
+            <Route path='/courses' element={<Courses />} />
             <Route path="/course/:id" element={< CourseDetails />} />
 
             <Route path='/resource' element={<Resources />} />

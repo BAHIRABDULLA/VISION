@@ -4,11 +4,27 @@ import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
 
-const PrivateRoute= ({children}:any) => {
-  console.log( 'its not no tnot not not not ');
+interface PrivateRouteProps {
+  children: React.ReactNode
+}
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+
+  const isMenteeAuthenticated = useSelector(
+    (state: RootState) => state.menteeAuth.isAuthenticated
+  )
+  const isMentorAuthenticated = useSelector(
+    (state: RootState) => state.mentorAuth.isAuthenticated
+  )
+
+  if (isMenteeAuthenticated) {
+    return <>{children}</>
+  }
   
-  const isAuthenticated = useSelector((state:RootState)=>state.menteeAuth.isAuthenticated)
-  return isAuthenticated ?children:<Navigate to='/'/>;
+  if (isMentorAuthenticated) {
+    return <>{children}</>
+  }
+
+  return <Navigate to='/' />
 }
 
 export default PrivateRoute

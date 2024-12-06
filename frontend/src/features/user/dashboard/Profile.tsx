@@ -15,10 +15,6 @@ import MentorData from './MentorData';
 import * as z from 'zod';
 
 
-interface PersonalInformationProps {
-    role: 'mentor' | 'mentee';
-}
-
 
 const passwordSchema = z.object({
     currentPassword: z.string()
@@ -37,7 +33,7 @@ const passwordSchema = z.object({
     })
 
 type passwordSchemaType = z.infer<typeof passwordSchema>
-const Profile: React.FC<PersonalInformationProps> = ({ role }) => {
+const Profile = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm<commonType>({ resolver: zodResolver(common) })
     const { register: passwordRegister, handleSubmit: passowrdHandleSubmit,
