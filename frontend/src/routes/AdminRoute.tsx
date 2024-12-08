@@ -11,6 +11,7 @@ import AdminPublicRoute from '@/components/auth/AdminPublicRoute'
 import AdminPrivateRoute from '@/components/auth/AdminPrivateRoute'
 import EditCourse from '@/features/admin/EditCourse'
 import AddResource from '@/features/admin/AddResource'
+import CategoriesSkills from '@/features/admin/Categories'
 
 const AdminRoute = () => {
     return (
@@ -24,6 +25,8 @@ const AdminRoute = () => {
                 <Route path='courses/:id' element={<EditCourse/>} />
                 <Route path='resources' element={<Resource />} />
                 <Route path='resources/add' element={<AddResource />} />
+                <Route path='categories' element={<CategoriesSkills />} />
+
             </Route>
             <Route path='/admin/login' element={<AdminPublicRoute><Login /></AdminPublicRoute>} />
         </Routes>

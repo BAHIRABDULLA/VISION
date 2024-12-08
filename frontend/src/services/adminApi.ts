@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 // import { privateApi } from './axiosConfig';
 import { adminPrivateApi } from './instance/adminInstance';
 
@@ -66,5 +66,38 @@ export const updateUserActiveStatus = async (id: string, isActive: boolean) => {
         return response
     } catch (error) {
         console.error('Error founded in update user active status', error);
+    }
+}
+
+
+export const getAllCategories = async()=>{
+    try {
+        const response = await adminPrivateApi.get('/admin/category')
+        return response
+    } catch (error) {
+        console.error('Error founded in get all categories',error);
+    }
+}
+
+
+export const saveNewCategory = async (data:object)=>{
+    try {
+        const response = await adminPrivateApi.post('/admin/category',data)
+        return response
+    } catch (error) {
+        console.error('Error founded in save new category ',error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}
+
+export const updateCategory = async (data:object)=>{
+    try {
+        const response = await adminPrivateApi.patch('/admin/category',data)
+        return response
+    } catch (error) {
+        console.error('Error founddedin in update category',error);
+        
     }
 }
