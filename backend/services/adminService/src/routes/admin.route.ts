@@ -17,6 +17,11 @@ router.get('/users/:id',authenticateToken,adminController.getUserById.bind(admin
 router.get('/refresh-token/', adminController.setNewAccessToken.bind(adminController))
 router.post('/logout',  adminController.logout.bind(adminController))
 
+
+router.get('/category',authenticateToken,adminController.getAllCategories.bind(adminController))
+router.post('/category',authenticateToken,adminController.addNewCategory.bind(adminController))
+router.patch('/category',authenticateToken,adminController.updateCategory.bind(adminController))
+
 router.patch('/:id/approval',authenticateToken,adminController.mentorApproval.bind(adminController))
 router.patch('/:id/status',authenticateToken,adminController.updateUserActiveStatus.bind(adminController))
 export default router

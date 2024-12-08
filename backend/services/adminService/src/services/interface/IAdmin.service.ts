@@ -1,3 +1,4 @@
+import { ICategory } from "../../models/category.model"
 
 
 export interface IAdminService {
@@ -6,4 +7,9 @@ export interface IAdminService {
     getUser(email:string):Promise<{user:object}|null>
     updateApproval(id:string,isApproved:string):Promise<null>
     updateUserStatus(id:string,isActive:boolean):Promise<any>
+
+
+    getAllCategories():Promise<Partial<ICategory[]> | null>
+    addNewCategory(category:string,skills:string[]):Promise<any>
+    updateCategory(category:string,skills:string[]):Promise<any>
 }

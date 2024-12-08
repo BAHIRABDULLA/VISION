@@ -11,7 +11,7 @@ export const generateAccessToken = (email:string):string=>{
     return jwt.sign(
         { email },
         secret_key,
-        { expiresIn: '2m' }
+        { expiresIn: '30m' }
     )  
 } 
 export const generateRefreshToken = (email:string)=>{
@@ -19,5 +19,5 @@ export const generateRefreshToken = (email:string)=>{
     if(!secret){
         throw new Error('Refrsesh token secret in not defined')
     }
-    return jwt.sign({email},secret,{expiresIn:'7m'})
+    return jwt.sign({email},secret,{expiresIn:'7d'})
 }
