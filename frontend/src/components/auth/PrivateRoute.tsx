@@ -8,7 +8,8 @@ interface PrivateRouteProps {
   children: React.ReactNode
 }
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-
+  console.log(children,'children in private route');
+  
   const isMenteeAuthenticated = useSelector(
     (state: RootState) => state.menteeAuth.isAuthenticated
   )
@@ -21,9 +22,12 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   }
   
   if (isMentorAuthenticated) {
+    console.log(isMentorAuthenticated,'is mentor authenticated in private roiute');
+    
     return <>{children}</>
   }
-
+  console.log('blum blum blum ');
+  
   return <Navigate to='/' />
 }
 

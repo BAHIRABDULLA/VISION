@@ -31,5 +31,4 @@ const authController = new AuthController(authService);
 const userController = new UserController(userService);
 
 
-// Export instances
 export { authController, userController, authService, userService };

@@ -1,7 +1,6 @@
 
 
 import { OtpRepository } from "../../repositories/implementation/otp.repository";
-import { UserRepository } from "../../repositories/implementation/user.repository"
 import { hashPassword, randomPassword } from "../../utils/hash.util"
 import { sentOTPEmail } from "../../utils/email.util";
 import bcrypt from 'bcryptjs'
@@ -34,10 +33,7 @@ interface PasswordUpdate{
 export class AuthService  implements IAuthService{
     private userRepository: IUserRepository
     private otpRepository: OtpRepository
-    // constructor() {
-    //     this.userRepository = new UserRepository(User)
-    //     this.otpRepository = new OtpRepository(Otp)
-    // }
+  
     constructor(userRepository:IUserRepository,otpRepository:OtpRepository){
         this.userRepository = userRepository;
         this.otpRepository = otpRepository

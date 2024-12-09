@@ -29,6 +29,7 @@ export const editCourse = async (data: object, id: string) => {
     }
 }
 
+
 export const getAllCourses = async () => {
     try {
         const response = await api.get('/')
@@ -49,11 +50,21 @@ export const getCourseDetails = async (id: string) => {
 }
 
 
-export const updateCourseStatus = async (id:string,status:string) => {
+export const updateCourseStatus = async (id: string, status: string) => {
     try {
-        const response  = await adminPrivateApi.patch(`/course/status/${id}`,{status:status})
+        const response = await adminPrivateApi.patch(`/course/status/${id}`, { status: status })
         return response
     } catch (error) {
-        console.error('Error founded in update course ',error);
+        console.error('Error founded in update course ', error);
+    }
+}
+
+
+
+export const addResource = async (data: object) => {
+    try {
+        const response = await adminPrivateApi.post('/course/resource',data)
+    } catch (error) {
+        console.error('Error founded in add resource', error);
     }
 }

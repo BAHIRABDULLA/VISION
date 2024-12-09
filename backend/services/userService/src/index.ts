@@ -33,9 +33,11 @@ import authRoute from './routes/auth.route'
 import userRoute from './routes/user.route'
 
 import { consumerMentorQueue } from './events/rabbitmq/consumers/consumer'
+import errorHandler from './middleware/error.handler'
 
 app.use('/', authRoute)
 app.use('/', userRoute)
+app.use(errorHandler)
 
 
 app.listen(4001, () => console.log('server running on http://localhost:4001 '))

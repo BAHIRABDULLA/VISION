@@ -70,14 +70,14 @@ export class UserService implements IUserService {
     async updateUserApproval(id: string, isApproved: string) {
         try {
             if (!['pending', 'approved', 'rejected'].includes(isApproved)) {
-                throw new CustomError("Invalid approval status",HttpStatus.BAD_REQUEST)
+                throw new CustomError("Invalid approval status", HttpStatus.BAD_REQUEST)
             }
             const updatedUser = await User.findByIdAndUpdate(
                 id, { isApproved }, { new: true });
             console.log(updatedUser, 'update  user ');
 
             if (!updatedUser) {
-                throw new CustomError("User not founded",HttpStatus.BAD_REQUEST)
+                throw new CustomError("User not founded", HttpStatus.BAD_REQUEST)
             }
             await sendMentorData('mentorApproval', { id, isApproved })
             await sendEmail(updatedUser?.email,
@@ -104,7 +104,7 @@ export class UserService implements IUserService {
         try {
             const response = await this.userRepository.update(id,{isActive:isActive})
              console.log(response,'response in update use status');
-             
+
             return response
         } catch (error) {
             console.error("Error founded in update user status",error);
