@@ -72,7 +72,7 @@ export const updateUserActiveStatus = async (id: string, isActive: boolean) => {
 
 export const getAllCategories = async()=>{
     try {
-        const response = await adminPrivateApi.get('/admin/category')
+        const response = await api.get('/category')
         return response
     } catch (error) {
         console.error('Error founded in get all categories',error);
@@ -92,12 +92,14 @@ export const saveNewCategory = async (data:object)=>{
     }
 }
 
-export const updateCategory = async (data:object)=>{
+export const updateCategory = async (id:string,data:object)=>{
     try {
-        const response = await adminPrivateApi.patch('/admin/category',data)
+        const response = await adminPrivateApi.patch(`/admin/category/${id}`,data)
         return response
     } catch (error) {
         console.error('Error founddedin in update category',error);
-        
+        if(error instanceof AxiosError){
+            return error.response
+        }
     }
 }

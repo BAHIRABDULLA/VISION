@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {  FaUsers,FaSignOutAlt} from 'react-icons/fa';
-import { MdSpaceDashboard } from "react-icons/md";
+import { MdSpaceDashboard ,MdCategory } from "react-icons/md";
 import { SiCoursera } from "react-icons/si";
 import { GrResources,GrTransaction  } from "react-icons/gr";
 
@@ -17,6 +17,7 @@ const links = [
   { to: '/admin/courses', text: 'Courses' ,icon:<SiCoursera/> },
   { to: '/admin/resources', text: 'Resources'  ,icon:<GrResources/>},
   { to: '/admin/transaction', text: 'Transaction'  ,icon:<GrTransaction/>},
+  { to: '/admin/categories', text: 'Categories'  ,icon:<MdCategory/>},
 ]
 
 interface AdminSidebarProps {

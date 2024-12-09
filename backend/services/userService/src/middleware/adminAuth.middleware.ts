@@ -7,11 +7,9 @@ interface CustomeRequest extends Request {
 }
 
 
-const adminAuthenticateToken = (req: CustomeRequest, res: Response, next: NextFunction) => {
+const authenticateToken = (req: CustomeRequest, res: Response, next: NextFunction) => {
     try {
         const token = req.headers['authorization']
-        console.log(token,'token kjdkfjdkjfd');
-        
         if (!token) {
             return res.status(401).json({ message: "Access denied . No token provided" })
         }
@@ -19,8 +17,6 @@ const adminAuthenticateToken = (req: CustomeRequest, res: Response, next: NextFu
         console.log(newToken, 'token in auth middleware ');
 
         const secret = process.env.ACCESS_TOKEN_SECRET
-        console.log(secret,'secretttt ');
-        
         const decodedToken = jwt.decode(newToken, { complete: true });
         console.log(decodedToken, 'decoded token ');
 
@@ -31,8 +27,6 @@ const adminAuthenticateToken = (req: CustomeRequest, res: Response, next: NextFu
             console.log('-  -  -  -  -  -  -  -  -');
 
             if (err) {
-                console.log(err,'err');
-                
                 return res.status(401).json({ message: 'Invalid token' });
             }
             req.user = user as JwtPayload
@@ -44,4 +38,4 @@ const adminAuthenticateToken = (req: CustomeRequest, res: Response, next: NextFu
     }
 }
 
-export default adminAuthenticateToken
+export default authenticateToken

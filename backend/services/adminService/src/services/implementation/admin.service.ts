@@ -159,12 +159,19 @@ export class AdminService implements IAdminService {
         }
     }
 
-    async updateCategory(category:string,skills:string[]){
+    async updateCategory(id:string,category:string,skills:string[]){
         try {
-            
+
+            const findCategory = await this.categoryRepository.findById(id)
+            if(!findCategory){
+                throw new CustomError('Category not founded',HttpStatus.NOTFOUND)
+            }
+            const response = await this.categoryRepository.update(id,{name:category,skills})
+
+            return response
         } catch (error) {
             console.error('Error founded in update category',error);
-            
+            throw error
         }
     }
 

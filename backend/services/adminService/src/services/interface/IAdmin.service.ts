@@ -11,5 +11,5 @@ export interface IAdminService {
 
     getAllCategories():Promise<Partial<ICategory[]> | null>
     addNewCategory(category:string,skills:string[]):Promise<any>
-    updateCategory(category:string,skills:string[]):Promise<any>
+    updateCategory(id:string,category:string,skills:string[]):Promise<ICategory | null>
 }

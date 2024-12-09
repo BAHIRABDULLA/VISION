@@ -171,11 +171,15 @@ export class AdminController {
 
     async updateCategory(req:Request,res:Response,next:NextFunction) {
         try {
+            const {id} = req.params
+            console.log(id, 'id in update cdategory')
             const {category,skills} = req.body
             console.log(category,'category',skills,'skills in update category');
-            const response = await this.adminService.updateCategory(category,skills)
+            const response = await this.adminService.updateCategory(id,category,skills)
+            return successResponse(res,HttpStatus.CREATED,'Category updattion successfully done',response)
         } catch (error) {
             console.error('Error founded in update category in controller',error);
+            next(error)
         }
     }
 }
