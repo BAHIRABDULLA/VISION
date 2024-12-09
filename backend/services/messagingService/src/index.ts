@@ -1,13 +1,33 @@
 import express from 'express';
-import connectMongodb from './config/db.config';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import http from 'http';
 import { Server } from 'socket.io';
+import http from 'http';
+import dotenv from 'dotenv';
 
-dotenv.config();
+import cors from 'cors';
+import messageRoutes from './routes/messageRoute'
+import connectMongodb from './config/db.config';
+import chatSocketHandler from './sockets/chat';
+import videoCallSocketHandler from './sockets/video.call';
+
+dotenv.config()
 
 const app = express();
+
+connectMongodb().catch((err)=>{
+  console.error('Failed to connect with mongodb',err);
+  process.exit(1)
+})
+
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+app.use(express.json());
+
+app.use('/', messageRoutes);
+
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -20,38 +40,21 @@ const io = new Server(server, {
   
 });
 
-connectMongodb();
-
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}));
-
-app.use(express.json());
-
-
-import messageRoutes from './routes/messageRoute'
-// app.use('/', messageRoutes);
 
 io.on('connection', (socket) => {
   console.log('Client connected');
-  
-  socket.on('join_room', (roomId) => {
-    socket.join(roomId);
-    console.log(`User ${socket.id} joined room ${roomId}`);
-  });
 
-  socket.on('send_message', (data) => {
-    console.log('Message received:', data);
-    io.to(data.roomId).emit('receive_message', data);
-  });
+  chatSocketHandler(io, socket);
+  videoCallSocketHandler(io, socket);
 
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
 });
 
-const port =  4006;
+
+
+const port =  4006
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
