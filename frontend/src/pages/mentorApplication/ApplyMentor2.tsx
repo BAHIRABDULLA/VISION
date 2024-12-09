@@ -102,8 +102,8 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
 
                 </div>
                 <div className='flex gap-5  py-1 mt-2 px-5'>
-                    <button type='button' onClick={prevStep} className=' text-gray-800 outline outline-offset-2 outline-gray-300 rounded-lg'>Back</button>
-                    <button type='submit' className='outline outline-offset-2 text-gray-800 outline-gray-300 rounded-lg  '>Finish</button>
+                    <button type='button' onClick={prevStep} className='  py-1 mt-2 px-5 text-purple-800 outline outline-offset-2 outline-purple-500 rounded-lg '>Back</button>
+                    <button type='submit' className=' py-1 mt-2 px-5 text-purple-800 outline outline-offset-2 outline-purple-500 rounded-lg  '>Finish</button>
                 </div>
 
             </form>

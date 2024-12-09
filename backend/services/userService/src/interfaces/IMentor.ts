@@ -5,10 +5,11 @@ export interface IMentor extends Document {
     _id:Types.ObjectId
     mentor:Types.ObjectId;
     jobTitle: string;
+    country:string;
     location: string
     category: string
     company?: string;
-    experience?:number;
+    experience:number;
     skills: string[];
     bio: string;
     socialMediaUrls?: {

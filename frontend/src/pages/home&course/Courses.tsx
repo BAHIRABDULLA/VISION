@@ -77,7 +77,8 @@ const Courses = () => {
             key={course._id}
             className="bg-gray-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow"
           >
-            <h2 className="text-2xl font-semibold text-white mb-2">{course.name}</h2>
+            <img src={course.image} alt="" className='max-h-28 w-full ' />
+            <h2 className="text-2xl mt-3 font-semibold text-white mb-2">{course.name}</h2>
             <p className="text-white mb-4">{course.overview}</p>
             <p className="text-white mb-2">Duration: {course.duration}</p>
             <p className="text-white mb-4 font-semibold">Price:  ₹   {course.price}</p>

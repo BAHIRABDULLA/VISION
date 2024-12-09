@@ -5,10 +5,11 @@ import { IUser } from './IUser';
 export interface IMentor extends Document {
     mentor: IUser| Types.ObjectId;
     jobTitle: string;
-    location: string
     category: string
+    country:string
+    location: string
     company?: string;
-    experience?:number;
+    experience:number;
     skills: string[];
     bio: string;
     socialMediaUrls?: {

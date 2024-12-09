@@ -13,6 +13,8 @@ const ApplyMentor = () => {
     const navigate = useNavigate()
 
     const handleNextstep = (data: any) => {
+        console.log(data,'data dddd');
+        
         setFormData({ ...formData, ...data })
         setStep(step + 1)
     }

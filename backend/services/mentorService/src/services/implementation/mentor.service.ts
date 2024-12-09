@@ -37,10 +37,10 @@ export class MentorService implements IMentorService {
     }
 
 
-    async mentorDetails(email: string, jobTitle: string, location: string, category: string, skills: string[], bio: string,
+    async mentorDetails(email: string, jobTitle: string, country: string, location: string, category: string, experience: number, skills: string[], bio: string,
         whyBecomeMentor: string, greatestAchievement: string, company?: string, profilePhoto?: any, socialMediaUrls?: socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string,) {
         try {
-            console.log(socialMediaUrls,'social medial urls +++++++++++',category,jobTitle,'category ,jobtitle');
+            console.log(socialMediaUrls, 'social medial urls +++++++++++', category, jobTitle, 'category ,jobtitle');
 
             const checkUser = await this.userRepository.isMentor(email)
 
@@ -51,7 +51,7 @@ export class MentorService implements IMentorService {
 
             const mentorData = {
                 mentor: checkUser._id,
-                jobTitle, location, category, company, skills, bio, socialMediaUrls,
+                jobTitle, country, location, category, company, experience, skills, bio, socialMediaUrls,
                 introductionVideoUrl, featuredArticleUrl, whyBecomeMentor,
                 greatestAchievement
             }
@@ -147,12 +147,12 @@ export class MentorService implements IMentorService {
         }
     }
 
-    async updateSessionPrice(id: string, data: {singleSessionPrice:number,monthlySubscriptionPrice:number}) {
+    async updateSessionPrice(id: string, data: { singleSessionPrice: number, monthlySubscriptionPrice: number }) {
         try {
             console.log(id, 'id in update session price service', data, 'data update ses_____')
-            const {singleSessionPrice,monthlySubscriptionPrice} = data
-            if((singleSessionPrice||monthlySubscriptionPrice)<50){
-                throw new CustomError("session price must be at least ₹ 50 to meet minimum requirement",HttpStatus.UNAUTHORIZED)
+            const { singleSessionPrice, monthlySubscriptionPrice } = data
+            if ((singleSessionPrice || monthlySubscriptionPrice) < 50) {
+                throw new CustomError("session price must be at least ₹ 50 to meet minimum requirement", HttpStatus.UNAUTHORIZED)
             }
             const findMentorFormFilled = await this.userRepository.findById(id)
             console.log(findMentorFormFilled, 'find mentor form fillecdf');

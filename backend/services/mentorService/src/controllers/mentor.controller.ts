@@ -32,7 +32,7 @@ export class MentorController {
 
     async applyMentor(req: Request, res: Response, next: NextFunction) {
         try {
-            let { email, jobTitle, location, category, skills, bio,
+            let { email, jobTitle,country, location, category,experience, skills, bio,
                 whyBecomeMentor, greatestAchievement, company, profilePhoto,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl,
             } = req.body;
@@ -61,7 +61,7 @@ export class MentorController {
             console.log(s3FileUrl, 's3FileUrl');
 
 
-            const response = await this.mentorService.mentorDetails(email, jobTitle, location, category, skills, bio,
+            const response = await this.mentorService.mentorDetails(email, jobTitle,country, location, category,experience, JSON.parse(skills), bio,
                 whyBecomeMentor, greatestAchievement, company, s3FileUrl,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl)
 

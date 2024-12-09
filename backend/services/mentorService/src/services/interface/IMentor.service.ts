@@ -7,7 +7,7 @@ export type socialMediaUrl= {
 }
 
 export interface IMentorService {
-    mentorDetails(email: string, jobTitle: string, location: string, category: string, skills: string[], bio: string,
+    mentorDetails(email: string, jobTitle: string,country:string, location: string, category: string, experience:number,skills: string[], bio: string,
         whyBecomeMentor: string, greatestAchievement: string, company?: string, profilePhoto?: any, socialMediaUrls?:socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string):Promise<any>
     registerMentor(mentorData:object):Promise<any>
     getAllMentors():Promise<any>

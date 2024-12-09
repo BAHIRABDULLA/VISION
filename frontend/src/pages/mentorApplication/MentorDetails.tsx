@@ -350,17 +350,14 @@ const MentorDetails: React.FC = () => {
                 <div className="bg-gray-800  p-6">
                     <h3 className="text-lg font-semibold text-white mb-4">Contact Options</h3>
                     <div className="space-y-3">
-                        <button className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors">
-                            <Mail className="w-5 h-5" />
-                            Send Message
+                        
+                         <button className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors">
+                            <MessageSquare className="w-5 h-5" />
+                             Chat
                         </button>
                         <button className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors">
                             <Video className="w-5 h-5" />
                             Schedule Call
-                        </button>
-                        <button className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors">
-                            <MessageSquare className="w-5 h-5" />
-                            Quick Chat
                         </button>
                     </div>
                 </div>

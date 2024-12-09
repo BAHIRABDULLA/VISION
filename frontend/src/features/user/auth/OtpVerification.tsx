@@ -56,8 +56,9 @@ const OtpVerification: React.FC = () => {
             navigate('/')
           } else {
             localStorage.setItem('accessToken', response.data.accessToken)
-            dispatch(mentorLogin({ token: response.data.accessToken, user: reduxData }))
-
+            // dispatch(mentorLogin({ token: response.data.accessToken, user: reduxData }))
+            console.log('its in otp verification process ');
+            
             navigate('/apply-mentor', { state: { email } })
           }
         } else if (type === 'forgetPassword') {
