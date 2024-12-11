@@ -54,8 +54,8 @@ privateApi.interceptors.response.use(
                         store.dispatch(mentorLogout())
                     }
                 }
-
                 console.error('Refresh token failed:', refreshError);
+                throw error
             }
         }
         return Promise.reject(error);
