@@ -60,6 +60,21 @@ export const createSlot = async (data: object) => {
         return response
     } catch (error) {
         console.error('Error founded in create slot ', error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}
+
+export const getSlotByUserId = async () =>{
+    try {
+        const response = await privateApi.get('/mentor/slots')
+        return response
+    } catch (error) {
+        console.error('Error founded in getslot by user id ',error); 
+        if(error instanceof AxiosError){
+            return error.response
+        }
     }
 }
 
@@ -79,6 +94,9 @@ export const deleteSlot = async (slotId: string) => {
         return response
     } catch (error) {
         console.error('Error founded in deleteSlot', error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
     }
 }
 

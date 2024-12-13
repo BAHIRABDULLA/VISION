@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Checkbox, FormControlLabel, FormControl, InputLabel, Input, InputAdornment } from '@mui/material';
 import { z } from 'zod';
-import { createSlot, deleteSlot, getMentorData, getSlots, updateMentorSessionPrice } from '@/services/mentorApi';
+import { createSlot, deleteSlot, getMentorData, getSlotByUserId, getSlots, updateMentorSessionPrice } from '@/services/mentorApi';
 import toast, { Toaster } from 'react-hot-toast';
 
 const priceSchema = z.object({
@@ -9,22 +9,23 @@ const priceSchema = z.object({
   monthlySubscriptionPrice: z.number({ message: "Please enter numbers" })
 })
 
-interface Slot{
-  _id:string,
-  time:string,
-  availableDays:string[]
+interface Slot {
+  _id: string,
+  time: string,
+  availableDays: string[]
 }
 const SlotManagement = () => {
 
   const [isEditPrice, setIsEditPrice] = useState(false)
 
   const [slots, setSlots] = useState<Slot[]>([]);
-  console.log(slots,'slots')
+  console.log(slots,'slots slots');
+  
   const [commonPrices, setCommonPrices] = useState({
     singleSessionPrice: '',
     monthlySubscriptionPrice: '',
   });
-  console.log(commonPrices, 'common price ')
+
   const [tempPrices, setTempPrices] = useState({ ...commonPrices });
   const [errors, setErrors] = useState({
     singleSessionPrice: '',
@@ -44,7 +45,7 @@ const SlotManagement = () => {
     })
     if (!parsed.success) {
       const errorMessages = parsed.error.flatten().fieldErrors;
-      console.log(errorMessages, 'error messages');
+
 
       setErrors({
         singleSessionPrice: errorMessages.singleSessionPrice?.[0] || '',
@@ -53,11 +54,11 @@ const SlotManagement = () => {
       return
     }
     setErrors({ singleSessionPrice: '', monthlySubscriptionPrice: '' })
-    console.log('submited dddaata', parsed.data);
+
     try {
       const response = await updateMentorSessionPrice(parsed.data)
-      console.log(response, 'response')
-      
+
+
       if (response?.status >= 400) {
         toast.error(response?.data.message)
       } else {
@@ -97,14 +98,18 @@ const SlotManagement = () => {
   const addSlot = async () => {
 
     if (newSlot.time && newSlot.availableDays.length > 0) {
-      
+
       const data = { time: newSlot.time, availableDays: newSlot.availableDays }
       const response = await createSlot(data)
-      console.log(response, 'response in add slot ');
-      setSlots([
-        ...slots,
-        { _id: response?.data._doc._id, time: newSlot.time, availableDays: newSlot.availableDays },
-      ]);
+      console.log(response,'respnose');
+      console.log(response?.data._doc.slots[0]._id,'response?.data._doc.slots[0]._id');
+      const newSlotData = {
+        _id: response?.data._doc.slots[0]._id,
+        time: newSlot.time,
+        availableDays: newSlot.availableDays,
+    };
+
+    setSlots([...(slots || []), newSlotData]);
       setNewSlot({ time: '', availableDays: [] });
     }
   };
@@ -113,7 +118,7 @@ const SlotManagement = () => {
   useEffect(() => {
     const fetchPrice = async () => {
       const response = await getMentorData()
-      console.log(response, 'response in fetch price');
+
       setCommonPrices({
         singleSessionPrice: response?.data._doc.singleSessionPrice,
         monthlySubscriptionPrice: response?.data._doc.monthlySubscriptionPrice
@@ -123,14 +128,14 @@ const SlotManagement = () => {
   }, [])
 
   useEffect(() => {
-    const fetchSlots = async () => {
-      const response = await getSlots()
-      console.log(response, 'response ');
-      setSlots(response?.data.data)
+    const fetchSlot = async () => {
+      const response = await getSlotByUserId()
+
+      setSlots(response?.data.data?.slots)
     }
-    fetchSlots()
-    
-  },[])
+    fetchSlot()
+
+  }, [])
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setCommonPrices((prev) => ({
@@ -139,17 +144,19 @@ const SlotManagement = () => {
     }));
   };
 
-  const handleDeleteSlot = async(slotId:string)=>{
+
+
+  const handleDeleteSlot = async (slotId: string) => {
     try {
       const response = await deleteSlot(slotId)
-      if(response?.status===200){
+      if (response?.status === 200) {
         setSlots(slots.filter((s) => s._id !== slotId));
         toast.success("Slot deleted successfully")
-      }else{
+      } else {
         toast.error("Failed to delete the slot. Please try again")
       }
     } catch (error) {
-      console.error('Error founded in handle delete slot',error);
+      console.error('Error founded in handle delete slot', error);
       toast.error("An error occured while deleting the slot")
     }
   }
@@ -238,7 +245,7 @@ const SlotManagement = () => {
       <div className="mt-8 text-white">
         <h2 className="text-xl font-bold mb-4">Existing Slots</h2>
         <div className="space-y-2">
-          {slots.length>=0&&slots.map((slot) => (
+          {slots?.length >= 0 && slots.map((slot) => (
             <div
               key={slot._id}
               className="bg-gray-100 rounded px-4 py-2 flex justify-between items-center"
@@ -251,7 +258,7 @@ const SlotManagement = () => {
               <button
                 className="text-red-500 hover:text-red-700"
                 // onClick={() => setSlots(slots.filter((s) => s._id !== slot._id))}
-                onClick={()=>handleDeleteSlot(slot._id)}
+                onClick={() => handleDeleteSlot(slot._id)}
               >
                 Delete
               </button>

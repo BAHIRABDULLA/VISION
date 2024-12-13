@@ -55,74 +55,41 @@ const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentor
 
         }
     }
-    // const handleBooking = async () => {
-    //     if (!selectedPlan) {
-    //         toast.error('Please choose a plan')
-    //         return
-    //     }
-    //     const bookingData = {
-    //         mentorId,
-    //         menteeId,
-    //         planType: selectedPlan,
-    //         price: selectedPlan === 'subscription' ? monthly : single
-    //     }
-    //     try {
-    //         if (selectedPlan === 'subscription') {
-    //             // const {data} = await axios.post('/payment/subscription',bookingData)
-    //             const { data } = await mentorSubscription(bookingData)
-    //             console.log(data, 'data in mentor subscription ');
-
-    //         } else {
-    //             // const {data:clientSecret}= await axios.post('/payment/onetime',bookingData)
-    //             const { data: clientSecret } = await mentorOneTimePayment(bookingData)
-    //             console.log(clientSecret, 'client secret ');
-
-    //             const stripePubicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
-    //             const stripe = await loadStripe(stripePubicKey)
-    //             const { error, paymentIntent } = await stripe?.confirmCardPayment(clientSecret)
-
-    //             if (error) throw error
-    //         }
-    //     } catch (error) {
-    //         console.error('Error founded in handlebooking', error);
-    //         toast.error('Please sign in your account')
-
-    //     }
-    // }
+   
 
     return (
         <>
             <Toaster />
-            <div className="bg-gray-800 rounded-lg p-6 mb-6">
+            <div className="bg-gray-700 border border-gray-500 rounded-lg p-6 mb-6">
                 <h3 className="text-lg font-semibold text-white mb-4">Pricing Plans</h3>
 
                 {/* Monthly Subscription */}
                 <div
                     className={`border rounded-lg p-4 mb-4 cursor-pointer transition-all ${selectedPlan === 'subscription'
                         ? 'border-purple-500 bg-purple-500/10'
-                        : 'border-gray-700 hover:border-purple-400'
+                        : 'border-gray-500 hover:border-purple-400'
                         }`}
                     onClick={() => setSelectedPlan('subscription')}
                 >
                     <div className="flex justify-between items-start mb-2">
                         <div>
                             <h4 className="text-white font-medium">Monthly Mentorship</h4>
-                            <p className="text-sm text-gray-400">Recurring monthly access</p>
+                            <p className="text-sm text-gray-300">Recurring monthly access</p>
                         </div>
                         <div className="text-right">
                             <p className="text-xl font-bold text-white">₹{monthly}/mo</p>
                         </div>
                     </div>
                     <ul className="space-y-2 mt-4">
-                        <li className="flex items-center text-sm text-gray-300">
+                        <li className="flex items-center text-sm text-gray-200">
                             <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
                             4 one-hour sessions per month
                         </li>
-                        <li className="flex items-center text-sm text-gray-300">
+                        <li className="flex items-center text-sm text-gray-200">
                             <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
                             Direct message access
                         </li>
-                        <li className="flex items-center text-sm text-gray-300">
+                        <li className="flex items-center text-sm text-gray-200">
                             <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
                             Code review support
                         </li>
@@ -133,29 +100,29 @@ const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentor
                 <div
                     className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPlan === 'one-time'
                         ? 'border-purple-500 bg-purple-500/10'
-                        : 'border-gray-700 hover:border-purple-400'
+                        : 'border-gray-600 hover:border-purple-400'
                         }`}
                     onClick={() => setSelectedPlan('one-time')}
                 >
                     <div className="flex justify-between items-start mb-2">
                         <div>
                             <h4 className="text-white font-medium">Single Session</h4>
-                            <p className="text-sm text-gray-400">One-time payment</p>
+                            <p className="text-sm text-gray-300">One-time payment</p>
                         </div>
                         <div className="text-right">
                             <p className="text-xl font-bold text-white">₹{single}</p>
                         </div>
                     </div>
                     <ul className="space-y-2 mt-4">
-                        <li className="flex items-center text-sm text-gray-300">
+                        <li className="flex items-center text-sm text-gray-200">
                             <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
                             1 one-hour session
                         </li>
-                        <li className="flex items-center text-sm text-gray-300">
+                        <li className="flex items-center text-sm text-gray-200">
                             <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
                             Session recording
                         </li>
-                        <li className="flex items-center text-sm text-gray-300">
+                        <li className="flex items-center text-sm text-gray-200">
                             <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
                             Follow-up notes
                         </li>
@@ -165,7 +132,7 @@ const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentor
                 <button onClick={handleBooking}
                     className={`w-full mt-6 py-2 px-4 rounded-lg transition-colors ${selectedPlan
                         ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                        : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                         }`}
                     disabled={!selectedPlan}
                 >

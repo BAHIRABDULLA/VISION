@@ -134,7 +134,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
             }
 
             const formattedTime = `${hours}:${minutes}`;
-            
+
             // console.log(formattedTime, 'formattedTime - - - - - - ');
             console.log(selectedSlot, 'slelcted slot ', typeof selectedSlot, selectedSlot.split(' '))
             const selectedDate = dates[activeIndex].date
@@ -142,6 +142,9 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
             // console.log(`Selected Date: ${formatDate(selectedDate)},---- ${selectedDate}`, typeof selectedDate);
 
             const response = await slotBooking(mentorId, formattedTime, selectedDate)
+            if(response?.status>=400){
+                toast.error(response?.data.message)
+            }
             console.log(response, 'resonse in booking session ');
         } catch (error) {
             console.error('error in handle slot booking', error);
@@ -152,24 +155,23 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
 
     return (
         <>
-
             <Toaster />
-            <div className="bg-gray-800 
-             mt-3 p-6">
+            <div className="bg-gray-700  
+             mt-3 p-6 ">
                 <div className='flex justify-between items-center'>
                     <div
                         onClick={navigatePrev}
-                        className='p-3 w-12 bg-gray-700 rounded-full cursor-pointer'
+                        className='p-3 w-12 bg-gray-600 rounded-full cursor-pointer'
                     >
                         <ChevronLeft color='white' />
                     </div>
 
-                    <div className="flex justify-center space-x-8 border-b border-gray-600 pb-4 mb-4">
+                    <div className="flex justify-center space-x-8 border-b border-gray-500 pb-4 mb-4">
                         {dates.map((dateObj, index) => (
                             <div
                                 key={index}
                                 onClick={() => handleDaySelection(index)}
-                                className={`font-medium cursor-pointer ${activeIndex === index ? 'text-blue-500' : 'text-gray-400'
+                                className={`font-medium cursor-pointer ${activeIndex === index ? 'text-blue-500' : 'text-gray-300'
                                     }`}
                             >
                                 {dateObj.label || formatDate(dateObj.date)}
@@ -179,7 +181,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
 
                     <div
                         onClick={navigateNext}
-                        className='p-3 w-12 bg-gray-700 rounded-full cursor-pointer'
+                        className='p-3 w-12 bg-gray-600 rounded-full cursor-pointer'
                     >
                         <ChevronRight color='white' />
                     </div>
@@ -193,7 +195,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
                                     key={i}
                                     className={`py-2 px-4 rounded-lg border transition-all cursor-pointer ${selectedSlot === slot
                                         ? 'border-purple-500 bg-purple-500/10 text-white'
-                                        : 'border-gray-700 text-gray-400 hover:border-purple-400'
+                                        : 'border-gray-600 text-gray-300 hover:border-purple-400'
                                         }`}
                                     onClick={() => setSelectedSlot(slot)}
                                 >
@@ -204,7 +206,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
                             ))}
                         </div>
                     ) : (
-                        <p className="text-gray-500 text-center">No slots available</p>
+                        <p className="text-gray-400 text-center">No slots available</p>
                     )}
                 </div>
 
@@ -212,7 +214,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
                     <button onClick={handleSlotBooking} disabled={!selectedSlot}
                         className={` mt-6 py-2 px-16 rounded-lg transition-colors ${selectedSlot
                             ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                            : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                            : 'bg-gray-700 text-gray-300 cursor-not-allowed'
                             }`}>
                         Book a Session
                     </button>

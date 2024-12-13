@@ -25,35 +25,7 @@ const MentorPage: React.FC = () => {
     //     console.log(`Navigated to page ${page}`);
     //     setCurrentPage(page);
     // };
-    const [mentors, setMentors] = useState([
-        // {
-        //     id: 1,
-        //     fullName: 'John Doe',
-        //     countryCode: 'US',
-        //     jobTitle: 'Senior Software Engineer',
-        //     description: 'Experienced mentor in full-stack development and cloud computing.',
-        //     slotsAvailable: 5,
-        //     pricePerMonth: '$200',
-        //     rating: 4.5,
-        //     image: 'https://via.placeholder.com/150',
-        //     experience: '10+ years',
-        //     expertise: ['Full Stack', 'Cloud Computing']
-        // },
-        // {
-        //     id: 2,
-        //     fullName: 'Jane Smith',
-        //     countryCode: 'UK',
-        //     jobTitle: 'Product Manager',
-        //     description: 'Specializes in product management and business strategy.',
-        //     slotsAvailable: 3,
-        //     pricePerMonth: '$180',
-        //     rating: 4.8,
-        //     image: 'https://via.placeholder.com/150',
-        //     experience: '8 years',
-        //     expertise: ['Product Management', 'Strategy']
-        // },
-    ]);
-    console.log(mentors,'mentros in all mentors ')
+    const [mentors, setMentors] = useState([]);
 
     useEffect(() => {
         const fetchMentors = async () => {
@@ -125,21 +97,6 @@ const MentorPage: React.FC = () => {
                                     <span className="text-sm">${filters.priceRange}</span>
                                 </div>
                             </div>
-
-                            {/* <div>
-                                <label className="block mb-2 font-medium">Availability</label>
-                                <select
-                                    className="w-full p-2 border border-gray-300 rounded"
-                                    value={filters.availability}
-                                    onChange={(e) => handleFilterChange('availability', e.target.value)}
-                                >
-                                    <option value="any">Any</option>
-                                    <option value="1-2">1-2 slots</option>
-                                    <option value="3-5">3-5 slots</option>
-                                    <option value="5+">5+ slots</option>
-                                </select>
-                            </div> */}
-
                             <div>
                                 <label className="block mb-2 font-medium">Experience Level</label>
                                 <select
@@ -218,11 +175,11 @@ const MentorPage: React.FC = () => {
                         <div key={mentor._id} className="bg-gray-700 rounded-lg shadow-lg overflow-hidden flex">
                             {/* Mentor Image */}
                             <div className="w-1/4">
-                                {/* <img
-                                    src={mentor.image}
+                                <img
+                                    src={mentor.mentor.profile}
                                     alt={mentor.fullName}
                                     className="w-full h-full object-cover"
-                                /> */}
+                                />
                             </div>
 
                             {/* Mentor Details */}
@@ -245,29 +202,15 @@ const MentorPage: React.FC = () => {
                                         <span key={i} className="text-yellow-500">★</span>
                                     ))}
                                     {mentor.rating % 1 !== 0 && <span className="text-yellow-500">★</span>}
-                                    <span className="ml-2 text-gray-400">({mentor.rating})</span>
+                                    <span className="ml-2 text-gray-400">{mentor.rating}</span>
                                 </div>
-
-                                {/* <p className="mt-3 text-gray-300">{mentor.description}</p> */}
-                                <p className="mt-3 text-gray-300">{mentor.bio}</p>
 
                                 <div className="mt-4 flex items-center gap-4">
-                                    <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">
-                                        {/* {mentor.slotsAvailable} slots available */}
-                                    </span>
-                                    <span className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">
+                                   <p ><span className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded text-sm">
                                         {mentor?.experience}
-                                    </span>
+                                    </span>Year experience in <span className='text-yellow-400'>{mentor.category}</span>  field</p>
+                                    
                                 </div>
-
-                                <div className="mt-4 flex items-center gap-2">
-                                    {/* {mentor.expertise.map((exp, index) => (
-                                        <span key={index} className="bg-gray-700  text-gray-300 px-3 py-1 rounded-full text-sm">
-                                            {exp}
-                                        </span>
-                                    ))} */}
-                                </div>
-
                                 <Link to={`/mentor/${mentor._id}`} className="mt-6 bg-purple-500 text-center text-white py-2 px-6 rounded-full hover:bg-purple-600 transition-colors block">
                                     View Profile
                                 </Link>
