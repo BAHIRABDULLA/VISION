@@ -6,6 +6,7 @@ import Stripe from "stripe";
 import { PaymentRepository } from "../../repositories/implementations/payment.repository";
 import CustomError from "../../utils/custom.error";
 import { HttpStatus } from "../../enums/http.status";
+import { publishMessage } from "../../events/rabbitmq/producer";
 
 export interface mentorshipPaymentData {
 
@@ -81,38 +82,20 @@ export class PaymentService implements IPaymentService {
         try {
             console.log('its here in web hook handle save');
 
-            // if (event.type === 'checkout.session.completed') {
-            //     const session = event.data.object as Stripe.Checkout.Session;
-            //     const userEmail = session.customer_email;
-            //     const courseId = session.metadata?.courseId;
-            //     const amount = session.amount_total!/100;
-            //     if (!userEmail || !courseId || amount == null) {
-            //         throw new Error("Missing required payment data");
-            //     }
-
-            //     const paymentData: Partial<IPayment> = {
-            //         userEmail,
-            //         courseId,
-            //         amount,
-            //         type: 'course_purchase',
-            //         status: 'completed',
-            //         // sessionId: session.id,
-            //     };
-
-            //     const response = await this.paymentRepository.create(paymentData)
-            //     console.log('Payment data saved successfully:', response);
-
-            // }
-
             if (event.type === 'checkout.session.completed') {
                 const session = event.data.object as Stripe.Checkout.Session;
 
-                await this.paymentRepository.findOneAndUpdate({ stripeSessionId: session.id },
+                const response=await this.paymentRepository.findOneAndUpdate({ stripeSessionId: session.id },
                     {
                         status: 'completed',
                         stripePaymentIntentId: session.payment_intent as string
                     }
                 )
+                console.log(response,'response after completing saving data')
+                if(response?.isModified){
+                    await publishMessage(response)
+                }
+                
             }
             return null
         } catch (error) {
@@ -129,8 +112,11 @@ export class PaymentService implements IPaymentService {
         try {
             const findUserBoughtMentorship = await this.paymentRepository.findUserBoughtSession(menteeId)
             console.log(findUserBoughtMentorship, 'find user bought mentorship');
-            if (findUserBoughtMentorship) {
-                throw new CustomError('Session already purchased', HttpStatus.UNAUTHORIZED)
+            if (findUserBoughtMentorship?.status ==='completed') {
+                throw new CustomError(`${findUserBoughtMentorship.type} session already purchased`, HttpStatus.UNAUTHORIZED)
+            }
+            if(findUserBoughtMentorship?.status==='pending'){
+                await this.paymentRepository.delete(findUserBoughtMentorship.id)
             }
             if (planType === 'one-time') {
                 const session = await this.stripe.checkout.sessions.create({

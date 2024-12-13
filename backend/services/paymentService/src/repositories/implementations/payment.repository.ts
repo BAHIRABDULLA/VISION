@@ -32,7 +32,7 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
                     {type:'one_time_payment'},
                     {type:'mentorship_subscription'}
                 ],
-                status:'completed'
+                // status:'completed'
             })
             return response
         } catch (error) {

@@ -10,7 +10,7 @@ const categorySchema = new mongoose.Schema<ICategory>({
     skills:[{
         type:String,
         required:true,
-        unique:true
+        // unique:true
     }]
 })
 

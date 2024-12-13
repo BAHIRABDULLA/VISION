@@ -6,7 +6,7 @@ interface CustomError extends Error {
 }
 
 const errorHandler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
-    console.log('Error in admin middleware',err);
+    console.log('Error in course middleware',err);
     
     const statusCode = err.statusCode || 500;
     const message = err.message || 'Internal server error';

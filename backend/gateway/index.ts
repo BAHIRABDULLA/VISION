@@ -22,7 +22,7 @@ const targets = {
     payment: process.env.PAYMENT_API_BASE_URL,
     messaging: process.env.MESSAGING_API_BASE_URL
 }
-console.log(targets.course, 'target course ');
+
 
 app.use('/user', createProxyMiddleware({
     target: targets.user,

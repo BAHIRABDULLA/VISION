@@ -4,6 +4,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
 import errorHandler from './middleware/error.handler';
+import { rabbitmqConnect } from './config/rabbitmq';
 dotenv.config()
 
 const app = express()
@@ -20,9 +21,14 @@ app.use(morgan('combined'))
 
 
 connectDb()
+rabbitmqConnect().then(()=>{
+    console.log('rabbitmq connected in course service');
+    receiveMessage()
+})
 
 import resourceRoute from './routes/resource.route';
 import courseRoute from './routes/course.route';
+import { receiveMessage } from './events/rabbitmq/consumer';
 
 app.use('/',resourceRoute)
 app.use('/',courseRoute)

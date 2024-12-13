@@ -1,16 +1,22 @@
 import mongoose, { Schema, Document, Types } from 'mongoose'
 
-export interface ISlot extends Document {
-    mentorId: Types.ObjectId;
-    time: string;
-    availableDays: string[];
-
+export interface ISlot extends Document{
+    mentorId: Types.ObjectId; 
+    slots: {
+        time: string; 
+        availableDays: string[]; 
+    }[];
 }
 
 const slotSchema = new Schema<ISlot>({
     mentorId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    time: { type: String, required: true },
-    availableDays: { type: [String], required: true },
-})
+    slots: [
+        {
+            time: { type: String, required: true },
+            availableDays: { type: [String], required: true },
+        },
+    ],
+});
+
 
 export default mongoose.model<ISlot>('Slot', slotSchema)

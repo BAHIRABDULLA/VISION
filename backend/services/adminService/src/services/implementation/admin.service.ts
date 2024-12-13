@@ -93,7 +93,7 @@ export class AdminService implements IAdminService {
                     ...commonData.data,
                     mentorDetails: mentorData.data.mentor
                 }
-                console.log(mergedData, 'merged data');
+          
                 return { user: mergedData }
             }
             return { user: commonData.data }

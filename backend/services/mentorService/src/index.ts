@@ -9,6 +9,7 @@ import { consumerMentorQueue } from './events/rabbitmq/consumers/consumer'
 import morgan from 'morgan'
 import errorHandler from './middleware/error.handler'
 import { consumerMentorApprovalQueue } from './events/rabbitmq/consumers/mentorApproval'
+import { receiveMessage } from './events/rabbitmq/consumers/paymentData'
 
 dotenv.config()
 const app = express()
@@ -19,6 +20,7 @@ rabbitmqConnect()
 .then(()=>{    
     consumerMentorQueue()
     consumerMentorApprovalQueue()
+    receiveMessage()
     console.log('consumer mentor detains in index.ts in mentorService');
     
 }).catch((error)=>console.error('Failed to connect rabbitmq ',error))
