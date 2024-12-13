@@ -6,7 +6,7 @@ interface CustomError extends Error {
 }
 
 const errorHandler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
-    console.log('Error in admin middleware',err);
+    console.log('Error in payment middleware',err);
     console.log('kjfdkfdkf');
     
     const statusCode = err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;

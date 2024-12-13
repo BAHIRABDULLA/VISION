@@ -32,6 +32,8 @@ export class MentorController {
 
     async applyMentor(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log('-----   5      ---------');
+
             let { email, jobTitle,country, location, category,experience, skills, bio,
                 whyBecomeMentor, greatestAchievement, company, profilePhoto,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl,
@@ -77,6 +79,8 @@ export class MentorController {
 
     async getAllMentors(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log('-----   6      ---------');
+
             const response = await this.mentorService.getAllMentors()
             return successResponse(res,HttpStatus.OK,"Sent all mentors",response)
         } catch (error) {
@@ -87,6 +91,8 @@ export class MentorController {
 
 
     async getMentor(req: Request, res: Response, next: NextFunction) {
+        console.log('-----   7      ---------');
+
         try {
             const { id } = req.params
             const response = await this.mentorService.getMentor(id)
@@ -99,6 +105,8 @@ export class MentorController {
 
     async updateMentor(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log('-----   8      ---------');
+
             const { id } = req.params
             console.log(id, 'req.params  . . . . ');
 
@@ -130,6 +138,8 @@ export class MentorController {
 
     async getMentorDetails(req: customRequest, res: Response, next: NextFunction) {
         try {
+            console.log('-----   9      ---------');
+
             const user = req.user as JwtPayload
             const response = await this.mentorService.getMentor(user.id)
             return successResponse(res, HttpStatus.OK, "mentor data sent", response)
@@ -140,6 +150,8 @@ export class MentorController {
 
     async getAllmentorWithMergedUserData(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log('-----   10      ---------');
+
             console.log('kfjkdjfdkfjdkjfdkfjdkfjdkjfk');
             const { search = '', priceRange = '0', experience = '', expertise = '', rating = '0', location = '', page = '1', limit = '' } = req.query;
             // const params = req.query
@@ -165,13 +177,13 @@ export class MentorController {
 
     async getMentorSpecificData(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log('-----   11      ---------');
+
             const { id } = req.params
-            console.log(id, 'id getMentorSpecificData -----')
             const response = await this.mentorService.getMentorSpecificData(id)
             if (!response) {
                 return errorResponse(res, HttpStatus.NOT_FOUND, "Not founded mentor details")
             }
-            console.log(response, 'response getMentorSpecificData');
 
             return successResponse(res, HttpStatus.OK, "Mentor data send", response)
         } catch (error) {

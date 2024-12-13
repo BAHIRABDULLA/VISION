@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv' 
 import connectMongodb from './config/db.config'
+import { rabbitmqConnect } from './config/rabbitmq'
 dotenv.config()
 
 const app = express()
@@ -13,6 +14,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
 connectMongodb()
+rabbitmqConnect()
 
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -21,6 +23,7 @@ app.use(cors({
 
 import paymentRoute from './routes/payment.route'
 import errorHandler from './middleware/error.handler'
+
 
 
 app.use('/',paymentRoute)

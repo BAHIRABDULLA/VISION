@@ -11,5 +11,6 @@ export interface IBooking extends Document{
     sessions: number;
     status: 'pending' | 'completed';
     bookedAt?: Date;
-    sessionDates?: Date[]
+    sessionCount:number
+    sessionDates?: Date[],
 } 

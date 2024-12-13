@@ -34,12 +34,35 @@ const passwordSchema = z.object({
 
 type passwordSchemaType = z.infer<typeof passwordSchema>
 const Profile = () => {
+    const [userData, setUserData] = useState<userSchemaType | null>(null)
 
-    const { register, handleSubmit, formState: { errors } } = useForm<commonType>({ resolver: zodResolver(common) })
+
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+            try {
+                const userDetails = await getUserDetails()
+                setUserData(userDetails.data)
+                if (!selectedFile) {
+                    setImagePreview(userDetails.data?.profile || '');
+                }
+            } catch (error) {
+                console.error('Error founded in user details', error);
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchUserDetails()
+    }, [])
+    console.log(userData, 'userData ');
+    const { register, handleSubmit, formState: { errors } } = useForm<commonType>({
+        resolver: zodResolver(common),
+        defaultValues: {
+            fullName: userData?.fullName
+        }
+    })
     const { register: passwordRegister, handleSubmit: passowrdHandleSubmit,
         formState: { errors: passwordError }, reset } = useForm<passwordSchemaType>({ resolver: zodResolver(passwordSchema) })
-    const [userData, setUserData] = useState<userSchemaType | null>(null)
-    console.log(userData, 'userData ');
+
     const [loading, setLoading] = useState(true)
     const [selectedFile, setSelectedFile] = useState(null)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -83,22 +106,7 @@ const Profile = () => {
             setImagePreview(URL.createObjectURL(file))
         }
     }
-    useEffect(() => {
-        const fetchUserDetails = async () => {
-            try {
-                const userDetails = await getUserDetails()
-                setUserData(userDetails.data)
-                if (!selectedFile) {
-                    setImagePreview(userDetails.data?.profile || '');
-                }
-            } catch (error) {
-                console.error('Error founded in user details', error);
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchUserDetails()
-    }, [])
+    
 
 
     const handleCommonDataSubmit = async (data: commonType) => {
@@ -118,7 +126,7 @@ const Profile = () => {
 
             if (response?.data.success) {
                 toast.success("Data updated")
-
+                setIsEditingCommonData(!isEditingCommonData)
             }
         } catch (error) {
             console.error('Error founded in common data saving', error);
@@ -126,14 +134,7 @@ const Profile = () => {
     }
 
 
-
-    // const user = useSelector((state: RootState) =>
-    //     role === 'mentee' ? state.menteeAuth.user : state.mentorAuth.user
-    // );
-
     const [showPasswordChange, setShowPasswordChange] = useState(false);
-
-
 
     if (loading) {
         return <Loading />
@@ -184,14 +185,20 @@ const Profile = () => {
 
                     </div>
                 </div>
-                <button
-                    className="bg-slate-400 px-7 py-1 rounded-md text-white mb-6"
-                    // onClick={() => setIsEditingCommonData(true)}
-                    onClick={toggleEditNameEmail}
-                    type='submit'
-                >
-                    {isEditingCommonData ? 'Save' : 'Edit'}
-                </button>
+                <div className='flex gap-4'>
+              
+                    {isEditingCommonData ? (
+                        <div className='flex gap-2'>
+                            <button type='submit' className='bg-slate-400 px-7 py-1 rounded-md text-white mb-6'
+                                >save</button>
+                            <button className='bg-slate-400 px-7 py-1 rounded-md text-white mb-6'
+                                type='button' onClick={toggleEditNameEmail}>Cancel</button>
+                        </div>
+                    ) : (
+                        <button onClick={toggleEditNameEmail} className='bg-slate-400 px-7 py-1 rounded-md text-white mb-6'>edit</button>
+                    )}
+                </div>
+
             </form>
 
             {userData?.role === 'mentor' && (
@@ -240,10 +247,10 @@ const Profile = () => {
                                 </div>
                             </div>
                             <div className='flex gap-3'>
-                                <button type='submit' className="bg-green-600 px-4 py-2 rounded-md text-white">
+                                <button type='submit' className="bg-gray-400 text-white px-4 py-2 rounded-md ">
                                     Update Password
                                 </button>
-                                <button type='button' onClick={handleCancel} className="bg-yellow-600 px-4 py-2 rounded-md text-white">
+                                <button type='button' onClick={handleCancel} className="bg-gray-400 text-white px-4 py-2 rounded-md ">
                                     Cancel
                                 </button>
                             </div>

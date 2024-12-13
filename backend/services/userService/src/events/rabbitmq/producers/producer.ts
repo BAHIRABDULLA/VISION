@@ -10,8 +10,3 @@ export const sendMentorData = async(queue:string,mentorData:any)=>{
         console.error('Failed to send mentor data',error);
     }
 }
-
-
-class SendMentorData {
-    
-}

@@ -201,27 +201,24 @@ export class MentorService implements IMentorService {
                     slots: mentorSlots
                 }
             })
-            console.log(mentorsWithSlots, 'mentors with slots');
+            
             const filteredMentors = mentorsWithSlots?.filter((mentor: { mentor: IUser; singleSessionPrice: number; experience: any; location: string; }) => {
                 if (typeof mentor.mentor !== 'string') {
                     const user = mentor.mentor as IUser;
                     const mentorSearch = !search || user.fullName.toLowerCase().includes(search.toLowerCase())
-                    console.log(mentorSearch, 'mentorSearch');
                     const matchesPriceRange = !priceRange || mentor.singleSessionPrice <= priceRange;
-                    console.log(matchesPriceRange, 'matchesprice range', priceRange, 'pricerange', mentor.singleSessionPrice, 'singlesesesionprice');
                     const matchesExperience = experience === 'any' ||
                         (experience === '1-3' && (mentor.experience ?? 0) >= 1 && (mentor.experience ?? 0) <= 3) ||
                         (experience === '4-7' && (mentor.experience ?? 0) >= 4 && (mentor.experience ?? 0) <= 7) ||
                         (experience === '8+' && (mentor.experience ?? 0) >= 8);
 
                     const matchesLocation = location === 'any' || mentor.location.toLowerCase().includes(location.toLowerCase())
-                    console.log(matchesExperience, 'matchesExperience', matchesLocation, 'matchesLocation')
 
                     return (mentorSearch && matchesPriceRange && matchesExperience && matchesLocation)
                 }
 
             })
-            console.log(filteredMentors, 'filtered mentors')
+    
             const totalResult = filteredMentors?.length || 0
             const pageSize = limit || 10
             const currentPage = page | 1
@@ -237,15 +234,15 @@ export class MentorService implements IMentorService {
     async getMentorSpecificData(id: string) {
         try {
             const mentor = await this.mentorRepoistory.findByIdWithBasicInfo(id)
-            console.log(mentor, 'mentor in getMentorSpecificData')
+            
             if (mentor?.mentor._id) {
                 const mentorSlots = await this.slotRepository.findMentorSlots(mentor?.mentor._id.toString())
-                console.log(mentorSlots, 'mentor slots')
+                
                 const mergedData = {
                     mentor,
                     slots: mentorSlots
                 }
-                console.log(mergedData, 'merged data');
+                
                 return mergedData
 
             }

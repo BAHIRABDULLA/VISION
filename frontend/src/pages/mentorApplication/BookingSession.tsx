@@ -142,8 +142,10 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
             // console.log(`Selected Date: ${formatDate(selectedDate)},---- ${selectedDate}`, typeof selectedDate);
 
             const response = await slotBooking(mentorId, formattedTime, selectedDate)
-            if(response?.status>=400){
+            if (response?.status >= 400) {
                 toast.error(response?.data.message)
+            } else {
+                toast.success('Session successfully booked ')
             }
             console.log(response, 'resonse in booking session ');
         } catch (error) {

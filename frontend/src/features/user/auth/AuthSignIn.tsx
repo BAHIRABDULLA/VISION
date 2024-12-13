@@ -23,9 +23,6 @@ import Google from '@/components/Google';
 const signInSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
   password: z.string()
-    .min(8, { message: "Password must be at least 8 characters long" })
-    .regex(/[a-zA-Z]/, { message: "Password must contain at least one letter" })
-    .regex(/[0-9]/, { message: "Password must contain at least one number" })
 });
 type SignInSchemaType = z.infer<typeof signInSchema>;
 

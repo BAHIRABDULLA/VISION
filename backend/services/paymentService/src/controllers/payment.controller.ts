@@ -52,7 +52,7 @@ export class PaymentController {
         }
 
         try {
-            console.log(req.body, 'req.body req.body ');
+           
             console.log(process.env.STRIPE_WEBHOOK_SIGNIN_SECRET, 'process.env.STRIPE_WEBHOOK_SIGNIN_SECRET');
 
             // const event = await this.paymentService.constructWebhookEvent(req.body, sig);
@@ -80,6 +80,8 @@ export class PaymentController {
 
             const userEmail = user.email
             const {planType,price,menteeId,mentorId}  = req.body
+            console.log(planType,'plan type',price,'price',menteeId,'menteeId',mentorId,'mentorId');
+            
             const response = await this.paymentService.commonSession(userEmail,planType,menteeId,mentorId,price)
             return res.status(200).json(response)
         } catch (error) {
