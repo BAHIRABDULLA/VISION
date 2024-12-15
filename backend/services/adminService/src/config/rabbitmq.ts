@@ -3,16 +3,22 @@ import amqplib,{Connection,Channel} from 'amqplib'
 let connection:Connection
 let channel:Channel;
 
-export const rabbitmqConnect=  async()=>{
-    try {
-        connection = await amqplib.connect('amqp://localhost')
-        channel = await connection.createChannel()
-        console.log('Connected to rabbitmq in admin service');
-        
-    } catch (error) {
-        console.error('Failed to connect rabbitmq ',error); 
-        
+
+export const rabbitmqConnect = async () => {
+    while (true) {
+        try {
+           
+            connection = await amqplib.connect('amqp://rabbitmq:5672');
+            channel = await connection.createChannel();
+            console.log('Connected to RabbitMQ in adminService');
+            break;
+        } catch (error) {
+            console.error('Failed to connect to RabbitMQ in adminService', error);
+            console.log('Retrying connection in 5 seconds...');
+            await new Promise(resolve => setTimeout(resolve, 5000)); 
+        }
     }
-}
+};
+
 
 export const getChannel = (): Channel=> channel

@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: "rabbitmq:management"
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # Web UI for RabbitMQ
+    networks:
+      - vision-network
+
+  vision-userservice:
+    image: vision-userservice
+    container_name: vision-userservice
+    build:
+      context: ./services/userService
+    ports:
+      - "4001:4001"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - vision-network
+    depends_on:
+      - rabbitmq
+
+  vision-mentorservice:
+    image: vision-mentorservice
+    container_name: vision-mentorservice
+    build:
+      context: ./services/mentorService
+    ports:
+      - "4002:4002"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - vision-network
+    depends_on:
+      - rabbitmq
+
+  vision-adminservice:
+    image: vision-adminservice
+    container_name: vision-adminservice
+    build:
+      context: ./services/adminService
+    ports:
+      - "4003:4003"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - vision-network
+    depends_on:
+      - rabbitmq
+
+  vision-courseservice:
+    image: vision-courseservice
+    container_name: vision-courseservice
+    build:
+      context: ./services/courseService
+    ports:
+      - "4004:4004"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - vision-network
+    depends_on:
+      - rabbitmq
+
+  vision-paymentservice:
+    image: vision-paymentservice
+    container_name: vision-paymentservice
+    build:
+      context: ./services/paymentService
+    ports:
+      - "4005:4005"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - vision-network
+    depends_on:
+      - rabbitmq
+
+  vision-messagingservice:
+    image: vision-messagingservice
+    container_name: vision-messagingservice
+    build:
+      context: ./services/messagingService
+    ports:
+      - "4006:4006"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - vision-network
+    depends_on:
+      - rabbitmq
+
+networks:
+  vision-network:
+    driver: bridge
