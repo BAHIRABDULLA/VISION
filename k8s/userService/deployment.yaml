@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vision-userservice
+  labels:
+    app: vision-userservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vision-userservice
+  template:
+    metadata:
+      labels:
+        app: vision-userservice
+    spec:
+      containers:
+      - name: vision-userservice
+        image: gcr.io/first-planet-444914-p6/vision-userservice:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: user-db-credentials
+              key: connectionString

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vision-messagingservice
+  labels:
+    app: vision-messagingservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vision-messagingservice
+  template:
+    metadata:
+      labels:
+        app: vision-messagingservice
+    spec:
+      containers:
+      - name: vision-messagingservice
+        image: gcr.io/first-planet-444914-p6/vision-messagingservice:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: messaging-db-credentials
+              key: connectionString

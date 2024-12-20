@@ -2,12 +2,12 @@ import mongoose from "mongoose"
 
 export const connectDb = async()=>{
     try {
-        const mongo_uri  = process.env.MONGO_URI
-        if(!mongo_uri){
-            console.log('cannot get mongo_uri');
+        const connectionString   = process.env.MONGO_URI
+        if(!connectionString ){
+            console.log('cannot get connectionString ');
             return
         }
-        await mongoose.connect(mongo_uri)
+        await mongoose.connect(connectionString )
         console.log('mongodb connected');
     } catch (error) {
         console.error('Error founded in connecting db',error);
