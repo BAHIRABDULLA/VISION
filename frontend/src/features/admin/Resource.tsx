@@ -1,16 +1,38 @@
-import React from 'react'
+import { getResources } from '@/services/courseApi';
+import React, { useEffect, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
 const Resource = () => {
 
+  // const [resources,setResources] = useState([])
   const resources = [
     { id: 1, name: "Tuples", type: "Image", course: 'Python', level: "Basic", status: "Active" },
     { id: 2, name: "useContext", type: "Document", course: "Javascript", level: "Advanced", status: "Active" },
     { id: 3, name: "Java Lambda", type: "Video", course: "Java", level: "Intermediate", status: "Inactive" }
   ];
+
+  useEffect(()=>{
+    const fetchResources = async ()=>{
+      try {
+        const response = await getResources()
+        console.log(response,'response');
+        if(response?.status&&response?.status>=400){
+          toast.error(response?.data.message || 'An error occured')
+        }else{
+          // setResources(response?.data)
+        }
+      } catch (error) {
+        console.error('Error founded in fetch resource',error);
+        toast.error('Internal server error')
+      }
+    }
+    fetchResources()
+  },[])
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-8">
+        <Toaster/>
         <h2 className="text-4xl font-bold text-gray-800">Resources List</h2>
         <Link
           to="/admin/resources/add"

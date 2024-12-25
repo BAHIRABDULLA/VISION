@@ -9,8 +9,8 @@ import Loading from '@/components/Loading';
 const MentorPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1)
     console.log(currentPage, 'current page ')
-    const [totalPages,setTotalPages]=useState(0)
-    console.log(totalPages,'total pages')
+    const [totalPages, setTotalPages] = useState(0)
+    console.log(totalPages, 'total pages')
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState({
@@ -45,14 +45,14 @@ const MentorPage: React.FC = () => {
 
                 const resposne = await getAllMentors(paramsData)
                 console.log(resposne, 'response - - -  in useeffetct mentors');
-                if(resposne?.data){
+                if (resposne?.data) {
                     setMentors(resposne.data.data)
                     setTotalPages(resposne?.data.pagination.totalPages)
                 }
             } catch (error) {
-                console.error('Error fetching mentors',error);
-                
-            }finally{
+                console.error('Error fetching mentors', error);
+
+            } finally {
                 setLoading(false)
             }
         }
@@ -61,8 +61,8 @@ const MentorPage: React.FC = () => {
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
     };
-    if(loading){
-        <Loading/>
+    if (loading) {
+        <Loading />
     }
     const handleFilterChange = (name: string, value: string | number) => {
         setFilters(prev => ({ ...prev, [name]: value }));
@@ -70,21 +70,21 @@ const MentorPage: React.FC = () => {
 
     const filteredMentors = mentors.filter((mentor) =>
         // mentor.fullName.toLowerCase().includes(searchQuery.toLowerCase())
-    mentor.mentor.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+        mentor.mentor.fullName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
-        <div className="bg-slate-800 min-h-screen">
+        <div className="min-h-screen ">
             <Header />
             <div className="container mx-auto px-28 py-8 flex gap-12">
                 {/* Filters Section */}
                 <div className="w-1/4 sticky top-0 h-full">
-                    <div className="bg-gray-100 p-6 rounded-lg shadow-lg">
-                        <h3 className="text-lg font-semibold mb-6">Filters</h3>
+                    <div className="bg-gray-200 dark:bg-gray-600 p-6 rounded-lg shadow-lg">
+                        <h3 className="text-lg font-semibold mb-6 text-gray-800 dark:text-white">Filters</h3>
 
                         <div className="space-y-6">
                             <div>
-                                <label className="block mb-2 font-medium">Price Range</label>
+                                <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">Price Range</label>
                                 <div className="flex items-center gap-2">
                                     <input
                                         type="range"
@@ -94,13 +94,13 @@ const MentorPage: React.FC = () => {
                                         onChange={(e) => handleFilterChange('priceRange', e.target.value)}
                                         className="w-full"
                                     />
-                                    <span className="text-sm">${filters.priceRange}</span>
+                                    <span className="text-sm text-gray-700 dark:text-gray-300">${filters.priceRange}</span>
                                 </div>
                             </div>
                             <div>
-                                <label className="block mb-2 font-medium">Experience Level</label>
+                                <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">Experience Level</label>
                                 <select
-                                    className="w-full p-2 border border-gray-300 rounded"
+                                    className="w-full p-2  rounded bg-white dark:bg-gray-500 text-gray-700 dark:text-white"
                                     value={filters.experience}
                                     onChange={(e) => handleFilterChange('experience', e.target.value)}
                                 >
@@ -112,9 +112,9 @@ const MentorPage: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block mb-2 font-medium">Expertise</label>
+                                <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">Expertise</label>
                                 <select
-                                    className="w-full p-2 border border-gray-300 rounded"
+                                    className="w-full p-2  rounded bg-white dark:bg-gray-500 text-gray-700 dark:text-white"
                                     value={filters.expertise}
                                     onChange={(e) => handleFilterChange('expertise', e.target.value)}
                                 >
@@ -128,9 +128,9 @@ const MentorPage: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block mb-2 font-medium">Minimum Rating</label>
+                                <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">Minimum Rating</label>
                                 <select
-                                    className="w-full p-2 border border-gray-300 rounded"
+                                    className="w-full p-2  rounded bg-white dark:bg-gray-500 text-gray-700 dark:text-white"
                                     value={filters.rating}
                                     onChange={(e) => handleFilterChange('rating', e.target.value)}
                                 >
@@ -142,9 +142,9 @@ const MentorPage: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block mb-2 font-medium">Location</label>
+                                <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">Location</label>
                                 <select
-                                    className="w-full p-2 border border-gray-300 rounded"
+                                    className="w-full p-2  rounded bg-white dark:bg-gray-500 text-gray-700 dark:text-white"
                                     value={filters.location}
                                     onChange={(e) => handleFilterChange('location', e.target.value)}
                                 >
@@ -167,12 +167,12 @@ const MentorPage: React.FC = () => {
                             placeholder="Search for mentors..."
                             value={searchQuery}
                             onChange={handleSearchChange}
-                            className="p-2 border border-gray-300 rounded w-1/2"
+                            className="p-2 border border-gray-700 dark:border-gray-300 rounded w-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-white"
                         />
                     </div>
 
                     {filteredMentors.map((mentor) => (
-                        <div key={mentor._id} className="bg-gray-700 rounded-lg shadow-lg overflow-hidden flex">
+                        <div key={mentor._id} className="rounded-lg shadow-lg overflow-hidden flex">
                             {/* Mentor Image */}
                             <div className="w-1/4">
                                 <img
@@ -183,18 +183,16 @@ const MentorPage: React.FC = () => {
                             </div>
 
                             {/* Mentor Details */}
-                            <div className="text-white w-3/4 p-6">
+                            <div className="bg-gray-100 dark:bg-gray-600  text-white w-3/4 p-6">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h3 className="text-xl font-semibold">{mentor.mentor.fullName}</h3>
-                                        {/* <p className="text-sm text-gray-400">{mentor.countryCode}</p> */}
-                                        <p className="text-sm text-gray-400">{mentor.location}</p>
+                                        <h3 className="text-xl font-semibold text-gray-800 dark:text-white">{mentor.mentor.fullName}</h3>
+                                        <p className="text-sm  text-gray-800 dark:text-white">{mentor.location}</p>
                                     </div>
-                                    {/* <p className="text-xl font-bold">{mentor.pricePerMonth}/month</p> */}
-                                    <p className="text-xl font-bold">₹ {mentor.singleSessionPrice}</p>
+                                    <p className="text-xl font-bold text-gray-800 dark:text-white">₹ {mentor.singleSessionPrice}</p>
                                 </div>
 
-                                <p className="mt-2 text-lg text-gray-300">{mentor.jobTitle}</p>
+                                <p className="mt-2 text-lg text-gray-700 dark:text-white">{mentor.jobTitle}</p>
 
                                 {/* Rating */}
                                 <div className="mt-2 flex items-center">
@@ -206,11 +204,11 @@ const MentorPage: React.FC = () => {
                                 </div>
 
                                 <div className="mt-4 flex items-center gap-4">
-                                   <p ><span className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded text-sm">
+                                    <p className='text-darkBg dark:text-white'><span className="font-extrabold dark:text-blue-300 px-3 py-1 rounded text-sm">
                                         {mentor?.experience}
-                                    </span>Year experience in <span className='text-yellow-400'>{mentor.category}</span>  field</p>
-                                    
+                                    </span>Year experience in <span className='text-red-600 dark:text-yellow-400'>{mentor.category}</span> field</p>
                                 </div>
+
                                 <Link to={`/mentor/${mentor._id}`} className="mt-6 bg-purple-500 text-center text-white py-2 px-6 rounded-full hover:bg-purple-600 transition-colors block">
                                     View Profile
                                 </Link>
@@ -219,7 +217,8 @@ const MentorPage: React.FC = () => {
                     ))}
                 </div>
             </div>
-            {/* <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} /> */}
+
+            {/* Pagination */}
             <div className='flex justify-center'>
                 <Pagination count={10} variant="outlined" size='large'
                     page={currentPage}
@@ -240,6 +239,11 @@ const MentorPage: React.FC = () => {
                 />
             </div>
         </div>
+
+
+
+
+
     );
 };
 

@@ -158,22 +158,23 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
     return (
         <>
             <Toaster />
-            <div className="bg-gray-700  
-             mt-3 p-6 ">
-                <div className='flex justify-between items-center'>
+            <div className="bg-gray-200 dark:bg-gray-600 mt-3 p-6">
+                <div className="flex justify-between items-center">
                     <div
                         onClick={navigatePrev}
-                        className='p-3 w-12 bg-gray-600 rounded-full cursor-pointer'
+                        className="p-3 w-12 bg-gray-400 dark:bg-gray-700 rounded-full cursor-pointer"
                     >
-                        <ChevronLeft color='white' />
+                        <ChevronLeft color="white" />
                     </div>
 
-                    <div className="flex justify-center space-x-8 border-b border-gray-500 pb-4 mb-4">
+                    <div className="flex justify-center space-x-8 border-b border-gray-600 dark:border-gray-300 pb-4 mb-4">
                         {dates.map((dateObj, index) => (
                             <div
                                 key={index}
                                 onClick={() => handleDaySelection(index)}
-                                className={`font-medium cursor-pointer ${activeIndex === index ? 'text-blue-500' : 'text-gray-300'
+                                className={`font-medium cursor-pointer ${activeIndex === index
+                                    ? 'text-blue-500'
+                                    : 'text-gray-700 dark:text-gray-400'
                                     }`}
                             >
                                 {dateObj.label || formatDate(dateObj.date)}
@@ -183,9 +184,9 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
 
                     <div
                         onClick={navigateNext}
-                        className='p-3 w-12 bg-gray-600 rounded-full cursor-pointer'
+                        className="p-3 w-12 bg-gray-400 dark:bg-gray-700 rounded-full cursor-pointer"
                     >
-                        <ChevronRight color='white' />
+                        <ChevronRight color="white" />
                     </div>
                 </div>
 
@@ -196,32 +197,34 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
                                 <button
                                     key={i}
                                     className={`py-2 px-4 rounded-lg border transition-all cursor-pointer ${selectedSlot === slot
-                                        ? 'border-purple-500 bg-purple-500/10 text-white'
-                                        : 'border-gray-600 text-gray-300 hover:border-purple-400'
+                                        ? 'border-purple-500 bg-purple-500/10 dark:text-white'
+                                        : 'border-gray-600 dark:border-gray-400 text-gray-800 dark:text-white hover:border-purple-400 dark:hover:border-purple-500'
                                         }`}
                                     onClick={() => setSelectedSlot(slot)}
                                 >
-
                                     {slot}
                                 </button>
-
                             ))}
                         </div>
                     ) : (
-                        <p className="text-gray-400 text-center">No slots available</p>
+                        <p className="text-gray-400 dark:text-gray-500 text-center">No slots available</p>
                     )}
                 </div>
 
                 <div className="flex justify-center mt-5">
-                    <button onClick={handleSlotBooking} disabled={!selectedSlot}
-                        className={` mt-6 py-2 px-16 rounded-lg transition-colors ${selectedSlot
+                    <button
+                        onClick={handleSlotBooking}
+                        disabled={!selectedSlot}
+                        className={`mt-6 py-2 px-16 rounded-lg transition-colors ${selectedSlot
                             ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                            : 'bg-gray-700 text-gray-300 cursor-not-allowed'
-                            }`}>
+                            : 'bg-gray-600 dark:bg-gray-700 dark:text-gray-500 text-gray-400  cursor-not-allowed'
+                            }`}
+                    >
                         Book a Session
                     </button>
                 </div>
             </div>
+
         </>
     )
 }

@@ -41,7 +41,7 @@ const CourseDetails = () => {
                 console.log(response, 'response in fetch payment details');
                 if (response?.status === 200) {
                     setIsPurchase(false)
-                }else{
+                } else {
                     setIsPurchase(true)
                 }
             }
@@ -116,7 +116,7 @@ const CourseDetails = () => {
     return (
         <>
 
-            <div className='bg-slate-800 min-h-screen  px-6 md:px-20'>
+            <div className=' min-h-screen  px-6 md:px-20'>
                 <Header />
                 {/* Back Navigation */}
                 <div className="container mx-auto px-8 py-4">
@@ -129,13 +129,13 @@ const CourseDetails = () => {
                 <div className="flex justify-between items-start mb-12">
 
                     <div>
-                        <h1 className="text-3xl text-white font-bold mb-2">{course?.name}</h1>
-                        <p className="text-gray-400">Course Duration: Estimate {course?.duration}</p>
+                        <h1 className="text-3xl text-gray-900 dark:text-white font-bold mb-2">{course?.name}</h1>
+                        <p className="text-gray-600 dark:text-gray-400">Course Duration: Estimate {course?.duration}</p>
                     </div>
                     {isPurchase ? (
-                        <div className="bg-slate-500 p-4 rounded-lg text-center">
-                            <div className="text-2xl text-white font-bold mb-2">₹ {course?.price}</div>
-                            <button className="bg-purple-600 text-white px-6 py-2 rounded-lg font-bold mb-2"
+                        <div className="bg-gray-200 dark:bg-gray-800  p-4 rounded-lg text-center">
+                            <div className="text-2xl text-gray-900 dark:text-white font-bold mb-2">₹ {course?.price}</div>
+                            <button className="bg-purple-600 text-white px-6 py-2 rounded-lg font-bold mb-2 hover:bg-purple-700"
                                 onClick={handleEnroll}>
                                 ENROLL!
                             </button>
@@ -146,8 +146,8 @@ const CourseDetails = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="bg-slate-500 p-4 rounded-lg text-center">
-                            <Link className='text-white font-bold' to='/resource'>Open the Course</Link>
+                        <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg text-center">
+                            <Link className='text-purple-600 dark:text-purple-400 font-bold hover:underline' to='/resource'>Open the Course</Link>
                         </div>
                     )}
 
@@ -155,9 +155,9 @@ const CourseDetails = () => {
 
                 {/* Course Overview */}
                 <section className="mb-12">
-                    <h2 className="text-xl text-white font-bold mb-4">Course Overview</h2>
-                    <div className="bg-slate-500/50 p-6 rounded-lg">
-                        <p className="text-gray-300 mb-4">
+                    <h2 className="text-xl text-gray-900 dark:text-white font-bold mb-4">Course Overview</h2>
+                    <div className="bg-gray-200 dark:bg-gray-800 p-6 rounded-lg">
+                        <p className="text-gray-700 dark:text-gray-300 mb-4">
                             {course?.overview}
                             {/* Embark On The Most Intensely Active-In-Demand Programming Language Today. This Course Is Designed For Those Looking To Python Programming To Advance In Computing Taking You Build The Skills Necessary For Software Development, Data Analysis, Automation, And Web Applications. */}
                         </p>
@@ -172,13 +172,13 @@ const CourseDetails = () => {
 
                 {/* Course Curriculum */}
                 <section className="mb-12">
-                    <h2 className="text-xl text-white font-bold mb-4">Course Curriculum</h2>
-                    <div className="bg-slate-500/50 p-6 rounded-lg">
+                    <h2 className="text-xl text-gray-900 dark:text-white font-bold mb-4">Course Curriculum</h2>
+                    <div className="bg-gray-200 dark:bg-gray-800 p-6 rounded-lg">
                         {/* <h3 className='font-bold text-white'>{course?.curriculum}</h3><br /> */}
                         <div className="grid grid-cols-2 gap-6">
                             <div>
-                                <h3 className="font-bold text-white mb-4">Basic Topics (Beginner)</h3>
-                                <ul className="space-y-2 text-gray-300">
+                                <h3 className="font-bold text-gray-900 dark:text-white mb-4">Basic Topics (Beginner)</h3>
+                                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                                     {/* <h4>{course?.curriculum[0].topics}</h4> */}
                                     {course?.curriculum[0].topics?.map((topic, index) => (
                                         <li key={index}>{topic}</li>
@@ -190,8 +190,8 @@ const CourseDetails = () => {
                                 </ul>
                             </div>
                             <div>
-                                <h3 className="font-bold text-white mb-4">Intermediate Topics</h3>
-                                <ul className="space-y-2 text-gray-300">
+                                <h3 className="font-bold text-gray-900 dark:text-white mb-4">Intermediate Topics</h3>
+                                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                                     {/* <h4>{course?.curriculum[1].topics}</h4> */}
                                     {course?.curriculum[1].topics?.map((topic, index) => (
                                         <li key={index}>{topic}</li>
@@ -202,8 +202,8 @@ const CourseDetails = () => {
                                 </ul>
                             </div>
                             <div>
-                                <h3 className="font-bold text-white mb-4">Advanced Topics</h3>
-                                <ul className="space-y-2 text-gray-300">
+                                <h3 className="font-bold text-gray-900 dark:text-white mb-4">Advanced Topics</h3>
+                                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                                     {/* <h4>{course?.curriculum[2].topics}</h4> */}
 
                                     {course?.curriculum[2].topics?.map((topic, index) => (
@@ -217,21 +217,21 @@ const CourseDetails = () => {
 
                 {/* Reviews */}
                 <section>
-                    <h2 className="text-xl text-white font-bold mb-4">Rating & Reviews</h2>
+                    <h2 className="text-xl text-gray-900 dark:text-white font-bold mb-4">Rating & Reviews</h2>
                     <div className="space-y-4">
                         {[1, 2, 3].map((review) => (
-                            <div key={review} className="bg-slate-500/50 p-4 rounded-lg flex items-start gap-4">
-                                <div className="w-10 h-10 bg-gray-600 rounded-full flex-shrink-0" />
+                            <div key={review} className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg flex items-start gap-4">
+                                <div className="w-10 h-10 bg-gray-400 dark:bg-gray-600 rounded-full flex-shrink-0" />
                                 <div>
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="font-bold">Alex</span>
+                                        <span className="font-bold text-gray-900 dark:text-white">Alex</span>
                                         <div className="flex">
                                             {[...Array(5)].map((_, i) => (
                                                 <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                             ))}
                                         </div>
                                     </div>
-                                    <p className="text-gray-300">
+                                    <p className="text-gray-700 dark:text-gray-300">
                                         Working with Python has been incredibly beneficial for me. I can truly recommend this journey from Vision to anyone in the programming world.
                                     </p>
                                 </div>
@@ -239,11 +239,8 @@ const CourseDetails = () => {
                         ))}
                     </div>
                 </section>
-                <div className='mt-5'>
-
-                    <Footer />
-                </div>
             </div>
+            <Footer />
         </>
     )
 }

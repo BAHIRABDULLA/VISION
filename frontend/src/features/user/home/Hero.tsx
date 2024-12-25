@@ -13,12 +13,12 @@ const Hero = () => {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
             {/* Left Content */}
             <div className="flex-1 max-w-xl">
-              <h1 className="text-5xl text-white lg:text-6xl font-bold mb-6">
+              <h1 className="text-5xl  lg:text-6xl font-bold mb-6">
                 <span className="text-purple-500">Transform</span> Your
                 <br />
                 Career Path Today
               </h1>
-              <p className="text-gray-300 text-lg mb-8">
+              <p className="text-lg mb-8 text-lightText dark:text-darkText">
                 Get personalized mentorship from industry experts and access
                 cutting-edge courses designed to accelerate your professional growth.
               </p>
@@ -28,12 +28,12 @@ const Hero = () => {
 
               <div className="flex gap-16 mt-12">
                 <div>
-                  <h3 className="text-white text-3xl font-bold mb-2">5,000+</h3>
-                  <p className="text-gray-400">Active Students</p>
+                  <h3 className="text-3xl font-bold mb-2 text-lightText dark:text-white">5,000+</h3>
+                  <p className="text-gray-500 dark:text-gray-400">Active Students</p>
                 </div>
                 <div>
-                  <h3 className="text-white text-3xl font-bold mb-2">300+</h3>
-                  <p className="text-gray-400">Expert Mentors</p>
+                  <h3 className="text-3xl font-bold mb-2 text-lightText dark:text-white">300+</h3>
+                  <p className="text-gray-500 dark:text-gray-400">Expert Mentors</p>
                 </div>
               </div>
             </div>
