@@ -1,0 +1,36 @@
+{
+  "name": "gateway",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec ts-node index.ts",
+    "dev": "concurrently \"npm run dev --prefix ../services/userService\" \"npm run dev --prefix ../services/mentorService\" \"npm run dev --prefix ../services/adminService\" \"npm run dev --prefix ../services/courseService\" \"npm run start --prefix .\"  \"npm run dev --prefix ../services/paymentService\"  \"npm run dev --prefix ../services/messagingService\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.5.0",
+    "fs": "^0.0.1-security",
+    "http-proxy-middleware": "^3.0.3",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7",
+    "rotating-file-stream": "^3.2.5"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.0.1",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

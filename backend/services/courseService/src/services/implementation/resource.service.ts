@@ -15,6 +15,20 @@ export class ResourceService implements IResourseService {
         this.resourceRepository = resourceRepository
         this.courseRepository = courseRepository
     }
+
+    async getResources():Promise<Partial<IResource[]>  | null>{
+        try {
+            const getResourceData = await this.resourceRepository.findAll()
+            console.log(getResourceData,'getResource data in resrource service layer')
+            if(getResourceData.length<=0){
+                throw new CustomError('Not founded resources',HttpStatus.NOTFOUND)
+            }
+            return getResourceData
+        } catch (error) {
+            console.error('Error founded in get resource in service layer',error);
+            throw error
+        }
+    }
     async createResourse(title: string, subtitle: string, type: 'text' | 'image' | 'video', course: string,
          level: string, topic: string, content: any): Promise<IResource | undefined> {
         try {

@@ -1,0 +1,148 @@
+# docker-compose.yml (for development)
+version: '3.8'
+
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  user-service:
+    build:
+      context: ./backend/services/userService
+      dockerfile: Dockerfile
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./backend/services/userService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  admin-service:
+    build:
+      context: ./backend/services/adminService
+      dockerfile: Dockerfile
+    ports:
+      - "4002:4002"
+    volumes:
+      - ./backend/services/adminService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  course-service:
+    build:
+      context: ./backend/services/courseService
+      dockerfile: Dockerfile
+    ports:
+      - "4003:4003"
+    volumes:
+      - ./backend/services/courseService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  mentor-service:
+    build:
+      context: ./backend/services/mentorService
+      dockerfile: Dockerfile
+    ports:
+      - "4004:4004"
+    volumes:
+      - ./backend/services/mentorService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  messaging-service:
+    build:
+      context: ./backend/services/messagingService
+      dockerfile: Dockerfile
+    ports:
+      - "4005:4005"
+    volumes:
+      - ./backend/services/messagingService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  payment-service:
+    build:
+      context: ./backend/services/paymentService
+      dockerfile: Dockerfile
+    ports:
+      - "4006:4006"
+    volumes:
+      - ./backend/services/paymentService:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+---
+# docker-compose.prod.yml
+version: '3.8'
+
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    image: gcr.io/${PROJECT_ID}/frontend:${TAG}
+
+  user-service:
+    build:
+      context: ./backend/services/userService
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    image: gcr.io/${PROJECT_ID}/user-service:${TAG}
+
+  admin-service:
+    build:
+      context: ./backend/services/adminService
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    image: gcr.io/${PROJECT_ID}/admin-service:${TAG}
+
+  course-service:
+    build:
+      context: ./backend/services/courseService
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    image: gcr.io/${PROJECT_ID}/course-service:${TAG}
+
+  mentor-service:
+    build:
+      context: ./backend/services/mentorService
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    image: gcr.io/${PROJECT_ID}/mentor-service:${TAG}
+
+  messaging-service:
+    build:
+      context: ./backend/services/messagingService
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    image: gcr.io/${PROJECT_ID}/messaging-service:${TAG}
+
+  payment-service:
+    build:
+      context: ./backend/services/paymentService
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    image: gcr.io/${PROJECT_ID}/payment-service:${TAG}

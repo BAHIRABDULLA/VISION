@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser'
 const app = express()
 import { authService, userService } from './config/container'
 
-app.use(morgan('dev'))
+// app.use(morgan('dev'))
 dotenv.config()
 rabbitmqConnect().then(()=>{
     consumerMentorQueue(userService,authService)

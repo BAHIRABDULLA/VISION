@@ -17,7 +17,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
-app.use(morgan('combined'))
+// app.use(morgan('combined'))
 
 
 connectDb()
@@ -30,7 +30,7 @@ import resourceRoute from './routes/resource.route';
 import courseRoute from './routes/course.route';
 import { receiveMessage } from './events/rabbitmq/consumer';
 
-app.use('/',resourceRoute)
+app.use('/resource',resourceRoute)
 app.use('/',courseRoute)
 app.use(errorHandler)
 

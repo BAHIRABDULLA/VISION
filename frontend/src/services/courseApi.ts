@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { privateApi } from './axiosConfig';
 import { adminPrivateApi } from './instance/adminInstance';
 
@@ -36,6 +36,9 @@ export const getAllCourses = async () => {
         return response
     } catch (error) {
         console.error('Error founed in get all courses', error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
     }
 }
 
@@ -56,6 +59,16 @@ export const updateCourseStatus = async (id: string, status: string) => {
         return response
     } catch (error) {
         console.error('Error founded in update course ', error);
+    }
+}
+
+export const getResources = async ()=>{
+    try {
+        const response  = await api.get('/resource')
+        return response
+    } catch (error) {
+        console.error('Error founded in get resource',error);
+        if(error instanceof AxiosError)return error.response
     }
 }
 

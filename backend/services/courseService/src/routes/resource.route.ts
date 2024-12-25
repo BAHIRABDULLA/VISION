@@ -9,7 +9,8 @@ const upload = multer({
     storage: multer.memoryStorage(),
 });
 
-router.post('/resource',adminAuthenticateToken,upload.single('content'),resourceController.createResourse.bind(resourceController));
+router.get('/',resourceController.getResources.bind(resourceController))
+router.post('/',adminAuthenticateToken,upload.single('content'),resourceController.createResource.bind(resourceController));
 
 
 export default router

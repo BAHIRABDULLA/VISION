@@ -42,7 +42,9 @@ export class CourseController {
 
     async getAllCourses(req: Request, res: Response) {
         try {
+            
             const response = await this.courseService.getAllCourses()
+            console.log(response,'response in get all coiurse');
             return res.json(response)
         } catch (error) {
             console.error('Error founded in get all courses', error);
