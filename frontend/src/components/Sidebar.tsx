@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaUserCircle, FaComments, FaVideo, FaHistory, FaBell, FaUsers, FaSignOutAlt, FaBars } from 'react-icons/fa';
 import { MdSpaceDashboard } from 'react-icons/md';
 import { FaCheckToSlot } from "react-icons/fa6";

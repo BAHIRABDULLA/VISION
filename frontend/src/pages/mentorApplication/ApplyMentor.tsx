@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import ApplyMentor2 from './ApplyMentor2'
 import ApplyMentor1 from './ApplyMentor1'
 import { applyMentor } from '@/services/mentorApi'

@@ -14,7 +14,7 @@ const DashboardLayout: React.FC = () => {
   return (
     <div className="flex min-h-screen">
       <Sidebar role={role} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-      <main className={`flex-1 p-6 bg-slate-800 transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <main className={`flex-1  bg-slate-800 transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Outlet />
       </main>
     </div>

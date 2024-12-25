@@ -1,4 +1,4 @@
-import {  string, z } from 'zod';
+import { z } from 'zod';
 export const courseSchema = z.object({
   name:z.string().min(1,{message:"Course name is required"}),
   duration:z.string().min(1,{message:"Course duration is required"}),

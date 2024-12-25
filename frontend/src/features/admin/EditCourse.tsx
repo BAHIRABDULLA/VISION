@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { TextField, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import Input from '@/components/Input';
 import Button from '@/components/Button';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';

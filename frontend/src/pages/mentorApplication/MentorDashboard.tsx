@@ -1,9 +1,8 @@
 
-import React from 'react';
 import DashboardLayout from '@/components/DashbaordLayout';
 
 const MentorDashboard = () => {
-  return <DashboardLayout role="mentor" />;
+  return <DashboardLayout  />;
 };
 
 export default MentorDashboard;

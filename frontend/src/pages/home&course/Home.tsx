@@ -1,5 +1,4 @@
-import CourseCard from '@/components/CourseCard'
-import CourseList from '@/components/CourseList'
+
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import Hero from '@/features/user/home/Hero'

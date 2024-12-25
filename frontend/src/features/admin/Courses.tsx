@@ -1,5 +1,5 @@
 import { getAllCourses, updateCourseStatus } from '@/services/courseApi';
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Modal from 'react-modal'
 import toast, { Toaster } from 'react-hot-toast';

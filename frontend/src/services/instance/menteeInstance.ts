@@ -1,6 +1,5 @@
 import axios from "axios";
 import { logout as menteeLogout } from "@/redux/slices/menteeAuthSlice";
-import { logout as mentorLogout } from "@/redux/slices/mentorAuthSlice";
 import { store } from "@/redux/store/store";
 
 

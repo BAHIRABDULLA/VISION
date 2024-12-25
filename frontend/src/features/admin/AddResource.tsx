@@ -103,7 +103,7 @@ const AddResources = () => {
             formData.append("content", content);
         }
     
-        const response = await addResource(formData); 
+         await addResource(formData); 
     };
     
 

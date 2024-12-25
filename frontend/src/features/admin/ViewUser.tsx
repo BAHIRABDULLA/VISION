@@ -1,5 +1,5 @@
 import { updateMentorApproveStatus, userData, } from '@/services/adminApi';
-import { useState, useEffect, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from 'react';
+import { useState, useEffect} from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { CommonDetails } from '@/interfaces/UserList';
@@ -8,7 +8,7 @@ import { MentorDetails } from '@/interfaces/UserList';
 import { Card, CardHeader, CardContent } from '@mui/material';
 import {
   Mail, User, Shield, Check, X, Calendar, Book, Users, Award, Building2,
-  MapPin, ChartBarStacked, Briefcase, Play, Newspaper, ListTodo
+  MapPin, ChartBarStacked, Briefcase,  ListTodo
 } from 'lucide-react';
 import { updateUserActiveStatus } from '@/services/adminApi';
 
@@ -47,7 +47,7 @@ const ViewUser = () => {
       const updatedUser = { ...userDetails, isActive: !userDetails.isActive };
       console.log(updatedUser.isActive,'update user . is active ');
       
-      const response = await updateUserActiveStatus(userId,updatedUser.isActive );
+       await updateUserActiveStatus(userId,updatedUser.isActive );
       
       setUserDetails(updatedUser);
     } catch (error) {
@@ -288,7 +288,7 @@ const ViewUser = () => {
               <div>
                 <p className="text-sm text-gray-500">Skills</p>
                 <ul className="list-disc list-inside text-gray-700">
-                  {(userDetails as MentorDetails)?.mentorDetails?.skills?.map((skill, index) => (
+                  {(userDetails as MentorDetails)?.mentorDetails?.skills?.map((skill, index:number) => (
                     <li key={index}>{skill}</li>
                   )) || <li>No skills listed.</li>}
                 </ul>

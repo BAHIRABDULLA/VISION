@@ -2,13 +2,12 @@
 
 import toast, { Toaster } from 'react-hot-toast'
 
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store/store';
-import { Avatar, Skeleton, TextField } from '@mui/material';
+import  { useEffect, useState } from 'react';
+
+import {  TextField } from '@mui/material';
 import { getUserDetails, passwordUpdate, updateCommonData } from '@/services/userApi';
 import Loading from '@/components/Loading';
-import { common, commonType, mentorSchema, mentorSchemaType, userSchema, userSchemaType } from '@/utils/userValidator';
+import { common, commonType,  userSchemaType } from '@/utils/userValidator';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MentorData from './MentorData';
@@ -66,7 +65,7 @@ const Profile = () => {
     const [loading, setLoading] = useState(true)
     const [selectedFile, setSelectedFile] = useState(null)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
-    const [error, setError] = useState('')
+    
 
     const [isEditingCommonData, setIsEditingCommonData] = useState(false);
 
@@ -142,7 +141,7 @@ const Profile = () => {
 
 
     return (
-        <div className="p-6 bg-gray-600  rounded-lg shadow-md text-white max-w-4xl mx-auto">
+        <div className="p-6 mt-9 bg-gray-600  rounded-lg shadow-md text-white max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold mb-4 text-center">Personal Information</h2>
             <Toaster />
             {/* Profile Picture Section */}

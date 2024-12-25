@@ -1,7 +1,7 @@
 import Header from '@/components/Header';
 import Loading from '@/components/Loading';
 import { getAllCourses } from '@/services/courseApi';
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // Sample data for courses (You might fetch this data from an API)

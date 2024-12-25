@@ -77,6 +77,7 @@ export const getResources = async ()=>{
 export const addResource = async (data: object) => {
     try {
         const response = await adminPrivateApi.post('/course/resource',data)
+        return response
     } catch (error) {
         console.error('Error founded in add resource', error);
     }

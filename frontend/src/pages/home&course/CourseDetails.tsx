@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { ChevronLeft, Star } from 'lucide-react';
 import Header from '@/components/Header';
 import { useParams } from 'react-router-dom';
@@ -8,8 +8,6 @@ import toast, { Toaster } from 'react-hot-toast';
 import Footer from '@/components/Footer';
 import { loadStripe } from '@stripe/stripe-js'
 import { createCheckoutSession, getCoursePaymentDetails } from '@/services/paymentApi';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store/store';
 import { Link } from 'react-router-dom';
 
 
@@ -107,11 +105,6 @@ const CourseDetails = () => {
     }
 
 
-
-
-    console.log(course?.curriculum[0].topics, 'course curriculum detailed here');
-
-
     if (loading) return <Loading />
     return (
         <>
@@ -180,7 +173,7 @@ const CourseDetails = () => {
                                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Basic Topics (Beginner)</h3>
                                 <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                                     {/* <h4>{course?.curriculum[0].topics}</h4> */}
-                                    {course?.curriculum[0].topics?.map((topic, index) => (
+                                    {course?.curriculum[0].topics?.map((topic, index:number) => (
                                         <li key={index}>{topic}</li>
                                     ))}
                                     {/* <li>Introduction To Python And Setup</li>
@@ -193,7 +186,7 @@ const CourseDetails = () => {
                                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Intermediate Topics</h3>
                                 <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                                     {/* <h4>{course?.curriculum[1].topics}</h4> */}
-                                    {course?.curriculum[1].topics?.map((topic, index) => (
+                                    {course?.curriculum[1].topics?.map((topic, index:number) => (
                                         <li key={index}>{topic}</li>
                                     ))}
                                     {/* <li>Object-Oriented Programming (OOP) In Python</li>
@@ -206,7 +199,7 @@ const CourseDetails = () => {
                                 <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                                     {/* <h4>{course?.curriculum[2].topics}</h4> */}
 
-                                    {course?.curriculum[2].topics?.map((topic, index) => (
+                                    {course?.curriculum[2].topics?.map((topic, index:number) => (
                                         <li key={index}>{topic}</li>
                                     ))}
                                 </ul>

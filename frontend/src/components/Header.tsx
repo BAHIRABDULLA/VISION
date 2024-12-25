@@ -2,9 +2,7 @@ import React from 'react'
 import vision_logo from '../assets/auth/vision_logo.svg'
 import vision_logo_dark from '@/assets/auth/vison_logo_black.svg'
 import { Link, NavLink } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { logout as menteeLogout} from '@/redux/slices/menteeAuthSlice'
-import { logout as mentorLogout} from '@/redux/slices/mentorAuthSlice'
+import { useSelector} from 'react-redux'
 import { IconButton } from '@mui/material'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
@@ -16,11 +14,11 @@ import { toggleTheme } from '@/redux/slices/themeSlice'
 const Header: React.FC = () => {
   // const role = useSelector((state: RootState) => state.auth.isAuthenticated)
   const isAuthenticated = useSelector((state: RootState) => state.menteeAuth.isAuthenticated)
-  const dispatch = useDispatch()
+
   const theme  = useSelector((state:RootState)=>state.theme.mode)
-  const handleLogout = () => {
-    dispatch(menteeLogout())
-  }
+  // const handleLogout = () => {
+  //   dispatch(menteeLogout())
+  // }
   return (
     <header className='flex items-center justify-between px-4 md:px-10 py-6 max-w-7xl mx-auto'>
       {/* Logo container */}

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import vision_logo from '@/assets/auth/vision_logo.svg'
+import  { useState } from 'react'
+
 import vision_logo2 from '@/assets/auth/vison_logo_black.svg'
 import Input from '@/components/Input'
 import { useNavigate } from 'react-router-dom'

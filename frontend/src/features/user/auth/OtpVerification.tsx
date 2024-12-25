@@ -1,12 +1,11 @@
 import Otp from '@/components/Otp'
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import {  useNavigate, useLocation } from 'react-router-dom';
 import Button from '@/components/Button';
 import vision_logo from '@/assets/auth/vision_logo.svg'
 import { otpVerify, resendOtp } from '@/services/userApi';
-import { useDispatch, UseDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { login as menteeLogin } from '@/redux/slices/menteeAuthSlice';
-import { login as mentorLogin } from '@/redux/slices/mentorAuthSlice';
 
 const OtpVerification: React.FC = () => {
   const location = useLocation()

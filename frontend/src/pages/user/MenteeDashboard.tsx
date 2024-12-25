@@ -1,8 +1,7 @@
-import React from 'react';
 import DashboardLayout from '@/components/DashbaordLayout';
 
 const MenteeDashboard = () => {
-  return <DashboardLayout role="mentee" />;
+  return <DashboardLayout />;
 };
 
 export default MenteeDashboard;

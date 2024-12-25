@@ -5,7 +5,7 @@ import { auth, googleProvider } from '@/firebase';
 import { googleSignIn } from '@/services/userApi';
 import { signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, UseDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { login as menteeLogin } from '@/redux/slices/menteeAuthSlice';
 import { login as mentorLogin } from '@/redux/slices/mentorAuthSlice';
 

@@ -2,7 +2,6 @@ import { getAllCourses } from '@/services/courseApi';
 import React, { useEffect, useState } from 'react'
 import Loading from './Loading';
 import CourseCard from './CourseCard';
-import Button from './Button';
 
 interface CourseListProps {
   limit?: number;

@@ -1,7 +1,7 @@
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import {getAuth,GoogleAuthProvider,signInWithPopup} from 'firebase/auth'
+// import { getAnalytics } from "firebase/analytics";
+import {getAuth,GoogleAuthProvider} from 'firebase/auth'
 
 console.log(import.meta.env.VITE_FIREBASE_API_KEY,'import . meta.env. vite fire api');
 
@@ -21,4 +21,4 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app)
 export const googleProvider = new GoogleAuthProvider()
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);

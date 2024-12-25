@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate ,useLocation} from 'react-router-dom';
+import {  useNavigate ,useLocation} from 'react-router-dom';
 import Button from '@/components/Button';
 import vision_logo from '@/assets/auth/vision_logo.svg'
 import Password from '@/components/Password';

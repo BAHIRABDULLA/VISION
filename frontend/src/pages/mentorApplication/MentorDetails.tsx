@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
-import { ChevronLeft, PenTool, ChevronRight, Star, MapPin, Clock, Calendar, Mail, Video, MessageSquare } from 'lucide-react';
+import { ChevronLeft,  Star, MapPin, Clock, Video, MessageSquare } from 'lucide-react';
 import PricingOptions from '@/pages/mentorApplication/PricingOptions';
 import { useParams } from 'react-router-dom';
 import { mentorSpecificData } from '@/services/mentorApi';

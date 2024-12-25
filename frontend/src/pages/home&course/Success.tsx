@@ -3,11 +3,11 @@
 
 
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
 import { Card, CardHeader, CardContent, Typography } from '@mui/material';
-import Header from '@/components/Header';
+
 
 const Success = () => {
   const navigate = useNavigate();

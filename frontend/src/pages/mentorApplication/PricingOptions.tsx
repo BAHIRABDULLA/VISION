@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { Check } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
-import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
-import { mentorOneTimePayment, mentorshipPayment, mentorSubscription } from '@/services/paymentApi';
+import {  mentorshipPayment } from '@/services/paymentApi';
 import toast, { Toaster } from 'react-hot-toast';
 
 type PlanType = 'subscription' | 'one-time' | null;

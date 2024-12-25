@@ -59,12 +59,12 @@ const RatingAndReview = () => {
 
 
     const [isAddingReview, setIsAddingReview] = useState(false)
-    const [newReview, setNewReview] = useState({
-        author: '',
-        position: '',
-        rating: 0,
-        content: ''
-    })
+    // const [newReview, setNewReview] = useState({
+    //     author: '',
+    //     position: '',
+    //     rating: 0,
+    //     content: ''
+    // })
 
     return (
         <div className="space-y-6">

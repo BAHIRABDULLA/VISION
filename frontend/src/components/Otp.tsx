@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
     InputOTP,
     InputOTPGroup,
@@ -12,7 +12,7 @@ interface OtpProps {
     setOtp:(newOtp:string[])=>void
 }
 
-const Otp: React.FC<OtpProps> = ({otp,setOtp}) => {
+const Otp: React.FC<OtpProps> = ({setOtp}) => {
     // const [otp, setOtp] = useState<string[]>(new Array(6).fill(''))
     const handleChange = (value:string)=>{
         console.log(value,'value in Otp .tsx');

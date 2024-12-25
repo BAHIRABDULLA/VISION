@@ -1,5 +1,6 @@
+
 import { getResources } from '@/services/courseApi';
-import React, { useEffect, useState } from 'react'
+import  { useEffect } from 'react'
 import toast, { Toaster } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 

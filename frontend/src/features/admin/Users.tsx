@@ -1,8 +1,7 @@
 import { getAllUsers } from '@/services/adminApi';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MdDelete } from "react-icons/md";
-// import { FaEdit } from "react-icons/fa";
+
 import { LuView } from "react-icons/lu";
 
 

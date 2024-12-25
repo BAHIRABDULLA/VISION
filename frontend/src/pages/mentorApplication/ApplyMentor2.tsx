@@ -1,12 +1,11 @@
 import { TextField } from '@mui/material'
 import React from 'react'
-import Input from '@/components/Input'
 import visionLogo from '../../assets/auth/vison_logo_black.svg'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 const applyMentorSchema = z.object({
     introductionVideoUrl: z.preprocess(
@@ -33,7 +32,7 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
     const { email } = location?.state
     console.log(email, 'email in location ');
 
-    const navigate = useNavigate()
+    
 
     const { register, handleSubmit, formState: { errors } } = useForm<applyMentorSchemaType>({ resolver: zodResolver(applyMentorSchema) })
  

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Checkbox, FormControlLabel, FormControl, InputLabel, Input, InputAdornment } from '@mui/material';
 import { z } from 'zod';
-import { createSlot, deleteSlot, getMentorData, getSlotByUserId, getSlots, updateMentorSessionPrice } from '@/services/mentorApi';
+import { createSlot, deleteSlot, getMentorData, getSlotByUserId, updateMentorSessionPrice } from '@/services/mentorApi';
 import toast, { Toaster } from 'react-hot-toast';
 
 const priceSchema = z.object({

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Button from '@/components/Button';
+
 import heroImage from '@/assets/becomementor_pre_head_img.png'
 
 const Hero = () => {

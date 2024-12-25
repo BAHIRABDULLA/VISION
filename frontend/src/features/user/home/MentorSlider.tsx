@@ -1,5 +1,5 @@
 import React from 'react'
-import { useEffect, useState } from 'react'
+
 
 interface Mentor {
   id: string
@@ -90,16 +90,18 @@ const MentorSlider: React.FC = () => {
 export default MentorSlider
 
 // Add this to your global CSS
-const styles = `
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
 
-.animate-scroll {
-  animation: scroll 30s linear infinite;
-}`
+
+// const styles = `
+// @keyframes scroll {
+//   0% {
+//     transform: translateX(0);
+//   }
+//   100% {
+//     transform: translateX(-50%);
+//   }
+// }
+
+// .animate-scroll {
+//   animation: scroll 30s linear infinite;
+// }`

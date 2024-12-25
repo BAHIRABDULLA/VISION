@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { privateApi } from './axiosConfig';
-import { adminPrivateApi } from './instance/adminInstance';
 
 
 console.log(import.meta.env.VITE_USER_API_BASE_URL, 'IMPORT mete ENV viteapivaseurl');

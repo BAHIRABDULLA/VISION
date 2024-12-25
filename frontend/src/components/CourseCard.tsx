@@ -1,5 +1,4 @@
-import { getAllCourses } from '@/services/courseApi';
-import React, { useEffect, useState, memo } from 'react'
+import React, {  memo } from 'react'
 
 import { useNavigate } from 'react-router-dom';
 

@@ -1,6 +1,6 @@
 import './index.css'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import './App.css'
+import { BrowserRouter as Router } from 'react-router-dom'
 import UserRoute from './routes/UserRoute'
 import AdminRoute from './routes/AdminRoute'
 import { useSelector } from 'react-redux'

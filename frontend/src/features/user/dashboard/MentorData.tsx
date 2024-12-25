@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { common, commonType, mentorSchema, mentorSchemaType, userSchema, userSchemaType } from '@/utils/userValidator';
+import {  mentorSchema, mentorSchemaType} from '@/utils/userValidator';
 import { updateMentorData } from '@/services/mentorApi';
-import { Avatar, Skeleton, TextField } from '@mui/material';
+import {  TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import toast, { Toaster } from 'react-hot-toast'
-import Input from '@/components/Input';
+import toast from 'react-hot-toast'
+
 
 
 

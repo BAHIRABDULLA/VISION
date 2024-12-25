@@ -1,6 +1,5 @@
 import axios, { AxiosError } from "axios";
 import { privateApi } from "./axiosConfig";
-import { Try } from "@mui/icons-material";
 
 console.log(import.meta.env.VITE_MENTOR_API_BASE_URL, 'import meta env vite mentor api');
 

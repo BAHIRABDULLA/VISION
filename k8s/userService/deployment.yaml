@@ -5,7 +5,7 @@ metadata:
   labels:
     app: vision-userservice
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: vision-userservice
@@ -18,7 +18,7 @@ spec:
       - name: vision-userservice
         image: gcr.io/first-planet-444914-p6/vision-userservice:latest
         ports:
-        - containerPort: 3000
+        - containerPort: 4001
         env:
         - name: MONGO_URI
           valueFrom:
