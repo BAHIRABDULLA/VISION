@@ -8,7 +8,7 @@ import { IUserService } from "../services/interface/IUser.service";
 import { FileArray, UploadedFile } from "express-fileupload";
 import { uploadFile } from "../utils/upload";
 import { sendEmail } from "../utils/email.util";
-import { sendMentorData } from "../events/rabbitmq/producers/producer";
+import { sendUserData } from "../events/rabbitmq/producers/producer";
 
 
 

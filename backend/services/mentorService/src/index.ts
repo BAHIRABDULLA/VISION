@@ -18,7 +18,7 @@ app.use(express.json())
 
 rabbitmqConnect()
 .then(()=>{    
-    consumerMentorQueue()
+    // consumerMentorQueue()
     consumerMentorApprovalQueue()
     receiveMessage()
     console.log('consumer mentor detains in index.ts in mentorService');

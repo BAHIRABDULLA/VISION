@@ -8,13 +8,17 @@ import messageRoutes from './routes/messageRoute'
 import connectMongodb from './config/db.config';
 import chatSocketHandler from './sockets/chat';
 import videoCallSocketHandler from './sockets/video.call';
+import { rabbitmqConnect } from './config/rabbitmq';
+import { setupConsumer } from './events/rabbitmq/consumers/users.consumer';
 
 dotenv.config()
 
 const app = express();
-
-connectMongodb().catch((err)=>{
-  console.error('Failed to connect with mongodb',err);
+rabbitmqConnect().then(() => {
+  setupConsumer('userExchange', 'messagingQueue')
+})
+connectMongodb().catch((err) => {
+  console.error('Failed to connect with mongodb', err);
   process.exit(1)
 })
 
@@ -35,9 +39,9 @@ const io = new Server(server, {
     methods: ['GET', 'POST'],
     credentials: true
   },
-  transports:['websocket','polling'],
-  path:'/messages'
-  
+  transports: ['websocket', 'polling'],
+  path: '/messages'
+
 });
 
 
@@ -47,14 +51,12 @@ io.on('connection', (socket) => {
   chatSocketHandler(io, socket);
   videoCallSocketHandler(io, socket);
 
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
+ 
 });
 
 
 
-const port =  4006
+const port = 4006
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

@@ -1,10 +1,14 @@
 import mongoose, { Schema } from "mongoose";
 
 const messageSchema = new Schema({
-    senderId: { type: String, required: true },
-    receiverId: { type: String, required: true },
+    conversationId:{
+        type:mongoose.Schema.Types.ObjectId,ref:"Conversation",required:true
+    },
+    sender: { type: mongoose.Schema.Types.ObjectId,ref:"User", required: true },
+    // receiverId: { type: String, required: true },
     content: { type: String, required: true },
-    read: { type: Boolean, default: false }
+    readBy: { type: Boolean, default: false },
+    sentAt:{type:Date,default:Date.now}
 })
 
 

@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.7",
+    "amqplib": "^0.10.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
@@ -9,6 +10,7 @@
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.6",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.1",
     "nodemon": "^3.1.7",

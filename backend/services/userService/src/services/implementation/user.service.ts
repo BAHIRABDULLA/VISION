@@ -1,5 +1,5 @@
 import { HttpStatus } from "../../enums/http.status";
-import { sendMentorData } from "../../events/rabbitmq/producers/producer";
+import { sendUserData } from "../../events/rabbitmq/producers/producer";
 import { IMentor } from "../../interfaces/IMentor";
 import { User } from "../../models/user.model";
 import { MentorRepository } from "../../repositories/implementation/mentor.repository";
@@ -79,7 +79,7 @@ export class UserService implements IUserService {
             if (!updatedUser) {
                 throw new CustomError("User not founded", HttpStatus.BAD_REQUEST)
             }
-            await sendMentorData('mentorApproval', { id, isApproved })
+            await sendUserData('mentorApproval', { id, isApproved })
             await sendEmail(updatedUser?.email,
                 'Your Mentor Application is Approved!',
                 `

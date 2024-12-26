@@ -5,7 +5,7 @@ import { hashPassword, randomPassword } from "../../utils/hash.util"
 import { sentOTPEmail } from "../../utils/email.util";
 import bcrypt from 'bcryptjs'
 import { generateAccessToken, generateRefreshToken } from "../../utils/token.util";
-import { sendMentorData } from "../../events/rabbitmq/producers/producer";
+import { sendUserData } from "../../events/rabbitmq/producers/producer";
 import { generateOtp } from "../../utils/otp.util";
 import { User } from "../../models/user.model";
 import IUserRepository from "../../repositories/interface/IUser.repository";
@@ -24,23 +24,23 @@ type SignInResult = {
 };
 
 
-interface PasswordUpdate{
-    currentPassword:string;
-    newPassword:string;
-    confirmPassword:string
+interface PasswordUpdate {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string
 }
 
-export class AuthService  implements IAuthService{
+export class AuthService implements IAuthService {
     private userRepository: IUserRepository
     private otpRepository: OtpRepository
-  
-    constructor(userRepository:IUserRepository,otpRepository:OtpRepository){
+
+    constructor(userRepository: IUserRepository, otpRepository: OtpRepository) {
         this.userRepository = userRepository;
         this.otpRepository = otpRepository
     }
 
 
-    
+
 
     async signUp(email: string) {
         try {
@@ -61,21 +61,21 @@ export class AuthService  implements IAuthService{
     }
 
 
-    async verifySignUpOtp(fullName: string, email: string, password: string, role: string, otp: string,type:string) {
+    async verifySignUpOtp(fullName: string, email: string, password: string, role: string, otp: string, type: string) {
         try {
             const checkUser = await this.userRepository.findByEmail(email)
-            if (checkUser && checkUser.isVerified&&type!=='forgetPassword') {
+            if (checkUser && checkUser.isVerified && type !== 'forgetPassword') {
                 return { success: false, message: "User already existed" }
             }
 
-            
+
             const getOtp = await this.otpRepository.findOtpByEmail(email)
             if (!getOtp) {
                 return { success: false, message: 'OTP expired or invalid' }
             }
             const findOtp = getOtp.find(x => x.otp == otp)
-            if(findOtp&& type==='forgetPassword'){
-                return createResponse(true,'OTP verified successfully',checkUser?.role)
+            if (findOtp && type === 'forgetPassword') {
+                return createResponse(true, 'OTP verified successfully', checkUser?.role)
             }
             const hashedPassword = await hashPassword(password)
             if (findOtp) {
@@ -98,11 +98,11 @@ export class AuthService  implements IAuthService{
                 const accessToken = generateAccessToken({ id: newUser._id.toString(), email, role: newUser.role })
                 const refreshToken = generateRefreshToken({ id: newUser._id.toString(), email, role: newUser.role })
 
+                await sendUserData('userExchange', newUser)
                 if (newUser.role === 'mentee') {
-                    return createResponse(true, 'OTP verified successfully', { role: newUser.role, accessToken, refreshToken,user:newUser })
+                    return createResponse(true, 'OTP verified successfully', { role: newUser.role, accessToken, refreshToken, user: newUser })
                     // return { success: true, message: 'OTP verified successfully', role: newUser.role, accessToken, refreshToken}
                 } else {
-                    await sendMentorData('mentorQueue', newUser)
                     return createResponse(true, 'OTP verified successfully', { role: newUser.role })
                     // return { success: true, message: 'OTP verified successfully', role: newUser.role }
                 }
@@ -150,9 +150,9 @@ export class AuthService  implements IAuthService{
                 role: role as 'mentee' | 'mentor',
                 isVerified: true
             })
-            if (role === 'mentor') {
-                await sendMentorData('mentorQueue', userData)
-            }
+
+            await sendUserData('userExchange', userData)
+
             const accessToken = generateAccessToken({ id: userData._id.toString(), email, role: userData.role })
             const refreshToken = generateRefreshToken({ id: userData._id.toString(), email, role: userData.role })
             return {
@@ -168,7 +168,7 @@ export class AuthService  implements IAuthService{
     async signIn(email: string, password: string, role: string): Promise<SignInResult | undefined> {
         try {
             const checkuser = await this.userRepository.findByEmail(email)
-            if (!checkuser || role!==checkuser.role) {
+            if (!checkuser || role !== checkuser.role) {
                 return { success: false, message: "User not existed" }
             }
             if (checkuser.isVerified === false) {
@@ -235,10 +235,10 @@ export class AuthService  implements IAuthService{
                 isMentorFormFilled: true,
                 profile
             }
-            
+
             const updateMentor = await this.userRepository.update(id, updateData)
-            console.log(updateMentor,'update mentor ');
-            
+            console.log(updateMentor, 'update mentor ');
+
             return { updateMentor }
         } catch (error) {
             console.error('Error founded in updating updateMentorField', error);
@@ -247,34 +247,34 @@ export class AuthService  implements IAuthService{
 
 
 
-    async passwordUpdate(id:string,data:PasswordUpdate){
+    async passwordUpdate(id: string, data: PasswordUpdate) {
         try {
-            const {currentPassword,newPassword,confirmPassword} = data
-            console.log(currentPassword,newPassword,confirmPassword,'))))');
+            const { currentPassword, newPassword, confirmPassword } = data
+            console.log(currentPassword, newPassword, confirmPassword, '))))');
             const checkUser = await this.userRepository.findById(id)
-            if(!checkUser){
-                return {success:false,message:'not user'}
+            if (!checkUser) {
+                return { success: false, message: 'not user' }
             }
-          const checkPassword = await bcrypt.compare(currentPassword,checkUser.password)
-          console.log(checkPassword,'checkPassword');
-          
-          if(!checkPassword){
-              return {success:false,message:'wrong password'}
-          }
-          if(newPassword !== confirmPassword){
-              return {success:false,message:'password do not match'}
-          }
-          const hashedPassword = await hashPassword(newPassword)
-          const updatePassword = await this.userRepository.update(id,{password:hashedPassword})
-          console.log(updatePassword,'update password');
-          if(!updatePassword){
-              return {success:false,message:'not updated'}
-          }
-          return {success:true,message:'updated'}
+            const checkPassword = await bcrypt.compare(currentPassword, checkUser.password)
+            console.log(checkPassword, 'checkPassword');
+
+            if (!checkPassword) {
+                return { success: false, message: 'wrong password' }
+            }
+            if (newPassword !== confirmPassword) {
+                return { success: false, message: 'password do not match' }
+            }
+            const hashedPassword = await hashPassword(newPassword)
+            const updatePassword = await this.userRepository.update(id, { password: hashedPassword })
+            console.log(updatePassword, 'update password');
+            if (!updatePassword) {
+                return { success: false, message: 'not updated' }
+            }
+            return { success: true, message: 'updated' }
 
         } catch (error) {
-            console.error('Error founded in password update',error);
-            return {success:false,message:'error'}
+            console.error('Error founded in password update', error);
+            return { success: false, message: 'error' }
         }
     }
 }
