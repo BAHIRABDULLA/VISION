@@ -4,12 +4,17 @@ import http from 'http';
 import dotenv from 'dotenv';
 
 import cors from 'cors';
-import messageRoutes from './routes/messageRoute'
+import messageRoute from './routes/message.route'
+import conversationRoute from './routes/conversation.route'
+import userRoute from './routes/user.route'
 import connectMongodb from './config/db.config';
 import chatSocketHandler from './sockets/chat';
 import videoCallSocketHandler from './sockets/video.call';
 import { rabbitmqConnect } from './config/rabbitmq';
 import { setupConsumer } from './events/rabbitmq/consumers/users.consumer';
+import errorHandler from './middleware/error.handler';
+
+
 
 dotenv.config()
 
@@ -29,7 +34,6 @@ app.use(cors({
 }));
 app.use(express.json());
 
-app.use('/', messageRoutes);
 
 
 const server = http.createServer(app);
@@ -53,8 +57,15 @@ io.on('connection', (socket) => {
 
  
 });
+ io.on('private_message',({to,message})=>{
+  console.log('userid');
+  
+ })
 
-
+app.use('/conversation',conversationRoute)
+app.use('/users',userRoute)
+app.use('/', messageRoute);
+app.use(errorHandler)
 
 const port = 4006
 server.listen(port, () => {

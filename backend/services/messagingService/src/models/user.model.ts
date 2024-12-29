@@ -3,6 +3,7 @@ import IUser from "../interfaces/IUser";
 
 
 const userSchema = new Schema<IUser>({
+    _id: { type: Schema.Types.ObjectId, required: true },
     fullName: { type: String, required: true },
     email: { type: String, required: true },
     role: { type: String, enum: ['mentee', 'mentor'], required: true },
@@ -16,6 +17,7 @@ const userSchema = new Schema<IUser>({
         type: String, enum: ['pending', 'approved', 'rejected'],
         required: function () { return this.role === 'mentor'; }
     },
+    isMentorship:{type:Boolean,default:false},
    
     createAt: { type: Date, default: Date.now() },
 })

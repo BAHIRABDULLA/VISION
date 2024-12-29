@@ -1,15 +1,13 @@
 import mongoose, { Schema } from "mongoose";
+import { IMessage } from "../interfaces/IMessage";
 
-const messageSchema = new Schema({
-    conversationId:{
-        type:mongoose.Schema.Types.ObjectId,ref:"Conversation",required:true
-    },
-    sender: { type: mongoose.Schema.Types.ObjectId,ref:"User", required: true },
-    // receiverId: { type: String, required: true },
-    content: { type: String, required: true },
-    readBy: { type: Boolean, default: false },
-    sentAt:{type:Date,default:Date.now}
-})
 
+const messageSchema: Schema<IMessage> = new Schema({
+    sender: { type: String, required: true, ref: 'User' },
+    recipient: { type: String, required: true, ref: 'User' },
+    message: { type: String, required: true },
+    timestamp: { type: Date, default: Date.now },
+  });
 
 export const Message = mongoose.model('Message',messageSchema)
+

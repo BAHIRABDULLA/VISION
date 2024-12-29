@@ -9,6 +9,7 @@ import  {Document, ObjectId} from "mongoose";
     profile: string;
     createAt: Date
     isApproved: 'pending'|'approved'|'rejected';
-    isActive: boolean   
+    isActive: boolean  ;
+    isMentorship:boolean
 }
 export default IUser
