@@ -6,7 +6,7 @@ import { TextField, Autocomplete, Box } from '@mui/material'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { countries } from '@/constants/countries';
 import { getAllCategories } from '@/services/adminApi';
 
@@ -48,6 +48,11 @@ type applyMentor1Props = {
     onNext: (data: any) => void;
 }
 
+
+interface CategorySchema {
+    name:string;
+    skills:string[]
+}
 const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
 
@@ -67,7 +72,7 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     const { email } = location.state
     console.log(email, 'email in apply mentor1 ');
 
-    const navigate = useNavigate()
+   
 
     const { register, handleSubmit, setValue, getValues, formState: { errors }, } = useForm<applyMentorSchemaType>({ resolver: zodResolver(applyMentorSchema) })
 
@@ -78,9 +83,9 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
 
     })
 
-
+    // @ts-ignore
     const [selectedCategory, setSelectedCategory] = useState(null)
-    const [categories, setCategories] = useState()
+    const [categories, setCategories] = useState<CategorySchema[]>([])
     console.log(categories, 'categories in ----------');
 
     const [skills, setSkills] = useState<string[] | []>([])
@@ -94,7 +99,8 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
         fetchCategories()
     }, [])
 
-    const handleCategoryChange = (event: any, value: string | null) => {
+    
+    const handleCategoryChange = (_event: any, value: string | null) => {
         console.log(value, 'value');
 
         setSelectedCategory(value)
@@ -107,7 +113,7 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
         }
     }
 
-    const handleSkillsChange = (event: any, value: string[]) => {
+    const handleSkillsChange = (_event: any, value: string[]) => {
         setValue("skills", value, { shouldValidate: true }); 
       };
     return (
@@ -210,7 +216,7 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
                                     }}
                                 />
                             )}
-                            onChange={(event, value) => setValue("country", value?.label || "")}
+                            onChange={(_event, value) => setValue("country", value?.label || "")}
                         />
                         {errors.country && <p className="text-red-500">{errors.country.message}</p>}
 

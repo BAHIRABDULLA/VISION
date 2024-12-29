@@ -1,9 +1,9 @@
 import { privateApi } from "./axiosConfig";
-import axios, { AxiosError } from "axios"
-const api = axios.create({
-    baseURL: import.meta.env.VITE_PAYMENT_API_BASE_URL,
-    withCredentials: true
-})
+import  { AxiosError } from "axios"
+// const api = axios.create({
+//     baseURL: import.meta.env.VITE_PAYMENT_API_BASE_URL,
+//     withCredentials: true
+// })
 
 
 export const createCheckoutSession = async (data: { price: number, courseId: string }) => {

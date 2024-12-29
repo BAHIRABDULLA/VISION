@@ -16,11 +16,16 @@ console.log(publicKey, 'public key');
 
 const stripePromise = loadStripe(publicKey)
 
+
+interface Curriculum {
+    level: string;
+    topics: string[];
+  }
 interface CourseDetailProps {
     name: string;
     duration: string
     overview: string;
-    curriculum: string
+    curriculum: Curriculum[]
     image: string;
     price: number;
 }

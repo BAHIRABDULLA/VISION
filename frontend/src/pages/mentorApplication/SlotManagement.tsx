@@ -25,8 +25,8 @@ const SlotManagement = () => {
     singleSessionPrice: '',
     monthlySubscriptionPrice: '',
   });
-
-  const [tempPrices, setTempPrices] = useState({ ...commonPrices });
+  // eslint-disable-next-line
+  // const [tempPrices, setTempPrices] = useState({ ...commonPrices });
   const [errors, setErrors] = useState({
     singleSessionPrice: '',
     monthlySubscriptionPrice: '',
@@ -34,7 +34,7 @@ const SlotManagement = () => {
 
   const handleCancelClick = () => {
     setIsEditPrice(false)
-    setTempPrices({ ...commonPrices })
+    // setTempPrices({ ...commonPrices })
   }
 
 
@@ -59,7 +59,7 @@ const SlotManagement = () => {
       const response = await updateMentorSessionPrice(parsed.data)
 
 
-      if (response?.status >= 400) {
+      if (response&& response?.status >= 400) {
         toast.error(response?.data.message)
       } else {
         toast.success(response?.data.message)

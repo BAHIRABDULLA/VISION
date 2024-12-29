@@ -4,6 +4,7 @@ import { addResource, getAllCourses } from "@/services/courseApi";
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { courseShemaType } from "./AddCourse";
 
 
 export const resourceSchema = z.object({
@@ -27,6 +28,11 @@ export const resourceSchema = z.object({
 )
 
 type resourceSchemaType = z.infer<typeof resourceSchema>
+
+type levelCourses ={
+    level:'basic'|'intermediate'|'advanced',
+    topics:string[]
+}
 const AddResources = () => {
 
 
@@ -74,9 +80,9 @@ const AddResources = () => {
 
     useEffect(() => {
         if (selectedCourse && selelctedLevel) {
-            const course = courses.find((course) => course.name === selectedCourse)
+            const course:any  = courses.find((course:courseShemaType) => course.name === selectedCourse)
             if (course && course.curriculum) {
-                const levelTopics = course.curriculum.find((item) => {
+                const levelTopics:levelCourses = course.curriculum.find((item) => {
                     return item.level === selelctedLevel
                 })
                 setTopics(levelTopics ? levelTopics.topics : [])

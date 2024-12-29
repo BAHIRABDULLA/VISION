@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signInRequest } from '@/services/userApi';
 
 import { useDispatch } from 'react-redux';
-import { login as menteeLogin} from '@/redux/slices/menteeAuthSlice';
+import { login as menteeLogin } from '@/redux/slices/menteeAuthSlice';
 import { login as mentorLogin } from '@/redux/slices/mentorAuthSlice';
 
 import { z } from 'zod';
@@ -46,22 +46,22 @@ const AuthSignIn: React.FC = () => {
       console.log('data:', data);
       const { email, password } = data
       const response = await signInRequest(email, password, role);
-     console.log(response,'response');
-     
-      
+      console.log(response, 'response');
+
+
       if (response.data.success) {
+        const id = response.data.user._id
         if (role == 'mentee') {
           localStorage.setItem('accessToken', response.data.accessToken);
-          const id = response.data.user._id
-          dispatch(menteeLogin({token:response.data.accessToken,user:{email,role,id}}));
+          dispatch(menteeLogin({ token: response.data.accessToken, user: { email, role, id } }));
           console.log('mentee');
 
           navigate('/');
         } else {
           localStorage.setItem('accessToken', response.data.accessToken);
           console.log('mentor kjkjkjkjkjk');
-          dispatch(mentorLogin({token:response.data.accessToken,user:{email,role}}));
-          
+          dispatch(mentorLogin({ token: response.data.accessToken, user: { email, role, id  } }));
+
           navigate('/dashboard/')
         }
       } else {

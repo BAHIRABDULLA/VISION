@@ -10,7 +10,7 @@ interface BookingProps {
 
 const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
 
-    const [selectedSlot, setSelectedSlot] = useState()
+    const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
     const [dates, setDates] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [availableSlots, setAvailableSlots] = useState([]);
@@ -64,7 +64,6 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
         return null;
     };
 
-    // Navigate dates forward
     const navigateNext = () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -142,7 +141,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
             // console.log(`Selected Date: ${formatDate(selectedDate)},---- ${selectedDate}`, typeof selectedDate);
 
             const response = await slotBooking(mentorId, formattedTime, selectedDate)
-            if (response?.status >= 400) {
+            if (response&&response?.status >= 400) {
                 toast.error(response?.data.message)
             } else {
                 toast.success('Session successfully booked ')

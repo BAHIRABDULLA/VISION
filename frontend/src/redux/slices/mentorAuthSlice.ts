@@ -1,6 +1,7 @@
 import { createSlice,PayloadAction } from "@reduxjs/toolkit";
 
 interface Mentor{
+    id?:string
     fullName?:string;
     email:string;
     role?:string

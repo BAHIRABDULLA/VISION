@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { mentorSpecificData } from '@/services/mentorApi';
 import BookingSession from './BookingSession';
 import RatingAndReview from '@/features/user/RatingAndReview';
+import { Link } from 'react-router-dom';
 
 interface MentorData {
     jobTitle: string;
@@ -56,8 +57,8 @@ const MentorDetails: React.FC = () => {
 
                     const slotGrouped: Record<string, string[]> = {}
 
-                    slots.slots.forEach((slot) => {
-                        slot.availableDays.forEach((day) => {
+                    slots.slots.forEach((slot:{availableDays:string[],time:any}) => {
+                        slot.availableDays.forEach((day: string | number) => {
                             if (!slotGrouped[day]) {
                                 slotGrouped[day] = [];
                             }
@@ -199,11 +200,14 @@ const MentorDetails: React.FC = () => {
                     <h3 className="text-lg font-semibold dark:text-white mb-4">Contact Options</h3>
                     <div className="space-y-3">
 
-                        <button className="w-full flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-500 dark:hover:bg-gray-600
+                        {/* <button className="w-full flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-500 dark:hover:bg-gray-600
                          dark:text-white hover:text-white py-2 px-4 rounded-lg transition-colors">
                             <MessageSquare className="w-5 h-5" />
                             Chat
-                        </button>
+                        </button> */}
+                        <Link className='w-full flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-500 dark:hover:bg-gray-600
+                         dark:text-white hover:text-white py-2 px-4 rounded-lg transition-colors' to='/dashboard/chat'><MessageSquare className="w-5 h-5" />
+                        Chat</Link>
                         <button className="w-full flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-500 dark:hover:bg-gray-600
                          dark:text-white hover:text-white py-2 px-4 rounded-lg transition-colors">
                             <Video className="w-5 h-5" />

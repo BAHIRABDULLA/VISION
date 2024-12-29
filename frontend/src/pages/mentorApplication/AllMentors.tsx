@@ -222,7 +222,7 @@ const MentorPage: React.FC = () => {
             <div className='flex justify-center'>
                 <Pagination count={10} variant="outlined" size='large'
                     page={currentPage}
-                    onChange={(event, value) => setCurrentPage(value)}
+                    onChange={(_event, value) => setCurrentPage(value)}
                     sx={{
                         "& .MuiPaginationItem-root": {
                             color: "white", // Change text color

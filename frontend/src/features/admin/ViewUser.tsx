@@ -299,7 +299,7 @@ const ViewUser = () => {
               <h4 className="text-lg font-medium text-gray-700 mb-2">Social Media:</h4>
               <ul className="list-none text-blue-500">
                 {Object.entries((userDetails as MentorDetails)?.mentorDetails?.socialMediaUrls || {}).map(
-                  ([platform, url]) => (
+                  ([platform]) => (
                     <li key={platform}>
                       {/* <a href={url} target="_blank" rel="noreferrer">{platform}</a> */}
                     </li>

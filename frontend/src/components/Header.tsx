@@ -2,11 +2,11 @@ import React from 'react'
 import vision_logo from '../assets/auth/vision_logo.svg'
 import vision_logo_dark from '@/assets/auth/vison_logo_black.svg'
 import { Link, NavLink } from 'react-router-dom'
-import { useSelector} from 'react-redux'
+import { useDispatch, useSelector} from 'react-redux'
 import { IconButton } from '@mui/material'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
-import { AppDispatch, RootState } from '@/redux/store/store'
+import {  RootState } from '@/redux/store/store'
 import { toggleTheme } from '@/redux/slices/themeSlice'
 
 
@@ -14,7 +14,7 @@ import { toggleTheme } from '@/redux/slices/themeSlice'
 const Header: React.FC = () => {
   // const role = useSelector((state: RootState) => state.auth.isAuthenticated)
   const isAuthenticated = useSelector((state: RootState) => state.menteeAuth.isAuthenticated)
-
+  const dispatch = useDispatch()
   const theme  = useSelector((state:RootState)=>state.theme.mode)
   // const handleLogout = () => {
   //   dispatch(menteeLogout())

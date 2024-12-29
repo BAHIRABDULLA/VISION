@@ -1,5 +1,6 @@
 import React from 'react'
 import CourseList from '@/components/CourseList'
+import { Link } from 'react-router-dom'
 
 const PopularCourses: React.FC = () => {
   return (
@@ -11,16 +12,12 @@ const PopularCourses: React.FC = () => {
         <div className='max-w-6xl mx-auto'>
           <CourseList limit={3} />
           <div className="text-center mt-12">
-            <button 
+            <Link to='/courses'
               className="bg-purple-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-purple-700 transition-colors
               dark:bg-purple-700 dark:hover:bg-purple-800"
-              onClick={() => {
-                // Handle navigation to all courses
-                console.log('Navigate to all courses')
-              }}
             >
               View All Courses
-            </button>
+            </Link>
           </div>
         </div>
       </div>

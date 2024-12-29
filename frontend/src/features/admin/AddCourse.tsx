@@ -11,7 +11,7 @@ import Input from '@/components/Input';
 import { courseSchema } from '@/utils/courseValidator';
 import { addCourse } from '@/services/courseApi';
 
-type courseShemaType = z.infer<typeof courseSchema>
+export type courseShemaType = z.infer<typeof courseSchema>
 
 
 const AddCourse = () => {

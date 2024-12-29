@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios'
-import { privateApi } from './axiosConfig';
+// import { privateApi } from './axiosConfig';
 import { adminPrivateApi } from './instance/adminInstance';
 
 

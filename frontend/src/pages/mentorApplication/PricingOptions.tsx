@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Check } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
-import { loadStripe } from '@stripe/stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 import {  mentorshipPayment } from '@/services/paymentApi';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -20,12 +20,12 @@ const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentor
     const [selectedPlan, setSelectedPlan] = useState<PlanType>(null);
     console.log(selectedPlan, 'selected plan')
     const menteeId = useSelector((state: RootState) => state.menteeAuth.user?.id)
-    const publicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+    // const publicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
 
-    const stripePromise = loadStripe(publicKey)
+    // const stripePromise = loadStripe(publicKey)
 
     const handleBooking = async () => {
-        const stripe = await stripePromise
+        // const stripe = await stripePromise
         try {
             if (!selectedPlan) {
                 toast.error('Please choose a plan')
