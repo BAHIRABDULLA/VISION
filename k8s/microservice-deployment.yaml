@@ -1,0 +1,237 @@
+# User  Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: bahirk/vision-userservice:latest  
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4001
+
+
+---
+# User Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 4001
+      targetPort: 4001
+  type: ClusterIP
+
+
+---
+# Mentor  Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mentor-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mentor-service
+  template:
+    metadata:
+      labels:
+        app: mentor-service
+    spec:
+      containers:
+      - name: mentor-service
+        image: bahirk/vision-mentorservice:latest
+        imagePullPolicy: Always  
+        ports:
+        - containerPort: 4002
+
+
+---
+# Mentor Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mentor-service
+spec:
+  selector:
+    app: mentor-service
+  ports:
+    - protocol: TCP
+      port: 4002
+      targetPort: 4002
+  type: ClusterIP
+
+
+---
+# Admin  Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-service
+  template:
+    metadata:
+      labels:
+        app: admin-service
+    spec:
+      containers:
+      - name: admin-service
+        image: bahirk/vision-adminservice:latest 
+        imagePullPolicy: Always 
+        ports:
+        - containerPort: 4003
+
+
+---
+# Admin Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-service
+spec:
+  selector:
+    app: admin-service
+  ports:
+    - protocol: TCP
+      port: 4003
+      targetPort: 4003
+  type: ClusterIP
+
+  
+---
+# Course  Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: course-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: course-service
+  template:
+    metadata:
+      labels:
+        app: course-service
+    spec:
+      containers:
+      - name: course-service
+        image: bahirk/vision-courseservice:latest  
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4004
+
+
+---
+# Course Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: course-service
+spec:
+  selector:
+    app: course-service
+  ports:
+    - protocol: TCP
+      port: 4004
+      targetPort: 4004
+  type: ClusterIP
+
+
+---
+# Payment  Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+      - name: payment-service
+        image: bahirk/vision-paymentservice:latest  
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4005
+
+
+---
+# Payment Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+spec:
+  selector:
+    app: payment-service
+  ports:
+    - protocol: TCP
+      port: 4005
+      targetPort: 4005
+  type: ClusterIP
+
+
+---
+# Messaging  Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messaging-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messaging-service
+  template:
+    metadata:
+      labels:
+        app: messaging-service
+    spec:
+      containers:
+      - name: messaging-service
+        image: bahirk/vision-messagingservice:latest  
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4006
+
+
+---
+# Messaging Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: messaging-service
+spec:
+  selector:
+    app: messaging-service
+  ports:
+    - protocol: TCP
+      port: 4006
+      targetPort: 4006
+  type: ClusterIP
