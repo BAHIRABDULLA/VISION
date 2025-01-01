@@ -28,7 +28,7 @@ rabbitmqConnect()
 
 connectDb()
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'http://vision.bahirabdulla.online',
     credentials: true
 }))
 // app.use(morgan('dev'))

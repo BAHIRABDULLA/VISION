@@ -29,7 +29,7 @@ connectMongodb().catch((err) => {
 
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'http://vision.bahirabdulla.online',
   credentials: true
 }));
 app.use(express.json());
@@ -39,7 +39,7 @@ app.use(express.json());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: 'http://vision.bahirabdulla.online',
     methods: ['GET', 'POST'],
     credentials: true
   },
@@ -57,10 +57,7 @@ io.on('connection', (socket) => {
 
  
 });
- io.on('private_message',({to,message})=>{
-  console.log('userid');
-  
- })
+
 
 app.use('/conversation',conversationRoute)
 app.use('/users',userRoute)

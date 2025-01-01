@@ -38,7 +38,7 @@ const Chat = () => {
   useEffect(() => {
     // Initialize socket connection
     if (!socket && userId) {
-      socket = io('http://localhost:4000', {
+      socket = io('ws://apivision.bahirabdulla.online', {
         withCredentials: true,
         path: '/messages',
         transports: ['websocket', 'polling'],

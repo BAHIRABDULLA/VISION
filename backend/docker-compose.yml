@@ -1,121 +1,129 @@
-services:
-
-  nginx:
-    image: nginx:latest
-    container_name: api-gateway
-    build:
-      context: ./nginx
-    networks:
-      - vision-network
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - vision-userservice
-      - vision-mentorservice
-      - vision-adminservice
-      - vision-courseservice
-      - vision-paymentservice
-      - vision-messagingservice
-
-
-  rabbitmq:
-    image: "rabbitmq:management"
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672" 
-    networks:
-      - vision-network
-
-  vision-userservice:
-    image: vision-userservice
-    container_name: vision-userservice
-    build:
-      context: ./services/userService
-    ports:
-      - "4001:3000"
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-    networks:
-      - vision-network
-    depends_on:
-      - rabbitmq
-
-  vision-mentorservice:
-    image: vision-mentorservice
-    container_name: vision-mentorservice
-    build:
-      context: ./services/mentorService
-    ports:
-      - "4002:3000"
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-    networks:
-      - vision-network
-    depends_on:
-      - rabbitmq
-
-  vision-adminservice:
-    image: vision-adminservice
-    container_name: vision-adminservice
-    build:
-      context: ./services/adminService
-    ports:
-      - "4003:3000"
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-    networks:
-      - vision-network
-    depends_on:
-      - rabbitmq
-
-  vision-courseservice:
-    image: vision-courseservice
-    container_name: vision-courseservice
-    build:
-      context: ./services/courseService
-    ports:
-      - "4004:3000"
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-    networks:
-      - vision-network
-    depends_on:
-      - rabbitmq
-
-  vision-paymentservice:
-    image: vision-paymentservice
-    container_name: vision-paymentservice
-    build:
-      context: ./services/paymentService
-    ports:
-      - "4005:3000"
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-    networks:
-      - vision-network
-    depends_on:
-      - rabbitmq
-
-  vision-messagingservice:
-    image: vision-messagingservice
-    container_name: vision-messagingservice
-    build:
-      context: ./services/messagingService
-    ports:
-      - "4006:3000"
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-    networks:
-      - vision-network
-    depends_on:
-      - rabbitmq
-
-
-  
+version: '3.8'
 
 networks:
   vision-network:
     driver: bridge
+
+services:
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - "4000:4000" 
+    depends_on:
+      - rabbitmq
+      - user-service
+      - mentor-service
+      - admin-service
+      - course-service
+      - payment-service
+      - messaging-service
+    networks:
+      - vision-network
+
+  # User Service
+  user-service:
+    image: bahirk/vision-userservice
+    build:
+      context: ./services/userService
+    container_name: user-service
+    ports:
+      - "4001:4001"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    networks:
+      - vision-network
+
+  # Mentor Service
+  mentor-service:
+    image: bahirk/vision-mentorservice
+    build:
+      context: ./services/mentorService
+    container_name: mentor-service
+    ports:
+      - "4002:4002"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    networks:
+      - vision-network
+
+  # Admin Service
+  admin-service:
+    image: bahirk/vision-adminservice
+    build:
+      context: ./services/adminService
+    container_name: admin-service
+    ports:
+      - "4003:4003"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    networks:
+      - vision-network
+
+  # Course Service
+  course-service:
+    image: bahirk/vision-courseservice
+    build:
+      context: ./services/courseService
+    container_name: course-service
+    ports:
+      - "4004:4004"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    networks:
+      - vision-network
+
+  # Payment Service
+  payment-service:
+    image: bahirk/vision-paymentservice
+    build:
+      context: ./services/paymentService
+    container_name: payment-service
+    ports:
+      - "4005:4005"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    networks:
+      - vision-network
+
+  # Messaging Service
+  messaging-service:
+    image: bahirk/vision-messagingservice
+    build:
+      context: ./services/messagingService
+    container_name: messaging-service
+    ports:
+      - "4006:4006"
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    networks:
+      - vision-network
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - vision-network
