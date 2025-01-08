@@ -4,37 +4,7 @@ import { getAllCourses } from '@/services/courseApi';
 import  { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-// Sample data for courses (You might fetch this data from an API)
-// const courses = [
-//   {
-//     id: 1,
-//     title: 'Python for Beginners',
-//     description: 'Learn the basics of Python, a powerful and versatile programming language.',
-//     duration: '3 months',
-//     price: '$99',
-//   },
-//   {
-//     id: 2,
-//     title: 'JavaScript Essentials',
-//     description: 'Master the fundamentals of JavaScript and build dynamic web applications.',
-//     duration: '2 months',
-//     price: '$89',
-//   },
-//   {
-//     id: 3,
-//     title: 'React Development',
-//     description: 'Learn how to create modern web applications with React.',
-//     duration: '2 months',
-//     price: '$109',
-//   },
-//   {
-//     id: 4,
-//     title: '.NET Core for Web Development',
-//     description: 'Get started with .NET Core and build powerful web applications.',
-//     duration: '3 months',
-//     price: '$129',
-//   },
-// ];
+
 
 interface courseDetails {
   _id: string
@@ -53,7 +23,11 @@ const Courses = () => {
       try {
         const response = await getAllCourses()
         console.log(response, 'response, = = ');
-        setCourses(response?.data.data || [])
+        if(response.status&&response.status>=400){
+          console.log('Cannot found course in Courses');
+        }else{
+          setCourses(response?.data.data || [])
+        }
       } catch (error) {
         console.error('Error founded in course fetching', error);
       } finally {

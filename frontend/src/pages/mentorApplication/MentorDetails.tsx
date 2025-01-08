@@ -29,6 +29,11 @@ interface MentorData {
     slots: any;
 }
 
+interface BookingData {
+    date: Date;
+    mentorId: string;
+    time: string
+}
 const MentorDetails: React.FC = () => {
 
 
@@ -44,17 +49,18 @@ const MentorDetails: React.FC = () => {
 
 
     const [groupedSlots, setGroupedSlots] = useState<Record<string, string[]>>({})
-
+    const [bookingData , setBookingData]  = useState<BookingData[]>([])
     useEffect(() => {
         const fetchMentorData = async () => {
             try {
                 if (id) {
                     const respnose = await mentorSpecificData(id)
                     console.log(respnose, 'response in fetch mentor data');
-                    const { mentor, slots } = respnose?.data || {}
+                    const { mentor, slots,bookingData} = respnose?.data || {}
                     console.log(mentor, 'mentor in fetch mentor data ');
                     console.log(slots, 'slots in fetch mentor data');
-
+                    const formattedBookings  = bookingData.map(({date,time})=>({date,time}))
+                    setBookingData(formattedBookings)
                     const slotGrouped: Record<string, string[]> = {}
 
                     slots.slots.forEach((slot:{availableDays:string[],time:any}) => {
@@ -195,7 +201,7 @@ const MentorDetails: React.FC = () => {
                     </div>
 
                 </div>
-                <BookingSession slots={groupedSlots} mentorId={mentorData?.mentor._id} />
+                <BookingSession slots={groupedSlots} mentorId={mentorData?.mentor._id} bookingData={bookingData} />
                 <div className=" p-6">
                     <h3 className="text-lg font-semibold dark:text-white mb-4">Contact Options</h3>
                     <div className="space-y-3">

@@ -3,13 +3,21 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast';
 
+
+interface BookingData {
+    date: Date;
+    time: string
+}
 interface BookingProps {
     slots: any,
-    mentorId: string
+    mentorId: string;
+    bookingData: BookingData[]
 }
 
-const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
+const BookingSession: React.FC<BookingProps> = ({ slots, mentorId, bookingData }) => {
 
+
+    console.log(bookingData, 'booking data in booking session ');
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
     const [dates, setDates] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -33,7 +41,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
         updateAvailableSlots(initialDates, 0);
     }, [slots]);
 
-    const updateAvailableSlots = (datesList, index) => {
+    const updateAvailableSlots = (datesList, index: number) => {
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const selectedDate = datesList[index].date;
         const dayName = dayNames[selectedDate.getDay()];
@@ -41,7 +49,6 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
         setAvailableSlots(daySlots);
     };
 
-    // Format date for display
     const formatDate = (date) => {
         return date.toLocaleDateString('en-US', {
             weekday: 'short',
@@ -50,7 +57,6 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
         });
     };
 
-    // Add a method to get label for a date
     const getLabelForDate = (date) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -80,14 +86,13 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
                 label: getLabelForDate(nextDate),
                 date: nextDate,
             });
-
+            console.log(newDates, 'new dates in navigate next function')
             setDates(newDates);
             setActiveIndex(0);
             updateAvailableSlots(newDates, 0);
         }
     };
 
-    // Navigate dates backward
     const navigatePrev = () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -117,7 +122,6 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
 
     const handleSlotBooking = async () => {
         try {
-            console.log('its here bab3e');
             if (!selectedSlot) {
                 toast.error('Please select a slot')
                 return
@@ -136,12 +140,14 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
 
             // console.log(formattedTime, 'formattedTime - - - - - - ');
             console.log(selectedSlot, 'slelcted slot ', typeof selectedSlot, selectedSlot.split(' '))
-            const selectedDate = dates[activeIndex].date
-
+            let selectedDate = dates[activeIndex].date
+            selectedDate.setHours(hours, minutes, 0, 0)
             // console.log(`Selected Date: ${formatDate(selectedDate)},---- ${selectedDate}`, typeof selectedDate);
 
             const response = await slotBooking(mentorId, formattedTime, selectedDate)
-            if (response&&response?.status >= 400) {
+            console.log(selectedDate, 'selectd date ', formattedTime, 'formateed tiem');
+
+            if (response && response?.status >= 400) {
                 toast.error(response?.data.message)
             } else {
                 toast.success('Session successfully booked ')
@@ -153,7 +159,10 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
         }
     }
 
-
+    availableSlots.map((slot, i)=>{
+        console.log(slot,'slot++++++++++++++++');
+        
+    })
     return (
         <>
             <Toaster />
@@ -168,6 +177,8 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
 
                     <div className="flex justify-center space-x-8 border-b border-gray-600 dark:border-gray-300 pb-4 mb-4">
                         {dates.map((dateObj, index) => (
+                          
+                            
                             <div
                                 key={index}
                                 onClick={() => handleDaySelection(index)}
@@ -193,6 +204,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
                     {availableSlots.length > 0 ? (
                         <div className="grid grid-cols-3 gap-2">
                             {availableSlots.map((slot, i) => (
+                            
                                 <button
                                     key={i}
                                     className={`py-2 px-4 rounded-lg border transition-all cursor-pointer ${selectedSlot === slot

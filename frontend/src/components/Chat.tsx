@@ -36,23 +36,21 @@ const Chat = () => {
 
   
   useEffect(() => {
-    // Initialize socket connection
     if (!socket && userId) {
       socket = io('ws://apivision.bahirabdulla.online', {
         withCredentials: true,
-        path: '/messages',
+        path: '/messages/chat',
         transports: ['websocket', 'polling'],
-        auth: { userId } // Send userId in connection auth
+        auth: { userId } 
       })
     }
 
-    // Socket event handlers
     if (socket) {
       socket.on('connect', () => {
         console.log('Socket connected:', socket.id)
         setIsConnected(true)
-        // Emit user_join after successful connection
-        socket.emit('user_join', { userId })
+      
+        socket.emit('chat-user_join', { userId })
       })
 
       socket.on('connect_error', (error) => {
@@ -61,11 +59,11 @@ const Chat = () => {
         toast.error('Failed to connect to chat server')
       })
 
-      socket.on('private_message', (data) => {
+      socket.on('chat-private_message', (data) => {
         setMessages((prev) => [...prev, { message: data.message, received: true }])
       })
 
-      // Fetch users on connection
+      
       const fetchUsers = async () => {
         try {
           const response = await getAllUsers(userId)
@@ -83,12 +81,12 @@ const Chat = () => {
       fetchUsers()
     }
 
-    // Cleanup
+  
     return () => {
       if (socket) {
         socket.off('connect')
         socket.off('connect_error')
-        socket.off('private_message')
+        socket.off('chat-private_message')
         socket.disconnect()
         socket = null
       }
@@ -112,16 +110,16 @@ const Chat = () => {
     }
 
     if (newMessage && selectedUser) {
-      socket.emit('private_message', {
+      socket.emit('chat-private_message', {
         to: selectedUser._id,
         message: newMessage
       }, (acknowledgement) => {
-        // Handle acknowledgement from server
+     
         if (acknowledgement?.error) {
           toast.error('Failed to send message')
           return
         }
-        // Only add message to UI if server acknowledged
+        
         setMessages((prev) => [...prev, { message: newMessage, received: false }])
         setNewMessage('')
       })
@@ -227,9 +225,6 @@ const Chat = () => {
         </div>
       </div>
     </div>
-
-
-
   )
 }
 

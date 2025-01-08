@@ -1,17 +1,24 @@
 
 import { getResources } from '@/services/courseApi';
-import  { useEffect } from 'react'
+import  { useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
 const Resource = () => {
 
-  // const [resources,setResources] = useState([])
-  const resources = [
-    { id: 1, name: "Tuples", type: "Image", course: 'Python', level: "Basic", status: "Active" },
-    { id: 2, name: "useContext", type: "Document", course: "Javascript", level: "Advanced", status: "Active" },
-    { id: 3, name: "Java Lambda", type: "Video", course: "Java", level: "Intermediate", status: "Inactive" }
-  ];
+  // const [resources,setResources] = useState([    { id: 1, title: "Tuples", type: "Image", course: 'Python', level: "Basic", status: "Active" },
+  //   { id: 2, title: "useContext", type: "Document", course: "Javascript", level: "Advanced", status: "Active" },
+  //   { id: 3, title: "Java Lambda", type: "Video", course: "Java", level: "Intermediate", status: "Inactive" }])
+
+
+  const [resources,setResources] = useState([])
+  console.log(resources,'resources .  . .  . ');
+  if(resources){
+    resources.map((res)=>{
+      console.log(res,'+++++++++++++');
+    })
+  }
+ 
 
   useEffect(()=>{
     const fetchResources = async ()=>{
@@ -21,7 +28,7 @@ const Resource = () => {
         if(response?.status&&response?.status>=400){
           toast.error(response?.data.message || 'An error occured')
         }else{
-          // setResources(response?.data)
+        setResources(response?.data.resources)
         }
       } catch (error) {
         console.error('Error founded in fetch resource',error);
@@ -61,21 +68,21 @@ const Resource = () => {
               resources.map((resource, index) => (
                 <tr key={resource.id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
                   <td className="py-3 px-5 text-gray-700">{index + 1}</td>
-                  <td className="py-3 px-5 text-gray-700">{resource.name}</td>
+                  <td className="py-3 px-5 text-gray-700">{resource.title}</td>
                   <td className="py-3 px-5 text-gray-700">{resource.type}</td>
-                  <td className="py-3 px-5 text-gray-700">{resource.course}</td>
+                  <td className="py-3 px-5 text-gray-700">{resource.course.name}</td>
                   <td className="py-3 px-5 text-gray-700">{resource.level}</td>
                   <td className="py-3 px-5">
                     <span
-                      className={`px-3 py-1 inline-block text-sm rounded-full ${resource.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                      className={`px-3 py-1 inline-block text-sm rounded-full ${resource.status === true ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
-                      {resource.status}
+                      {resource.status === true ? 'Active' : 'Inactive'}
                     </span>
                   </td>
                   <td className="py-3 px-5 flex items-center gap-4">
-                    <button className="text-blue-500 hover:text-blue-700">
+                    <Link to={`/admin/resources/${resource._id}`} className="text-green-500 hover:text-green-700">
                       Edit
-                    </button>
+                    </Link>
                     <button className="text-red-500 hover:text-red-700">
                       Delete
                     </button>

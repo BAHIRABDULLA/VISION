@@ -14,7 +14,9 @@ export class ResourseController {
     async getResources(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.resourceService.getResources()
-            return successResponse(res,HttpStatus.OK,"Resource successfully sent",response)
+            console.log(response,'response in get resource controller');
+            
+            return successResponse(res,HttpStatus.OK,"Resource successfully sent",{resources:response})
         } catch (error) {
             console.error('Error founded in get resource',error);
             next(error)
@@ -47,6 +49,14 @@ export class ResourseController {
     }
 
 
-
+    async getResourceById(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+            const response = await this.resourceService.getResourceById(id)
+            return res.json(response)
+        } catch (error) {
+            console.error('Error founded in get resource by id', error);
+        }
+    }
 
 }

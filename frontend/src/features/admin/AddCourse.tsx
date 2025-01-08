@@ -31,23 +31,31 @@ const AddCourse = () => {
     try {
       console.log(data, 'data in onsubmt');
       const curriculumData = [
-        { level: 'Basic', topics: data.curriculum.basic.split(',') },
-        { level: 'Intermediate', topics: data.curriculum.intermediate.split(',') },
-        { level: 'Advanced', topics: data.curriculum.advanced.split(',') }
-      ]
+        {
+          level: 'Basic',
+          topics: data.curriculum.basic.split(',').map((topic) => topic.trim()),
+        },
+        {
+          level: 'Intermediate',
+          topics: data.curriculum.intermediate.split(',').map((topic) => topic.trim()),
+        },
+        {
+          level: 'Advanced',
+          topics: data.curriculum.advanced.split(',').map((topic) => topic.trim()),
+        },
+      ];
       const formData = new FormData()
-      formData.append('name', data.name)
+      formData.append('name', data.name.trim())
       formData.append('duration', data.duration)
-      formData.append('overview', data.overview)
-
+      formData.append('overview', data.overview.trim())
       formData.append('curriculum', JSON.stringify(curriculumData))
-      formData.append('price', data.price.toString())
+      formData.append('price', data.price.toString().trim())
       if (selectedImage) {
         formData.append('image', selectedImage)
       }
-      for (let key of formData.keys()) {
-        console.log(key, '}}}}}}}}');
-      }
+      // for (let key of formData) {
+      //   console.log(key, '}}}}}}}}',formData[key]);
+      // }
       const response = await addCourse(formData)
       console.log(response, 'response in add couirse .tsx');
       if (response?.data) {

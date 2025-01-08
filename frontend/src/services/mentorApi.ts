@@ -59,19 +59,19 @@ export const createSlot = async (data: object) => {
         return response
     } catch (error) {
         console.error('Error founded in create slot ', error);
-        if(error instanceof AxiosError){
+        if (error instanceof AxiosError) {
             return error.response
         }
     }
 }
 
-export const getSlotByUserId = async () =>{
+export const getSlotByUserId = async () => {
     try {
         const response = await privateApi.get('/mentor/slots')
         return response
     } catch (error) {
-        console.error('Error founded in getslot by user id ',error); 
-        if(error instanceof AxiosError){
+        console.error('Error founded in getslot by user id ', error);
+        if (error instanceof AxiosError) {
             return error.response
         }
     }
@@ -93,7 +93,7 @@ export const deleteSlot = async (slotId: string) => {
         return response
     } catch (error) {
         console.error('Error founded in deleteSlot', error);
-        if(error instanceof AxiosError){
+        if (error instanceof AxiosError) {
             return error.response
         }
     }
@@ -124,12 +124,37 @@ export const mentorSpecificData = async (id: string) => {
 }
 
 
-export const slotBooking = async (mentorId:string,time:string,date:object) => {
+export const slotBooking = async (mentorId: string, time: string, date: object) => {
     try {
-        const resposne = await privateApi.post('/mentor/slots/booking',{mentorId,time,date})
+        const resposne = await privateApi.post('/mentor/slots/booking', { mentorId, time, date })
         return resposne
     } catch (error) {
-        console.error('Error founded in slot booking ',error);
+        console.error('Error founded in slot booking ', error);
+        if (error instanceof AxiosError) {
+            return error.response
+        }
+    }
+}
+
+
+export const getBookings = async () => {
+    try {
+        const response = await privateApi.get('/mentor/slots/booking')
+        return response
+    } catch (error) {
+        console.error('Error founded in get bookings', error);
+        if (error instanceof AxiosError) {
+            return error.response
+        }
+    }
+}
+
+export const getBookingDetails = async (bookingId: string) => {
+    try {
+        const response = await privateApi.get(`/mentor/slots/booking/${bookingId}`)
+        return response
+    } catch (error) {
+        console.error('Error founded in get booking details', error);
         if (error instanceof AxiosError) {
             return error.response
         }

@@ -14,6 +14,6 @@ export const publishMessage = async (data: object, exchangeName: string = 'logs_
         }, 500);
 
     } catch (error) {
-        console.error('Error in publish message');
+        console.error('Error in publish message',error);
     } 
 }

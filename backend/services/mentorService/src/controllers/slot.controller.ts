@@ -100,4 +100,30 @@ export class SlotController {
             next(error)
         }
     }
+
+    async getBookingSlotDetails(req:Request,res:Response,next:NextFunction){
+        try {
+
+            const {bookingId}  = req.params
+            console.log(bookingId,'booking id in get booking slot details');
+            
+            const response  = await this.slotService.getBookingSlotDetails(bookingId)    
+            return successResponse(res,HttpStatus.OK,"Founded booking slot details",{booking:response})
+        } catch (error) {
+            console.error('Error founded in get booking slot details',error);
+            next(error)
+        }
+    }
+
+    async getBookingSlot(req:customRequest,res:Response,next:NextFunction){
+        try {
+            console.log('-----   0      ---------');
+            const user = req.user as JwtPayload 
+            const response = await this.slotService.getBookingSlot(user.id,user.role)
+            return successResponse(res,HttpStatus.OK,"Founded all booking slots",{bookings:response})
+        } catch (error) {
+            console.error('Error founded in get booking slot controller',error);
+            next(error)
+        }
+    }
 }
