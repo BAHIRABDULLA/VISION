@@ -58,12 +58,18 @@ export class SlotService implements ISlotService {
 
             console.log(mentorId, 'mentorId', menteeId, 'menteeId', time, 'time', date, 'date  in booking slot');
 
+            const findAnyoneBookedSession = await this.bookingRepository.findByBookingData(mentorId, date, time)
+            if (findAnyoneBookedSession) {
+                console.log(findAnyoneBookedSession, 'findanyone booked session');
+                throw new CustomError("Session already purchased ", HttpStatus.BAD_REQUEST)
+
+            }
             const givenDate = new Date(date)
             const dayIndex = givenDate.getDay()
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const dayName = days[dayIndex]
             const checkSessionBooked = await this.paymentRepository.findByMenteeAndMentorId(menteeId, mentorId)
-            console.log(checkSessionBooked,'check session booked')
+            console.log(checkSessionBooked, 'check session booked')
             if (!checkSessionBooked) {
                 throw new CustomError('Please purchase any Mentorship plans', HttpStatus.NOT_FOUND)
             }
@@ -71,11 +77,11 @@ export class SlotService implements ISlotService {
                 && checkSessionBooked.sessionCount == 0) {
                 throw new CustomError('Please purchase any Mentorship plans', HttpStatus.UNAUTHORIZED)
             }
-            if(checkSessionBooked.type ==='mentorship_subscription' && checkSessionBooked.sessionCount>=4){
-                throw new CustomError('You already booked session',HttpStatus.CONFLICT)
+            if (checkSessionBooked.type === 'mentorship_subscription' && checkSessionBooked.sessionCount > 4) {
+                throw new CustomError('You already booked session', HttpStatus.CONFLICT)
             }
-            if(checkSessionBooked.type ==='one_time_payment' && checkSessionBooked.sessionCount>=1){
-                throw new CustomError('You already booked session',HttpStatus.CONFLICT)
+            if (checkSessionBooked.type === 'one_time_payment' && checkSessionBooked.sessionCount > 1) {
+                throw new CustomError('You already booked session', HttpStatus.CONFLICT)
             }
             const today = new Date()
             const providedDate = new Date(date)
@@ -105,6 +111,33 @@ export class SlotService implements ISlotService {
             return response
         } catch (error) {
             console.error('Error founded in bookslot service', error);
+            throw error
+        }
+    }
+
+    async getBookingSlotDetails(bookingId:string){
+        try {
+            
+            const response  = await this.bookingRepository.findById(bookingId)
+            // console.log(response,'response in booking slot service------');
+            
+            return response
+        } catch (error) {
+            console.error('Error founded in get booking details in service',error);
+            throw error
+        }
+    }
+
+    async getBookingSlot(userId: string, role: string): Promise<Partial<IBooking[]> | null> {
+        try {
+            console.log(role, 'role in get booking slot', userId, 'userId in get booking slot');
+
+            const response = await this.bookingRepository.findByUserId(userId, role)
+            // console.log(response, 'response in get booking slot');
+            return response
+
+        } catch (error) {
+            console.error('Error founded in get booking slot in slot service', error);
             throw error
         }
     }

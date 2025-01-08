@@ -9,6 +9,7 @@ import { IMentorService, socialMediaUrl } from "../interface/IMentor.service";
 import { IMentorRepository } from "../../repositories/interface/IMentor.repository";
 import { IUserRepository } from "../../repositories/interface/IUser.repository";
 import { ISlotRepository } from "../../repositories/interface/ISlot.repository";
+import { IBookingRepository } from "../../repositories/interface/IBooking.repository";
 
 
 interface ParamsData {
@@ -30,10 +31,12 @@ export class MentorService implements IMentorService {
     private mentorRepoistory: IMentorRepository
     private userRepository: IUserRepository
     private slotRepository: ISlotRepository
-    constructor(mentorRepository: IMentorRepository, userRepository: IUserRepository, slotRepository: ISlotRepository) {
+    private bookingRepository:IBookingRepository
+    constructor(mentorRepository: IMentorRepository, userRepository: IUserRepository, slotRepository: ISlotRepository,bookingRepository:IBookingRepository) {
         this.mentorRepoistory = mentorRepository
         this.userRepository = userRepository
         this.slotRepository = slotRepository
+        this.bookingRepository = bookingRepository
     }
 
 
@@ -237,10 +240,11 @@ export class MentorService implements IMentorService {
             
             if (mentor?.mentor._id) {
                 const mentorSlots = await this.slotRepository.findMentorSlots(mentor?.mentor._id.toString())
-                
+                const bookingData = await this.bookingRepository.findBookingDataWithMentorId(mentor?.mentor._id)
                 const mergedData = {
                     mentor,
-                    slots: mentorSlots
+                    slots: mentorSlots,
+                    bookingData
                 }
                 
                 return mergedData

@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollapsed }) 
     { label: 'Dashboard', icon: <MdSpaceDashboard />, path: '/dashboard' },
     { label: 'Personal Information', icon: <FaUserCircle />, path: '/dashboard/profile' },
     { label: 'Chat', icon: <FaComments />, badge: '5', path: '/dashboard/chat' },
-    { label: 'Video Call', icon: <FaVideo />, badge: '5', path: '/dashboard/video-call' },
+    { label: 'Video Call', icon: <FaVideo />, badge: '5', path: '/dashboard/video-call-users' },
     { label: 'Billing History', icon: <FaHistory />, path: '/dashboard/billing' },
     { label: 'Notification', icon: <FaBell />, path: '/dashboard/notification' },
     ...(role === 'mentor' ?

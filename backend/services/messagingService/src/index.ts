@@ -38,33 +38,41 @@ app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
+  path: '/messages',
   cors: {
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST'],
     credentials: true
   },
-  transports: ['websocket', 'polling'],
-  path: '/messages'
+  transports:['websocket','polling']
+  
 
 });
 
+const chatNamespace = io.of('/chat');
+const videoNamespace = io.of('/video');
+
+// chatNamespace.on('connection', (socket) => {
+//   chatSocketHandler(chatNamespace, socket);
+// });
+
+// videoNamespace.on('connection', (socket) => {
+//   videoCallSocketHandler(videoNamespace, socket);
+// });
 
 io.on('connection', (socket) => {
   console.log('Client connected');
-
+  videoCallSocketHandler(io, socket); 
   chatSocketHandler(io, socket);
-  videoCallSocketHandler(io, socket);
-
- 
 });
- io.on('private_message',({to,message})=>{
-  console.log('userid');
-  
- })
+
 
 app.use('/conversation',conversationRoute)
 app.use('/users',userRoute)
-app.use('/', messageRoute);
+app.use('/', messageRoute,(req,res)=>{
+  console.log(req.url);
+  
+});
 app.use(errorHandler)
 
 const port = 4006

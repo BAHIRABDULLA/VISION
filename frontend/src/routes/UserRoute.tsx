@@ -23,6 +23,7 @@ import SlotManagement from '@/pages/mentorApplication/SlotManagement'
 import DashboardLayout from '@/components/DashbaordLayout'
 import Dashboard from '@/components/Dashboard'
 import VideoCall from '@/components/VideoCall'
+import VideoCallList from '@/components/VideoCallList'
 
 
 const UserRoute = () => {
@@ -65,7 +66,8 @@ const UserRoute = () => {
                 <Route path='' element={<Dashboard />} />
                 <Route path='profile' element={<Profile />} />
                 <Route path='chat' element={<Chat />} />
-                <Route path='video-call' element={<VideoCall/>} />
+                <Route path='video-call-users' element={<VideoCallList/>} />
+                <Route path='video-call/:id' element={<VideoCall/>} />
                 <Route path='billing' element={<div>billing history content</div>} />
                 <Route path='notification' element={<div>notification content</div>} />
                 <Route path='slot-manage' element={<SlotManagement />} />

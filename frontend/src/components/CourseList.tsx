@@ -2,6 +2,7 @@ import { getAllCourses } from '@/services/courseApi';
 import React, { useEffect, useState } from 'react'
 import Loading from './Loading';
 import CourseCard from './CourseCard';
+import toast from 'react-hot-toast';
 
 interface CourseListProps {
   limit?: number;
@@ -25,11 +26,15 @@ const CourseList: React.FC<CourseListProps> = ({ limit }) => {
   useEffect(() => {
     const fetchCourseData = async () => {
       const response = await getAllCourses()
-      console.log(response?.data, 'response data ');
-      console.log(response?.data.data,'response,data.sdata');
-      
-      setCourses(response?.data.data)
-      setLaoding(false)
+      console.log(response, 'response data ');
+      console.log(response?.data.data, 'response,data.sdata');
+      if (response.status && response.status >= 400) {
+        toast.error('Cannot found courses')
+      } else if(response.status && response.status<400){
+        setCourses(response?.data.data)
+        setLaoding(false)
+      }
+
     }
     fetchCourseData()
   }, [])

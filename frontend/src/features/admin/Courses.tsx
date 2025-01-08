@@ -6,7 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 
 Modal.setAppElement("#root")
 
-interface CourseType {
+export interface CourseType {
 
     _id: string;
     name: string;

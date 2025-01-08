@@ -24,7 +24,7 @@ const bookingRepository = new BookingRepository(bookingModel)
 const paymentRepository = new PaymentRepository(Payment)
 
 
-const mentorService = new MentorService(mentorRepository,userRepository,slotRepository)
+const mentorService = new MentorService(mentorRepository,userRepository,slotRepository,bookingRepository)
 const slotService = new SlotService(slotRepository,bookingRepository,paymentRepository)
 const paymentService = new PaymentService(paymentRepository,bookingRepository)
 

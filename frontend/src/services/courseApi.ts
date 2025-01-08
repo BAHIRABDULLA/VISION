@@ -35,7 +35,7 @@ export const getAllCourses = async () => {
         const response = await api.get('/')
         return response
     } catch (error) {
-        console.error('Error founed in get all courses', error);
+        // console.error('Error founed in get all courses', error);
         if(error instanceof AxiosError){
             return error.response
         }
@@ -65,6 +65,8 @@ export const updateCourseStatus = async (id: string, status: string) => {
 export const getResources = async ()=>{
     try {
         const response  = await api.get('/resource')
+        console.log(response,'response in get resources in course api');
+        
         return response
     } catch (error) {
         console.error('Error founded in get resource',error);
@@ -80,5 +82,33 @@ export const addResource = async (data: object) => {
         return response
     } catch (error) {
         console.error('Error founded in add resource', error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}
+
+
+export const editResource = async (data: object, id: string) => {
+    try {
+        const response = await adminPrivateApi.patch(`/course/resource/${id}`,data)
+        return response
+    } catch (error) {
+        console.error('Error founded in edit resource', error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}
+
+export const getResourceDetails = async (id: string) => {
+    try {
+        const response = await api.get(`/resource/${id}`)
+        return response
+    } catch (error) {
+        console.error('Error founded in get resource details', error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
     }
 }

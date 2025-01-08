@@ -18,11 +18,13 @@ export class ResourceService implements IResourseService {
 
     async getResources():Promise<Partial<IResource[]>  | null>{
         try {
-            const getResourceData = await this.resourceRepository.findAll()
+            const getResourceData = await this.resourceRepository.findAllWithPopulateCourse()
             console.log(getResourceData,'getResource data in resrource service layer')
-            if(getResourceData.length<=0){
+            if( !getResourceData || getResourceData.length<=0 ){
                 throw new CustomError('Not founded resources',HttpStatus.NOTFOUND)
             }
+            console.log(getResourceData,'get resoucrcde');
+            
             return getResourceData
         } catch (error) {
             console.error('Error founded in get resource in service layer',error);
@@ -33,15 +35,17 @@ export class ResourceService implements IResourseService {
          level: string, topic: string, content: any): Promise<IResource | undefined> {
         try {
             const courseDoc = await this.courseRepository.findByName(course)
-            console.log(courseDoc,'find course create resource');
+            console.log('----',courseDoc,'find course create resource');
             if(!courseDoc){
                 throw new CustomError(`Course ${course} not found `,HttpStatus.NOTFOUND)
             }
             const curriculum = courseDoc.curriculum.find(curr=>curr.level === level)
+            console.log(curriculum,'curriculum  in create resource');
+            
             if(!curriculum){
                 throw new CustomError(`Level ${level} not found in course ${course}`,HttpStatus.NOTFOUND)
             }
-            if(!curriculum.topics.includes(topic)){
+            if(!curriculum.topics.includes(topic.trim())){
                 throw new CustomError(`Topic ${topic} not found in level ${level} of ${course}`,HttpStatus.NOTFOUND)
             }
             const courseId = courseDoc._id as Types.ObjectId
@@ -65,9 +69,23 @@ export class ResourceService implements IResourseService {
                 }
             }
             const createResourse = await this.resourceRepository.create(data)
+
             return createResourse
         } catch (error) {
             console.error('Error founded in create course', error);
+            throw error
+        }
+    }
+
+    async getResourceById(id: string): Promise<Partial<IResource> | null> {
+        try {
+            const resourceData = await this.resourceRepository.findByIdWithCourse(id)
+            if(!resourceData){
+                throw new CustomError('Resource not found',HttpStatus.NOTFOUND)
+            }
+            return resourceData
+        } catch (error) {
+            console.error('Error founded in get resource by id', error);
             throw error
         }
     }
