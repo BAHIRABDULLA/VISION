@@ -65,3 +65,5 @@ jobs:
           SERVICE_NAME=$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')
           kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=bahirk/vision-${SERVICE_NAME}:latest
           kubectl rollout status deployment/${SERVICE_NAME}
+
+#/
