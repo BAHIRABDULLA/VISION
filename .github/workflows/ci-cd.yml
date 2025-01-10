@@ -54,7 +54,7 @@ jobs:
 
       - name: Set up GKE context
         run: |
-          echo ${{ secrets.GKE_KUBECONFIG }} | base64 -d > kubeconfig.yaml
+          echo "${{ secrets.GKE_KUBECONFIG }}" | base64 -d > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
 
       - name: Verify Kubernetes context
