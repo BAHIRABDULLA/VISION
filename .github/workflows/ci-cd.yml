@@ -66,4 +66,3 @@ jobs:
           kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=bahirk/vision-${SERVICE_NAME}:latest
           kubectl rollout status deployment/${SERVICE_NAME}
 
-#/
