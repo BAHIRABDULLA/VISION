@@ -52,17 +52,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up GKE context
-        run: |
-          echo "${{ secrets.GKE_KUBECONFIG }}" | base64 -d > kubeconfig.yaml
-          export KUBECONFIG=kubeconfig.yaml
+      # Replace the current GKE setup with these steps
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
 
-      - name: Verify Kubernetes context
-        run: kubectl config current-context
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v1'
+        with:
+          cluster_name: 'vision-cluster1'    # Replace with your cluster name
+          location: 'asia-south1-a'    # Replace with your cluster location (region or zone)
+          project_id: 'first-planet-444914-p6'    # Replace with your project ID
 
       - name: Deploy ${{ matrix.service }}
         run: |
           SERVICE_NAME=$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')
           kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=bahirk/vision-${SERVICE_NAME}:latest
           kubectl rollout status deployment/${SERVICE_NAME}
-
