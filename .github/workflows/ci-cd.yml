@@ -42,12 +42,12 @@ jobs:
     strategy:
       matrix:
         service:
-          - userService
-          - mentorService
-          - adminService
-          - courseService
-          - paymentService
-          - messagingService
+          - user-service
+          - mentor-service
+          - admin-service
+          - course-service
+          - payment-service
+          - messaging-service
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -64,12 +64,12 @@ jobs:
       - name: 'Get GKE credentials'
         uses: 'google-github-actions/get-gke-credentials@v1'
         with:
-          cluster_name: 'vision-cluster1'    # Replace with your cluster name
-          location: 'asia-south1-a'    # Replace with your cluster location (region or zone)
-          project_id: 'first-planet-444914-p6'    # Replace with your project ID
+          cluster_name: 'vision-cluster1'
+          location: 'asia-south1-a'
+          project_id: 'first-planet-444914-p6'
 
       - name: Deploy ${{ matrix.service }}
         run: |
-          SERVICE_NAME=$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')
-          kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=bahirk/vision-${SERVICE_NAME}:latest
+          SERVICE_NAME=${{ matrix.service }}
+          kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=bahirk/vision-${SERVICE_NAME//-}:latest
           kubectl rollout status deployment/${SERVICE_NAME}
