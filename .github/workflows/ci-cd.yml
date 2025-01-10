@@ -32,8 +32,9 @@ jobs:
 
       - name: Build and push Docker image for ${{ matrix.service }}
         run: |
-          docker build -t bahirk/vision-${{ matrix.service | toLowerCase }}:latest ./services/${{ matrix.service }}
-          docker push bahirk/vision-${{ matrix.service | toLowerCase }}:latest
+          SERVICE_NAME=$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')
+          docker build -t bahirk/vision-$SERVICE_NAME:latest ./services/${{ matrix.service }}
+          docker push bahirk/vision-$SERVICE_NAME:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -41,12 +42,12 @@ jobs:
     strategy:
       matrix:
         service:
-          - user-service
-          - mentor-service
-          - admin-service
-          - course-service
-          - payment-service
-          - messaging-service
+          - userService
+          - mentorService
+          - adminService
+          - courseService
+          - paymentService
+          - messagingService
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -61,5 +62,6 @@ jobs:
 
       - name: Deploy ${{ matrix.service }}
         run: |
-          kubectl set image deployment/${{ matrix.service }} ${{ matrix.service }}=bahirk/vision-${{ matrix.service }}:latest
-          kubectl rollout status deployment/${{ matrix.service }}
+          SERVICE_NAME=$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')
+          kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=bahirk/vision-${SERVICE_NAME}:latest
+          kubectl rollout status deployment/${SERVICE_NAME}
