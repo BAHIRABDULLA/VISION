@@ -159,7 +159,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId, bookingData }
         }
     }
 
-    availableSlots.map((slot, i)=>{
+    availableSlots.map((slot)=>{
         console.log(slot,'slot++++++++++++++++');
         
     })

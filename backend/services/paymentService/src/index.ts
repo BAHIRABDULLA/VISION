@@ -16,10 +16,10 @@ app.use(express.urlencoded({extended:true}))
 connectMongodb()
 rabbitmqConnect()
 
-app.use(cors({
-    origin: 'http://vision.bahirabdulla.online',
-    credentials: true
-}))
+// app.use(cors({
+//     origin: 'https://vision.bahirabdulla.online',
+//     credentials: true
+// }))
 
 import paymentRoute from './routes/payment.route'
 import errorHandler from './middleware/error.handler'

@@ -10,13 +10,16 @@ import { ICategoryRepository } from '../../repositories/interface/ICategory.repo
 import CustomError from '../../utils/custom.error'
 import { HttpStatus } from '../../enums/http.status'
 
+console.log(process.env.API_BASE_URL,'in admin service API_BASE_URL');
+
 
 
 const userApi = axios.create({
-    baseURL: 'http://localhost:4001/'
+    baseURL: `${process.env.API_BASE_URL}/user`,
+    
 })
 const mentorApi = axios.create({
-    baseURL: 'http://localhost:4002/'
+    baseURL: `${process.env.API_BASE_URL}/mentor`
 })
 
 @injectable()

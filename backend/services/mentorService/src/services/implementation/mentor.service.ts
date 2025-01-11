@@ -23,9 +23,9 @@ interface ParamsData {
     limit: number
 }
 
-const userApi = axios.create({
-    baseURL: 'http://localhost:4001/'
-})
+// const userApi = axios.create({
+//     baseURL: `${process.env.API_BASE_URL}/user`
+// })
 
 export class MentorService implements IMentorService {
     private mentorRepoistory: IMentorRepository

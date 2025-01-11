@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import  { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Card, CardContent, Button, Alert } from '@mui/material';
-import { Link } from 'react-router-dom';
 import { getBookingDetails } from '@/services/mentorApi';
 
 interface SessionValidation {
@@ -164,8 +163,10 @@ const VideoCall = () => {
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
-
-        const socket = io('http://localhost:4000', {
+        const baseUrl = import.meta.env.VITE_COMMON_API_BASE_URL
+        console.log(baseUrl,'baseurl');
+        
+        const socket = io(baseUrl, {
           withCredentials:true,
           path: '/messages',
           transports: ['websocket'],

@@ -11,29 +11,24 @@ const VideoCallList: React.FC = () => {
         state.menteeAuth.user || state.mentorAuth.user
     );
     const userId = user.id
-    const [session, setSession] = useState([])
+    const [sessions, setSessions] = useState([])
     useEffect(() => {
         const fechBookingParticipant = async () => {
             const response = await getBookings()
             console.log(response, 'response in fetch booking participant');
-            setSession(response.data.bookings)
+            setSessions(response.data.bookings)
         }
         fechBookingParticipant()
     }, [])
 
-    const sessions = [
-        { mentee: "mentee - 1", time: "10:00  04/02/2025 Sunday", link: "#" },
-        { mentee: "mentee - 2", time: "10:00  04/02/2025 Sunday", link: "#" },
-        { mentee: "mentee - 3", time: "10:00  04/02/2025 Sunday", link: "#" },
-        { mentee: "mentee - 4", time: "10:00  04/02/2025 Sunday", link: "#" },
-    ];
+    
 
 
     return (
         <div className="m-5">
             <h1 className="text-3xl font-bold text-center mb-6">Sessions of {role}s</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {session.map((session, index) => (
+                {sessions.map((session, index) => (
                     <div
                         key={index}
                         className="bg-white text-black p-5 rounded-lg shadow-md"

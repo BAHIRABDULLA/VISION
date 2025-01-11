@@ -28,10 +28,10 @@ connectMongodb().catch((err) => {
 })
 
 
-app.use(cors({
-  origin: 'http://vision.bahirabdulla.online',
-  credentials: true
-}));
+// app.use(cors({
+//   origin: 'https://vision.bahirabdulla.online',
+//   credentials: true
+// }));
 app.use(express.json());
 
 
@@ -40,7 +40,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   path: '/messages',
   cors: {
-    origin: 'http://vision.bahirabdulla.online',
+    origin: 'https://vision.bahirabdulla.online',
     methods: ['GET', 'POST'],
     credentials: true
   },

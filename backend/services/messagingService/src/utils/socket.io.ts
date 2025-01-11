@@ -4,7 +4,7 @@ import { createServer } from "http";
 export const httpServer = createServer();
 export const io = new Server(httpServer, {
     cors: {
-        origin: 'http://vision.bahirabdulla.online',
+        origin: 'https://vision.bahirabdulla.online',
         methods: ['GET', 'POST'],
         credentials: true
     },

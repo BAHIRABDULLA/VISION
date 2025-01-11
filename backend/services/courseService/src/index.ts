@@ -10,10 +10,10 @@ dotenv.config()
 const app = express()
 
 
-app.use(cors({
-    origin:'http://vision.bahirabdulla.online',
-    credentials:true
-}))
+// app.use(cors({
+//     origin:'https://vision.bahirabdulla.online',
+//     credentials:true
+// }))
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
@@ -29,9 +29,16 @@ rabbitmqConnect().then(()=>{
 import resourceRoute from './routes/resource.route';
 import courseRoute from './routes/course.route';
 import { receiveMessage } from './events/rabbitmq/consumer';
-
+app.use((req,res)=>{
+    console.log(req.url,'req.url in app.use');
+    
+})
 app.use('/resource',resourceRoute)
-app.use('/',courseRoute)
+app.use('/',courseRoute,(req,res)=>{
+    console.log(req.url,'req.url');   
+}
+)
+
 app.use(errorHandler)
 
 const port = process.env.PORT

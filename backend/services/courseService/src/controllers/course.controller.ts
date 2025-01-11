@@ -42,6 +42,7 @@ export class CourseController {
 
     async getAllCourses(req: Request, res: Response) {
         try {
+            console.log('-----   get all courses controller -----');
             
             const response = await this.courseService.getAllCourses()
             // console.log(response,'response in get all coiurse');

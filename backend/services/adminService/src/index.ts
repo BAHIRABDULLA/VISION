@@ -16,10 +16,10 @@ rabbitmqConnect().then( () =>{
 })
 
 app.use(cookieParser())
-app.use(cors({
-    origin: 'http://vision.bahirabdulla.online/',
-    credentials: true
-}))
+// app.use(cors({
+//     origin: 'https://vision.bahirabdulla.online',
+//     credentials: true
+// }))
 
 app.use(express.json())
 
