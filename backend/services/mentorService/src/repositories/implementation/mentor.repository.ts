@@ -1,6 +1,6 @@
 import { IMentor } from "../../interface/IMentor";
 import {  Mentor } from "../../model/mentor.model";
-import { IMentorRepository } from "../interface/IMentor.repository";
+import { IMentorRepository, IPopulatedMentor } from "../interface/IMentor.repository";
 import { BaseRepository } from "./base.repository";
 
 
@@ -13,6 +13,7 @@ export class MentorRepository extends BaseRepository<IMentor> implements IMentor
             return await Mentor.findOne({ email })
         } catch (error) {
             console.error('Error founded in finding user via email', error);
+            throw error
         }
     }
 
@@ -22,6 +23,7 @@ export class MentorRepository extends BaseRepository<IMentor> implements IMentor
             return await Mentor.findOne({ mentor: id })
         } catch (error) {
             console.error('Error founded in find mentor repository', error);
+            throw error
         }
     }
 
@@ -33,18 +35,22 @@ export class MentorRepository extends BaseRepository<IMentor> implements IMentor
             return resposne
         } catch (error) {
             console.error('Error founded in find mentor and update', error);
+            throw error
         }
     }
 
 
-    async findAllWithUserData(){
+    async findAllWithUserData(): Promise<IPopulatedMentor[]> {
         try {
-            return await Mentor.find().populate({
-                path:'mentor',
-                match:{isApproved:'approved'}
-            })
+            const mentors = await Mentor.find().populate({
+                path: 'mentor',
+                match: { isApproved: 'approved' }
+            }).exec();
+
+            return mentors as IPopulatedMentor[];
         } catch (error) {
-            console.error('Error founded in find all with user data',error);
+            console.error('Error found in find all with user data', error);
+            throw error;
         }
     }
     async findByIdWithBasicInfo(id:string){
@@ -53,7 +59,7 @@ export class MentorRepository extends BaseRepository<IMentor> implements IMentor
             return response
         } catch (error) {
             console.error('Error founded in findByIdWithBasicInfo',error);
-            
+            throw error
         }
     }
 }

@@ -53,7 +53,7 @@ export class SlotService implements ISlotService {
     }
 
 
-    async bookSlot(mentorId: string, menteeId: string, time: string, date: Date): Promise<any> {
+    async bookSlot(mentorId: string, menteeId: string, time: string, date: Date): Promise<IBooking | null> {
         try {
 
             console.log(mentorId, 'mentorId', menteeId, 'menteeId', time, 'time', date, 'date  in booking slot');

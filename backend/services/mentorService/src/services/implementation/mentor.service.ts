@@ -6,13 +6,13 @@ import { IUser } from "../../interface/IUser";
 import { IMentor } from "../../interface/IMentor";
 import mongoose, { ObjectId } from 'mongoose'
 import { IMentorService, socialMediaUrl } from "../interface/IMentor.service";
-import { IMentorRepository } from "../../repositories/interface/IMentor.repository";
+import { IMentorRepository, IPopulatedMentor } from "../../repositories/interface/IMentor.repository";
 import { IUserRepository } from "../../repositories/interface/IUser.repository";
 import { ISlotRepository } from "../../repositories/interface/ISlot.repository";
 import { IBookingRepository } from "../../repositories/interface/IBooking.repository";
 
 
-interface ParamsData {
+export interface mentorParamsData {
     search: string;
     priceRange: number;
     experience: string;
@@ -41,7 +41,7 @@ export class MentorService implements IMentorService {
 
 
     async mentorDetails(email: string, jobTitle: string, country: string, location: string, category: string, experience: number, skills: string[], bio: string,
-        whyBecomeMentor: string, greatestAchievement: string, company?: string, profilePhoto?: any, socialMediaUrls?: socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string,) {
+        whyBecomeMentor: string, greatestAchievement: string, company?: string, profilePhoto?: string, socialMediaUrls?: socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string,) {
         try {
             console.log(socialMediaUrls, 'social medial urls +++++++++++', category, jobTitle, 'category ,jobtitle');
 
@@ -85,9 +85,13 @@ export class MentorService implements IMentorService {
     }
 
 
-    async registerMentor(mentorData: any) {
+    async registerMentor(mentorData: object) {
         try {
             const mentor = this.userRepository.create(mentorData)
+            if (!mentor) {
+                throw new CustomError("Error facing to register mentor", HttpStatus.UNAUTHORIZED)
+            }
+            return mentor
         } catch (error) {
             console.log('Error registering mentor', error);
             throw error
@@ -187,13 +191,13 @@ export class MentorService implements IMentorService {
     }
 
 
-    async getAllmentorWithMergedUserData(params: ParamsData) {
+    async getAllmentorWithMergedUserData(params: mentorParamsData) {
         try {
             const { search, priceRange, experience, expertise, rating, location, page, limit } = params;
 
 
             const mentors = await this.mentorRepoistory.findAllWithUserData()
-            const approvedMentors = mentors?.filter((mentor: { mentor: null; }) => mentor.mentor !== null)
+            const approvedMentors = mentors?.filter((mentor: IPopulatedMentor) => mentor.mentor !== null)
 
             const slots = await this.slotRepository.findAll()
             const mentorsWithSlots = approvedMentors?.map((mentor: { mentor: { _id: { toString: () => string; }; }; toObject: () => any; }) => {
@@ -205,7 +209,7 @@ export class MentorService implements IMentorService {
                 }
             })
             
-            const filteredMentors = mentorsWithSlots?.filter((mentor: { mentor: IUser; singleSessionPrice: number; experience: any; location: string; }) => {
+            const filteredMentors = mentorsWithSlots?.filter((mentor: { mentor: IUser; singleSessionPrice: number; experience: number ; location: string; }) => {
                 if (typeof mentor.mentor !== 'string') {
                     const user = mentor.mentor as IUser;
                     const mentorSearch = !search || user.fullName.toLowerCase().includes(search.toLowerCase())
@@ -240,7 +244,7 @@ export class MentorService implements IMentorService {
             
             if (mentor?.mentor._id) {
                 const mentorSlots = await this.slotRepository.findMentorSlots(mentor?.mentor._id.toString())
-                const bookingData = await this.bookingRepository.findBookingDataWithMentorId(mentor?.mentor._id)
+                const bookingData = await this.bookingRepository.findBookingDataWithMentorId(mentor?.mentor._id.toString())
                 const mergedData = {
                     mentor,
                     slots: mentorSlots,

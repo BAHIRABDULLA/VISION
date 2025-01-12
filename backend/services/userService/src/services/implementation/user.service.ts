@@ -67,7 +67,7 @@ export class UserService implements IUserService {
     }
 
 
-    async updateUserApproval(id: string, isApproved: string) {
+    async updateUserApproval(id: string, isApproved: "pending" | "approved" | "rejected") {
         try {
             if (!['pending', 'approved', 'rejected'].includes(isApproved)) {
                 throw new CustomError("Invalid approval status", HttpStatus.BAD_REQUEST)
@@ -79,7 +79,7 @@ export class UserService implements IUserService {
             if (!updatedUser) {
                 throw new CustomError("User not founded", HttpStatus.BAD_REQUEST)
             }
-            await sendUserData('mentorApproval', { id, isApproved })
+            await sendUserData('mentorApproval', { id, isApproved})
             await sendEmail(updatedUser?.email,
                 'Your Mentor Application is Approved!',
                 `
