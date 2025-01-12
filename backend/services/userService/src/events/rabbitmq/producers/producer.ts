@@ -1,6 +1,7 @@
 import { getChannel } from "../../../config/rabbitmq";
+import IUser from "../../../interfaces/IUser";
 
-export const sendUserData = async(exchange:string,data:any)=>{
+export const sendUserData = async(exchange:string,data:Partial<IUser>)=>{
     try {
         console.log();
         

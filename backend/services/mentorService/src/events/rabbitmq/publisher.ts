@@ -1,6 +1,7 @@
 import { getChannel } from "../../config/rabbitmq";
+import { IMentor } from "../../interface/IMentor";
 
-export const sendMentorData = async(mentorData:any,profile?:string)=>{
+export const sendMentorData = async(mentorData:Partial<IMentor>,profile?:string)=>{
     try {
         const channel = getChannel()
         const queue = 'mentorData'

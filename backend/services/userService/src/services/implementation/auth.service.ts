@@ -15,7 +15,7 @@ import { createResponse } from "../../utils/response.handler";
 import { IAuthService } from "../interface/IAuth.service";
 
 
-type SignInResult = {
+export type SignInResult = {
     success: boolean;
     message: string;
     accessToken?: string;
@@ -79,7 +79,7 @@ export class AuthService implements IAuthService {
             }
             const hashedPassword = await hashPassword(password)
             if (findOtp) {
-                const userData: any = {
+                const userData:any = {
                     fullName,
                     email,
                     password: hashedPassword,

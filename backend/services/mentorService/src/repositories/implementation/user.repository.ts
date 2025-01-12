@@ -13,6 +13,7 @@ export class UserRepository extends BaseRepository<IUser>  implements IUserRepos
             return user
         } catch (error) {
             console.error('Error founded in finding emial',error);
+            throw error
         }
     }
 
@@ -22,6 +23,7 @@ export class UserRepository extends BaseRepository<IUser>  implements IUserRepos
             return response
         } catch (error) {
             console.error('Error founded in find all approved mentors',error);
+            return []
         }
     }
 

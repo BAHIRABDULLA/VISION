@@ -1,4 +1,5 @@
 import IUser from "../../interfaces/IUser"
+import { SignInResult } from "../implementation/auth.service";
 
 type common = {
     success: boolean;
@@ -21,7 +22,7 @@ export interface IAuthService {
     verifySignUpOtp(fullName:string,email:string,password:string,role:string,otp:string,type:string):Promise<common | undefined>
     resendOtpWork(email:string):Promise<common | undefined>
     signInWithGoogle(email:string,name:string,role:string):Promise<common| undefined>
-    signIn(email:string,password:string,role:string):Promise<any>
+    signIn(email:string,password:string,role:string):Promise< SignInResult | undefined>
     sendMail(email:string):Promise<object | undefined>
     resetPassword(email:string,password:string,confirmPassword:string):Promise<common | undefined>
     // updateFormFieldAndPhoto(id:string,profile:string):Promise<IUser | undefined>

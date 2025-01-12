@@ -1,4 +1,5 @@
 import { IResource } from "../../interfaces/IResource";
+import { Content } from "../implementation/resource.service";
 
 
 
