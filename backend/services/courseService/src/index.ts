@@ -29,15 +29,12 @@ rabbitmqConnect().then(()=>{
 import resourceRoute from './routes/resource.route';
 import courseRoute from './routes/course.route';
 import { receiveMessage } from './events/rabbitmq/consumer';
-app.use((req,res)=>{
+app.use((req,res,next)=>{
     console.log(req.url,'req.url in app.use');
-    
+    next()
 })
 app.use('/resource',resourceRoute)
-app.use('/',courseRoute,(req,res)=>{
-    console.log(req.url,'req.url');   
-}
-)
+app.use('/',courseRoute)
 
 app.use(errorHandler)
 

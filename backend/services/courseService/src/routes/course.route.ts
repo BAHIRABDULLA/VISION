@@ -12,10 +12,12 @@ const upload = multer({
 
 
 
+router.patch('/status/:id',adminAuthenticateToken,courseController.editCourseStatus.bind(courseController))
+
 router.get('/:id',courseController.getCourseDetails.bind(courseController))
 router.patch('/:id',adminAuthenticateToken,upload.single('image'),courseController.editCourse.bind(courseController))
-router.patch('/status/:id',adminAuthenticateToken,courseController.editCourseStatus.bind(courseController))
+
 router.post('/',adminAuthenticateToken,upload.single('image'),courseController.createCourse.bind(courseController));
-// router.get('/',courseController.getAllCourses.bind(courseController));
+router.get('/',courseController.getAllCourses.bind(courseController));
 
 export default router  

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: bahirk/vision-frontend:latest
+        image: bahirk/vision-frontend:v1.0.1
         imagePullPolicy: Always
         ports:
         - containerPort: 80
