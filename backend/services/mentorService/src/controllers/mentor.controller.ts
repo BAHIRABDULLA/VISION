@@ -81,8 +81,8 @@ export class MentorController {
         try {
             console.log('-----   6      ---------');
 
-            const response = await this.mentorService.getAllMentors()
-            return successResponse(res,HttpStatus.OK,"Sent all mentors",response)
+            const response = await this.mentorService.getAllMentorsWithPopulatedData()
+            return successResponse(res,HttpStatus.OK,"Sent all mentors",{response})
         } catch (error) {
             console.error('Error founded in get all mentors ');
             next(error)

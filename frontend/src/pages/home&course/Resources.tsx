@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Book,
     Video,
@@ -6,6 +6,8 @@ import {
     ChevronRight
 } from 'lucide-react';
 import Header from '@/components/Header';
+import { getAllResourceWithCourseId } from '@/services/courseApi';
+import { useParams } from 'react-router-dom';
 
 // Sample content data
 const learningContent = {
@@ -77,70 +79,83 @@ const ContentCard = ({ item, contentType }) => {
 };
 
 const Resources = () => {
+    const { id } = useParams<{ id: string }>()
+        console.log(id, 'id is here in resources page');
     const [activeLevel, setActiveLevel] = useState('basic');
     const [activeContentType, setActiveContentType] = useState('videos');
+
 
     const levels = ['basic', 'intermediate', 'advanced'];
     const contentTypes = ['videos', 'images', 'documents'];
 
+    useEffect(() => {  
+        const fetchData = async () => {
+            const response = await getAllResourceWithCourseId(id);
+            console.log(response, 'response in get resources in Resources page');
+        };
+        fetchData();
+    }
+    , []);
     return (
-        <div className='min-h-screen bg-slate-800'>
+        <>
             <Header />
-            <div className="flex ">
-                {/* Sidebar */}
-                <div className="w-64 bg-slate-800 ">
-                    <div className="px-8 border-b">
-                        <h1 className="text-2xl font-bold text-white">Levels</h1>
-                    </div>
+            <div className='min-h-screen bg-gray-100 dark:bg-gray-600'>
+                <div className="flex ">
+                    {/* Sidebar */}
+                    <div className="w-64 bg-slate-200 dark:bg-slate-700">
+                        <div className="px-8 border-b dark:border-gray-600">
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Levels</h1>
+                        </div>
 
-                    {/* Level Navigation */}
-                    <nav className="py-4">
-                        {levels.map((level) => (
-                            <button
-                                key={level}
-                                onClick={() => setActiveLevel(level)}
-                                className={`w-full px-6 py-3 text-left hover:bg-gray-100 transition-colors duration-300 ${activeLevel === level
+                        {/* Level Navigation */}
+                        <nav className="py-4">
+                            {levels.map((level) => (
+                                <button
+                                    key={level}
+                                    onClick={() => setActiveLevel(level)}
+                                    className={`w-full px-6 py-3 text-left hover:bg-gray-100 transition-colors duration-300 ${activeLevel === level
                                         ? 'bg-blue-50 text-purple-600 font-semibold'
-                                        : 'text-white hover:text-gray-900'
-                                    }`}
-                            >
-                                {level.charAt(0).toUpperCase() + level.slice(1)} Level
-                            </button>
-                        ))}
-                    </nav>
-                </div>
-
-                {/* Main Content Area */}
-                <div className="flex-grow px-8">
-                    {/* Content Type Tabs */}
-                    <div className="mb-6 border-b flex space-x-4">
-                        {contentTypes.map((type) => (
-                            <button
-                                key={type}
-                                onClick={() => setActiveContentType(type)}
-                                className={`pb-2 capitalize ${activeContentType === type
-                                        ? 'border-b-2 border-blue-600 text-purple-500'
-                                        : 'text-gray-300 hover:text-white'
-                                    }`}
-                            >
-                                {type}
-                            </button>
-                        ))}
+                                        : 'text-black dark:text-white hover:text-gray-900'
+                                        }`}
+                                >
+                                    {level.charAt(0).toUpperCase() + level.slice(1)} Level
+                                </button>
+                            ))}
+                        </nav>
                     </div>
 
-                    {/* Content Grid */}
-                    <div className="grid md:grid-cols-2 gap-4">
-                        {learningContent[activeLevel][activeContentType].map((item) => (
-                            <ContentCard
-                                key={item.id}
-                                item={item}
-                                contentType={activeContentType}
-                            />
-                        ))}
+                    {/* Main Content Area */}
+                    <div className="flex-grow px-8">
+                        {/* Content Type Tabs */}
+                        <div className="mb-6 border-b flex space-x-4 dark:border-gray-600">
+                            {contentTypes.map((type) => (
+                                <button
+                                    key={type}
+                                    onClick={() => setActiveContentType(type)}
+                                    className={`pb-2 capitalize ${activeContentType === type
+                                        ? 'border-b-2 border-blue-600 text-purple-500 dark:text-purple-400'
+                                        : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                                        }`}
+                                >
+                                    {type}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Content Grid */}
+                        <div className="grid md:grid-cols-2 gap-4">
+                            {learningContent[activeLevel][activeContentType].map((item) => (
+                                <ContentCard
+                                    key={item.id}
+                                    item={item}
+                                    contentType={activeContentType}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
 
     );
 };

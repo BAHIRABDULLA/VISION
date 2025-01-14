@@ -5,7 +5,7 @@ dotenv.config()
 
 const accessKey = process.env.S3_BUCKET_ACCESS_KEY
 const secretKey = process.env.S3_BUCKET_SECRET
-const s3 = new AWS.S3({
+export const s3 = new AWS.S3({
     accessKeyId:accessKey,
     secretAccessKey:secretKey,
     region:'ap-south-1'

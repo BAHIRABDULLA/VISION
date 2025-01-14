@@ -73,6 +73,8 @@ export class CourseService implements ICourseService {
 
     async getCourseById(id: string) {
         try {
+            console.log('--- 1  ---');
+            
             const findCourse = await this.courseRepository.findById(id)
             console.log(findCourse, 'find course ');
 

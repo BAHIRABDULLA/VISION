@@ -20,5 +20,14 @@ class ResourceRepository extends BaseRepository<IResource> implements IResourceR
             throw error
         }
     }
+
+    async findByCourseId(courseId: string): Promise<Partial<IResource[]> | null> {
+        try {
+            return await Resource.find({ course: courseId }).populate('course')
+        } catch (error) {
+            console.error('Error founded in get resource in service layer', error);
+            throw error
+        }   
+    }
 }
 export default ResourceRepository

@@ -6,7 +6,7 @@ import { HttpStatus } from "../enums/http.status";
 import { IUserService } from "../services/interface/IUser.service";
 // import { uploadFileToS3 } from "../utils/upload";
 import { FileArray, UploadedFile } from "express-fileupload";
-import { uploadFile } from "../utils/upload";
+import { s3, uploadFile } from "../utils/upload";
 import { sendEmail } from "../utils/email.util";
 import { sendUserData } from "../events/rabbitmq/producers/producer";
 
@@ -26,6 +26,33 @@ export class UserController {
     constructor(userService: IUserService) {
         this.userService = userService
     }
+
+    async generateSignedUrl(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { fileName, fileType } = req.body
+            console.log(fileName,'filename' , fileType,'filetype');
+            
+            if (!fileName || !fileType) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'fileName and fileType are required' 
+                });
+            }
+            const params = {
+                Bucket: process.env.BUCKET_NAME!,
+                Key: fileName,
+                Expires: 60,
+                ContentType: fileType,
+                
+            }
+            const signedUrl = await s3.getSignedUrlPromise('putObject', params)
+            res.status(HttpStatus.OK).json({ signedUrl ,key:fileName})
+        } catch (error) {
+            console.error('Error founded in generate signed url', error);
+            next(error)
+        }
+    }
+
     async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.userService.getAllUsers()
@@ -83,6 +110,43 @@ export class UserController {
     }
 
 
+    // async profileUpdate(req: CustomeRequest, res: Response, next: NextFunction) {
+    //     try {
+    //         const user = req.user as JwtPayload
+    //         if (!user) {
+    //             return res.json({ message: 'Not founded user' })
+    //         }
+    //         const id = user.id
+    //         const { fullName } = req.body
+    //         let s3FileUrl = ''
+    //         if (req.file) {
+    //             const file = req.file
+    //             const fileContent = file.buffer;
+    //             const fileType = file.mimetype;
+    //             const fileName = `uploads/${Date.now()}_${file.originalname}`;
+
+    //             const result = await uploadFile(fileContent, fileName, fileType);
+    //             if (!result) {
+    //                 return res.status(HttpStatus.NOTFOUND).json({ success: false, message: '' })
+    //             }
+    //             s3FileUrl = result.Location
+    //             console.log('Uploaded file URL:', s3FileUrl);
+
+    //         }
+    //         if (s3FileUrl === '') {
+    //             s3FileUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'
+    //         }
+    //         const updateUser = await this.userService.updateUser(id, { fullName, profile: s3FileUrl })
+
+    //         console.log(updateUser, 'update user = =  =   ');
+    //         res.status(HttpStatus.OK).json({ success: true, message: "update successfully", updateUser })
+    //     } catch (error) {
+    //         console.error('Error founded in profile update', error);
+    //         next(error)
+    //     }
+    // }
+
+
     async profileUpdate(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user as JwtPayload
@@ -90,26 +154,18 @@ export class UserController {
                 return res.json({ message: 'Not founded user' })
             }
             const id = user.id
-            const { fullName } = req.body
-            let s3FileUrl = ''
-            if (req.file) {
-                const file = req.file
-                const fileContent = file.buffer;
-                const fileType = file.mimetype;
-                const fileName = `uploads/${Date.now()}_${file.originalname}`;
-
-                const result = await uploadFile(fileContent, fileName, fileType);
-                if (!result) {
-                    return res.status(HttpStatus.NOTFOUND).json({ success: false, message: '' })
-                }
-                s3FileUrl = result.Location
-                console.log('Uploaded file URL:', s3FileUrl);
-
+            console.log(req.body, 'req.body in profile update');
+            
+            const { fullName ,fileKey} = req.body
+            console.log(fullName, 'fullName in profile update',fileKey);
+            
+            let profileUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png';
+            if(fileKey){
+                profileUrl = fileKey
+                // profileUrl = `https://${process.env.BUCKET_NAME}.s3.ap-south-1.amazonaws.com/${fileKey}`
             }
-            if (s3FileUrl === '') {
-                s3FileUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'
-            }
-            const updateUser = await this.userService.updateUser(id, { fullName, profile: s3FileUrl })
+            
+            const updateUser = await this.userService.updateUser(id, { fullName, profile: profileUrl })
 
             console.log(updateUser, 'update user = =  =   ');
             res.status(HttpStatus.OK).json({ success: true, message: "update successfully", updateUser })

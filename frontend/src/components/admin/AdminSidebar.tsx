@@ -16,8 +16,8 @@ const links = [
   { to: '/admin/users', text: 'Users' ,icon:<FaUsers/> },
   { to: '/admin/courses', text: 'Courses' ,icon:<SiCoursera/> },
   { to: '/admin/resources', text: 'Resources'  ,icon:<GrResources/>},
-  { to: '/admin/transaction', text: 'Transaction'  ,icon:<GrTransaction/>},
   { to: '/admin/categories', text: 'Categories'  ,icon:<MdCategory/>},
+  { to: '/admin/transaction', text: 'Transaction'  ,icon:<GrTransaction/>},
 ]
 
 interface AdminSidebarProps {

@@ -210,6 +210,16 @@ export class PaymentService implements IPaymentService {
         }
     }
 
+    async findAllTransactions() {
+        try {
+            const allTransactions = await this.paymentRepository.findAll()
+            return allTransactions
+        } catch (error) {
+            console.error('Error founded in find all transactions', error);
+            throw error
+        }
+    }
+
 }
 
 

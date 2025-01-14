@@ -83,7 +83,7 @@ const UserRoute = () => {
             <Route path='/courses' element={<Courses />} />
             <Route path="/course/:id" element={< CourseDetails />} />
 
-            <Route path='/resource' element={<Resources />} />
+            <Route path='/resource/:id' element={<Resources />} />
 
             <Route path='/success' element={<Success />} />
             <Route path='/cancel' element={<Cancel />} />

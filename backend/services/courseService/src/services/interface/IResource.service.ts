@@ -11,4 +11,5 @@ export interface IResourseService {
         // createResource(data:Partial<IResource>):Promise<IResource | undefined>
 
     getResourceById(id:string):Promise<Partial<IResource> | null>
+    getResourcesByCourseId(courseId:string):Promise<Partial<IResource[]> | null>
 }

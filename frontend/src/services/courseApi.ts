@@ -112,3 +112,15 @@ export const getResourceDetails = async (id: string) => {
         }
     }
 }
+
+export const getAllResourceWithCourseId = async (courseId: string) => {
+    try {
+        const response = await api.get(`/resource/course/${courseId}`)
+        return response
+    } catch (error) {
+        console.error('Error founded in get all resource with course id', error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}

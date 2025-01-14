@@ -13,6 +13,7 @@ import EditCourse from '@/features/admin/EditCourse'
 import AddResource from '@/features/admin/AddResource'
 import CategoriesSkills from '@/features/admin/Categories'
 import EditResource from '@/features/admin/EditResource'
+import Transaction from '@/features/admin/Transaction'
 
 const AdminRoute = () => {
     return (
@@ -28,6 +29,7 @@ const AdminRoute = () => {
                 <Route path='resources/add' element={<AddResource />} />
                 <Route path='resources/:id' element={<EditResource />} />
                 <Route path='categories' element={<CategoriesSkills />} />
+                <Route path='transaction' element={<Transaction/>} />
 
             </Route>
             <Route path='/admin/login' element={<AdminPublicRoute><Login /></AdminPublicRoute>} />
