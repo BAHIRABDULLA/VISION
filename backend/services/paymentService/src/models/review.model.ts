@@ -5,7 +5,7 @@ interface IReview extends Document {
     mentorId?: string;
     userId: string;
     rating: number;
-    comment: string;
+    review: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -15,7 +15,7 @@ const reviewSchema = new Schema<IReview>({
     mentorId:   {type:String},
     userId: { type: String},
     rating: { type: Number, required: true, min: 1, max: 5 },
-    comment: { type: String, required: true },
+    review: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });

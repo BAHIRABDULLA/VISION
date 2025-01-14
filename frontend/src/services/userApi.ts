@@ -89,7 +89,7 @@ export const logout = async () => {
 
 export const updateCommonData = async ( data: object) => {
     try {
-        const response = await privateApi.post(`/user`, data)
+        const response = await privateApi.put(`/user`, data)
         return response
     } catch (error) {
         console.error('Error in update common data', error);
@@ -102,5 +102,14 @@ export const passwordUpdate = async(data:object)=>{
         return response
     } catch (error) {
         console.error('Error founded in password update ',error);
+    }
+}
+
+export const getSignedUrl = async (fileName:string,fileType:any) => {
+    try {
+        const response = await privateApi.post('/user/generate-signed-url', { fileName,fileType })
+        return response
+    } catch (error) {
+        console.error('Error in get signed url', error);
     }
 }

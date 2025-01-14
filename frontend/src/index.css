@@ -167,3 +167,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+
+
+
+
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  display: flex;
+  gap: 1rem; /* Add spacing between mentor cards */
+  animation: scroll 15s linear infinite; /* Adjust duration for speed */
+}

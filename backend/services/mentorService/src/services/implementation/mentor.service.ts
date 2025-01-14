@@ -97,7 +97,15 @@ export class MentorService implements IMentorService {
             throw error
         }
     }
-
+    async getAllMentorsWithPopulatedData() {
+        try {
+            const mentors = await this.mentorRepoistory.findAllWithUserData()
+            return mentors
+        } catch (error) {
+            console.error('Error founded in fetching all mentors', error);
+            throw error
+        }
+    }
 
     async getAllMentors() {
         try {

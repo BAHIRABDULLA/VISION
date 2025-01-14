@@ -1,10 +1,11 @@
 import Header from '@/components/Header';
 // import Pagination from '@/components/Pagination';
 import Pagination from '@mui/material/Pagination';
-import { getAllMentors } from '@/services/mentorApi';
-import React, { useEffect, useState } from 'react';
+import { getAllMentorsWithParamsData } from '@/services/mentorApi';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Loading from '@/components/Loading';
+import { debounce } from 'lodash'
 
 const MentorPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1)
@@ -43,7 +44,7 @@ const MentorPage: React.FC = () => {
                 }
                 console.log(paramsData, 'params data');
 
-                const resposne = await getAllMentors(paramsData)
+                const resposne = await getAllMentorsWithParamsData(paramsData)
                 console.log(resposne, 'response - - -  in useeffetct mentors');
                 if (resposne?.data) {
                     setMentors(resposne.data.data)
@@ -58,14 +59,27 @@ const MentorPage: React.FC = () => {
         }
         fetchMentors()
     }, [searchQuery, filters, currentPage])
+    const handleSearchChangeDebounced = useCallback(
+        debounce((value: string) => {
+            setSearchQuery(value);
+        }, 200),
+        []
+    );
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
+        handleSearchChangeDebounced(e.target.value)
     };
     if (loading) {
         <Loading />
     }
+    const handleFilterChangeDebounced = useCallback(
+        debounce((name: string, value: string | number) => {
+            setFilters(prev => ({ ...prev, [name]: value }));
+        }, 500),
+        []
+    );
     const handleFilterChange = (name: string, value: string | number) => {
-        setFilters(prev => ({ ...prev, [name]: value }));
+        // setFilters(prev => ({ ...prev, [name]: value }));
+        handleFilterChangeDebounced(name, value)
     };
 
     const filteredMentors = mentors.filter((mentor) =>

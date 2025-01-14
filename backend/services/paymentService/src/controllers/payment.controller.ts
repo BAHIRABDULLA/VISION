@@ -103,4 +103,15 @@ export class PaymentController {
         }
     }
 
+    async findTransactions(req:Request,res:Response , next:NextFunction){
+        try {
+            
+            const response = await this.paymentService.findAllTransactions()
+            return successResponse(res,HttpStatus.OK,"Founded transactions",{transactions:response})
+        } catch (error) {
+            console.error('Error founded in find transactions',error);
+            next(error)
+        }
+    }
+
 }

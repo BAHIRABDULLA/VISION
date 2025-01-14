@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 
 
 const Hero2 = () => {
@@ -17,10 +18,10 @@ const Hero2 = () => {
                             Whether you're starting out or seeking an advanced role, our experienced
                             mentors are here to help you succeed.
                         </p>
-                        <button className="border-2 border-purple-500 text-purple-500 px-8 py-3 rounded-lg font-medium
-                         hover:bg-purple-500 hover:text-white transition-colors dark:hover:bg-purple-600 dark:hover:text-gray-100">
-                            Connect with Mentor
-                        </button>
+                        <Link to='/mentors'  className="border-2 border-purple-500 text-purple-500 px-8 py-3 rounded-lg font-medium
+                         hover:bg-purple-500 hover:text-white transition-colors dark:hover:bg-purple-600 dark:hover:text-gray-100" >
+                            Explore Mentors
+                         </Link>
                     </div>
                 </div>
 

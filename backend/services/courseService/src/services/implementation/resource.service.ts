@@ -95,4 +95,21 @@ export class ResourceService implements IResourseService {
             throw error
         }
     }
+
+    async getResourcesByCourseId(courseId: string): Promise<Partial<IResource[]> | null> {
+        try {
+            const courseData = await this.courseRepository.findById(courseId)
+            if (!courseData) {
+                throw new CustomError('Course not found', HttpStatus.NOTFOUND)
+            }
+            const resourceData = await this.resourceRepository.findByCourseId(courseId)
+            if (!resourceData || resourceData.length <= 0) {
+                throw new CustomError('Resource not found', HttpStatus.NOTFOUND)
+            }
+            return resourceData
+        } catch (error) {
+            console.error('Error founded in get resource by course id', error);
+            throw error
+        }
+    }
 }

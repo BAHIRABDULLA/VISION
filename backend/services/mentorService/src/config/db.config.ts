@@ -7,7 +7,10 @@ import mongoose from "mongoose";
             console.log('cannot get connectionString ');
             return
         }
-        await mongoose.connect(connectionString )
+        await mongoose.connect(connectionString, {
+            serverSelectionTimeoutMS: 30000,
+            socketTimeoutMS: 45000, 
+        });
         
     } catch (error) {
         console.error('Error founded in connect mongodb',error);

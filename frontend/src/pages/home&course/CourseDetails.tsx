@@ -1,5 +1,5 @@
-import  { useEffect, useState } from 'react'
-import { ChevronLeft, Star } from 'lucide-react';
+import { useEffect, useState } from 'react'
+import { ChevronLeft, PenTool, Star } from 'lucide-react';
 import Header from '@/components/Header';
 import { useParams } from 'react-router-dom';
 import { getCourseDetails } from '@/services/courseApi';
@@ -7,7 +7,7 @@ import Loading from '@/components/Loading';
 import toast, { Toaster } from 'react-hot-toast';
 import Footer from '@/components/Footer';
 import { loadStripe } from '@stripe/stripe-js'
-import { createCheckoutSession, getCoursePaymentDetails } from '@/services/paymentApi';
+import { createCheckoutSession, createCourseReview, getAllCourseReviews, getCoursePaymentDetails } from '@/services/paymentApi';
 import { Link } from 'react-router-dom';
 
 
@@ -20,7 +20,7 @@ const stripePromise = loadStripe(publicKey)
 interface Curriculum {
     level: string;
     topics: string[];
-  }
+}
 interface CourseDetailProps {
     name: string;
     duration: string
@@ -37,6 +37,10 @@ const CourseDetails = () => {
     const [course, setCourse] = useState<CourseDetailProps | null>(null)
     const [loading, setLoading] = useState(true)
     const [isPurchase, setIsPurchase] = useState(true)
+    const [review, setReview] = useState('')
+    const [reviews, setReviews] = useState([])
+    const [isAddingReview, setIsAddingReview] = useState(false)
+
     useEffect(() => {
         const fetchPaymentDetails = async () => {
             if (id) {
@@ -74,7 +78,16 @@ const CourseDetails = () => {
         }
         fetchCourseDetails()
     }, [id])
-
+    useEffect(() => {
+        const fetchCourseReviews = async () => {
+            const response = await getAllCourseReviews(id)
+            console.log(response, 'response in fetch payment details');
+            if (response?.status === 200) {
+                setReviews(response?.data.reviews)
+            }
+        }
+        fetchCourseReviews()
+    }, [])
     const handleEnroll = async () => {
         const stripe = await stripePromise
         try {
@@ -107,6 +120,31 @@ const CourseDetails = () => {
             toast.error('Please sign in your account')
             console.error('Error creating cehckout session', error);
         }
+    }
+
+    const handleAddReview = async () => {
+
+        try {
+            if (!review) {
+                toast.error('Review is empty')
+                return
+            }
+            const data = {
+                courseId: id,
+                rating: 5,
+                review: review
+            }
+            const response = await createCourseReview(data)
+            if (response?.status && response?.status >= 400) {
+                toast.error(response?.data.message || 'Failed to add review')
+                return
+            }
+            
+            toast.success('Review added successfully')
+        } catch (error) {
+
+        }
+        setIsAddingReview(false)
     }
 
 
@@ -145,7 +183,7 @@ const CourseDetails = () => {
                         </div>
                     ) : (
                         <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg text-center">
-                            <Link className='text-purple-600 dark:text-purple-400 font-bold hover:underline' to='/resource'>Open the Course</Link>
+                            <Link className='text-purple-600 dark:text-purple-400 font-bold hover:underline' to={`/resource/${id}`}>Open the Course</Link>
                         </div>
                     )}
 
@@ -178,7 +216,7 @@ const CourseDetails = () => {
                                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Basic Topics (Beginner)</h3>
                                 <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                                     {/* <h4>{course?.curriculum[0].topics}</h4> */}
-                                    {course?.curriculum[0].topics?.map((topic, index:number) => (
+                                    {course?.curriculum[0].topics?.map((topic, index: number) => (
                                         <li key={index}>{topic}</li>
                                     ))}
                                     {/* <li>Introduction To Python And Setup</li>
@@ -191,7 +229,7 @@ const CourseDetails = () => {
                                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Intermediate Topics</h3>
                                 <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                                     {/* <h4>{course?.curriculum[1].topics}</h4> */}
-                                    {course?.curriculum[1].topics?.map((topic, index:number) => (
+                                    {course?.curriculum[1].topics?.map((topic, index: number) => (
                                         <li key={index}>{topic}</li>
                                     ))}
                                     {/* <li>Object-Oriented Programming (OOP) In Python</li>
@@ -204,7 +242,7 @@ const CourseDetails = () => {
                                 <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                                     {/* <h4>{course?.curriculum[2].topics}</h4> */}
 
-                                    {course?.curriculum[2].topics?.map((topic, index:number) => (
+                                    {course?.curriculum[2].topics?.map((topic, index: number) => (
                                         <li key={index}>{topic}</li>
                                     ))}
                                 </ul>
@@ -216,9 +254,47 @@ const CourseDetails = () => {
                 {/* Reviews */}
                 <section>
                     <h2 className="text-xl text-gray-900 dark:text-white font-bold mb-4">Rating & Reviews</h2>
+
+                    <div className="flex gap-2 cursor-pointer hover:opacity-80"
+                        onClick={() => setIsAddingReview(!isAddingReview)}>
+                        <h5 className="text-balck font-bold dark:text-gray-300">Add a review</h5>
+                        <PenTool className="text-yellow-500 mt-1 w-5 h-4" />
+                    </div>
+
+                    {/* Review Input Section */}
+                    {isAddingReview && (
+                        <div>
+                            <div>
+                                <div className="flex">
+                                    <span className=" dark:text-gray-300 mr-2">Rating:</span>
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <Star key={star} className="w-6 h-6 cursor-pointer text-yellow-500" />
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="mt-3">
+                                <textarea
+                                    name="content" onChange={(e) => setReview(e.target.value)}
+                                    placeholder="Write your review here..."
+                                    className="w-full bg-gray-200 dark:bg-gray-800 text-white dark:text-gray-300 p-2 rounded h-24"
+                                />
+                            </div>
+                            <div className="flex justify-end space-x-2">
+                                <button
+                                    className="bg-gray-600 dark:bg-gray-600 text-white dark:text-gray-300 px-4 py-1 rounded hover:bg-gray-500 dark:hover:bg-gray-500"
+                                    onClick={() => setIsAddingReview(!isAddingReview)}>
+                                    Cancel
+                                </button>
+                                <button onClick={handleAddReview}
+                                    className="bg-yellow-500 text-black dark:bg-yellow-400 dark:text-gray-800 px-4 py-1 rounded hover:bg-yellow-400 dark:hover:bg-yellow-500">
+                                    Submit Review
+                                </button>
+                            </div>
+                        </div>
+                    )}
                     <div className="space-y-4">
-                        {[1, 2, 3].map((review) => (
-                            <div key={review} className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg flex items-start gap-4">
+                        {reviews.map((review,index) => (
+                            <div key={index} className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg flex items-start gap-4">
                                 <div className="w-10 h-10 bg-gray-400 dark:bg-gray-600 rounded-full flex-shrink-0" />
                                 <div>
                                     <div className="flex items-center gap-2 mb-2">
@@ -230,7 +306,7 @@ const CourseDetails = () => {
                                         </div>
                                     </div>
                                     <p className="text-gray-700 dark:text-gray-300">
-                                        Working with Python has been incredibly beneficial for me. I can truly recommend this journey from Vision to anyone in the programming world.
+                                        {review.review}
                                     </p>
                                 </div>
                             </div>

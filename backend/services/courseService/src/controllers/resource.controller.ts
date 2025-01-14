@@ -59,4 +59,14 @@ export class ResourseController {
         }
     }
 
+    async getResourcesByCourseId(req: Request, res: Response) {
+        try {
+            const { courseId } = req.params
+            const response = await this.resourceService.getResourcesByCourseId(courseId)
+            return res.status(HttpStatus.OK).json(response)
+        } catch (error) {
+            console.error('Error founded in get resource by course id', error);
+        }
+    }
+
 }

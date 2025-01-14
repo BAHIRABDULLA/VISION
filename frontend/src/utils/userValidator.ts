@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 export const common = z.object({
     fullName: z.string().min(1, { message: "Name cannot be empty" }),
-    file: z.optional(z.any()),
+    fileKey: z.optional(z.any()),
 })
 export type commonType = z.infer<typeof common>
 

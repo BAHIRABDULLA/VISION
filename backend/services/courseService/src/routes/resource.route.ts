@@ -9,6 +9,8 @@ const upload = multer({
     storage: multer.memoryStorage(),
 });
 
+
+router.get('/course/:courseId',resourceController.getResourcesByCourseId.bind(resourceController))
 router.get('/:id',resourceController.getResourceById.bind(resourceController))
 
 router.get('/',resourceController.getResources.bind(resourceController))

@@ -100,7 +100,7 @@ export const deleteSlot = async (slotId: string) => {
 }
 
 
-export const getAllMentors = async (paramsData: object) => {
+export const getAllMentorsWithParamsData = async (paramsData: object) => {
     try {
         const response = await api.get('/', {
             params: paramsData
@@ -108,6 +108,18 @@ export const getAllMentors = async (paramsData: object) => {
         return response
     } catch (error) {
         console.error('Error foiunded in get all mentors', error);
+    }
+}
+
+export const getAllMentors = async () => {
+    try {
+        const response = await api.get('/mentors')
+        return response
+    } catch (error) {
+        console.error('Error founded in get all mentors', error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
     }
 }
 
