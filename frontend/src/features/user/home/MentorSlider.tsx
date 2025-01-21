@@ -20,7 +20,6 @@ const MentorSlider: React.FC = () => {
     const fetchMentors = async () => {
       try {
         const response = await getAllMentors();
-        console.log(response.data.response, "response in fetch mentors in mentor slider");
         setMentors(response.data.response);
       } catch (error) {
         console.error(error);
@@ -53,15 +52,15 @@ const MentorSlider: React.FC = () => {
               >
                 <div className="bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 hover:scale-105 transition-transform duration-300">
                   <img
-                    src={mentor.mentor.profile}
-                    alt={mentor.mentor.fullName}
+                    src={mentor?.mentor?.profile}
+                    alt={mentor?.mentor?.fullName}
                     className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
                   />
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-white text-center mb-2">
-                    {mentor.mentor.fullName}
+                    {mentor?.mentor?.fullName}
                   </h3>
                   <p className="text-purple-600 dark:text-purple-400 text-center">
-                    {mentor.category}
+                    {mentor?.category}
                   </p>
                 </div>
               </div>

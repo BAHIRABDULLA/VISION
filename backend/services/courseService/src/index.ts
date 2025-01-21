@@ -22,7 +22,6 @@ app.use(express.urlencoded({extended:true}))
 
 connectDb()
 rabbitmqConnect().then(()=>{
-    console.log('rabbitmq connected in course service');
     receiveMessage()
 })
 

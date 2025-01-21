@@ -18,30 +18,25 @@ const Chat = () => {
   const user = useSelector((state: RootState) =>
     state.menteeAuth.user || state.mentorAuth.user
   );
-  console.log(user, 'user in chat ');
 
   const role = user?.role === 'mentee' ? 'mentee' : 'mentor';
-  console.log(role, 'role');
 
 
   const [messages, setMessages] = useState<Message[]>([])
-  console.log(messages, 'messages');
   const [selectedUser, setSelectedUser] = useState(null)
   const [newMessage, setNewMessage] = useState('')
   const [users, setUsers] = useState([])
-  console.log(users, 's');
   const [isConnected, setIsConnected] = useState(false)
   const userId: string | undefined = user?.id
-  console.log(userId, 'userId');
 
-  
+
   useEffect(() => {
     if (!socket && userId) {
       socket = io('http://localhost:4000', {
         withCredentials: true,
         path: '/messages/chat',
         transports: ['websocket', 'polling'],
-        auth: { userId } 
+        auth: { userId }
       })
     }
 
@@ -49,7 +44,7 @@ const Chat = () => {
       socket.on('connect', () => {
         console.log('Socket connected:', socket.id)
         setIsConnected(true)
-      
+
         socket.emit('chat-user_join', { userId })
       })
 
@@ -63,10 +58,12 @@ const Chat = () => {
         setMessages((prev) => [...prev, { message: data.message, received: true }])
       })
 
-      
+
       const fetchUsers = async () => {
         try {
           const response = await getAllUsers(userId)
+          console.log(response, 'response in fetch users chat');
+
           if (response?.status >= 400) {
             toast.error(response.data.message || 'Failed to fetch users')
           } else {
@@ -81,7 +78,7 @@ const Chat = () => {
       fetchUsers()
     }
 
-  
+
     return () => {
       if (socket) {
         socket.off('connect')
@@ -111,15 +108,13 @@ const Chat = () => {
 
     if (newMessage && selectedUser) {
       socket.emit('chat-private_message', {
-        to: selectedUser._id,
+        to: role === 'mentee' ? selectedUser.mentorId._id : selectedUser.menteeId._id,
         message: newMessage
       }, (acknowledgement) => {
-     
         if (acknowledgement?.error) {
           toast.error('Failed to send message')
           return
         }
-        
         setMessages((prev) => [...prev, { message: newMessage, received: false }])
         setNewMessage('')
       })
@@ -137,39 +132,43 @@ const Chat = () => {
     <div className="flex h-screen">
       <Toaster />
       {/* Chat Area (Left Side) */}
-      <div className="flex flex-col w-3/4 bg-green-500">
+      <div className="flex flex-col w-3/4 dark:bg-gray-800 bg-gray-100">
         {/* Chat Header */}
-        <div className="flex items-center justify-between bg-gray-600 p-4 shadow-md">
+        <div className="flex items-center justify-between dark:bg-gray-700 bg-gray-300 p-4 shadow-md">
           {selectedUser ? (
             <div className="flex items-center">
-              <div className="mr-4 w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center">
-                <span className="text-white text-xl font-bold">
-                  {selectedUser.fullName.charAt(0)}
+              <div className="mr-4 w-10 h-10 rounded-full dark:bg-gray-600 bg-gray-400 flex items-center justify-center">
+                <span className="dark:text-white text-black text-xl font-bold">
+                  {role === 'mentee'
+                    ? selectedUser.mentorId.fullName.charAt(0)
+                    : selectedUser.menteeId.fullName.charAt(0)}
                 </span>
               </div>
               <div>
-                <div className="text-lg text-white font-semibold">
-                  {selectedUser.fullName}
+                <div className="text-lg dark:text-white text-gray-800 font-semibold">
+                  {role === 'mentee'
+                    ? selectedUser.mentorId.fullName
+                    : selectedUser.menteeId.fullName}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="text-white text-xl font-bold">
+            <div className="dark:text-white text-gray-800 text-xl font-bold">
               Select a chat to start messaging
             </div>
           )}
         </div>
 
         {/* Chat Messages */}
-        <div className="flex-grow px-4 py-2 space-y-2 bg-gray-700">
+        <div className="flex-grow px-4 py-2 space-y-2 dark:bg-gray-800 bg-gray-100">
           {selectedUser ? (
             <div className="flex flex-col space-y-2">
               {messages.map((msg, index) => (
                 <div
                   key={index}
                   className={`max-w-[70%] rounded-lg p-1 px-4 ${msg.received
-                    ? "bg-white text-black self-start"
-                    : "bg-purple-100 text-black self-end"
+                      ? "dark:bg-gray-700 bg-white dark:text-gray-200 text-black self-start"
+                      : "dark:bg-purple-800 bg-purple-100 dark:text-white text-black self-end"
                     }`}
                 >
                   {msg.message}
@@ -177,24 +176,24 @@ const Chat = () => {
               ))}
             </div>
           ) : (
-            <div className="flex items-center justify-center h-full text-white">
+            <div className="flex items-center justify-center h-full dark:text-gray-300 text-gray-700">
               No chat selected
             </div>
           )}
         </div>
 
         {/* Message Input */}
-        <div className="flex items-center p-4 bg-gray-300 border-t ">
+        <div className="flex items-center p-4 dark:bg-gray-700 bg-gray-300 border-t dark:border-gray-600">
           <input
             type="text"
             placeholder="Type a message"
-            className="flex-grow p-2 text-black rounded-lg border  focus:outline-none  "
+            className="flex-grow p-2 dark:text-white text-black dark:bg-gray-600 bg-gray-200 rounded-lg border dark:border-gray-500 focus:outline-none"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             disabled={!selectedUser}
           />
           <button
-            className="ml-4 bg-purple-600 text-white px-4 py-2 rounded-lg disabled:bg-gray-400"
+            className="ml-4 dark:bg-purple-700 bg-purple-600 dark:text-white text-white px-4 py-2 rounded-lg disabled:dark:bg-gray-500 disabled:bg-gray-400"
             onClick={sendMessage}
             disabled={!newMessage || !selectedUser}
           >
@@ -204,27 +203,35 @@ const Chat = () => {
       </div>
 
       {/* Users Panel (Right Side) */}
-      <div className="w-1/4 bg-gray-600 border-l border-gray-300 overflow-y-auto">
+      <div className="w-1/4 dark:bg-gray-800 bg-gray-300 border-l dark:border-gray-700 border-gray-300 overflow-y-auto">
         <div className="overflow-y-auto">
           {users?.map((user) => (
             <div
               key={user.id}
-              className={`flex items-center p-4 cursor-pointer hover:bg-gray-500 ${selectedUser?.id === user.id ? "bg-gray-600" : ""
+              className={`flex items-center p-4 cursor-pointer hover:dark:bg-gray-700 hover:bg-gray-500 ${selectedUser?._id === user._id
+                  ? "dark:bg-gray-700 bg-gray-600"
+                  : ""
                 }`}
               onClick={() => handleUserSelect(user)}
             >
-              <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center">
-                <span className="text-white text-xl font-bold">
-                  {user?.fullName.charAt(0)}
+              <div className="w-10 h-10 rounded-full dark:bg-gray-600 bg-gray-400 flex items-center justify-center">
+                <span className="dark:text-white text-black text-xl font-bold">
+                  {role === 'mentor'
+                    ? user.menteeId.fullName.charAt(0)
+                    : user.mentorId.fullName.charAt(0)}
                 </span>
               </div>
-              <div className="ml-4 text-white flex-grow">{user?.fullName}</div>
-
+              <div className="ml-4 dark:text-white text-gray-800 flex-grow">
+                {role === 'mentor'
+                  ? user.menteeId.fullName
+                  : user.mentorId.fullName}
+              </div>
             </div>
           ))}
         </div>
       </div>
     </div>
+
   )
 }
 

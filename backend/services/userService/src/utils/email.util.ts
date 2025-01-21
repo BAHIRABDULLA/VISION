@@ -18,7 +18,6 @@ import nodemailer from 'nodemailer'
 //     try {
 
 //         const sentMail = await transporter.sendMail(mailOption)
-//         console.log(sentMail, 'sentEmail');
 
 //     } catch (error) {
 //         console.error('Error sending email', error);

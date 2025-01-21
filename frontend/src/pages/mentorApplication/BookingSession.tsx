@@ -17,7 +17,6 @@ interface BookingProps {
 const BookingSession: React.FC<BookingProps> = ({ slots, mentorId, bookingData }) => {
 
 
-    console.log(bookingData, 'booking data in booking session ');
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
     const [dates, setDates] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -86,7 +85,6 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId, bookingData }
                 label: getLabelForDate(nextDate),
                 date: nextDate,
             });
-            console.log(newDates, 'new dates in navigate next function')
             setDates(newDates);
             setActiveIndex(0);
             updateAvailableSlots(newDates, 0);
@@ -138,30 +136,23 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId, bookingData }
 
             const formattedTime = `${hours}:${minutes}`;
 
-            // console.log(formattedTime, 'formattedTime - - - - - - ');
-            console.log(selectedSlot, 'slelcted slot ', typeof selectedSlot, selectedSlot.split(' '))
             let selectedDate = dates[activeIndex].date
             selectedDate.setHours(hours, minutes, 0, 0)
-            // console.log(`Selected Date: ${formatDate(selectedDate)},---- ${selectedDate}`, typeof selectedDate);
 
             const response = await slotBooking(mentorId, formattedTime, selectedDate)
-            console.log(selectedDate, 'selectd date ', formattedTime, 'formateed tiem');
 
             if (response && response?.status >= 400) {
                 toast.error(response?.data.message)
             } else {
                 toast.success('Session successfully booked ')
             }
-            console.log(response, 'resonse in booking session ');
         } catch (error) {
             console.error('error in handle slot booking', error);
             toast.error('Please sign in your account')
         }
     }
 
-    availableSlots.map((slot, i)=>{
-        console.log(slot,'slot++++++++++++++++');
-        
+    availableSlots.map((slot, i)=>{        
     })
     return (
         <>

@@ -31,9 +31,6 @@ async function initMedia() {
 }
 
 function startCall() {
-
-
-    console.log('its entere to start call ________');
     
     peerConnection = new RTCPeerConnection(servers)
     if(localStream){

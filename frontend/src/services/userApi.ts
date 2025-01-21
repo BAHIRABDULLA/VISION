@@ -45,7 +45,6 @@ export const googleSignIn = async (email: string, name: string, role: string) =>
 export const sendMail = async (email: string) => {
     try {
         const response = await api.post('/forget-password', { email })
-        console.log(response, 'response');
         return response
 
     } catch (error) {
@@ -57,7 +56,6 @@ export const sendMail = async (email: string) => {
 export const resetPassword = async (email: string, password: string, confirmPassword: string) => {
     try {
         const response = await api.post('/reset-password', { email, password, confirmPassword })
-        console.log(response, 'response in reset password ');
         return response
 
     } catch (error) {

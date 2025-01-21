@@ -7,7 +7,7 @@ import rootReducer from './rootReducer'
 const persistConfig = {
     key: 'root',
     storage,
-    whitelist: ['adminAuth', 'menteeAuth', 'mentorAuth', 'theme']
+    whitelist: ['adminAuth', 'menteeAuth', 'mentorAuth', 'theme', 'mentorApplication']
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

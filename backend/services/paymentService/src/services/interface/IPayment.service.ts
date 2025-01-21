@@ -1,7 +1,5 @@
 import Stripe from 'stripe';
-import { mentorshipPaymentData } from '../implementation/payment.service';
-import { IPayment } from '../../models/payment.model';
-import { Url } from 'url';
+import { IPayment } from '../../interfaces/IPayment';
 
 export interface IPaymentService {
     createSession(price: number, courseId: string, email: string, menteeId: string): Promise<{ id?: string; success: boolean; message: string } | null>;

@@ -23,10 +23,12 @@ app.use(cors({
 
 import paymentRoute from './routes/payment.route'
 import reviewRoute from './routes/review.route'
+import bookingRoute from './routes/booking.route'
 import errorHandler from './middleware/error.handler'
 
 
 app.use('/review',reviewRoute)
+app.use('/booking',bookingRoute)
 app.use('/',paymentRoute)
 
 app.use(errorHandler)

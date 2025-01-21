@@ -39,7 +39,6 @@ const PasswordReset: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<resetPassSchemaType> = async (data) => {
-    console.log(data, 'data in onSubmit ');
     const { password, confirmPassword } = data
     const response = await resetPassword(email,password, confirmPassword)
     if (response?.data.success) {
@@ -58,8 +57,8 @@ const PasswordReset: React.FC = () => {
       </div>
 
       {/* Right Side with Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col items-center justify-center mb-8 p-8">
-        <h2 className="text-3xl font-semibold ">Reset Password</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col bg-white items-center justify-center mb-8 p-8">
+        <h2 className="text-3xl text-black font-semibold ">Reset Password</h2>
 
         <div className="flex flex-col items-center mt-4 w-full ">
 

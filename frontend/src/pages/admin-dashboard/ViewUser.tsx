@@ -14,19 +14,15 @@ import { updateUserActiveStatus } from '@/services/adminApi';
 
 const ViewUser = () => {
   const [userDetails, setUserDetails] = useState<CommonDetails | MentorDetails | MenteeDetails | null>(null);
-  console.log(userDetails, 'user details ');
 
 
   const { id } = useParams()
   const role = id?.slice(0, 6)
-  console.log(role, 'rolero  __________');
-
 
   const userId = id?.slice(7)
   if (!userId) {
     return
   }
-  console.log(id?.slice(7), 'use params');
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -45,7 +41,6 @@ const ViewUser = () => {
 
     try {
       const updatedUser = { ...userDetails, isActive: !userDetails.isActive };
-      console.log(updatedUser.isActive,'update user . is active ');
       
        await updateUserActiveStatus(userId,updatedUser.isActive );
       

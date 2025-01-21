@@ -8,8 +8,6 @@ const api = axios.create({
 
 
 export const createCheckoutSession = async (data: { price: number, courseId: string }) => {
-    console.log(data.courseId, 'data.course id ');
-
     try {
         const response = await privateApi.post('/payment/create-checkout-session', data)
         return response
@@ -24,8 +22,6 @@ export const createCheckoutSession = async (data: { price: number, courseId: str
 
 export const mentorOneTimePayment = async (bookingData: object) => {
     try {
-        console.log('its here ');
-        console.log(bookingData, 'booking data one time payment')
         const response = await privateApi.post('/payment/single', bookingData)
         return response
     } catch (error) {
@@ -35,7 +31,6 @@ export const mentorOneTimePayment = async (bookingData: object) => {
 
 export const mentorSubscription = async (bookingData: object) => {
     try {
-        console.log(bookingData, 'booking data subscription')
         const response = await privateApi.post('/payment/subscription', bookingData)
         return response
     } catch (error) {

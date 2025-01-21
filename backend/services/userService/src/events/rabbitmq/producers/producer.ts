@@ -3,7 +3,6 @@ import IUser from "../../../interfaces/IUser";
 
 export const sendUserData = async(exchange:string,data:Partial<IUser>)=>{
     try {
-        console.log();
         
         const channel = getChannel()
         await channel.assertExchange(exchange,'fanout',{durable:true})

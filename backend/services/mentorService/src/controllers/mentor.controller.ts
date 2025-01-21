@@ -32,13 +32,11 @@ export class MentorController {
 
     async applyMentor(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log('-----   5      ---------');
 
             let { email, jobTitle,country, location, category,experience, skills, bio,
                 whyBecomeMentor, greatestAchievement, company, profilePhoto,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl,
             } = req.body;
-            console.log(req.body,'req.body ()()()()()()');
             if(socialMediaUrls){
                 socialMediaUrls = JSON.parse(socialMediaUrls)
             }
@@ -57,17 +55,12 @@ export class MentorController {
                     console.error('Error uploading to S3:', error);
                     res.status(500).json({ message: 'Error uploading file to S3', error });
                 }
-            } else {
-                console.log('No file received');
-            }
-            console.log(s3FileUrl, 's3FileUrl');
+            } 
 
 
             const response = await this.mentorService.mentorDetails(email, jobTitle,country, location, category,experience, JSON.parse(skills), bio,
                 whyBecomeMentor, greatestAchievement, company, s3FileUrl,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl)
-
-            console.log(response, 'response in mentor controller');
 
             return successResponse(res,HttpStatus.OK,"Mentor details updated",response)
         } catch (error) {
@@ -79,7 +72,6 @@ export class MentorController {
 
     async getAllMentors(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log('-----   6      ---------');
 
             const response = await this.mentorService.getAllMentorsWithPopulatedData()
             return successResponse(res,HttpStatus.OK,"Sent all mentors",{response})
@@ -91,7 +83,6 @@ export class MentorController {
 
 
     async getMentor(req: Request, res: Response, next: NextFunction) {
-        console.log('-----   7      ---------');
 
         try {
             const { id } = req.params
@@ -105,14 +96,11 @@ export class MentorController {
 
     async updateMentor(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log('-----   8      ---------');
 
             const { id } = req.params
-            console.log(id, 'req.params  . . . . ');
 
             const data = req.body
             const response = await this.mentorService.updateMentorData(id, data)
-            console.log(response, 'response in conttroller updatementor');
             return successResponse(res,HttpStatus.OK,"Mentor updation successfully done",response)
         } catch (error) {
             console.error('Error founded in update mentor', error);
@@ -123,13 +111,9 @@ export class MentorController {
 
     async updateMentorSessionPrice(req: customRequest, res: Response, next: NextFunction) {
         try {
-            console.log('=====    ========    =================    ');
             const user = req.user as JwtPayload
-            console.log(user, 'user id updater mentor session price')
             const data = req.body
-            console.log(req.body, 'req.body')
             const response = await this.mentorService.updateSessionPrice(user.id, data)
-            console.log(response, 'respoe');
             return successResponse(res, HttpStatus.OK, "Session price updated", response)
         } catch (error) {
             next(error)
@@ -138,7 +122,6 @@ export class MentorController {
 
     async getMentorDetails(req: customRequest, res: Response, next: NextFunction) {
         try {
-            console.log('-----   9      ---------');
 
             const user = req.user as JwtPayload
             const response = await this.mentorService.getMentor(user.id)
@@ -150,9 +133,7 @@ export class MentorController {
 
     async getAllmentorWithMergedUserData(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log('-----   10      ---------');
 
-            console.log('kfjkdjfdkfjdkjfdkfjdkfjdkjfk');
             const { search = '', priceRange = '0', experience = '', expertise = '', rating = '0', location = '', page = '1', limit = '' } = req.query;
             // const params = req.query
             const params: ParamsData = {
@@ -166,7 +147,6 @@ export class MentorController {
                 limit: parseInt(limit as string, 10),
             }
 
-            console.log(search, priceRange, experience, expertise, rating, location, page, limit, 'params ')
             const response = await this.mentorService.getAllmentorWithMergedUserData(params)
             return successResponse(res, HttpStatus.OK, "Mentors with filtered data sent", response)
         } catch (error) {
@@ -177,7 +157,6 @@ export class MentorController {
 
     async getMentorSpecificData(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log('-----   11      ---------');
 
             const { id } = req.params
             const response = await this.mentorService.getMentorSpecificData(id)

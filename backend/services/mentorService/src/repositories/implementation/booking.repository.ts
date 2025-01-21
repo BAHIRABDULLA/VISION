@@ -8,6 +8,8 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
 
     async findByBookingData(mentorId:string,date:Date,time:string){
         try {
+            console.log(mentorId,'mentorId');
+            
             const response = await bookingModel.findOne({mentorId,date,time})
             console.log(response,'response');
             
@@ -30,6 +32,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
     async findByUserId(userId:string,role:string){
         try {
             return await bookingModel.find({[`${role}Id`]:userId})
+            .populate(role === 'mentee' ? 'mentorId' : 'menteeId');
         } catch (error) {
             console.error('Error founded in find by user id ',error);
             throw error

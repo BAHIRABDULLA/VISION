@@ -71,7 +71,7 @@ const Google: React.FC<GoogleProps> = ({ type }) => {
             <button className="border border-gray-300 p-1 rounded-md 
         w-1/2 flex items-center justify-center space-x-2" onClick={handleGoogleSignIn}>
                 <img src={google_logo} alt="Google" className="w-6 h-6" />
-                <span>Continue with Google</span>
+                <span className='text-black'>Continue with Google</span>
             </button>
         </>
 

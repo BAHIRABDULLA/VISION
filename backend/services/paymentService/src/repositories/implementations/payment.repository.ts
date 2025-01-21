@@ -1,4 +1,5 @@
-import Payment, { IPayment } from "../../models/payment.model";
+import { IPayment } from "../../interfaces/IPayment";
+import Payment from "../../models/payment.model";
 import { IPaymentRepository } from "../interface/IPayment.repository";
 import BaseRepository from "./base.repository";
 import { FilterQuery } from "mongoose";
@@ -24,7 +25,7 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
         }
     }
 
-    async findUserBoughtSession(menteeId:string):Promise<IPayment | null>{
+    async findUserBoughtPlans(menteeId:string):Promise<IPayment | null>{
         try {
             const response  = await Payment.findOne({
                 menteeId,

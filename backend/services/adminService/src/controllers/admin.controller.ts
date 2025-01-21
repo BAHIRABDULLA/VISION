@@ -23,13 +23,10 @@ export class AdminController {
         try {
             const { email, password } = req.body;
             const response = await this.adminService.login(email, password);
-            console.log(response, 'response in respn');
-
             if (!response?.token) {
                 return errorResponse(res, HttpStatus.UNAUTHORIZED, 'Invalid credentials')
             }
             const refreshToken = generateRefreshToken(email)
-            console.log(refreshToken, 'admin refresh token ');
 
             setRefreshTokenCookie(res, refreshToken)
             return successResponse(res, HttpStatus.OK, "Login successful", { token: response.token, user: email })
@@ -58,7 +55,6 @@ export class AdminController {
     async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
-            // console.log(id,'id in admin controller ');
             const response = await this.adminService.getUser(id)
             if (!response?.user) {
                 return errorResponse(res, HttpStatus.NOTFOUND, "User data not found")
@@ -85,7 +81,6 @@ export class AdminController {
     async setNewAccessToken(req: Request, res: Response) {
         try {
             const refreshToken = req.cookies['refreshToken-a']
-            console.log(refreshToken, '= = = = =');
 
             if (!refreshToken) return res.status(HttpStatus.FORBIDDEN).json({ message: "No refresh token provided" })
             const secret = process.env.REFRESH_TOKEN_SECRET
@@ -93,7 +88,6 @@ export class AdminController {
                 return res.json({ message: "internal server error" })
             }
             const decoded = jwt.verify(refreshToken, secret)
-            console.log(decoded, 'decoded in refresh token ');
 
             if (typeof decoded === 'object' && decoded !== null && 'email' in decoded) {
 
@@ -121,7 +115,6 @@ export class AdminController {
                 return res.status(400).json({ message: 'Invalid approval status' });
             }
             const updateMentorApproval = await this.adminService.updateApproval(id, isApproved)
-            console.log(updateMentorApproval, 'upate mentor approval in admin side');
 
             return successResponse(res, HttpStatus.OK, "Mentor approval done", successResponse)
         } catch (error) {
@@ -132,12 +125,9 @@ export class AdminController {
 
     async updateUserActiveStatus(req: Request, res: Response) {
         try {
-            console.log('udpate4 usert active status *********');
 
             const { id } = req.params
             const { isActive } = req.body
-            console.log(req.body, 'req.body in udpatea user active status', isActive)
-            console.log(id, 'id in updatea user active status')
             const response = await this.adminService.updateUserStatus(id, isActive)
             return successResponse(res, HttpStatus.OK, "status updated")
         } catch (error) {
@@ -146,12 +136,12 @@ export class AdminController {
     }
 
 
-    async getAllCategories(req:Request,res:Response){
+    async getAllCategories(req: Request, res: Response) {
         try {
             const response = await this.adminService.getAllCategories()
-            return successResponse(res,HttpStatus.OK,"All categories fetched",{categories:response})
+            return successResponse(res, HttpStatus.OK, "All categories fetched", { categories: response })
         } catch (error) {
-            console.error('Error founded in get all categories',error);
+            console.error('Error founded in get all categories', error);
         }
     }
 
@@ -159,8 +149,6 @@ export class AdminController {
         try {
             const { data } = req.body
             const { category, skills } = req.body
-            console.log(data, 'data in add new cateogry ')
-            console.log(category, skills, 'category , skills in add new category');
             const response = await this.adminService.addNewCategory(category, skills)
             return successResponse(res, HttpStatus.CREATED, "New Category added", response)
         } catch (error) {
@@ -169,16 +157,14 @@ export class AdminController {
         }
     }
 
-    async updateCategory(req:Request,res:Response,next:NextFunction) {
+    async updateCategory(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params
-            console.log(id, 'id in update cdategory')
-            const {category,skills} = req.body
-            console.log(category,'category',skills,'skills in update category');
-            const response = await this.adminService.updateCategory(id,category,skills)
-            return successResponse(res,HttpStatus.CREATED,'Category updattion successfully done',response)
+            const { id } = req.params
+            const { category, skills } = req.body
+            const response = await this.adminService.updateCategory(id, category, skills)
+            return successResponse(res, HttpStatus.CREATED, 'Category updattion successfully done', response)
         } catch (error) {
-            console.error('Error founded in update category in controller',error);
+            console.error('Error founded in update category in controller', error);
             next(error)
         }
     }

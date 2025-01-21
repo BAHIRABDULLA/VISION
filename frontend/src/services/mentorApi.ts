@@ -18,8 +18,6 @@ export const applyMentor = async (data: object) => {
 export const updateMentorData = async (id: string, data: object) => {
     try {
         const response = await api.patch(`/${id}`, data)
-        console.log(response, 'respons in mentor api ');
-
         return response
     } catch (error) {
         console.error('Error founded in update mentor data ', error);
@@ -29,7 +27,6 @@ export const updateMentorData = async (id: string, data: object) => {
 export const updateMentorSessionPrice = async (data: object) => {
     try {
         const response = await privateApi.patch(`mentor/session-price`, data)
-        console.log(response, 'response update mentor session price in metorapi');
 
         return response
     } catch (error) {
@@ -53,7 +50,6 @@ export const getMentorData = async () => {
 
 export const createSlot = async (data: object) => {
     try {
-        console.log(data, 'data');
         const response = await privateApi.post('/mentor/slots', data)
 
         return response
@@ -127,7 +123,6 @@ export const getAllMentors = async () => {
 export const mentorSpecificData = async (id: string) => {
     try {
         const response = await api.get(`/${id}`)
-        console.log(response, 'response ');
 
         return response
     } catch (error) {

@@ -1,14 +1,6 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import { IReview } from '../interfaces/IReview';
 
-interface IReview extends Document {
-    courseId?: string;
-    mentorId?: string;
-    userId: string;
-    rating: number;
-    review: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
 
 const reviewSchema = new Schema<IReview>({
     courseId:   {type:String},

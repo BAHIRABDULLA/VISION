@@ -53,7 +53,6 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
 
 
     const handleMentorDataSubmit = async (data: mentorSchemaType) => {
-        console.log('submiting mentor data ');
         try {
             const response = await updateMentorData(userData?._id!, data)
             if (response?.data.success) {

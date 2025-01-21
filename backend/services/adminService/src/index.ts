@@ -11,9 +11,7 @@ dotenv.config()
 
 const app = express()
 
-rabbitmqConnect().then( () =>{
-    console.log('- - - -   rabbitmq connected admin  - - - - ');
-})
+rabbitmqConnect()
 
 app.use(cookieParser())
 app.use(cors({

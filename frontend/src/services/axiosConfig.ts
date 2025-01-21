@@ -15,8 +15,6 @@ export const privateApi = axios.create({
 
 privateApi.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
-    console.log(token, 'token in api interceptor ');
-
     if (token) {
         config.headers.Authorization = `Bearer ${token}`
     }
@@ -35,8 +33,6 @@ privateApi.interceptors.response.use(
             originalRequest._retry = true;
             try {
                 const response = await privateApi.get('/user/refresh-token');
-                console.log(response, 'response in axios config file');
-
                 if (response.status === 200) {
                     const newAccessToken = response.data.accessToken;
                     localStorage.setItem('accessToken', newAccessToken);

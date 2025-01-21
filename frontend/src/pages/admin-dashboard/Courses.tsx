@@ -28,12 +28,10 @@ const Courses = () => {
     const openModal = (course: CourseType, status: string) => {
         setSelectedCourse(course)
         setSelectedStatus(status)
-        console.log(selectedStatus, 'selected status');
 
         setIsModalOpen(true)
     }
     const closeModal = () => {
-        console.log('it is closed');
 
         setIsModalOpen(false)
         setSelectedCourse(null)
@@ -41,12 +39,9 @@ const Courses = () => {
 
 
     const confirmStatusChange = async () => {
-        console.log('=======================');
         
         if (selectedCourse) {
-            console.log(selectedCourse.name,'selected course.name', selectedStatus,'selected status');
             
-            console.log(`Status for ${selectedCourse.name} changed to: ${selectedStatus}`);
             const response = await updateCourseStatus(selectedCourse._id,selectedStatus)
             if(response?.status>=400){
                 toast.error(response?.data.message)
@@ -59,7 +54,6 @@ const Courses = () => {
         }
     }
 
-    console.log(courses, 'courses');
     useEffect(() => {
         const fetchCourseData = async () => {
             const response = await getAllCourses()

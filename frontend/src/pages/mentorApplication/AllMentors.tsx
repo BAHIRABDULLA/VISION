@@ -9,9 +9,7 @@ import { debounce } from 'lodash'
 
 const MentorPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1)
-    console.log(currentPage, 'current page ')
     const [totalPages, setTotalPages] = useState(0)
-    console.log(totalPages, 'total pages')
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState({
@@ -23,7 +21,6 @@ const MentorPage: React.FC = () => {
     });
     // const totalPages = 10
     // const handlePageChange = (page: number) => {
-    //     console.log(`Navigated to page ${page}`);
     //     setCurrentPage(page);
     // };
     const [mentors, setMentors] = useState([]);
@@ -42,10 +39,8 @@ const MentorPage: React.FC = () => {
                     page: currentPage,
                     limit: 10
                 }
-                console.log(paramsData, 'params data');
 
                 const resposne = await getAllMentorsWithParamsData(paramsData)
-                console.log(resposne, 'response - - -  in useeffetct mentors');
                 if (resposne?.data) {
                     setMentors(resposne.data.data)
                     setTotalPages(resposne?.data.pagination.totalPages)

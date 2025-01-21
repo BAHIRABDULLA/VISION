@@ -11,7 +11,6 @@ import toast, { Toaster } from "react-hot-toast";
 
 export const resourceSchema = z.object({
     title: z.string().min(1, { message: "Resource title is required" }),
-    subtitle: z.string().min(1, { message: "Resource subtitle is required" }),
     type: z.enum(['text', 'image', 'video'], { message: "Resource type is required" }),
     course: z.string().min(1, { message: "Course is required" }),
     level: z.string().min(1, { message: "Course level is required" }),
@@ -41,13 +40,10 @@ const AddResources = () => {
     const [contentType, setContentType] = useState("text");
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState('')
-    console.log(selectedCourse, 'selected course ');
 
     const [selelctedLevel, setSelectedLevel] = useState('')
-    console.log(selelctedLevel, 'selected level ');
 
     const [topics, setTopics] = useState([])
-    console.log(courses, 'course ');
 
 
     // const [level, setLevel] = useState("Basic");
@@ -72,7 +68,6 @@ const AddResources = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             const response = await getAllCourses()
-            console.log(response, 'responspe');
             if (response?.data) {
                 setCourses(response.data.data)
             }
@@ -101,7 +96,6 @@ const AddResources = () => {
     const onSubmit = async (data: resourceSchemaType) => {
         const formData = new FormData();
         formData.append("title", data.title.trim());
-        formData.append("subtitle", data.subtitle.trim());
         formData.append("type", data.type.trim());
         formData.append("course", data.course.trim());
         formData.append("level", data.level.trim());
@@ -114,7 +108,6 @@ const AddResources = () => {
         }
     
         const response =  await addResource(formData); 
-        console.log(response,'response in add resource');
         
         if(response.status&& response.status>=400){
             return toast.error(response.data.message||'There is an error occured')
@@ -133,9 +126,6 @@ const AddResources = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" encType="multipart/form-data">
                 <TextField label="Title" fullWidth className="bg-white" variant="outlined" {...register('title')} />
                 {errors.title && <p className="text-red-500">{errors.title.message}</p>}
-
-                <TextField label="Subtitle" fullWidth className="bg-white" variant="outlined" {...register('subtitle')} />
-                {errors.subtitle && <p className="text-red-500">{errors.subtitle.message}</p>}
 
                 <FormControl fullWidth className="bg-white">
                     <InputLabel>Type of Content</InputLabel>

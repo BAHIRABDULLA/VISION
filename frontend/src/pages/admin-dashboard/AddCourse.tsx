@@ -29,7 +29,6 @@ const AddCourse = () => {
 
   const onSubmit = async (data: courseShemaType) => {
     try {
-      console.log(data, 'data in onsubmt');
       const curriculumData = [
         {
           level: 'Basic',
@@ -57,7 +56,6 @@ const AddCourse = () => {
       //   console.log(key, '}}}}}}}}',formData[key]);
       // }
       const response = await addCourse(formData)
-      console.log(response, 'response in add couirse .tsx');
       if (response?.data) {
         toast.success("Course added");
         navigate('/admin/courses')
@@ -75,8 +73,6 @@ const AddCourse = () => {
 
     if (file) {
       setSelectedImage(file)
-      console.log(selectedImage, 'selected image ');
-
       // setSelectedImage(URL.createObjectURL(file))
       // setImageFile(file)
     }

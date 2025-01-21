@@ -30,18 +30,12 @@ const CategoriesSkills: React.FC = () => {
     }
     const saveCategory = async () => {
         try {
-            console.log(newCategory, 'new category');
-            console.log(skills, 'skills');
-            console.log(editingCategory, 'editing category');
-    
             const data = { category: newCategory, skills };
             
     
             if (editingCategory) {
                 const id = editingCategory._id; 
-                console.log(data, 'data for update');
                 const response = await updateCategory(id, data);
-                console.log(response,'respnse for update cateodoguyy ');
                 
                 if (response?.status < 400) {
                     setCategories((prevCategories) =>
@@ -54,9 +48,7 @@ const CategoriesSkills: React.FC = () => {
                     toast.error(response?.data?.message || 'Failed to update category');
                 }
             } else {
-                console.log(data, 'data for new category');
                 const response = await saveNewCategory(data);
-                console.log(response,'response in for save category');
                 
                 if (response?.status < 400 && response.data?._doc) {
                     setCategories((prevCategories) => [
@@ -80,12 +72,10 @@ const CategoriesSkills: React.FC = () => {
 
 
     const editCategory = (category: any) => {
-        console.log(category, 'category in edit category');
         setEditingCategory(category)
         setNewCategory(category.name)
         setSkills(category.skills)
         setIsModalOpen(true)
-        console.log(editingCategory, 'editin category');
 
     }
 
@@ -100,7 +90,6 @@ const CategoriesSkills: React.FC = () => {
         const fetchCategories = async () => {
 
             const response = await getAllCategories()
-            console.log(response, 'resopnse for fetch categoires');
 
             if (response) {
                 setCategories(response.data.categories)

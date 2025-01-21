@@ -21,6 +21,7 @@ const signUpSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters long" })
     .regex(/[a-zA-Z]/, { message: "Password must contain at least one letter" })
     .regex(/[0-9]/, { message: "Password must contain at least one number" })
+    .refine(val => !/\s/.test(val), 'Password cannot contain spaces')
 });
 
 type SignUpSchemaType = z.infer<typeof signUpSchema>;
@@ -39,11 +40,9 @@ const AuthSignUp: React.FC = () => {
   const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
     const role = isMentee ? 'mentee' : 'mentor';
     try {
-      console.log('data:', data);
       const { fullName, email, password } = data
       const response = await signUpRequest( email);
       if (response.success) {
-        console.log(response,'response in sign up request ');
         
         navigate('/otp-signup', { state: { fullName,email,password,role, type: 'signup' } });
       } else {
@@ -63,8 +62,8 @@ const AuthSignUp: React.FC = () => {
       </div>
 
       {/* Right side with form */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8">
-        <h2 className="text-3xl font-semibold mb-8">Sign Up</h2>
+      <div className="flex-1 flex flex-col items-center bg-white justify-center p-8">
+        <h2 className="text-3xl text-black font-semibold mb-8">Sign Up</h2>
 
         {/* Role selection buttons */}
         <div className="flex justify-center w-full mb-4">

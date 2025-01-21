@@ -47,7 +47,6 @@ export class AuthService implements IAuthService {
             const existingUser = await this.userRepository.findByEmail(email)
 
             if (existingUser && existingUser.isVerified) {
-                console.log(existingUser.isVerified, 'existnig user ');
                 return createResponse(false, "User already exits")
             }
             const otp = generateOtp()
@@ -91,7 +90,6 @@ export class AuthService implements IAuthService {
                     userData.isMentorFormFilled = false
                 }
                 const newUser = await this.userRepository.create(userData)
-                console.log(newUser, ' new User in auth service ');
 
                 // await this.userRepository.updateUserField(email, 'isVerified', true)
                 await this.otpRepository.deleteOtp(email)
@@ -140,7 +138,6 @@ export class AuthService implements IAuthService {
                 }
             }
             const password = randomPassword
-            console.log(randomPassword, 'randomPassword');
 
             const hashedPassword = await hashPassword(password)
             userData = await this.userRepository.create({
@@ -186,7 +183,6 @@ export class AuthService implements IAuthService {
             // }
             const accessToken = generateAccessToken({ id: checkuser._id.toString(), email, role: checkuser.role })
             const refreshToken = generateRefreshToken({ id: checkuser._id.toString(), email, role: checkuser.role })
-            console.log(refreshToken, 'refresh token in auth.service');
 
             return { success: true, message: "Sign in successfully completed", checkuser, accessToken, refreshToken };
         } catch (error) {
@@ -197,7 +193,6 @@ export class AuthService implements IAuthService {
 
     async sendMail(email: string) {
         try {
-            console.log('-----    sendMail function auth.service   ----');
 
             const isUser = await this.userRepository.findByEmail(email)
             if (!isUser || isUser.isVerified === false) {
@@ -237,7 +232,6 @@ export class AuthService implements IAuthService {
             }
 
             const updateMentor = await this.userRepository.update(id, updateData)
-            console.log(updateMentor, 'update mentor ');
 
             return { updateMentor }
         } catch (error) {
@@ -250,13 +244,11 @@ export class AuthService implements IAuthService {
     async passwordUpdate(id: string, data: PasswordUpdate) {
         try {
             const { currentPassword, newPassword, confirmPassword } = data
-            console.log(currentPassword, newPassword, confirmPassword, '))))');
             const checkUser = await this.userRepository.findById(id)
             if (!checkUser) {
                 return { success: false, message: 'not user' }
             }
             const checkPassword = await bcrypt.compare(currentPassword, checkUser.password)
-            console.log(checkPassword, 'checkPassword');
 
             if (!checkPassword) {
                 return { success: false, message: 'wrong password' }
@@ -266,7 +258,6 @@ export class AuthService implements IAuthService {
             }
             const hashedPassword = await hashPassword(newPassword)
             const updatePassword = await this.userRepository.update(id, { password: hashedPassword })
-            console.log(updatePassword, 'update password');
             if (!updatePassword) {
                 return { success: false, message: 'not updated' }
             }

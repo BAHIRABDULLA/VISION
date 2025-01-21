@@ -14,7 +14,9 @@ class CourseRepository extends BaseRepository<ICourse> implements ICourseReposit
         }   
         throw new Error("Method not implemented.")
     }
-    
 
+    async findByUserId(userId:string){
+        
+    }
 }
 export default CourseRepository

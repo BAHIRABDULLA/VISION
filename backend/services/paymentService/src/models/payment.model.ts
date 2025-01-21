@@ -1,18 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { IPayment } from '../interfaces/IPayment';
 
-export interface IPayment extends Document {
-    userEmail: string;
-    amount: number;
-    status: 'pending' | 'completed';
-    type: 'course_purchase' | 'mentorship_subscription' | 'one_time_payment';
-    courseId?: string;
-    menteeId:string;
-    mentorId?: string;
-    subscriptionPeriod?: string;
-    stripeSessionId?: string;
-    stripePaymentIntentId?: string
-    createdAt: Date;
-}
 
 const paymentSchema = new Schema<IPayment>({
     userEmail: { type: String, required: true },

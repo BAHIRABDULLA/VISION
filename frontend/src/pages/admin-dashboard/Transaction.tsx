@@ -5,14 +5,10 @@ import { getAllTransaction } from '@/services/paymentApi';
 const Transaction = () => {
 
     const [transactions, setTransactions] = React.useState([]);
-    console.log(transactions, 'transaction');
-
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
                 const response = await getAllTransaction()
-                console.log(response, 'response in transaction');
-
                 setTransactions(response.data.transactions);
             } catch (error) {
                 console.error(error);

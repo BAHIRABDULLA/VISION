@@ -1,9 +1,12 @@
 import { useState } from "react";
 
 import { PenTool, Star } from "lucide-react";
+import toast from "react-hot-toast";
+import { createCourseReview } from "@/services/paymentApi";
 
-const RatingAndReview = () => {
+const RatingAndReview = (props) => {
 
+    const review = props.review
     const mentorr = {
         reviews: [
             {
@@ -65,6 +68,31 @@ const RatingAndReview = () => {
     //     rating: 0,
     //     content: ''
     // })
+
+    const handleAddReview = async () => {
+
+        try {
+            if (!review) {
+                toast.error('Review is empty')
+                return
+            }
+            const data = {
+                courseId: 'id',
+                rating: 5,
+                review: review
+            }
+            const response = await createCourseReview(data)
+            if (response?.status && response?.status >= 400) {
+                toast.error(response?.data.message || 'Failed to add review')
+                return
+            }
+
+            toast.success('Review added successfully')
+        } catch (error) {
+
+        }
+        setIsAddingReview(false)
+    }
 
     return (
         <div className="space-y-6">

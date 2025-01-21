@@ -1,3 +1,4 @@
+import { paymentService } from "../../config/injection";
 import { getChannel } from "../../config/rabbitmq";
 
 
@@ -11,9 +12,11 @@ export async function receiveMessage(){
         const {queue}  = await channel.assertQueue('',{exclusive:true})
         await channel.bindQueue(queue,exchange,'')
         console.log('Waiting for messages in course service');
-        channel.consume(queue,(msg)=>{
+        channel.consume(queue,async(msg)=>{
             if(msg){
                 console.log(`message recieive course service ${msg.content.toString()}`);
+                await paymentService.savePaymentData(JSON.parse(msg.content.toString()))
+
             }
         },{noAck:true})
         

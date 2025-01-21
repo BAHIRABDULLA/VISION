@@ -7,6 +7,7 @@ import { ISlotService } from "../interface/ISlot.service";
 import CustomError from "../../utils/custom.error";
 import { HttpStatus } from "../../enums/http.status";
 import { IPaymentRepository } from "../../repositories/interface/IPayment.repository";
+import axios from "axios";
 
 
 
@@ -20,10 +21,7 @@ export class SlotService implements ISlotService {
     async createSlot(time: string, availableDays: string[], mentorId: string) {
         try {
             const response = await this.slotRepository.createOrUpdateSlots(time, availableDays, mentorId)
-            console.log(response, 'ersponse in create slot');
-
             // const response = await this.slotRepository.create(data)
-            console.log(response, 'response in create slot');
             return response
         } catch (error) {
             console.error('Error founded in slot service', error);
@@ -53,14 +51,12 @@ export class SlotService implements ISlotService {
     }
 
 
-    async bookSlot(mentorId: string, menteeId: string, time: string, date: Date): Promise<IBooking | null> {
+    async bookSlot(mentorId: string, menteeId: string, time: string, date: Date, token: string): Promise<IBooking | null> {
         try {
 
-            console.log(mentorId, 'mentorId', menteeId, 'menteeId', time, 'time', date, 'date  in booking slot');
 
             const findAnyoneBookedSession = await this.bookingRepository.findByBookingData(mentorId, date, time)
             if (findAnyoneBookedSession) {
-                console.log(findAnyoneBookedSession, 'findanyone booked session');
                 throw new CustomError("Session already purchased ", HttpStatus.BAD_REQUEST)
 
             }
@@ -69,7 +65,6 @@ export class SlotService implements ISlotService {
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const dayName = days[dayIndex]
             const checkSessionBooked = await this.paymentRepository.findByMenteeAndMentorId(menteeId, mentorId)
-            console.log(checkSessionBooked, 'check session booked')
             if (!checkSessionBooked) {
                 throw new CustomError('Please purchase any Mentorship plans', HttpStatus.NOT_FOUND)
             }
@@ -108,6 +103,15 @@ export class SlotService implements ISlotService {
                 time
             }
             const response = await this.bookingRepository.create(data)
+            const sendDataToPaymentService = await axios.post('http://localhost:4000/payment/booking/create',
+                response,
+                {
+                    headers:
+                        { Authorization: `Bearer ${token}` }
+                }
+            )
+            // console.log(sendDataToPaymentService,'sendDataToPaymentService');
+            
             return response
         } catch (error) {
             console.error('Error founded in bookslot service', error);
@@ -115,27 +119,22 @@ export class SlotService implements ISlotService {
         }
     }
 
-    async getBookingSlotDetails(bookingId:string){
+    async getBookingSlotDetails(bookingId: string) {
         try {
-            
-            const response  = await this.bookingRepository.findById(bookingId)
-            // console.log(response,'response in booking slot service------');
-            
+
+            const response = await this.bookingRepository.findById(bookingId)
             return response
         } catch (error) {
-            console.error('Error founded in get booking details in service',error);
+            console.error('Error founded in get booking details in service', error);
             throw error
         }
     }
 
     async getBookingSlot(userId: string, role: string): Promise<Partial<IBooking[]> | null> {
         try {
-            console.log(role, 'role in get booking slot', userId, 'userId in get booking slot');
 
             const response = await this.bookingRepository.findByUserId(userId, role)
-            // console.log(response, 'response in get booking slot');
             return response
-
         } catch (error) {
             console.error('Error founded in get booking slot in slot service', error);
             throw error

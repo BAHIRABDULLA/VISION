@@ -3,8 +3,11 @@ import ApplyMentor2 from './ApplyMentor2'
 import ApplyMentor1 from './ApplyMentor1'
 import { applyMentor } from '@/services/mentorApi'
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { resetApplicationData, setFirstComponentData } from '@/redux/slices/mentorApplicationSlice';
 
 const ApplyMentor = () => {
+    const dispatch = useDispatch()
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState({})
     const location = useLocation()
@@ -13,8 +16,7 @@ const ApplyMentor = () => {
     const navigate = useNavigate()
 
     const handleNextstep = (data: any) => {
-        console.log(data,'data dddd');
-        
+        dispatch(setFirstComponentData(data))
         setFormData({ ...formData, ...data })
         setStep(step + 1)
     }
@@ -22,10 +24,10 @@ const ApplyMentor = () => {
         setStep(step - 1)
     }
     const handleFinish = async (data: any) => {
+        dispatch(resetApplicationData())
         const finalData = { ...formData, ...data }
         const formDataObj = new FormData()
         for (const key in finalData) {
-            console.log(key, 'key', finalData[key], 'finalData[key]')
             if (key === 'file') {
                 if (finalData.file.length > 0) {
                     formDataObj.append(key, finalData.file[0])
@@ -40,15 +42,11 @@ const ApplyMentor = () => {
 
         const response = await applyMentor(formDataObj)
         if (response.data.success) {
-            console.log(response.data, 'response datae');
-
             navigate('/thanks-mentor')
         } else {
             navigate('/signup')
         }
     }
-
-
     return (
         <div className=''>
             {step == 1 && <ApplyMentor1 onNext={handleNextstep} />}

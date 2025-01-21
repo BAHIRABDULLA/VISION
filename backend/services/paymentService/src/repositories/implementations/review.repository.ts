@@ -1,4 +1,4 @@
-import { IReview, Review } from "../../models/review.model";
+import {  IReview, Review } from "../../models/review.model";
 import { IReviewRepository } from "../interface/IReview.repository";
 import BaseRepository from "./base.repository";
 

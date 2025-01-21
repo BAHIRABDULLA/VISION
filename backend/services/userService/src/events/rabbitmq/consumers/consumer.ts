@@ -13,20 +13,16 @@ export const consumerMentorQueue = async (userService:UserService,authService:Au
     try {
         const channel = getChannel()
         const queue = 'mentorData'
-        console.log(queue, 'queue in counsumer mentor queue ');
 
         await channel.assertQueue(queue, { durable: true })
         channel.consume(queue, async (msg) => {
             if (msg !== null) {
                 const payload = JSON.parse(msg.content.toString())
-                console.log(payload, 'mentorData&&&&&&&&s');
-                console.log(payload.mentor, payload.profile,'payload.profile');
-                
+                console.log(msg, 'msg in userService events');                
                 
                 await userService.uploadMentorData(payload)
                 await authService.updateFormFieldAndPhoto(payload.mentor, payload.profile)
                 channel.ack(msg)
-                console.log('Listening to mentorQueue...');
             }
         })
     } catch (error) {

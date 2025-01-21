@@ -6,6 +6,7 @@ import { setRefreshTokenCookie } from "../utils/tokenCookie.util";
 import { createResponse, sendResponse } from "../utils/response.handler";
 import { generateAccessToken } from "../utils/token.util";
 import { IAuthService } from "../services/interface/IAuth.service";
+import { signUpSchema } from "../validators/user.validator";
 interface CustomeRequest extends Request {
     user?: string | JwtPayload,
 }
@@ -15,15 +16,12 @@ export class AuthController {
 
 
     constructor(authService: IAuthService) {
-        console.log('AuthController constructed:', !!authService);
         this.authService = authService
     }
 
     async signup(req: Request, res: Response) {
         try {
             const { email } = req.body
-            console.log(email, 'email in sign u p  up ');
-            console.log(req.body, 'reqq.   bbbbooodyddydy');
 
 
             const user = await this.authService.signUp(email)
@@ -40,8 +38,7 @@ export class AuthController {
         try {
 
             const { fullName, email, password, role, otp ,type} = req.body
-            console.log(req.body, 'rq.body ');
-            console.log(fullName, 'fullname', email, 'email', password, 'passowrd', role, 'role', otp, 'otp');
+            signUpSchema.safeParse(req.body)
 
 
             const result = await this.authService.verifySignUpOtp(fullName, email, password, role, otp,type)
@@ -51,7 +48,6 @@ export class AuthController {
 
                 if (result.data?.role === 'mentee') {
                     setRefreshTokenCookie(res, result.data.refreshToken!, role)
-                    console.log(result.data.user);
                     
                     return res.status(HttpStatus.OK).json({
                         success: true, message: result?.message, accessToken: result?.data.accessToken,
@@ -81,7 +77,6 @@ export class AuthController {
 
 
     async signin(req: Request, res: Response) {
-        console.log('Signin called:', !!this.authService);
         try {
             const { email, password, role } = req.body
             const result = await this.authService.signIn(email, password, role)
@@ -145,7 +140,6 @@ export class AuthController {
     async setNewAccessToken(req: Request, res: Response) {
         try {
             const refreshToken = req.cookies.refreshToken
-            console.log(refreshToken, 'refreshToken');
 
             if (!refreshToken) return res.status(HttpStatus.FORBIDDEN).json({ message: "No refresh token provided" })
             const secret = process.env.REFRESH_TOKEN_SECRET
@@ -153,10 +147,8 @@ export class AuthController {
                 return res.json({ message: "internal server error" })
             }
             const decoded = jwt.verify(refreshToken, secret)
-            console.log(decoded, 'decoded in refresh token ');
 
             if (typeof decoded === 'object' && decoded !== null && 'id' in decoded && 'email' in decoded && 'role' in decoded) {
-                console.log('its entere herer  herere ');
 
                 // const newAccessToken = jwt.sign({ id: (decoded as JwtPayload).id, role: (decoded as JwtPayload).role }, process.env.ACCESS_TOKEN_SECRET!, {
                 //     expiresIn: '15m',
@@ -183,7 +175,6 @@ export class AuthController {
 
         try {
             const refreshToken = req.cookies['refreshToken-mr']
-            console.log(refreshToken, 'refreshToken-mr');
 
             if (!refreshToken) return res.status(HttpStatus.FORBIDDEN).json({ message: "No refresh token provided" })
             const secret = process.env.REFRESH_TOKEN_SECRET
@@ -191,7 +182,6 @@ export class AuthController {
                 return res.json({ message: "internal server error" })
             }
             const decoded = jwt.verify(refreshToken, secret)
-            console.log(decoded, 'decoded in refresh token ');
 
             if (typeof decoded === 'object' && decoded !== null && 'id' in decoded && 'email' in decoded && 'role' in decoded) {
                 const newAccessToken = generateAccessToken({ id: (decoded as JwtPayload).id, email: (decoded as JwtPayload).email, role: (decoded as JwtPayload).role })
@@ -217,7 +207,6 @@ export class AuthController {
                 res.json({ success: false, message: "user does not existed" })
             }
             const data = req.body
-            console.log(data, 'data in change password controller ');
 
             const passwordUpdate = await this.authService.passwordUpdate(user.id, data)
             if (passwordUpdate?.success) {
@@ -235,7 +224,6 @@ export class AuthController {
 
     async logout(req: Request, res: Response) {
         try {
-            console.log('logot here - - - - - - - ');
             res.clearCookie('refreshToken')
             return res.json({ message: "Logged out successfully" })
         } catch (error) {

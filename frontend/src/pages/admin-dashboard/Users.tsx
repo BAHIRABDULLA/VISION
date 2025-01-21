@@ -19,12 +19,10 @@ interface User {
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
-  console.log(users, 'useras, use s user');
 
   const allUsers = async () => {
     try {
       const response = await getAllUsers()
-      console.log(response, 'response in Users in admin s_e ');
       if (response && Array.isArray(response.data.users)) {
         setUsers(response.data.users)
       } else {
@@ -38,9 +36,6 @@ const Users: React.FC = () => {
   }
   useEffect(() => {
     allUsers()
-
-    // console.log(users[users.length-1].isApproved,'users[users.length-1].isApproved');
-
   }, [])
 
 

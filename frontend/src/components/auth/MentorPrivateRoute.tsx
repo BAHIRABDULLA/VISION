@@ -3,9 +3,7 @@ import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
 
-const MentorPrivateRoute= ({children}:any) => {
-   console.log('its here bro btro bro bro ');
-   
+const MentorPrivateRoute= ({children}:any) => {   
   const isAuthenticated = useSelector((state:RootState)=>state.mentorAuth.isAuthenticated)
   return isAuthenticated?children:<Navigate to='/signin'/>;
 }

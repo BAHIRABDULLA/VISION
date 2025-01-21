@@ -14,17 +14,13 @@ const authenticateToken = (req: CustomeRequest, res: Response, next: NextFunctio
             return res.status(401).json({ message: "Access denied . No token provided" })
         }
         const newToken = token?.split(' ')[1]
-        console.log(newToken, 'token in admin auth middleware ');
 
         const secret = process.env.ACCESS_TOKEN_SECRET
         const decodedToken = jwt.decode(newToken, { complete: true });
-        console.log(decodedToken, 'decoded token ');
-
         if (!secret) {
             throw new Error('Access token secret is not defined')
         }
         jwt.verify(newToken, secret, (err, user) => {
-            console.log('/ / / / / / / / / / / / / /');
 
             if (err) {
                 return res.status(401).json({ message: 'Invalid token' });
