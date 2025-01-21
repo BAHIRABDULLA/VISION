@@ -12,10 +12,8 @@ const Resource = () => {
 
 
   const [resources,setResources] = useState([])
-  console.log(resources,'resources .  . .  . ');
   if(resources){
     resources.map((res)=>{
-      console.log(res,'+++++++++++++');
     })
   }
  
@@ -24,7 +22,6 @@ const Resource = () => {
     const fetchResources = async ()=>{
       try {
         const response = await getResources()
-        console.log(response,'response');
         if(response?.status&&response?.status>=400){
           toast.error(response?.data.message || 'An error occured')
         }else{

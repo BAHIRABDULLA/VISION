@@ -1,6 +1,7 @@
 import { HttpStatus } from "../../enums/http.status";
 import { sendUserData } from "../../events/rabbitmq/producers/producer";
 import { IMentor } from "../../interfaces/IMentor";
+import IUser from "../../interfaces/IUser";
 import { User } from "../../models/user.model";
 import { MentorRepository } from "../../repositories/implementation/mentor.repository";
 import IUserRepository from "../../repositories/interface/IUser.repository";
@@ -29,16 +30,12 @@ export class UserService implements IUserService {
     async getUser(id: string) {
         try {
             const user = await this.userRepository.findById(id)
-            console.log(user, 'user, = = = = = = = ');
 
             if (user?.role === 'mentor') {
                 const mentorData = await this.mentorRepository.findMentor(id)
-                console.log(mentorData, 'this is mentordata ');
                 const mergedData = {
                     ...user.toObject(), ...mentorData?.toObject()
                 }
-                console.log(mergedData, '///////////////////');
-
                 return mergedData
             }
             return user
@@ -51,7 +48,6 @@ export class UserService implements IUserService {
     async uploadMentorData(data: IMentor) {
         try {
             const response = await this.mentorRepository.updateOrInsert(data._id.toString(), data)
-            console.log(response, 'response ');
         } catch (error) {
             console.error('error fonded in upload mentor data', error);
             throw error
@@ -67,19 +63,19 @@ export class UserService implements IUserService {
     }
 
 
-    async updateUserApproval(id: string, isApproved: "pending" | "approved" | "rejected") {
+    async updateUserApproval({ id, isApproved
+    }: { id: string, isApproved: "pending" | "approved" | "rejected" }): Promise<IUser | null> {
         try {
             if (!['pending', 'approved', 'rejected'].includes(isApproved)) {
                 throw new CustomError("Invalid approval status", HttpStatus.BAD_REQUEST)
             }
             const updatedUser = await User.findByIdAndUpdate(
                 id, { isApproved }, { new: true });
-            console.log(updatedUser, 'update  user ');
 
             if (!updatedUser) {
                 throw new CustomError("User not founded", HttpStatus.BAD_REQUEST)
             }
-            await sendUserData('mentorApproval', { id, isApproved})
+            await sendUserData('mentorApproval', { id, isApproved })
             await sendEmail(updatedUser?.email,
                 'Your Mentor Application is Approved!',
                 `
@@ -100,14 +96,12 @@ export class UserService implements IUserService {
     }
 
 
-    async updateUserStatus(id:string,isActive:boolean){
+    async updateUserStatus(id: string, isActive: boolean) {
         try {
-            const response = await this.userRepository.update(id,{isActive:isActive})
-             console.log(response,'response in update use status');
-
+            const response = await this.userRepository.update(id, { isActive: isActive })
             return response
         } catch (error) {
-            console.error("Error founded in update user status",error);
+            console.error("Error founded in update user status", error);
             throw error
         }
     }

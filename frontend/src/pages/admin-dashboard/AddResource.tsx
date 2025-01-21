@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { TextField, MenuItem, Select, FormControl, InputLabel, Button, Typography } from "@mui/material";
-import {useParams } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { addResource, getAllCourses } from "@/services/courseApi";
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { courseShemaType } from "./AddCourse";
 import toast, { Toaster } from "react-hot-toast";
-import {  getAllCourses, getResourceDetails } from "@/services/courseApi";
-
 
 
 export const resourceSchema = z.object({
     title: z.string().min(1, { message: "Resource title is required" }),
-    subtitle: z.string().min(1, { message: "Resource subtitle is required" }),
     type: z.enum(['text', 'image', 'video'], { message: "Resource type is required" }),
     course: z.string().min(1, { message: "Course is required" }),
     level: z.string().min(1, { message: "Course level is required" }),
@@ -33,28 +30,21 @@ export const resourceSchema = z.object({
 
 type resourceSchemaType = z.infer<typeof resourceSchema>
 
-type levelCourses = {
-    level: 'basic' | 'intermediate' | 'advanced',
-    topics: string[]
+type levelCourses ={
+    level:'basic'|'intermediate'|'advanced',
+    topics:string[]
 }
+const AddResources = () => {
 
-
-const EditResource = () => {
-
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
     const [contentType, setContentType] = useState("text");
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState('')
-    console.log(selectedCourse, 'selected course ');
-    const [resource, setResource] = useState<resourceSchemaType>()
-    console.log(resource, 'resource in edit resource');
 
     const [selelctedLevel, setSelectedLevel] = useState('')
-    console.log(selelctedLevel, 'selected level ');
 
     const [topics, setTopics] = useState([])
-    console.log(courses, 'course ');
-    const params = useParams()
+
 
     // const [level, setLevel] = useState("Basic");
     const [content, setContent] = useState<File | null>(null);
@@ -62,16 +52,7 @@ const EditResource = () => {
 
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<resourceSchemaType>({
-        resolver: zodResolver(resourceSchema),
-        defaultValues: {
-            title: resource?.title,
-            subtitle: resource?.subtitle,
-            type: resource?.type,
-            course: resource?.course,
-            level: resource?.level,
-            topic: resource?.topic,
-            content: resource?.content
-        }
+        resolver: zodResolver(resourceSchema)
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,36 +66,8 @@ const EditResource = () => {
 
     })
     useEffect(() => {
-        const fetchResource = async () => {
-            const response = await getResourceDetails(params.id);
-            if (response?.status && response?.status >= 400) {
-                toast.error(response?.data?.message || 'An error occurred');
-            } else if (response?.data) {
-                const resourceData = {
-                    ...response.data,
-                    subtitle: response.data.subTitle,
-                };
-                setResource(resourceData);
-                // setValue("title", resourceData.title);
-                // setValue("subtitle", resourceData.subtitle);
-                // setValue("type", resourceData.type);
-                setSelectedCourse(resourceData.course.name);
-                setSelectedLevel(resourceData.level);
-                // setValue("topic", resourceData.topic);
-
-                if (resourceData.content && resourceData.type !== "text") {
-                    setContent(resourceData.content);
-                    setContentType(resourceData.type);
-                }
-            }
-        };
-        fetchResource();
-    }, [params.id, setValue]);
-
-    useEffect(() => {
         const fetchCourses = async () => {
             const response = await getAllCourses()
-            console.log(response, 'responspe');
             if (response?.data) {
                 setCourses(response.data.data)
             }
@@ -124,68 +77,55 @@ const EditResource = () => {
 
     useEffect(() => {
         if (selectedCourse && selelctedLevel) {
-            const course: any = courses.find((course: courseShemaType) => course.name === selectedCourse)
+            const course:any  = courses.find((course:courseShemaType) => course.name === selectedCourse)
             if (course && course.curriculum) {
-                const levelTopics: levelCourses = course.curriculum.find((item) => {
+                const levelTopics:levelCourses = course.curriculum.find((item) => {
                     return item.level === selelctedLevel
                 })
                 setTopics(levelTopics ? levelTopics.topics : [])
-                setValue('topic', resource?.topic)
             } else {
                 setTopics([])
             }
         } else {
             setTopics([])
         }
-    }, [selectedCourse, selelctedLevel, courses, resource?.topic])
+    }, [selectedCourse, selelctedLevel, courses])
 
 
 
     const onSubmit = async (data: resourceSchemaType) => {
         const formData = new FormData();
         formData.append("title", data.title.trim());
-        formData.append("subtitle", data.subtitle.trim());
         formData.append("type", data.type.trim());
         formData.append("course", data.course.trim());
         formData.append("level", data.level.trim());
         formData.append("topic", data.topic.trim());
-
-        if (content) {
+    
+        if (content) { 
             formData.append("content", content);
-        } else {
-            formData.append("content", data.content)
+        }else{
+            formData.append("content",data.content)
         }
-        for (let pair of formData.entries()) {
-            console.log(pair[0], pair[1], 'pair in form data');
+    
+        const response =  await addResource(formData); 
+        
+        if(response.status&& response.status>=400){
+            return toast.error(response.data.message||'There is an error occured')
+        }else{
+            navigate('/admin/resources')
         }
-        try {
-            // const response =  await editResource(formData, 'id'); 
-            // console.log(response,'response in add resource');
-
-            // if(response.status&& response.status>=400){
-            //     return toast.error(response.data.message||'There is an error occured')
-            // }else{
-            //     navigate('/admin/resources')
-            // }
-        } catch (error) {
-            console.error('Error founded in edit resource', error);
-        }
-
     };
-
+    
 
     return (
         <div className="max-w-3xl mx-auto p-6   rounded-md">
-            <Toaster />
+            <Toaster/>
             <Typography variant="h4" className="text-center font-bold mb-6">
                 Add Resource
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" encType="multipart/form-data">
-                <TextField label="Title" defaultValue={resource?.title} fullWidth className="bg-white" variant="outlined" {...register('title')} />
+                <TextField label="Title" fullWidth className="bg-white" variant="outlined" {...register('title')} />
                 {errors.title && <p className="text-red-500">{errors.title.message}</p>}
-
-                <TextField label="Subtitle" defaultValue={resource?.subtitle} fullWidth className="bg-white" variant="outlined" {...register('subtitle')} />
-                {errors.subtitle && <p className="text-red-500">{errors.subtitle.message}</p>}
 
                 <FormControl fullWidth className="bg-white">
                     <InputLabel>Type of Content</InputLabel>
@@ -198,8 +138,8 @@ const EditResource = () => {
                         <MenuItem value="image">Image</MenuItem>
                         <MenuItem value="video">Video</MenuItem>
                     </Select>
-                    {errors.type && <p className="text-red-500">{errors.type.message}</p>}
                 </FormControl>
+                {errors.type && <p className="text-red-500">{errors.type.message}</p>}
 
 
                 <FormControl fullWidth className="bg-white">
@@ -215,8 +155,8 @@ const EditResource = () => {
                             </MenuItem>
                         ))}
                     </Select>
-                    {errors.course && <p className="text-red-500">{errors.course.message}</p>}
                 </FormControl>
+                {errors.course && <p className="text-red-500">{errors.course.message}</p>}
 
 
                 <FormControl fullWidth className="bg-white">
@@ -229,14 +169,13 @@ const EditResource = () => {
                             <MenuItem key={lvl} value={lvl}> {lvl} </MenuItem>
                         ))}
                     </Select>
-                    {errors.level && <p className="text-red-500">{errors.level.message}</p>}
                 </FormControl>
+                {errors.level && <p className="text-red-500">{errors.level.message}</p>}
 
 
                 <FormControl fullWidth className="bg-white mb-4">
                     <InputLabel>Topic</InputLabel>
                     <Select
-                        value={resource?.topic}
                         variant="outlined"  {...register('topic')}
                         disabled={!topics.length}
                     >
@@ -246,12 +185,12 @@ const EditResource = () => {
                             </MenuItem>
                         ))}
                     </Select>
-                    {errors.topic && <p className="text-red-500">{errors.topic.message}</p>}
                 </FormControl>
+                {errors.topic && <p className="text-red-500">{errors.topic.message}</p>}
 
 
                 {contentType === "text" && (
-                    <TextField defaultValue={resource?.content}
+                    <TextField
                         label="Content" fullWidth multiline rows={4}
                         className="bg-white"
                         variant="outlined" {...register('content')}
@@ -305,4 +244,4 @@ const EditResource = () => {
     );
 };
 
-export default EditResource;
+export default AddResources;

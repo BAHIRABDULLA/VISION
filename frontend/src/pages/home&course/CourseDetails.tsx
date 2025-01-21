@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronLeft, PenTool, Star } from 'lucide-react';
+import { ChevronLeft, Clock, PenTool, Star } from 'lucide-react';
 import Header from '@/components/Header';
 import { useParams } from 'react-router-dom';
 import { getCourseDetails } from '@/services/courseApi';
@@ -9,10 +9,11 @@ import Footer from '@/components/Footer';
 import { loadStripe } from '@stripe/stripe-js'
 import { createCheckoutSession, createCourseReview, getAllCourseReviews, getCoursePaymentDetails } from '@/services/paymentApi';
 import { Link } from 'react-router-dom';
+import RatingAndReview from '@/components/RatingAndReview';
+import CurriculumCard from '@/features/user/CurriculumCard';
 
 
 const publicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
-console.log(publicKey, 'public key');
 
 const stripePromise = loadStripe(publicKey)
 
@@ -33,7 +34,8 @@ const CourseDetails = () => {
 
 
     const { id } = useParams<{ id: string }>()
-    console.log(id, 'id is here bro  . . . ');
+    const [activeTab, setActiveTab] = useState('overview');
+
     const [course, setCourse] = useState<CourseDetailProps | null>(null)
     const [loading, setLoading] = useState(true)
     const [isPurchase, setIsPurchase] = useState(true)
@@ -45,7 +47,6 @@ const CourseDetails = () => {
         const fetchPaymentDetails = async () => {
             if (id) {
                 const response = await getCoursePaymentDetails(id)
-                console.log(response, 'response in fetch payment details');
                 if (response?.status === 200) {
                     setIsPurchase(false)
                 } else {
@@ -61,7 +62,6 @@ const CourseDetails = () => {
             if (id) {
                 try {
                     const courseDetailById = await getCourseDetails(id)
-                    console.log(courseDetailById, 'courseDetailById');
 
                     if (courseDetailById?.data.success) {
                         setCourse(courseDetailById.data.course)
@@ -70,7 +70,6 @@ const CourseDetails = () => {
                     }
                 } catch (error) {
                     toast.error('Payment failed')
-                    console.error('Error founded in fething details', error);
                 } finally {
                     setLoading(false)
                 }
@@ -81,7 +80,6 @@ const CourseDetails = () => {
     useEffect(() => {
         const fetchCourseReviews = async () => {
             const response = await getAllCourseReviews(id)
-            console.log(response, 'response in fetch payment details');
             if (response?.status === 200) {
                 setReviews(response?.data.reviews)
             }
@@ -91,7 +89,6 @@ const CourseDetails = () => {
     const handleEnroll = async () => {
         const stripe = await stripePromise
         try {
-            console.log(id, 'id in handelenrolle');
             if (!course?.price) {
                 console.error('Price is not defined for the course.');
                 return;
@@ -103,7 +100,6 @@ const CourseDetails = () => {
             if (!course?.price) toast.error('Price is not defined for the course.')
 
             const response = await createCheckoutSession({ price: course?.price, courseId: id })
-            console.log(response, 'response ')
 
             if (response?.status >= 400) {
                 toast.error(response?.data.message)
@@ -123,28 +119,25 @@ const CourseDetails = () => {
     }
 
     const handleAddReview = async () => {
-
-        try {
-            if (!review) {
-                toast.error('Review is empty')
-                return
-            }
-            const data = {
-                courseId: id,
-                rating: 5,
-                review: review
-            }
-            const response = await createCourseReview(data)
-            if (response?.status && response?.status >= 400) {
-                toast.error(response?.data.message || 'Failed to add review')
-                return
-            }
-            
-            toast.success('Review added successfully')
-        } catch (error) {
-
-        }
-        setIsAddingReview(false)
+    //     try {
+    //         if (!review) {
+    //             toast.error('Review is empty')
+    //             return
+    //         }
+    //         const data = {
+    //             courseId: id,
+    //             rating: 5,
+    //             review: review
+    //         }
+    //         const response = await createCourseReview(data)
+    //         if (response?.status && response?.status >= 400) {
+    //             toast.error(response?.data.message || 'Failed to add review')
+    //             return
+    //         }
+    //         toast.success('Review added successfully')
+    //     } catch (error) {
+    //     }
+    //     setIsAddingReview(false)
     }
 
 
@@ -166,7 +159,6 @@ const CourseDetails = () => {
 
                     <div>
                         <h1 className="text-3xl text-gray-900 dark:text-white font-bold mb-2">{course?.name}</h1>
-                        <p className="text-gray-600 dark:text-gray-400">Course Duration: Estimate {course?.duration}</p>
                     </div>
                     {isPurchase ? (
                         <div className="bg-gray-200 dark:bg-gray-800  p-4 rounded-lg text-center">
@@ -189,130 +181,42 @@ const CourseDetails = () => {
 
                 </div>
 
-                {/* Course Overview */}
-                <section className="mb-12">
-                    <h2 className="text-xl text-gray-900 dark:text-white font-bold mb-4">Course Overview</h2>
-                    <div className="bg-gray-200 dark:bg-gray-800 p-6 rounded-lg">
-                        <p className="text-gray-700 dark:text-gray-300 mb-4">
-                            {course?.overview}
-                            {/* Embark On The Most Intensely Active-In-Demand Programming Language Today. This Course Is Designed For Those Looking To Python Programming To Advance In Computing Taking You Build The Skills Necessary For Software Development, Data Analysis, Automation, And Web Applications. */}
-                        </p>
-                        {/* <ul className="list-disc pl-6 text-gray-300">
-                            <li className="mb-2">Write Efficient Python Code And Build Real-Own Projects</li>
-                            <li className="mb-2">Learn Core Python Programming Concepts And Data Structures</li>
-                            <li className="mb-2">Develop Web Applications Using Python Frameworks</li>
-                            <li className="mb-2">Whether You're New To Programming Or Looking To Expand Your Skills, This Course Provides The Tools And Resources To Excel In Python And Beyond</li>
-                        </ul> */}
-                    </div>
-                </section>
-
-                {/* Course Curriculum */}
-                <section className="mb-12">
-                    <h2 className="text-xl text-gray-900 dark:text-white font-bold mb-4">Course Curriculum</h2>
-                    <div className="bg-gray-200 dark:bg-gray-800 p-6 rounded-lg">
-                        {/* <h3 className='font-bold text-white'>{course?.curriculum}</h3><br /> */}
-                        <div className="grid grid-cols-2 gap-6">
-                            <div>
-                                <h3 className="font-bold text-gray-900 dark:text-white mb-4">Basic Topics (Beginner)</h3>
-                                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                                    {/* <h4>{course?.curriculum[0].topics}</h4> */}
-                                    {course?.curriculum[0].topics?.map((topic, index: number) => (
-                                        <li key={index}>{topic}</li>
-                                    ))}
-                                    {/* <li>Introduction To Python And Setup</li>
-                                    <li>Control Structure Of This Course</li>
-                                    <li>Functions And Modules</li>
-                                    <li>Test</li> */}
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-900 dark:text-white mb-4">Intermediate Topics</h3>
-                                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                                    {/* <h4>{course?.curriculum[1].topics}</h4> */}
-                                    {course?.curriculum[1].topics?.map((topic, index: number) => (
-                                        <li key={index}>{topic}</li>
-                                    ))}
-                                    {/* <li>Object-Oriented Programming (OOP) In Python</li>
-                                    <li>Working With Dynamic Memory Parsers</li>
-                                    <li>Test</li> */}
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-900 dark:text-white mb-4">Advanced Topics</h3>
-                                <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                                    {/* <h4>{course?.curriculum[2].topics}</h4> */}
-
-                                    {course?.curriculum[2].topics?.map((topic, index: number) => (
-                                        <li key={index}>{topic}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Reviews */}
-                <section>
-                    <h2 className="text-xl text-gray-900 dark:text-white font-bold mb-4">Rating & Reviews</h2>
-
-                    <div className="flex gap-2 cursor-pointer hover:opacity-80"
-                        onClick={() => setIsAddingReview(!isAddingReview)}>
-                        <h5 className="text-balck font-bold dark:text-gray-300">Add a review</h5>
-                        <PenTool className="text-yellow-500 mt-1 w-5 h-4" />
-                    </div>
-
-                    {/* Review Input Section */}
-                    {isAddingReview && (
-                        <div>
-                            <div>
-                                <div className="flex">
-                                    <span className=" dark:text-gray-300 mr-2">Rating:</span>
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <Star key={star} className="w-6 h-6 cursor-pointer text-yellow-500" />
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="mt-3">
-                                <textarea
-                                    name="content" onChange={(e) => setReview(e.target.value)}
-                                    placeholder="Write your review here..."
-                                    className="w-full bg-gray-200 dark:bg-gray-800 text-white dark:text-gray-300 p-2 rounded h-24"
-                                />
-                            </div>
-                            <div className="flex justify-end space-x-2">
-                                <button
-                                    className="bg-gray-600 dark:bg-gray-600 text-white dark:text-gray-300 px-4 py-1 rounded hover:bg-gray-500 dark:hover:bg-gray-500"
-                                    onClick={() => setIsAddingReview(!isAddingReview)}>
-                                    Cancel
-                                </button>
-                                <button onClick={handleAddReview}
-                                    className="bg-yellow-500 text-black dark:bg-yellow-400 dark:text-gray-800 px-4 py-1 rounded hover:bg-yellow-400 dark:hover:bg-yellow-500">
-                                    Submit Review
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                    <div className="space-y-4">
-                        {reviews.map((review,index) => (
-                            <div key={index} className="bg-gray-200 dark:bg-gray-800 p-4 rounded-lg flex items-start gap-4">
-                                <div className="w-10 h-10 bg-gray-400 dark:bg-gray-600 rounded-full flex-shrink-0" />
-                                <div>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="font-bold text-gray-900 dark:text-white">Alex</span>
-                                        <div className="flex">
-                                            {[...Array(5)].map((_, i) => (
-                                                <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-700 dark:text-gray-300">
-                                        {review.review}
-                                    </p>
-                                </div>
-                            </div>
+                {/* Tabs Navigation */}
+                <div className="bg-gray-200 dark:bg-gray-600 rounded-lg mb-4">
+                    <div className="flex border-b border-gray-700 dark:border-gray-700">
+                        {['overview', 'reviews'].map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`flex-1 px-4 py-3 text-center capitalize ${activeTab === tab
+                                    ? 'text-purple-500 border-b-2  border-purple-500'
+                                    : 'text-gray-600 dark:text-gray-200 hover:text-black '
+                                    }`}
+                            >
+                                {tab}
+                            </button>
                         ))}
                     </div>
-                </section>
+                </div>
+                <div className="bg-gray-300 dark:bg-gray-600 rounded-lg p-6 mb-12">
+                    {activeTab === 'overview' && (
+                        <div>
+                            <h3 className="text-xl font-semibold dark:text-white mb-4">Overview</h3>
+                            <p className="text-gray-600 dark:text-gray-400">Course Duration: Estimate {course?.duration}</p>
+
+                            <p className=" dark:text-gray-200 whitespace-pre-line">{course?.overview}</p>
+                        </div>
+                    )}
+
+                    {activeTab === 'reviews' && (
+                        <div className="space-y-6">
+                            {/* Reviews */}
+                            <RatingAndReview reviews={reviews} />
+                        </div>
+                    )}
+                </div>
+                {/* Course Curriculum */}
+                <CurriculumCard course={course}/>
             </div>
             <Footer />
         </>

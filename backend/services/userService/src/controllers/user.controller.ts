@@ -29,9 +29,7 @@ export class UserController {
 
     async generateSignedUrl(req: Request, res: Response, next: NextFunction) {
         try {
-            const { fileName, fileType } = req.body
-            console.log(fileName,'filename' , fileType,'filetype');
-            
+            const { fileName, fileType } = req.body            
             if (!fileName || !fileType) {
                 return res.status(400).json({ 
                     success: false, 
@@ -67,8 +65,6 @@ export class UserController {
     async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
-            console.log('here is error', id);
-
             const user = await this.userService.getUser(id)
             res.json(user)
         } catch (error) {
@@ -81,10 +77,8 @@ export class UserController {
     async updateUserApprovalStatus(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params;
         const { isApproved } = req.body;
-        console.log(req.body, 'req.body in update user status in user controlelr');
-        console.log(id, isApproved, 'id is approved');
         try {
-            const response = await this.userService.updateUserApproval(id, isApproved)
+            const response = await this.userService.updateUserApproval({id, isApproved})
             return res.status(200).json({ success: true, response })
         } catch (error) {
             console.error('Error founded in update user approval status',error);
@@ -95,12 +89,10 @@ export class UserController {
     async getUser(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user as JwtPayload
-            console.log(user, 'user, ===========');
             if (!user) {
                 return res.json({ message: 'Not founded user' })
             }
             const response = await this.userService.getUser(user.id)
-            console.log(response, 'response in user controller get user');
 
             return res.status(HttpStatus.OK).json(response)
         } catch (error) {
@@ -130,7 +122,6 @@ export class UserController {
     //                 return res.status(HttpStatus.NOTFOUND).json({ success: false, message: '' })
     //             }
     //             s3FileUrl = result.Location
-    //             console.log('Uploaded file URL:', s3FileUrl);
 
     //         }
     //         if (s3FileUrl === '') {
@@ -138,7 +129,6 @@ export class UserController {
     //         }
     //         const updateUser = await this.userService.updateUser(id, { fullName, profile: s3FileUrl })
 
-    //         console.log(updateUser, 'update user = =  =   ');
     //         res.status(HttpStatus.OK).json({ success: true, message: "update successfully", updateUser })
     //     } catch (error) {
     //         console.error('Error founded in profile update', error);
@@ -154,10 +144,8 @@ export class UserController {
                 return res.json({ message: 'Not founded user' })
             }
             const id = user.id
-            console.log(req.body, 'req.body in profile update');
             
             const { fullName ,fileKey} = req.body
-            console.log(fullName, 'fullName in profile update',fileKey);
             
             let profileUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png';
             if(fileKey){
@@ -167,7 +155,6 @@ export class UserController {
             
             const updateUser = await this.userService.updateUser(id, { fullName, profile: profileUrl })
 
-            console.log(updateUser, 'update user = =  =   ');
             res.status(HttpStatus.OK).json({ success: true, message: "update successfully", updateUser })
         } catch (error) {
             console.error('Error founded in profile update', error);
@@ -179,7 +166,6 @@ export class UserController {
         try {
             const { isActive } = req.body
             const { id } = req.params
-            console.log(id, 'id in update use status ');
             const response = await this.userService.updateUserStatus(id, isActive)
             return res.status(HttpStatus.OK).json(response)
         } catch (error) {

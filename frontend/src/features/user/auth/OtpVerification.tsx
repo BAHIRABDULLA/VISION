@@ -10,7 +10,6 @@ import { login as menteeLogin } from '@/redux/slices/menteeAuthSlice';
 const OtpVerification: React.FC = () => {
   const location = useLocation()
   const { fullName, email, password, role, type } = location.state;
-  console.log(type, 'type in otp verification');
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -30,7 +29,6 @@ const OtpVerification: React.FC = () => {
 
   const handleResendOtp = async () => {
     const resend = await resendOtp(email)
-    console.log(resend, 'resend in handle resend otp ');
 
     setTimeRemaining(60)
     setIsResendEnabled(false)
@@ -40,9 +38,7 @@ const OtpVerification: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const otpString = otp.join('')
-      console.log(otpString, 'otpstrijng in otp verification ');
       const response = await otpVerify(fullName, email, password, role, otpString, type)
-      console.log(response, 'response in otp verification');
       if (response.data.success === true) {
         if (type === 'signup') {
           const reduxData = { fullName, email, role }
@@ -50,14 +46,11 @@ const OtpVerification: React.FC = () => {
             localStorage.setItem('accessToken', response.data.accessToken)
             const id = response.data.user._id
             dispatch(menteeLogin({ token: response.data.accessToken, user: { ...reduxData, id } }))
-            console.log(localStorage.getItem('accessToken'), 'access token in localstorage');
 
             navigate('/')
           } else {
             localStorage.setItem('accessToken', response.data.accessToken)
-            // dispatch(mentorLogin({ token: response.data.accessToken, user: reduxData }))
-            console.log('its in otp verification process ');
-            
+            // dispatch(mentorLogin({ token: response.data.accessToken, user: reduxData }))            
             navigate('/apply-mentor', { state: { email } })
           }
         } else if (type === 'forgetPassword') {
@@ -80,8 +73,8 @@ const OtpVerification: React.FC = () => {
       </div>
 
       {/* Right Side with Form */}
-      <div className="flex-1 flex flex-col items-center justify-center mb-8 p-8 ">
-        <h2 className="text-3xl font-semibold mb-6">OTP Verification</h2>
+      <div className="flex-1 flex flex-col items-center justify-center bg-white mb-8 p-8 ">
+        <h2 className="text-3xl text-black font-semibold mb-6">OTP Verification</h2>
 
         <div className="flex flex-col items-center justify-center mt-4 w-full ">
           {/* otp */}
@@ -93,7 +86,7 @@ const OtpVerification: React.FC = () => {
         {/* Error Message */}
         {error && <p className="text-red-500 mt-4">{error}</p>}
 
-        {!isResendEnabled && <p className='mt-4'>Time remaining :{timeRemaining} seconds</p>}
+        {!isResendEnabled && <p className='mt-4 text-black'>Time remaining :{timeRemaining} seconds</p>}
 
 
         <div className="mt-4 text-gray-500 text-sm">

@@ -26,8 +26,6 @@ const CourseList: React.FC<CourseListProps> = ({ limit }) => {
   useEffect(() => {
     const fetchCourseData = async () => {
       const response = await getAllCourses()
-      console.log(response, 'response data ');
-      console.log(response?.data.data, 'response,data.sdata');
       if (response.status && response.status >= 400) {
         toast.error('Cannot found courses')
       } else if(response.status && response.status<400){

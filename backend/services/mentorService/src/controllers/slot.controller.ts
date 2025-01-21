@@ -23,11 +23,9 @@ export class SlotController {
 
     async createSlot(req:customRequest,res:Response , next:NextFunction){
         try {
-            console.log('-----   4      ---------');
 
             const user = req.user as JwtPayload
             const {time,availableDays} = req.body
-            console.log(time,'data in create slot controller',availableDays);
           
             const response = await this.slotService.createSlot(time,availableDays,user.id)
             if(!response){
@@ -44,15 +42,11 @@ export class SlotController {
 
     async getSlot(req:customRequest,res:Response,next:NextFunction){
         try {
-            console.log('-----   3      ---------');
 
-            console.log('hey bana neeee');
             
             const user = req.user as JwtPayload
-            console.log(user,' user   ++++++++++++++');
             
             const response = await this.slotService.getSlotByUser(user.id)
-            console.log(response,'response ,,  }}}}}}}}' );
             
             return successResponse(res,HttpStatus.OK,"Founded all slots",{data:response})
         } catch (error) {
@@ -64,10 +58,8 @@ export class SlotController {
 
     async deleteSlot(req:customRequest,res:Response,next:NextFunction){
         try {
-            console.log('-----   2      ---------');
             const user = req.user as JwtPayload
             const {id} = req.params
-            console.log(id,'id in delete slot')
             const response = await this.slotService.removeSlot(user.id,id)
             if(!response){
                 return errorResponse(res,HttpStatus.NOT_FOUND,"Slot not founded")
@@ -84,16 +76,11 @@ export class SlotController {
     async bookingSlot(req:customRequest,res:Response ,next:NextFunction){
         try {
 
-            console.log('-----   1      ---------');
             
             const {mentorId,time,date} = req.body
             const user = req.user as JwtPayload
-            console.log(user,'user as booking slot');
-            
-            console.log(req.body,'req.body oin booking slot controller');
-            
-            const response = await this.slotService.bookSlot(mentorId,user.id,time,date)
-            
+            const token = req.headers['authorization']?.split(' ')[1]!
+            const response = await this.slotService.bookSlot(mentorId,user.id,time,date,token)
             return successResponse(res,HttpStatus.OK,"created")
         } catch (error) {
             console.error('Error founded in booking slot controller',error);
@@ -105,7 +92,6 @@ export class SlotController {
         try {
 
             const {bookingId}  = req.params
-            console.log(bookingId,'booking id in get booking slot details');
             
             const response  = await this.slotService.getBookingSlotDetails(bookingId)    
             return successResponse(res,HttpStatus.OK,"Founded booking slot details",{booking:response})
@@ -117,7 +103,6 @@ export class SlotController {
 
     async getBookingSlot(req:customRequest,res:Response,next:NextFunction){
         try {
-            console.log('-----   0      ---------');
             const user = req.user as JwtPayload 
             const response = await this.slotService.getBookingSlot(user.id,user.role)
             return successResponse(res,HttpStatus.OK,"Founded all booking slots",{bookings:response})

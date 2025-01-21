@@ -8,8 +8,8 @@ export class UserController {
     async getAllUsers(req:Request,res:Response,next:NextFunction){
         try {
             const {userId} = req.params
-            const response = await this.userService.getAllUsers(userId)
-            // console.log(response,'response  to get all users ');
+            const token = req.headers['authorization']?.split(' ')[1]!
+            const response = await this.userService.getAllUsers(userId,token)
             
             return res.status(HttpStatus.OK).json({message:"Users data  successfully sent",users:response})
         } catch (error) {

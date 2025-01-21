@@ -34,7 +34,6 @@ app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true
 }))
-console.log(process.env.USER_API_BASE_URL,'USER_API_BASE_URL');
 
 const targets = {
     user: process.env.USER_API_BASE_URL,

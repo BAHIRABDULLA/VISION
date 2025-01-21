@@ -5,7 +5,7 @@ import PricingOptions from '@/pages/mentorApplication/PricingOptions';
 import { useParams } from 'react-router-dom';
 import { mentorSpecificData } from '@/services/mentorApi';
 import BookingSession from './BookingSession';
-import RatingAndReview from '@/features/user/RatingAndReview';
+import RatingAndReview from '@/components/RatingAndReview';
 import { Link } from 'react-router-dom';
 
 interface MentorData {
@@ -40,12 +40,9 @@ const MentorDetails: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState('about');
     const { id } = useParams()
-    console.log(id, 'id ind ttoo')
     // Mock mentor data
     // const [mentor, setMentor] = useState<MentorData | undefined>(undefined)
     const [mentorData, setMentorData] = useState<MentorData | undefined>(undefined)
-    console.log(mentorData, 'mentor')
-    console.log(mentorData?.mentor._id, 'mentor.mentor ', mentorData?.mentor);
 
 
     const [groupedSlots, setGroupedSlots] = useState<Record<string, string[]>>({})
@@ -55,10 +52,7 @@ const MentorDetails: React.FC = () => {
             try {
                 if (id) {
                     const respnose = await mentorSpecificData(id)
-                    console.log(respnose, 'response in fetch mentor data');
                     const { mentor, slots,bookingData} = respnose?.data || {}
-                    console.log(mentor, 'mentor in fetch mentor data ');
-                    console.log(slots, 'slots in fetch mentor data');
                     const formattedBookings  = bookingData.map(({date,time})=>({date,time}))
                     setBookingData(formattedBookings)
                     const slotGrouped: Record<string, string[]> = {}
@@ -70,17 +64,13 @@ const MentorDetails: React.FC = () => {
                             }
 
                             const [hour, minute] = slot.time.split(':')
-                            // console.log(hour, 'hour', minute, 'minute')
                             const period = +hour >= 12 ? 'PM' : 'AM';
                             const formattedHour = +hour > 12 ? +hour - 12 : +hour === 0 ? 12 : +hour
                             const formattedTime = `${formattedHour}:${minute} ${period}`
-                            console.log(formattedTime, 'formatted time')
                             slotGrouped[day].push(formattedTime)
-                            // console.log(slotGrouped[day],'slotGrouped[day]');
                         });
                     });
                     setGroupedSlots(slotGrouped)
-                    console.log(groupedSlots, 'groupded sltos');
                     setMentorData({ ...mentor, slots })
                 }
             } catch (error) {
@@ -185,7 +175,7 @@ const MentorDetails: React.FC = () => {
 
                             {activeTab === 'reviews' && (
                                 <div className="space-y-6">
-                                    <RatingAndReview />
+                                    <RatingAndReview  review='review'/>
                                 </div>
                             )}
                         </div>

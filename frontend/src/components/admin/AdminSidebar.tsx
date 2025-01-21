@@ -34,7 +34,6 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, setIsCollapsed
     dispatch(adminLogout());
     localStorage.removeItem('accessToken-a')
     const response = await logout()
-    console.log(response,'response in admin logout');
     if(response){
       navigate('/admin/login');   
     }

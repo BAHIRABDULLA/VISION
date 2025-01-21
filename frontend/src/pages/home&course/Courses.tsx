@@ -22,7 +22,6 @@ const Courses = () => {
     const courseListFetch = async () => {
       try {
         const response = await getAllCourses()
-        console.log(response, 'response, = = ');
         if(response.status&&response.status>=400){
           console.log('Cannot found course in Courses');
         }else{

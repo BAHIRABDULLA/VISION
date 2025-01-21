@@ -15,10 +15,8 @@ interface PricingOptionsProps {
 }
 
 const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentorId }) => {
-    console.log(mentorId, 'mentorid ');
 
     const [selectedPlan, setSelectedPlan] = useState<PlanType>(null);
-    console.log(selectedPlan, 'selected plan')
     const menteeId = useSelector((state: RootState) => state.menteeAuth.user?.id)
     // const publicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
 
@@ -38,10 +36,8 @@ const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentor
                 mentorId
             }
             const response = await mentorshipPayment(data)
-            console.log(response, 'response in handlebooking');
 
             if (response?.data.url) {
-                console.log(response.data.url, 'response data url')
                 window.location.href = response.data.url
             } else {
                 // toast.error('Unable to process payment')

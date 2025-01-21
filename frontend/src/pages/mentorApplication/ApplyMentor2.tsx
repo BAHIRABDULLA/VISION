@@ -7,6 +7,7 @@ import { z } from 'zod';
 
 import { useLocation } from 'react-router-dom'
 
+
 const applyMentorSchema = z.object({
     introductionVideoUrl: z.preprocess(
         (val) => (val === '' ? undefined : val),
@@ -30,9 +31,6 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
 
     const location = useLocation()
     const { email } = location?.state
-    console.log(email, 'email in location ');
-
-    
 
     const { register, handleSubmit, formState: { errors } } = useForm<applyMentorSchemaType>({ resolver: zodResolver(applyMentorSchema) })
  
@@ -59,7 +57,7 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
                 <div className='grid grid-cols-2 gap-4'>
                     {/* left side */}
                     <div>
-                        <TextField
+                        <TextField 
                             helperText="Add a YouTube video for your future mentees" {...register('introductionVideoUrl')}
                             id="demo-helper-text-aligned" placeholder='http://introduction-video-url'
                             label="Introduction Video (Optional)" fullWidth
@@ -69,7 +67,7 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
                     </div>
                     {/* right side */}
                     <div>
-                        <TextField
+                        <TextField 
                             helperText="Link an interview / podcast / piece of writing you are proud of or were featured in."
                             id="demo-helper-text-aligned" placeholder='http://blog-url' {...register('featuredArticleUrl')}
                             label="Featured Article (Optional)" fullWidth
@@ -78,7 +76,7 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
 
                     </div>
                     <div className='col-span-2'>
-                        <TextField
+                        <TextField 
                             id="outlined-multiline-static"
                             label="Why do you want to become mentor ?"
                             multiline
@@ -88,7 +86,7 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
                         {errors.whyBecomeMentor && <p className='text-sm text-red-700'>{errors.whyBecomeMentor.message}</p>}
                     </div>
                     <div className='col-span-2'>
-                        <TextField
+                        <TextField 
                             id="outlined-multiline-static"
                             label="What , in your opinion, has been your greatest achievement so far ?"
                             multiline
@@ -98,7 +96,6 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
                         {errors.greatestAchievement && <p className='text-sm text-red-700'>{errors.greatestAchievement.message}</p>}
                     </div>
                     {/* <div className='col-span-2 flex items-center'> */}
-
                 </div>
                 <div className='flex gap-5  py-1 mt-2 px-5'>
                     <button type='button' onClick={prevStep} className='  py-1 mt-2 px-5 text-purple-800 outline outline-offset-2 outline-purple-500 rounded-lg '>Back</button>

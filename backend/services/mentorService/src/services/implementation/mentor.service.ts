@@ -43,14 +43,10 @@ export class MentorService implements IMentorService {
     async mentorDetails(email: string, jobTitle: string, country: string, location: string, category: string, experience: number, skills: string[], bio: string,
         whyBecomeMentor: string, greatestAchievement: string, company?: string, profilePhoto?: string, socialMediaUrls?: socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string,) {
         try {
-            console.log(socialMediaUrls, 'social medial urls +++++++++++', category, jobTitle, 'category ,jobtitle');
-
             const checkUser = await this.userRepository.isMentor(email)
-
             if (!checkUser) {
                 throw new CustomError("User does not existed", HttpStatus.UNAUTHORIZED)
             }
-
 
             const mentorData = {
                 mentor: checkUser._id,
@@ -61,8 +57,6 @@ export class MentorService implements IMentorService {
 
             const newMentor = await this.mentorRepoistory.create(mentorData);
             await this.userRepository.update(checkUser._id.toString(), { isMentorFormFilled: true })
-
-            console.log(newMentor, 'new mentor in mentor.servcie');
 
             const data = {
                 id: newMentor.mentor
@@ -85,15 +79,14 @@ export class MentorService implements IMentorService {
     }
 
 
-    async registerMentor(mentorData: object) {
+    async registerUser(userData: object) {
         try {
-            const mentor = this.userRepository.create(mentorData)
+            const mentor = this.userRepository.create(userData)
             if (!mentor) {
                 throw new CustomError("Error facing to register mentor", HttpStatus.UNAUTHORIZED)
             }
             return mentor
         } catch (error) {
-            console.log('Error registering mentor', error);
             throw error
         }
     }
@@ -130,9 +123,7 @@ export class MentorService implements IMentorService {
 
     async updateMentorData(id: string, data: IMentor) {
         try {
-            console.log(data, 'data in updata ++++++++++++++++++++++++++++++');
             const findUser = await this.userRepository.findById(id)
-            console.log(findUser, 'find user update mentor data')
             if (findUser) {
                 data.mentor = new mongoose.Types.ObjectId(id)
                 const newMentor = await this.mentorRepoistory.create(data)
@@ -146,7 +137,6 @@ export class MentorService implements IMentorService {
 
             } else {
                 const updatingMentor = await this.mentorRepoistory.update(id, data)
-                console.log(updatingMentor, 'respon in service in update mentor data ');
                 if (!updatingMentor) {
                     // return { success: false, message: 'Mentor details not updated' }
                     throw new CustomError("Error facing to update mentor", HttpStatus.UNAUTHORIZED)
@@ -164,13 +154,11 @@ export class MentorService implements IMentorService {
 
     async updateSessionPrice(id: string, data: { singleSessionPrice: number, monthlySubscriptionPrice: number }) {
         try {
-            console.log(id, 'id in update session price service', data, 'data update ses_____')
             const { singleSessionPrice, monthlySubscriptionPrice } = data
             if ((singleSessionPrice || monthlySubscriptionPrice) < 50) {
                 throw new CustomError("session price must be at least ₹ 50 to meet minimum requirement", HttpStatus.UNAUTHORIZED)
             }
             const findMentorFormFilled = await this.userRepository.findById(id)
-            console.log(findMentorFormFilled, 'find mentor form fillecdf');
 
             if (!findMentorFormFilled) {
                 throw new CustomError('Please complete profile section', HttpStatus.NOT_FOUND)
@@ -179,7 +167,6 @@ export class MentorService implements IMentorService {
                 throw new CustomError("Mentorship not approved", HttpStatus.BAD_REQUEST)
             }
             const response = await this.mentorRepoistory.findMentorAndUpdate(id, data)
-            console.log(response, 'response in update session price in serviced')
             return response
         } catch (error) {
             throw error
@@ -190,7 +177,6 @@ export class MentorService implements IMentorService {
 
     async mentorApproval(data: { id: string, isApproved: 'approved' | 'rejected' | 'pending' }) {
         try {
-            console.log(data, 'data')
             const { id, isApproved } = data
             await this.userRepository.update(id, { isApproved })
         } catch (error) {

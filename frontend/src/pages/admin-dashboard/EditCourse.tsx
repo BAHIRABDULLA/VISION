@@ -19,13 +19,9 @@ const EditCourse = () => {
   const [existingImage, setExistingImage] = useState<string | null>(null)
 
   const [course, setCourse] = useState<courseShemaType | null>(null)
-  console.log(course, 'course course couirse');
-  console.log(typeof course?.curriculum.basic, 'typeof course curriculum',course?.curriculum.basic);
 
   const navigate = useNavigate()
   const params = useParams()
-  console.log(params, 'params');
-  console.log(params.id, 'params.id');
 
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<courseShemaType>({
@@ -38,14 +34,10 @@ const EditCourse = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        console.log('its here bro in use effecgt');
         
         if(params.id){
-        console.log('its here bro in use effecgt - - - -  -');
 
           const response = await getCourseDetails(params.id )
-          console.log(response, 'response here eee');
-          console.log(response?.data.course, 'response here eee');
           const courseData = response?.data.course
           setExistingImage(courseData.image)
           const formData = {
@@ -74,7 +66,6 @@ const EditCourse = () => {
   const onSubmit = async (data: courseShemaType) => {
     try {
 
-      console.log(data, 'data in onsubmt');
       const curriculumData = [
         { level: 'Basic', topics: data.curriculum.basic.split(',') },
         { level: 'Intermediate', topics: data.curriculum.intermediate.split(',') },
@@ -84,7 +75,6 @@ const EditCourse = () => {
       formData.append('name', data.name)
       formData.append('duration', data.duration)
       formData.append('overview', data.overview)
-      console.log(JSON.stringify(data.curriculum),'data . curriculum  . ');
       
       formData.append('curriculum', JSON.stringify(curriculumData))
       formData.append('price', String(data.price))
@@ -96,7 +86,6 @@ const EditCourse = () => {
       }
       if(params.id){
         const response = await editCourse(formData, params.id)
-        console.log(response, 'response in add couirse .tsx');
         if (response?.data) {
           toast.success("Course added");
           navigate('/admin/courses')
@@ -118,8 +107,6 @@ const EditCourse = () => {
 
     if (file) {
       setSelectedImage(file)
-      console.log(selectedImage, 'selected image ');
-
       // setSelectedImage(URL.createObjectURL(file))
       // setImageFile(file)
     }

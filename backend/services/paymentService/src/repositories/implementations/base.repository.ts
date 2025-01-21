@@ -2,7 +2,7 @@ import { IBaseRepository } from "../interface/IBase.repository";
 import { Model,Document } from "mongoose";
 
  class BaseRepository<T extends Document>  implements IBaseRepository<T>{
-    private model:Model<T>
+    protected model:Model<T>
 
     constructor(model:Model<T>){
         this.model = model

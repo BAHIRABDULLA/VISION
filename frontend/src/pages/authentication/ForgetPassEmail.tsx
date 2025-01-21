@@ -30,9 +30,7 @@ const ForgetPassEmail: React.FC = () => {
 
 
   const onSubmit: SubmitHandler<forgetPassSchemaType> = async (data) => {
-    console.log(data);
     const {email} = data
-    console.log(email,'email in forget pass schema  ');
     const response  = await sendMail(email)
     if(response?.data.success){
       navigate('/forget-otp',{state:{email,type:'forgetPassword'}})
@@ -49,8 +47,8 @@ const ForgetPassEmail: React.FC = () => {
       </div>
 
       {/* Right Side with Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col items-center justify-center mb-8 p-8">
-        <h2 className="text-3xl font-semibold">Forget Password</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col items-center bg-white justify-center mb-8 p-8">
+        <h2 className="text-3xl text-black font-semibold">Forget Password</h2>
 
         <div className="mt-4 text-gray-500 text-sm text-center">
           <p>Enter your email here to receive a one-time passcode</p>

@@ -19,8 +19,7 @@ const SlotManagement = () => {
   const [isEditPrice, setIsEditPrice] = useState(false)
 
   const [slots, setSlots] = useState<Slot[]>([]);
-  console.log(slots,'slots slots');
-  
+
   const [commonPrices, setCommonPrices] = useState({
     singleSessionPrice: '',
     monthlySubscriptionPrice: '',
@@ -59,7 +58,7 @@ const SlotManagement = () => {
       const response = await updateMentorSessionPrice(parsed.data)
 
 
-      if (response&& response?.status >= 400) {
+      if (response && response?.status >= 400) {
         toast.error(response?.data.message)
       } else {
         toast.success(response?.data.message)
@@ -101,15 +100,13 @@ const SlotManagement = () => {
 
       const data = { time: newSlot.time, availableDays: newSlot.availableDays }
       const response = await createSlot(data)
-      console.log(response,'respnose');
-      console.log(response?.data._doc.slots[0]._id,'response?.data._doc.slots[0]._id');
       const newSlotData = {
         _id: response?.data._doc.slots[0]._id,
         time: newSlot.time,
         availableDays: newSlot.availableDays,
-    };
+      };
 
-    setSlots([...(slots || []), newSlotData]);
+      setSlots([...(slots || []), newSlotData]);
       setNewSlot({ time: '', availableDays: [] });
     }
   };
@@ -156,108 +153,105 @@ const SlotManagement = () => {
         toast.error("Failed to delete the slot. Please try again")
       }
     } catch (error) {
-      console.error('Error founded in handle delete slot', error);
       toast.error("An error occured while deleting the slot")
     }
   }
 
   return (
-    <div className="p-4 bg-gray-600 rounded-lg shadow-md">
+    <div className="p-4 min-h-screen bg-gray-300 dark:bg-gray-800 rounded-lg shadow-md">
       {/* Set Common Prices */}
       <Toaster />
-      <div className="mt-8 text-white">
-        <h2 className="text-xl font-bold mb-4">Set  Prices</h2>
-        <div className="space-y-4">
-          <div className='flex '>
-            <FormControl fullWidth sx={{ m: 1, backgroundColor: 'white', borderRadius: '8px' }} variant="filled" >
-              <InputLabel htmlFor="standard-adornment-amount">Single Session Price</InputLabel>
-              <Input onChange={handlePriceChange} value={commonPrices.singleSessionPrice}
-                id="standard-adornment-amount" name='singleSessionPrice'
-                startAdornment={<InputAdornment position="start"> ₹ </InputAdornment>}
-                disabled={!isEditPrice}
-              />
-              {errors.singleSessionPrice && <p className='text-red-500'>{errors.singleSessionPrice}</p>}
-            </FormControl>
-            <FormControl fullWidth sx={{ m: 1, backgroundColor: "white", borderRadius: '8px' }} variant="filled">
-              <InputLabel htmlFor="standard-adornment-amount">Monthly Subscription Price</InputLabel>
-              <Input onChange={handlePriceChange} value={commonPrices.monthlySubscriptionPrice}
-                id="standard-adornment-amount" name='monthlySubscriptionPrice'
-                startAdornment={<InputAdornment position="start"> ₹ </InputAdornment>}
-                disabled={!isEditPrice}
-              />
-              {errors.monthlySubscriptionPrice && <p className='text-red-500'>{errors.monthlySubscriptionPrice}</p>}
-            </FormControl>
+      <div className=' bg-gray-200 dark:bg-slate-500 px-3 py-3 rounded-lg'>
+        <div className="mt-8 text-gray-900 dark:text-white">
+          <h2 className="text-xl font-bold mb-4">Set Prices</h2>
+          <div className="space-y-4">
+            <div className="flex">
+              <FormControl fullWidth sx={{ m: 1, backgroundColor: 'white', borderRadius: '8px' }} variant="filled">
+                <InputLabel htmlFor="standard-adornment-amount" className="text-gray-600 dark:text-gray-300">Single Session Price</InputLabel>
+                <Input onChange={handlePriceChange} value={commonPrices.singleSessionPrice}
+                  id="standard-adornment-amount" name="singleSessionPrice"
+                  startAdornment={<InputAdornment position="start"> ₹ </InputAdornment>}
+                  disabled={!isEditPrice} />
+                {errors.singleSessionPrice && <p className="text-red-500">{errors.singleSessionPrice}</p>}
+              </FormControl>
+              <FormControl fullWidth sx={{ m: 1, backgroundColor: 'white', borderRadius: '8px' }} variant="filled">
+                <InputLabel htmlFor="standard-adornment-amount" className="text-gray-600 dark:text-gray-300">Monthly Subscription Price</InputLabel>
+                <Input onChange={handlePriceChange} value={commonPrices.monthlySubscriptionPrice}
+                  id="standard-adornment-amount" name="monthlySubscriptionPrice"
+                  startAdornment={<InputAdornment position="start"> ₹ </InputAdornment>}
+                  disabled={!isEditPrice} />
+                {errors.monthlySubscriptionPrice && <p className="text-red-500">{errors.monthlySubscriptionPrice}</p>}
+              </FormControl>
+            </div>
+
+            <div className="flex gap-6">
+              {isEditPrice ? (
+                <>
+                  <Button variant="contained" onClick={handlePriceSubmit} color="primary">Save</Button>
+                  <Button variant="contained" color="secondary" onClick={handleCancelClick}>Cancel</Button>
+                </>
+              ) : (
+                <Button variant="contained" color="primary" onClick={() => setIsEditPrice(!isEditPrice)}>Edit</Button>
+              )}
+            </div>
           </div>
+        </div>
 
-
-          <div className="flex gap-6">
-            {isEditPrice ? (
-              <>
-                <Button variant="contained" onClick={handlePriceSubmit} color="primary" >Save</Button>
-                <Button variant="contained" color="secondary" onClick={handleCancelClick}>Cancel</Button>
-              </>
-            ) : (
-              <Button variant="contained" color="primary" onClick={() => setIsEditPrice(!isEditPrice)}>Edit</Button>
-            )}
+        {/* Add New Slot */}
+        <div className="mt-8 text-gray-900 dark:text-white">
+          <h2 className="text-xl font-bold mb-4">Add New Slot</h2>
+          <div className="space-y-4">
+            <TextField
+              label="Time"
+              type="time"
+              name="time"
+              value={newSlot.time}
+              onChange={handleInputChange}
+              variant="filled"
+              fullWidth sx={{ backgroundColor: 'white', borderRadius: '8px' }}
+              InputLabelProps={{ shrink: true }}
+              color="primary"
+            />
+            <div className="text-gray-900 dark:text-white mb-2">Available Days (Days):</div>
+            <div className="flex space-x-4">
+              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+                <FormControlLabel
+                  key={day}
+                  control={
+                    <Checkbox
+                      value={day}
+                      checked={newSlot.availableDays.includes(day)}
+                      onChange={handleAvailabilityChange}
+                      color="primary"
+                    />
+                  }
+                  label={<span className="text-gray-600 dark:text-gray-200">{day}</span>}
+                />
+              ))}
+            </div>
+            <Button onClick={addSlot} variant="contained" color="primary" className="w-full mt-4">
+              Add Slot
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Add New Slot */}
-      <div className="mt-8 text-white">
-        <h2 className="text-xl font-bold mb-4">Add New Slot</h2>
-        <div className="space-y-4">
-          <TextField
-            label="Time"
-            type="time"
-            name="time"
-            value={newSlot.time}
-            onChange={handleInputChange}
-            variant="filled"
-            fullWidth sx={{ backgroundColor: "white", borderRadius: "8px" }}
-            InputLabelProps={{ shrink: true }}
-            color="primary"
-          />
-          <div className="text-white mb-2">availableDays (Days):</div>
-          <div className="flex space-x-4">
-            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
-              <FormControlLabel
-                key={day}
-                control={
-                  <Checkbox
-                    value={day}
-                    checked={newSlot.availableDays.includes(day)}
-                    onChange={handleAvailabilityChange}
-                    color="primary"
-                  />
-                }
-                label={day}
-              />
-            ))}
-          </div>
-          <Button onClick={addSlot} variant="contained" color="primary" className="w-full mt-4">
-            Add Slot
-          </Button>
-        </div>
-      </div>
 
       {/* Existing Slots */}
-      <div className="mt-8 text-white">
+      <div className="mt-8 text-gray-900 dark:text-white">
         <h2 className="text-xl font-bold mb-4">Existing Slots</h2>
         <div className="space-y-2">
-          {slots?.length >= 0 && slots.map((slot) => (
+          {slots?.length > 0 && slots.map((slot) => (
             <div
               key={slot._id}
-              className="bg-gray-100 rounded px-4 py-2 flex justify-between items-center"
+              className="bg-gray-100 dark:bg-gray-700 rounded px-4 py-2 flex justify-between items-center"
             >
               <div>
-                <div className="font-medium text-black">{slot.time}</div>
-                <div className="text-gray-600">Available Days: {slot.availableDays.join(', ')}</div>
-
+                <div className="font-medium text-black dark:text-white">{slot.time}</div>
+                <div className="text-gray-600 dark:text-gray-300">Available Days: {slot.availableDays.join(', ')}</div>
               </div>
               <button
-                className="text-red-500 hover:text-red-700"
-                // onClick={() => setSlots(slots.filter((s) => s._id !== slot._id))}
+                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500"
                 onClick={() => handleDeleteSlot(slot._id)}
               >
                 Delete
@@ -267,6 +261,7 @@ const SlotManagement = () => {
         </div>
       </div>
     </div>
+
   );
 };
 

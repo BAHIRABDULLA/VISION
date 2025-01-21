@@ -10,7 +10,7 @@ import Loading from '@/components/Loading';
 import { common, commonType, userSchemaType } from '@/utils/userValidator';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import MentorData from './MentorData';
+import MentorData from '../../features/user/dashboard/MentorData';
 import * as z from 'zod';
 import axios from 'axios';
 
@@ -63,15 +63,15 @@ const Profile = () => {
                 setUserData(userDetails.data)
                 if (!selectedFile) {
                     if (userDetails.data?.profile && userDetails.data.profile !== 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png') {
-                        const filePath = userDetails.data.profile; 
+                        const filePath = userDetails.data.profile;
                         const fileType = getFileTypeFromUrl(filePath);
 
-                       
+
                         const response = await getSignedUrl(filePath, fileType);
 
                         if (response?.status === 200) {
                             const { signedUrl } = response.data;
-                            setImagePreview(signedUrl); 
+                            setImagePreview(signedUrl);
                         }
                     }
                 }
@@ -82,7 +82,6 @@ const Profile = () => {
             }
         }
         fetchUserDetails()
-        console.log(selectedFile, 'selected file');
 
     }, [])
     const getFileTypeFromUrl = (url) => {
@@ -105,7 +104,6 @@ const Profile = () => {
             if (imagePreview) URL.revokeObjectURL(imagePreview);
         };
     }, [imagePreview]);
-    // console.log(userData, 'userData ');
     const { register, handleSubmit, formState: { errors } } = useForm<commonType>({
         resolver: zodResolver(common),
         defaultValues: {
@@ -123,10 +121,8 @@ const Profile = () => {
 
     const handleUpdatePassword = async (data: object) => {
         try {
-            console.log(data, 'data');
             await passwordSchema.parseAsync(data)
             const response = await passwordUpdate(data)
-            console.log("Password updated successfully", response);
             if (response?.data.success) {
                 toast.success(response?.data.message)
                 setShowPasswordChange(false)
@@ -153,7 +149,6 @@ const Profile = () => {
     const generateSignedUrl = async (file: File) => {
         try {
             const response = await getSignedUrl(`profile/${Date.now()}_${file.name}`, file.type)
-            console.log(response, 'response in Profile .tsx');
             if (response?.status && response.status === 200) {
                 const { signedUrl, key } = response.data
                 setSignedUrl(signedUrl)
@@ -174,8 +169,6 @@ const Profile = () => {
         try {
             let uploadedFileKey = filekey;
             if (selectedFile && signedUrl) {
-                console.log(selectedFile, 'selected file in common data submit');
-
                 setUploading(true);
                 await axios.put(signedUrl, selectedFile, {
                     headers: { 'Content-Type': selectedFile.type },
@@ -186,7 +179,6 @@ const Profile = () => {
             }
 
             // const formData = new FormData();
-            console.log(data, 'data in common data submit');
 
             // formData.append('fullName', data.fullName);
             // if (uploadedFileKey) formData.append('fileKey', uploadedFileKey);
@@ -219,13 +211,14 @@ const Profile = () => {
 
 
     return (
-        <div className="p-6 mt-9 bg-gray-600  rounded-lg shadow-md text-white max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 text-center">Personal Information</h2>
+        <div className="p-6 mt-9 bg-gray-300 dark:bg-gray-600 rounded-lg shadow-md text-gray-900 dark:text-white max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4 text-center dark:text-white">Personal Information</h2>
             <Toaster />
+
             {/* Profile Picture Section */}
-            <form key={1} onSubmit={handleSubmit(handleCommonDataSubmit)} >
+            <form key={1} onSubmit={handleSubmit(handleCommonDataSubmit)}>
                 <div className="flex flex-col items-center mb-6">
-                    <div className="w-32 h-32 bg-white rounded-full mb-4 flex items-center justify-center text-gray-400">
+                    <div className="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-full mb-4 flex items-center justify-center text-gray-400 dark:text-gray-300">
                         {imagePreview ? (
                             <img
                                 src={imagePreview}
@@ -237,9 +230,11 @@ const Profile = () => {
                         )}
                     </div>
                     <input
-                        type="file" onChange={handleChange}
-                        accept="image/*" hidden={!isEditingCommonData}
-                        className={`w-full p-2 text-black rounded-md ${!isEditingCommonData ? 'hidden' : 'block'}`}
+                        type="file"
+                        onChange={handleChange}
+                        accept="image/*"
+                        hidden={!isEditingCommonData}
+                        className={`w-full p-2 text-gray-900 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md ${!isEditingCommonData ? 'hidden' : 'block'}`}
                     />
                 </div>
 
@@ -247,46 +242,70 @@ const Profile = () => {
                 <div className="grid grid-cols-2 gap-4 mb-6">
                     <div>
                         <TextField
-                            label="Full Name" defaultValue={userData?.fullName || ''} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px", }} disabled={!isEditingCommonData}
+                            label="Full Name"
+                            defaultValue={userData?.fullName || ''}
+                            variant="filled"
+                            fullWidth
+                            sx={{
+                                backgroundColor: 'white',
+                                borderRadius: '8px',
+                            }}
+                            disabled={!isEditingCommonData}
                             {...register('fullName')}
                         />
-                        {errors.fullName && <p className='text-red-500'>{errors.fullName.message}</p>}
-
+                        {errors.fullName && <p className="text-red-500">{errors.fullName.message}</p>}
                     </div>
                     <div>
                         <TextField
-                            label="Email" defaultValue={userData?.email} disabled variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            label="Email"
+                            defaultValue={userData?.email}
+                            disabled
+                            variant="filled"
+                            fullWidth
+                            sx={{
+                                backgroundColor: 'white',
+                                borderRadius: '8px',
+                            }}
                         />
-
                     </div>
                 </div>
-                <div className='flex gap-4'>
 
+                {/* Action Buttons */}
+                <div className="flex gap-4">
                     {isEditingCommonData ? (
-                        <div className='flex gap-2'>
-                            <button type='submit' disabled={uploading} className='bg-slate-400 px-7 py-1 rounded-md text-white mb-6'
-                            >save</button>
-                            <button className='bg-slate-400 px-7 py-1 rounded-md text-white mb-6'
-                                type='button' onClick={toggleEditNameEmail}>Cancel</button>
+                        <div className="flex gap-2">
+                            <button
+                                type="submit"
+                                disabled={uploading}
+                                className="bg-gray-500 dark:bg-gray-700 px-7 py-1 rounded-md text-white mb-6"
+                            >
+                                Save
+                            </button>
+                            <button
+                                type="button"
+                                onClick={toggleEditNameEmail}
+                                className="bg-gray-500 dark:bg-gray-700 px-7 py-1 rounded-md text-white mb-6"
+                            >
+                                Cancel
+                            </button>
                         </div>
                     ) : (
-                        <button onClick={toggleEditNameEmail} className='bg-slate-400 px-7 py-1 rounded-md text-white mb-6'>edit</button>
+                        <button
+                            onClick={toggleEditNameEmail}
+                            className="bg-gray-500 dark:bg-gray-700 px-7 py-1 rounded-md text-white mb-6"
+                        >
+                            Edit
+                        </button>
                     )}
                 </div>
-
             </form>
 
-            {userData?.role === 'mentor' && (
-                <MentorData userData={userData} />
-            )}
-
+            {userData?.role === 'mentor' && <MentorData userData={userData} />}
 
             {/* Password Change Section */}
             <div className="mt-6">
                 <button
-                    className="bg-blue-600 px-4 py-2 rounded-md text-white"
+                    className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-900 px-4 py-2 rounded-md text-white"
                     onClick={togglePasswordChange}
                 >
                     Change Password
@@ -296,47 +315,73 @@ const Profile = () => {
                     <form onSubmit={passowrdHandleSubmit(handleUpdatePassword)}>
                         <div className="mt-4">
                             <TextField
-                                label="Current Password:" {...passwordRegister('currentPassword')}
-                                variant="filled" fullWidth
-                                sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                                label="Current Password"
+                                {...passwordRegister('currentPassword')}
+                                variant="filled"
+                                fullWidth
+                                sx={{
+                                    backgroundColor: 'white',
+                                    borderRadius: '8px',
+                                }}
                             />
-                            {passwordError.currentPassword && <p className='text-red-600'>{passwordError.currentPassword.message}</p>}
+                            {passwordError.currentPassword && (
+                                <p className="text-red-500">{passwordError.currentPassword.message}</p>
+                            )}
 
                             <div className="grid grid-cols-2 gap-4 mt-3 mb-6">
                                 <div>
                                     <TextField
-                                        label="New Password:"
-                                        variant="filled" fullWidth {...passwordRegister('newPassword')}
-                                        sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                                        label="New Password"
+                                        variant="filled"
+                                        fullWidth
+                                        {...passwordRegister('newPassword')}
+                                        sx={{
+                                            backgroundColor: 'white',
+                                            borderRadius: '8px',
+                                        }}
                                     />
-                                    {passwordError.newPassword && <p className='text-red-600'>{passwordError.newPassword.message}</p>}
-
+                                    {passwordError.newPassword && (
+                                        <p className="text-red-500">{passwordError.newPassword.message}</p>
+                                    )}
                                 </div>
                                 <div>
                                     <TextField
-                                        label="Confirm New Password:"  {...passwordRegister('confirmPassword')}
-                                        variant="filled" fullWidth
-                                        sx={{ backgroundColor: "white", borderRadius: "8px" }}
-
+                                        label="Confirm New Password"
+                                        variant="filled"
+                                        fullWidth
+                                        {...passwordRegister('confirmPassword')}
+                                        sx={{
+                                            backgroundColor: 'white',
+                                            borderRadius: '8px',
+                                        }}
                                     />
-                                    {passwordError.confirmPassword && <p className='text-red-600'>{passwordError.confirmPassword.message}</p>}
-
+                                    {passwordError.confirmPassword && (
+                                        <p className="text-red-500">{passwordError.confirmPassword.message}</p>
+                                    )}
                                 </div>
                             </div>
-                            <div className='flex gap-3'>
-                                <button type='submit' className="bg-gray-400 text-white px-4 py-2 rounded-md ">
+                            <div className="flex gap-3">
+                                <button
+                                    type="submit"
+                                    className="bg-gray-500 dark:bg-gray-700 text-white px-4 py-2 rounded-md"
+                                >
                                     Update Password
                                 </button>
-                                <button type='button' onClick={handleCancel} className="bg-gray-400 text-white px-4 py-2 rounded-md ">
+                                <button
+                                    type="button"
+                                    onClick={handleCancel}
+                                    className="bg-gray-500 dark:bg-gray-700 text-white px-4 py-2 rounded-md"
+                                >
                                     Cancel
                                 </button>
                             </div>
-
                         </div>
                     </form>
                 )}
             </div>
         </div>
+
+
     );
 };
 

@@ -33,14 +33,11 @@ const AdminLogin = () => {
     const onSubmit = async (data: object) => {
         try {
             const response = await loginApi(data)
-            console.log(response, 'response');
             if (response?.data.token) {
                 localStorage.setItem('accessToken-a', response.data.token)
                 dispatch(login({ token: response.data.token, admin: response.data }))
                 navigate('/admin/dashboard')
             } else {
-                console.log(response?.data.message, 'respnose .data.mesage');
-
                 setError(response?.data.message)
             }
         } catch (error) {

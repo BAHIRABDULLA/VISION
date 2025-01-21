@@ -14,6 +14,8 @@ const chatSocketHandler = (server: Server, socket: Socket) => {
 
 
     connectedUsers.set(userId, socket.id)
+    console.log(connectedUsers,'connected users in chat ts - - - - - - -  -');
+    
     console.log(`User ${userId} connected with socket ${socket.id}`)
 
     socket.on('chat-user_join', ({ userId }) => {

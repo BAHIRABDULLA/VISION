@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 // import { privateApi } from './axiosConfig';
 import { adminPrivateApi } from './instance/adminInstance';
+import { privateApi } from './axiosConfig';
 
 
 console.log(import.meta.env.VITE_COURSE_API_BASE_URL, 'IMPORT mete course ENV viteapivaseurl');
@@ -64,9 +65,7 @@ export const updateCourseStatus = async (id: string, status: string) => {
 
 export const getResources = async ()=>{
     try {
-        const response  = await api.get('/resource')
-        console.log(response,'response in get resources in course api');
-        
+        const response  = await api.get('/resource')        
         return response
     } catch (error) {
         console.error('Error founded in get resource',error);
@@ -119,6 +118,19 @@ export const getAllResourceWithCourseId = async (courseId: string) => {
         return response
     } catch (error) {
         console.error('Error founded in get all resource with course id', error);
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}
+
+
+export const getPurchasedCourses = async () => {
+    try {
+        const response = await privateApi.post(`/course/user/`)
+        return response
+    } catch (error) {
+        console.error('Error founded in purchase course', error);
         if(error instanceof AxiosError){
             return error.response
         }

@@ -18,11 +18,9 @@ app.use(express.json())
 
 rabbitmqConnect()
 .then(()=>{    
-    // consumerMentorQueue()
+    consumerMentorQueue('userExchange', 'mentorQueue')
     consumerMentorApprovalQueue()
-    receiveMessage()
-    console.log('consumer mentor detains in index.ts in mentorService');
-    
+    receiveMessage()    
 }).catch((error)=>console.error('Failed to connect rabbitmq ',error))
 
 

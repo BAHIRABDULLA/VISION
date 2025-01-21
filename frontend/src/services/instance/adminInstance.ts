@@ -10,7 +10,6 @@ export const adminPrivateApi = axios.create({
 
 adminPrivateApi.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken-a');
-    console.log(token, 'token in api interceptor ');
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`
@@ -30,8 +29,6 @@ adminPrivateApi.interceptors.response.use(
             originalRequest._retry = true;
             try {
                 const response = await adminPrivateApi.get('admin/refresh-token');
-                console.log(response, 'response in axios config file');
-
                 if (response.status === 200) {
                     const newAccessToken = response.data.accessToken;
                     localStorage.setItem('accessToken-a', newAccessToken);

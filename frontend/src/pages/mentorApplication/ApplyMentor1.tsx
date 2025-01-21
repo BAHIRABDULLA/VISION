@@ -3,12 +3,15 @@ import visionLogo from '../../assets/auth/vison_logo_black.svg'
 import Input from '@/components/Input'
 import { TextField, Autocomplete, Box } from '@mui/material'
 
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useLocation } from 'react-router-dom';
 import { countries } from '@/constants/countries';
 import { getAllCategories } from '@/services/adminApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store/store';
+import { resetSkills } from '@/redux/slices/mentorApplicationSlice';
 
 
 const applyMentorSchema = z.object({
@@ -50,12 +53,71 @@ type applyMentor1Props = {
 
 
 interface CategorySchema {
-    name:string;
-    skills:string[]
+    name: string;
+    skills: string[]
 }
 const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
-    const [imagePreview, setImagePreview] = useState<string | null>(null)
 
+    const firstComponentData = useSelector((state: RootState) => state.mentorApplication.firstComponentData)
+    const dispatch = useDispatch()
+
+    const [imagePreview, setImagePreview] = useState<string | null>(null)
+    
+
+    const location = useLocation()
+    const { register, control, handleSubmit, setValue, getValues, formState: { errors }, } = useForm<applyMentorSchemaType>({
+        resolver: zodResolver(applyMentorSchema),
+        defaultValues: {
+            file: firstComponentData?.file[0] || '',
+            jobTitle: firstComponentData?.jobTitle || '',
+            category: firstComponentData?.category || '',
+            country: firstComponentData?.country || '',
+            location: firstComponentData?.location || '',
+            company: firstComponentData?.company || '',
+            skills: firstComponentData?.skills || [],
+            bio: firstComponentData?.bio || '',
+            socialMediaUrls: {
+                github: firstComponentData?.socialMediaUrls?.github || '',
+                linkedin: firstComponentData?.socialMediaUrls?.linkedin || '',
+                x: firstComponentData?.socialMediaUrls?.x || '',
+                portfolio: firstComponentData?.socialMediaUrls?.portfolio || '',
+            }
+        }
+    })
+
+
+    // @ts-ignore
+    const [selectedCategory, setSelectedCategory] = useState(null)
+    const [selectedSkills, setSelectedSkills] = useState<string[]>(firstComponentData?.skills || [])
+    const [categories, setCategories] = useState<CategorySchema[]>([])
+    const [skills, setSkills] = useState<string[] | []>([])
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const response = await getAllCategories()
+            const categoriesData = response?.data.categories || [];
+            setCategories(categoriesData);
+        }
+        fetchCategories()
+    }, [])
+
+    useEffect(() => {
+        // Handle file preview when firstComponentData changes
+        if (firstComponentData?.file) {
+            // Check if it's a FileList or array-like object
+            if (typeof firstComponentData?.file[0] == 'object') {
+                const file = firstComponentData.file[0] 
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImagePreview(reader.result as string);
+                };
+                reader.readAsDataURL(file);
+            } 
+            else if (typeof firstComponentData.file === 'string') {
+                setImagePreview(firstComponentData.file);
+            }
+        }
+    }, [firstComponentData?.file]);
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
@@ -67,44 +129,13 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
         }
     }
 
-
-    const location = useLocation()
-    const { email } = location.state
-    console.log(email, 'email in apply mentor1 ');
-
-   
-
-    const { register, handleSubmit, setValue, getValues, formState: { errors }, } = useForm<applyMentorSchemaType>({ resolver: zodResolver(applyMentorSchema) })
-
-
-    useEffect(() => {
-        console.log(getValues(), 'get values')
-        console.log(errors, 'errrors');
-
-    })
-
-    // @ts-ignore
-    const [selectedCategory, setSelectedCategory] = useState(null)
-    const [categories, setCategories] = useState<CategorySchema[]>([])
-    console.log(categories, 'categories in ----------');
-
-    const [skills, setSkills] = useState<string[] | []>([])
-    useEffect(() => {
-        const fetchCategories = async () => {
-            const response = await getAllCategories()
-            console.log(response, 'response for getll categoruyeis');
-            const categoriesData = response?.data.categories || [];
-            setCategories(categoriesData);
-        }
-        fetchCategories()
-    }, [])
-
-    
     const handleCategoryChange = (_event: any, value: string | null) => {
-        console.log(value, 'value');
-
+        dispatch(resetSkills())
         setSelectedCategory(value)
+        setSelectedSkills([])
+        setValue("skills", [])
         setValue("category", value || "");
+
         const category = categories.find((cat) => cat.name === value)
         if (category && category.skills) {
             setSkills(category.skills);
@@ -114,8 +145,9 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     }
 
     const handleSkillsChange = (_event: any, value: string[]) => {
-        setValue("skills", value, { shouldValidate: true }); 
-      };
+        setSelectedSkills(value)
+        setValue("skills", value, { shouldValidate: true });
+    };
     return (
         <div className='min-h-screen flex flex-col items-center justify-center bg-gray-50'>
             <form onSubmit={handleSubmit(onNext)} encType='multipart/form-data' className='w-full max-w-6xl p-8  rounded-lg'>
@@ -147,19 +179,17 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
                         <input type="file" className="block w-full text-sm text-slate-500
                             file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold
                              file:bg-violet-50 file:text-violet-700
-                             hover:file:bg-violet-100w" {...register("file")} onChange={handleFileChange} />
+                             hover:file:bg-violet-100w" {...register("file")} onChange={handleFileChange}  />
                     </label>
                     {/* <input type='file' className='ml-4 px-4 py-2 text-sm border rounded-md'{...register("file")}
                         onChange={handleFileChange} /> */}
                 </div>
 
-
-
                 {/* <div className='grid grid-cols-2 gap-4'> */}
 
                 <div className='flex gap-4'>
                     <div className='w-full'>
-                        <Input label='Job Title *' customClasses='w-full' {...register('jobTitle')} />
+                        <Input label='Job Title *' defaultValue={firstComponentData?.jobTitle || ''} customClasses='w-full' {...register('jobTitle')} />
                         {errors.jobTitle && <p className="text-red-500">{errors.jobTitle.message}</p>}
                     </div>
 
@@ -167,97 +197,98 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
                         <Autocomplete disablePortal
                             options={categories?.map((category) => category.name)}
                             onChange={handleCategoryChange}
+                            defaultValue={firstComponentData.category || ''}
                             renderInput={(params) => <TextField {...params} label="Category" />}
                         />
                         {errors.category && <p className="text-red-500">{errors.category.message}</p>}
                     </div>
-
                 </div>
 
 
                 <div className='flex gap-4'>
-
                     <div className='w-full mt-4'>
                         <Autocomplete
                             id="country-select-demo"
-                            className=''
                             options={countries}
                             autoHighlight
                             getOptionLabel={(option) => option.label}
-                            renderOption={(props, option) => {
-                                const { key, ...optionProps } = props;
-                                return (
-                                    <Box
-                                        key={key}
-                                        component="li"
-                                        sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
-                                        {...optionProps}
-                                    >
-                                        <img
-                                            loading="lazy"
-                                            width="20"
-                                            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                                            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                                            alt=""
-                                        />
-                                        {option.label} ({option.code}) +{option.phone}
-                                    </Box>
-                                );
+                            defaultValue={
+                                firstComponentData?.country
+                                    ? countries.find(country => country.label === firstComponentData.country)
+                                    : null
+                            }
+                            onChange={(_event, value) => {
+                                setValue("country", value?.label || "")
                             }}
+                            renderOption={(props, option) => (
+                                <Box
+                                    component="li"
+                                    sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+                                    {...props}
+                                >
+                                    <img
+                                        loading="lazy"
+                                        width="20"
+                                        srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                                        src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                                        alt=""
+                                    />
+                                    {option.label} ({option.code}) +{option.phone}
+                                </Box>
+                            )}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
                                     label="Choose a country"
-                                    slotProps={{
-                                        htmlInput: {
-                                            ...params.inputProps,
-                                            autoComplete: 'new-password',
-                                        },
+                                    inputProps={{
+                                        ...params.inputProps,
+                                        autoComplete: 'new-password',
                                     }}
                                 />
                             )}
-                            onChange={(_event, value) => setValue("country", value?.label || "")}
                         />
                         {errors.country && <p className="text-red-500">{errors.country.message}</p>}
-
                     </div>
                     <div className='w-full'>
-                        <Input label='Location *' customClasses='w-full ' {...register('location')} />
+                        <Input label='Location *' defaultValue={firstComponentData?.location || ''} customClasses='w-full ' {...register('location')} />
 
                         {errors.location && <p className="text-red-500">{errors.location.message}</p>}
                     </div>
-
-
                 </div>
                 {/* </div> */}
+
                 <div className='flex gap-4 mt-2'>
                     <div className='w-full'>
-                        <TextField label="Company " helperText="optional" fullWidth   {...register('company')} />
+                        <TextField label="Company " defaultValue={firstComponentData?.company || ''} helperText="optional" fullWidth   {...register('company')} />
                         {errors.company && <p className="text-red-500">{errors.company.message}</p>}
 
                     </div>
-
                     <div className='w-full'>
-
-                        <TextField id="outlined-helperText" label="Experience" helperText="In year" fullWidth {...register('experience')} />
+                        <TextField id="outlined-helperText" defaultValue={firstComponentData?.experience || ''} label="Experience" helperText="In year" fullWidth {...register('experience')} />
                         {errors.experience && <p className="text-red-500">{errors.experience.message}</p>}
-
                     </div>
                 </div>
 
                 <div className='mt-3'>
-
-                    <Autocomplete multiple id="tags-outlined" options={skills}
+                    <Autocomplete
+                        multiple
+                        id="tags-outlined"
+                        options={skills}
+                        value={selectedSkills}
                         filterSelectedOptions
                         onChange={handleSkillsChange}
                         renderInput={(params) => (
-                            <TextField {...params} label="Skills" placeholder="Skills"/>
+                            <TextField
+                                {...params}
+                                label="Skills *"
+                                placeholder="Select skills"
+                            />
                         )}
                     />
                     {errors.skills && <p className="text-red-500">{errors.skills.message}</p>}
                 </div>
                 <div className='mt-4'>
-                    <TextField
+                    <TextField defaultValue={firstComponentData?.bio || ''}
                         id="outlined-multiline-static"
                         label="Bio *"
                         multiline
@@ -268,25 +299,29 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
                 </div>
                 <div className='col-span-2 flex gap-2 items-center'>
                     <div className='w-full '>
-                        <Input label="GitHub URL"  {...register('socialMediaUrls.github')} />
+                        <Input label="GitHub URL" defaultValue={firstComponentData.socialMediaUrls?.github || ''}
+                            {...register('socialMediaUrls.github')} />
                         {errors?.socialMediaUrls?.github && (
                             <p className="text-red-500">{errors.socialMediaUrls.github.message}</p>
                         )}
                     </div>
                     <div className='w-full'>
-                        <Input label="LinkedIn URL"  {...register('socialMediaUrls.linkedin')} />
+                        <Input label="LinkedIn URL" defaultValue={firstComponentData.socialMediaUrls?.linkedin || ''}
+                            {...register('socialMediaUrls.linkedin')} />
                         {errors?.socialMediaUrls?.linkedin && (
                             <p className="text-red-500">{errors.socialMediaUrls.linkedin.message}</p>
                         )}
                     </div>
                     <div className='w-full'>
-                        <Input label="Twitter/X URL"  {...register('socialMediaUrls.x')} />
+                        <Input label="Twitter/X URL" defaultValue={firstComponentData.socialMediaUrls?.x || ''}
+                            {...register('socialMediaUrls.x')} />
                         {errors?.socialMediaUrls?.x && (
                             <p className="text-red-500">{errors.socialMediaUrls.x.message}</p>
                         )}
                     </div>
                     <div className='w-full'>
-                        <Input label="Portfolio URL"  {...register('socialMediaUrls.portfolio')} />
+                        <Input label="Portfolio URL" defaultValue={firstComponentData.socialMediaUrls?.portfolio || ''}
+                            {...register('socialMediaUrls.portfolio')} />
                         {errors?.socialMediaUrls?.portfolio && (
                             <p className="text-red-500">{errors.socialMediaUrls.portfolio.message}</p>
                         )}

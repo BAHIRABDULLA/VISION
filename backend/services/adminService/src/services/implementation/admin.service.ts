@@ -9,6 +9,7 @@ import { IAdminRepository } from '../../repositories/interface/IAdmin.repository
 import { ICategoryRepository } from '../../repositories/interface/ICategory.repository'
 import CustomError from '../../utils/custom.error'
 import { HttpStatus } from '../../enums/http.status'
+import { publishMessage } from '../../events/rabbitmq/producer'
 
 console.log(process.env.API_BASE_URL,'in admin service API_BASE_URL');
 
@@ -46,8 +47,6 @@ export class AdminService implements IAdminService {
             if (!passwordCheck) return null
             // return errorResponse("Invalid credentials, Please try again")
             const token = generateAccessToken(email)
-            console.log(token, 'token token token ');
-
             // return successResponse("Login successful", { token:getAccessToken })
             return { token }
         } catch (error) {
@@ -63,10 +62,8 @@ export class AdminService implements IAdminService {
             // const usersFromMentorService = await mentorApi.get('/mentors')
 
             let userData = users.data
-            console.log(userData, 'data from suer service');
 
             // let dataFromMentorService = usersFromMentorService.data
-            // console.log(dataFromUserService,'data from mentor service');
 
             // const mergedUsers = dataFromUserService.map((x: any) => {
             //     const findMentor = dataFromMentorService.find((y: { mentor: any }) => y.mentor === x._id);
@@ -108,8 +105,9 @@ export class AdminService implements IAdminService {
 
     async updateApproval(id: string, isApproved: string) {
         try {
+
+            // await publishMessage({id,isApproved})
             const sentRequestToUserService = await userApi.patch(`${id}/approval`, { isApproved })
-            // console.log(sentRequestToUserService);
 
 
             return sentRequestToUserService.data
@@ -143,7 +141,6 @@ export class AdminService implements IAdminService {
     async addNewCategory(category: string, skills: string[]) {
         try {
             const findExistingCategory = await this.categoryRepository.findByCategoryName(category)
-            console.log(findExistingCategory,'findexisting cateogry ') 
             if(findExistingCategory){
                 throw new CustomError('Category already exited',HttpStatus.FORBIDDEN)
             }

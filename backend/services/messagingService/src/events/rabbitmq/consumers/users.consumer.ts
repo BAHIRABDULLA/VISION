@@ -10,7 +10,6 @@ export const setupConsumer = async (exchange:string,queue:string) => {
         await channel.assertQueue(queue, { durable: true })
         await channel.bindQueue(queue,exchange,'')
         channel.consume(queue, async (msg) => {
-            console.log(msg, 'msg in consumer messaging ====== queue');
             if (msg !== null) {
                 const userData = JSON.parse(msg.content.toString())
                 console.log(userData, 'userData , , , ');

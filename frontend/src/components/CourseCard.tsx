@@ -15,8 +15,6 @@ const CourseCard: React.FC<CourseCardProps> = memo(({ id, name, image, price, ra
 
   const navigate = useNavigate()
   const handleViewDetials = () => {
-    console.log(id, 'id id i di di di di di ');
-
     navigate(`/course/${id}`)
   }
   return (

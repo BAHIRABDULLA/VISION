@@ -4,6 +4,7 @@ import { JwtPayload } from "jsonwebtoken";
 import Stripe from "stripe";
 import { successResponse } from "../utils/response.helper";
 import { HttpStatus } from "../enums/http.status";
+import CustomError from "../utils/custom.error";
 
 
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-09-30.acacia' })
@@ -23,16 +24,10 @@ export class PaymentController {
         try {
 
             const user = req.user as JwtPayload
-            console.log(user, 'user as jwt payload');
 
             const userEmail = user.email
             const menteeId = user.id 
-            console.log(userEmail, 'user email');
-            console.log(req.body,'reb.qody');
-            
             const { price, courseId } = req.body
-            console.log(price, courseId, 'price , course i d');
-
             const response = await this.paymentService.createSession(price, courseId, userEmail,menteeId)
             res.json(response)
         } catch (error) {
@@ -45,22 +40,16 @@ export class PaymentController {
         console.log('its here webhook handler');
         let event
         const sig = req.headers['stripe-signature'] as string;
-        console.log(sig, 'sig sig sig ');
-
         if (!sig) {
             return res.status(400).send('Webhook Error: Missing signature or secret');
         }
 
         try {
            
-            console.log(process.env.STRIPE_WEBHOOK_SIGNIN_SECRET, 'process.env.STRIPE_WEBHOOK_SIGNIN_SECRET');
-
             // const event = await this.paymentService.constructWebhookEvent(req.body, sig);
             
             event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SIGNIN_SECRET!);
             if (event) {
-                console.log(`its so simple bro , don't worry `);
-
                 await this.paymentService.webhookHandleSave(event);
                 res.json({ received: true });
             } else {
@@ -76,12 +65,11 @@ export class PaymentController {
     async mentorshipCheckoutSession(req:CustomeRequest,res:Response ,next:NextFunction){
         try {
             const user = req.user as JwtPayload
-            console.log(user, 'user as jwt payload');
-
+            if(!user){
+                throw new CustomError("Please sign in",HttpStatus.BAD_REQUEST)
+            }
             const userEmail = user.email
-            const {planType,price,menteeId,mentorId}  = req.body
-            console.log(planType,'plan type',price,'price',menteeId,'menteeId',mentorId,'mentorId');
-            
+            const {planType,price,menteeId,mentorId}  = req.body            
             const response = await this.paymentService.commonSession(userEmail,planType,menteeId,mentorId,price)
             return res.status(200).json(response)
         } catch (error) {
@@ -94,7 +82,6 @@ export class PaymentController {
         try {
             const user = req.user as JwtPayload
             const {id} = req.params
-            console.log(id,'id in find course payment')
             const response = await this.paymentService.findCoursePayment(id,user.id)
             return successResponse(res,HttpStatus.OK,"Founded course",response)
         } catch (error) {

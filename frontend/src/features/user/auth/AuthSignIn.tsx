@@ -43,10 +43,8 @@ const AuthSignIn: React.FC = () => {
 
     const role = isMentee ? 'mentee' : 'mentor';
     try {
-      console.log('data:', data);
       const { email, password } = data
       const response = await signInRequest(email, password, role);
-      console.log(response, 'response');
 
 
       if (response.data.success) {
@@ -54,12 +52,10 @@ const AuthSignIn: React.FC = () => {
         if (role == 'mentee') {
           localStorage.setItem('accessToken', response.data.accessToken);
           dispatch(menteeLogin({ token: response.data.accessToken, user: { email, role, id } }));
-          console.log('mentee');
 
           navigate('/');
         } else {
           localStorage.setItem('accessToken', response.data.accessToken);
-          console.log('mentor kjkjkjkjkjk');
           dispatch(mentorLogin({ token: response.data.accessToken, user: { email, role, id  } }));
 
           navigate('/dashboard/')
@@ -79,8 +75,8 @@ const AuthSignIn: React.FC = () => {
         <img src={vision_logo} alt="vision_logo" className="w-3/4 md:w-2/4 lg:w-1/3" />
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 w-full md:w-3/4">
-        <h2 className="text-3xl font-semibold mb-4">Sign In</h2>
+      <div className="flex-1 flex flex-col bg-white items-center justify-center p-4 md:p-8 w-full md:w-3/4">
+        <h2 className="text-3xl text-black font-semibold mb-4">Sign In</h2>
 
         <div className="flex justify-center w-full mb-6">
           <button

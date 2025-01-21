@@ -4,8 +4,13 @@ import { NextFunction, Request, Response } from "express";
 import { uploadFile } from "../utils/file.upload";
 import ICourse from "../interfaces/ICourse";
 import { errorResponse, successResponse } from "../utils/response.helper";
+import { JwtPayload } from "jsonwebtoken";
 
 
+
+interface CustomeRequest extends Request {
+    user?: string | JwtPayload,
+}
 // interface courseData {
 //     name: string
 //     duration: string
@@ -24,7 +29,6 @@ export class CourseController {
 
     async createCourse(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log(req.body, 'req.body ');
 
             const { name, duration, overview, price, curriculum } = req.body
             const data = { name, duration, overview, price, curriculum: JSON.parse(curriculum) }
@@ -45,7 +49,6 @@ export class CourseController {
             console.log('-----   get all courses controller -----');
             
             const response = await this.courseService.getAllCourses()
-            // console.log(response,'response in get all coiurse');
             return res.json(response)
         } catch (error) {
             console.error('Error founded in get all courses', error);
@@ -56,7 +59,6 @@ export class CourseController {
     async getCourseDetails(req: Request, res: Response) {
         try {
             const { id } = req.params
-            console.log(id, 'id in course controller ')
             const response = await this.courseService.getCourseById(id)
             return res.json(response)
         } catch (error) {
@@ -69,9 +71,6 @@ export class CourseController {
         try {
             const { id } = req.params
             const { name, duration, overview, price, curriculum } = req.body
-            console.log(name,'name',duration,'duration',price,'price',overview,'overview')
-            console.log(curriculum,'curriculum here edi course controller')
-            console.log(JSON.parse(curriculum));
             
             const data = { name, duration, overview, price, curriculum: JSON.parse(curriculum) }
             const response = await this.courseService.editCourseData(data, id, req.file)
@@ -90,10 +89,7 @@ export class CourseController {
         try {
             const courseId = req.params.id
             const {status} = req.body
-            console.log(req.body,'req.body');
-            
-            console.log(status,'status in course controlelr')
-            console.log(courseId,'course id in edit course status course controler');
+     
             const response = await this.courseService.courseStatusUpdate(courseId,status)
             if(!response){
                 return errorResponse(res,HttpStatus.NOTFOUND,"There is an issue to update status")
@@ -101,6 +97,20 @@ export class CourseController {
             return successResponse(res,HttpStatus.OK,"Status updated",response)
         } catch (error) {
             console.error('Error founded in edit course controller',error);
+            next(error)
+        }
+    }
+
+
+    async getPurchasedCourses(req:CustomeRequest,res:Response,next:NextFunction){
+        try {
+
+            const user = req.user as JwtPayload
+            const userId = user.id
+            const response = await this.courseService.getPurchasedCourses(userId)
+            return successResponse(res,HttpStatus.OK,"Purchased courses fetched",response)
+        } catch (error) {
+            console.error('Error founded in get purchased courses controller',error);
             next(error)
         }
     }

@@ -8,7 +8,6 @@ interface IUser {
 
 const generateAccessToken= (user:IUser )=>{
     const secret = process.env.ACCESS_TOKEN_SECRET
-    console.log(secret,'secret in access token secret');
     if(!secret){
         throw new Error('Access token secret is not defined')
     }

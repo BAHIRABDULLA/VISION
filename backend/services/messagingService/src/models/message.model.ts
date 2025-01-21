@@ -5,7 +5,12 @@ import { IMessage } from "../interfaces/IMessage";
 const messageSchema: Schema<IMessage> = new Schema({
     sender: { type: String, required: true, ref: 'User' },
     recipient: { type: String, required: true, ref: 'User' },
-    message: { type: String, required: true },
+    messages: [
+      {
+        text: { type: String, required: true },
+        timestamp: { type: Date, default: Date.now },
+      },
+    ],
     timestamp: { type: Date, default: Date.now },
   });
 

@@ -54,30 +54,28 @@ const Home: React.FC = () => {
 
   return (
     <div className=' min-h-screen'>
+
       <div ref={(el) => el && sections.current.push(el)} >
         <Header />
         <Hero />
       </div>
 
-   <div ref={(el) => el && sections.current.push(el)} >
+      <div ref={(el) => el && sections.current.push(el)} >
         <Hero2 />
       </div>
+
       <div ref={(el) => el && sections.current.push(el)} className='min-h-screen'>
-        {/* Popular Courses Section */}
         <PopularCourses />
       </div>
 
       <div ref={(el) => el && sections.current.push(el)} className=''>
-        {/* Mentors Slider */}
         <MentorSlider />
       </div>
 
       <div ref={(el) => el && sections.current.push(el)} className=''>
         <Testimonial />
         <Footer />
-
       </div>
-
 
     </div>
   )

@@ -80,7 +80,6 @@ const ContentCard = ({ item, contentType }) => {
 
 const Resources = () => {
     const { id } = useParams<{ id: string }>()
-        console.log(id, 'id is here in resources page');
     const [activeLevel, setActiveLevel] = useState('basic');
     const [activeContentType, setActiveContentType] = useState('videos');
 
@@ -91,7 +90,6 @@ const Resources = () => {
     useEffect(() => {  
         const fetchData = async () => {
             const response = await getAllResourceWithCourseId(id);
-            console.log(response, 'response in get resources in Resources page');
         };
         fetchData();
     }
