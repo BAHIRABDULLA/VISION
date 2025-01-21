@@ -4,6 +4,8 @@ import connectDb from './config/db.config'
 import mentorRoute from './routes/mentor.route'
 import slotRoute from './routes/slot.route'
 import cors from 'cors'
+import {createStream} from 'rotating-file-stream';
+import path from 'path'
 import { rabbitmqConnect } from './config/rabbitmq'
 import { consumerMentorQueue } from './events/rabbitmq/consumers/consumer'
 import morgan from 'morgan'
@@ -29,7 +31,12 @@ connectDb()
 //     origin: 'https://vision.bahirabdulla.online',
 //     credentials: true
 // }))
-// app.use(morgan('dev'))
+const accessLogStream = createStream('access.log', {
+    interval: '1d',
+    path: path.join(__dirname, 'logs') 
+});
+
+app.use(morgan('combined',{stream:accessLogStream}))
 
 app.use('/slots',slotRoute)
 app.use('/',mentorRoute)

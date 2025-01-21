@@ -28,7 +28,7 @@ const OtpVerification: React.FC = () => {
   },[timeRemaining])
 
   const handleResendOtp = async () => {
-    const resend = await resendOtp(email)
+    await resendOtp(email)
 
     setTimeRemaining(60)
     setIsResendEnabled(false)

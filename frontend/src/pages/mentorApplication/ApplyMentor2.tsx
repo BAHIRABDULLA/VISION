@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-import { useLocation } from 'react-router-dom'
 
 
 const applyMentorSchema = z.object({
@@ -29,8 +28,8 @@ type applyMentor2Props = {
 }
 const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
 
-    const location = useLocation()
-    const { email } = location?.state
+    // const location = useLocation()
+    // const { email } = location?.state
 
     const { register, handleSubmit, formState: { errors } } = useForm<applyMentorSchemaType>({ resolver: zodResolver(applyMentorSchema) })
  

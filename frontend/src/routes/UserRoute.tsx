@@ -24,7 +24,6 @@ import DashboardLayout from '@/components/DashbaordLayout'
 import Dashboard from '@/pages/user-dashboard/Dashboard'
 import VideoCall from '@/pages/user-dashboard/VideoCall'
 import VideoCallList from '@/pages/user-dashboard/VideoCallList'
-import NotFoundPage from '@/components/NotFound'
 import MyCourses from '@/pages/user-dashboard/MyCourses'
 
 

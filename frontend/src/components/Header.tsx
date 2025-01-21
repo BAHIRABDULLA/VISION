@@ -75,7 +75,7 @@ const Header: React.FC = () => {
         <div
           className={`fixed top-0 left-0 w-3/4 h-full bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ${isDrawerOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
-          onClick={e => e.stopPropagation()}
+          // onClick={e => e.stopPropagation()}
         >
           <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700">
             <img

@@ -24,7 +24,7 @@ const VideoCallList: React.FC = () => {
     const toggleHistory = () => {
         setIsHistoryOpen(!isHistoryOpen);
     }
-    const [sessionHistory,setSessionHistory] = useState([
+    const [sessionHistory] = useState([
         {
             menteeId:{fullName:'lala'},
             date:'4343434',

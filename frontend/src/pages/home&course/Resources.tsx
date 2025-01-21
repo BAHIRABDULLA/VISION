@@ -89,7 +89,7 @@ const Resources = () => {
 
     useEffect(() => {  
         const fetchData = async () => {
-            const response = await getAllResourceWithCourseId(id);
+             await getAllResourceWithCourseId(id);
         };
         fetchData();
     }

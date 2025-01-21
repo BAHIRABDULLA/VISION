@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronLeft, Clock, PenTool, Star } from 'lucide-react';
+import { ChevronLeft, Star } from 'lucide-react';
 import Header from '@/components/Header';
 import { useParams } from 'react-router-dom';
 import { getCourseDetails } from '@/services/courseApi';
@@ -7,7 +7,7 @@ import Loading from '@/components/Loading';
 import toast, { Toaster } from 'react-hot-toast';
 import Footer from '@/components/Footer';
 import { loadStripe } from '@stripe/stripe-js'
-import { createCheckoutSession, createCourseReview, getAllCourseReviews, getCoursePaymentDetails } from '@/services/paymentApi';
+import { createCheckoutSession, getAllCourseReviews, getCoursePaymentDetails } from '@/services/paymentApi';
 import { Link } from 'react-router-dom';
 import RatingAndReview from '@/components/RatingAndReview';
 import CurriculumCard from '@/features/user/CurriculumCard';
@@ -39,9 +39,9 @@ const CourseDetails = () => {
     const [course, setCourse] = useState<CourseDetailProps | null>(null)
     const [loading, setLoading] = useState(true)
     const [isPurchase, setIsPurchase] = useState(true)
-    const [review, setReview] = useState('')
+    // const [review, setReview] = useState('')
     const [reviews, setReviews] = useState([])
-    const [isAddingReview, setIsAddingReview] = useState(false)
+    // const [isAddingReview, setIsAddingReview] = useState(false)
 
     useEffect(() => {
         const fetchPaymentDetails = async () => {
@@ -118,7 +118,7 @@ const CourseDetails = () => {
         }
     }
 
-    const handleAddReview = async () => {
+    // const handleAddReview = async () => {
     //     try {
     //         if (!review) {
     //             toast.error('Review is empty')
@@ -138,7 +138,7 @@ const CourseDetails = () => {
     //     } catch (error) {
     //     }
     //     setIsAddingReview(false)
-    }
+    // }
 
 
     if (loading) return <Loading />

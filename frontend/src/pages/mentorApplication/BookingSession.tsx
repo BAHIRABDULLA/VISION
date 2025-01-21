@@ -14,9 +14,9 @@ interface BookingProps {
     bookingData: BookingData[]
 }
 
-const BookingSession: React.FC<BookingProps> = ({ slots, mentorId, bookingData }) => {
+const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
 
-
+    
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
     const [dates, setDates] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -152,8 +152,6 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId, bookingData }
         }
     }
 
-    availableSlots.map((slot, i)=>{        
-    })
     return (
         <>
             <Toaster />

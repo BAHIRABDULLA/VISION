@@ -55,7 +55,7 @@ spec:
     spec:
       containers:
       - name: mentor-service
-        image: bahirk/vision-mentorservice:v1.0.0
+        image: bahirk/vision-mentorservice:latest
         imagePullPolicy: Always  
         ports:
         - containerPort: 4002
@@ -135,7 +135,7 @@ spec:
     spec:
       containers:
       - name: course-service
-        image: bahirk/vision-courseservice:v1.0.3
+        image: bahirk/vision-courseservice:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 4004

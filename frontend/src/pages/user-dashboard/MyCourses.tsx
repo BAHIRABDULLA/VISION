@@ -1,5 +1,5 @@
 import { getPurchasedCourses } from '@/services/courseApi';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const MyCourses = () => {
   // Sample data - replace with your actual data source
@@ -9,7 +9,7 @@ const MyCourses = () => {
   }, []);
   const fetchCourses = async () => {
     try {
-      const response = await getPurchasedCourses();
+     await getPurchasedCourses();
       
       // const response = await fetch('https://api.example.com/courses');
       // const data = await response.json();

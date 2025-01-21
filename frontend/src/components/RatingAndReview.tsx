@@ -1,12 +1,13 @@
 import { useState } from "react";
 
 import { PenTool, Star } from "lucide-react";
-import toast from "react-hot-toast";
-import { createCourseReview } from "@/services/paymentApi";
+// import toast from "react-hot-toast";
+// import { createCourseReview } from "@/services/paymentApi";
 
 const RatingAndReview = (props) => {
+console.log(props);
 
-    const review = props.review
+    // const review = props.review
     const mentorr = {
         reviews: [
             {
@@ -69,30 +70,30 @@ const RatingAndReview = (props) => {
     //     content: ''
     // })
 
-    const handleAddReview = async () => {
+    // const handleAddReview = async () => {
 
-        try {
-            if (!review) {
-                toast.error('Review is empty')
-                return
-            }
-            const data = {
-                courseId: 'id',
-                rating: 5,
-                review: review
-            }
-            const response = await createCourseReview(data)
-            if (response?.status && response?.status >= 400) {
-                toast.error(response?.data.message || 'Failed to add review')
-                return
-            }
+    //     try {
+    //         if (!review) {
+    //             toast.error('Review is empty')
+    //             return
+    //         }
+    //         const data = {
+    //             courseId: 'id',
+    //             rating: 5,
+    //             review: review
+    //         }
+    //         const response = await createCourseReview(data)
+    //         if (response?.status && response?.status >= 400) {
+    //             toast.error(response?.data.message || 'Failed to add review')
+    //             return
+    //         }
 
-            toast.success('Review added successfully')
-        } catch (error) {
+    //         toast.success('Review added successfully')
+    //     } catch (error) {
 
-        }
-        setIsAddingReview(false)
-    }
+    //     }
+    //     setIsAddingReview(false)
+    // }
 
     return (
         <div className="space-y-6">

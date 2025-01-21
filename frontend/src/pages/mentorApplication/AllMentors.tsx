@@ -9,7 +9,7 @@ import { debounce } from 'lodash'
 
 const MentorPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(0)
+    const [_totalPages, setTotalPages] = useState(0)
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState({

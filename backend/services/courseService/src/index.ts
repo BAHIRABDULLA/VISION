@@ -2,6 +2,8 @@ import express from 'express'
 import { connectDb } from './config/db';
 import cors from 'cors'
 import morgan from 'morgan'
+import {createStream} from 'rotating-file-stream';
+import path from 'path'
 import dotenv from 'dotenv'
 import errorHandler from './middleware/error.handler';
 import { rabbitmqConnect } from './config/rabbitmq';
@@ -17,7 +19,12 @@ const app = express()
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
-// app.use(morgan('combined'))
+const accessLogStream = createStream('access.log', {
+    interval: '1d',
+    path: path.join(__dirname, 'logs') 
+});
+
+app.use(morgan('combined',{stream:accessLogStream}))
 
 
 connectDb()

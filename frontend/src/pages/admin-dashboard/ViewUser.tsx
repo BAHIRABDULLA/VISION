@@ -17,7 +17,6 @@ const ViewUser = () => {
 
 
   const { id } = useParams()
-  const role = id?.slice(0, 6)
 
   const userId = id?.slice(7)
   if (!userId) {

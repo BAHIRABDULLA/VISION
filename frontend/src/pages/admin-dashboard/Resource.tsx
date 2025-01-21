@@ -14,6 +14,8 @@ const Resource = () => {
   const [resources,setResources] = useState([])
   if(resources){
     resources.map((res)=>{
+      console.log(res,'res');
+      
     })
   }
  
