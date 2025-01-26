@@ -5,7 +5,7 @@ const route = express.Router()
 import { reviewController } from '../config/container'
 import authenticateToken from '../middleware/auth.middleware'
 
-route.get('/course/:courseId',reviewController.getReviewsByCourseId.bind(reviewController))
-route.post('/course/create',authenticateToken,reviewController.createCourseReview.bind(reviewController))
+route.post('/create',authenticateToken,reviewController.createReview.bind(reviewController))
+route.get('/:courseIdOrMentorId',reviewController.getReviewsBycourseIdOrMentorId.bind(reviewController))
 
 export default route

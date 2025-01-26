@@ -3,9 +3,12 @@ import { messageService } from '../config/container'
 
 const connectedUsers = new Map<string, string>()
 
-const chatSocketHandler = (server: Server, socket: Socket) => {
-
+const chatSocketHandler = (namespace: Namespace, socket: Socket) => {
+    console.log('- - - - -  chat socket handler - - - - -');
+    
     const userId = socket.handshake.auth.userId
+    console.log(userId,'userId in socker connection');
+    
     if (!userId) {
         console.log('No userId provided, disconnecting socket')
         socket.disconnect()
@@ -19,6 +22,8 @@ const chatSocketHandler = (server: Server, socket: Socket) => {
     console.log(`User ${userId} connected with socket ${socket.id}`)
 
     socket.on('chat-user_join', ({ userId }) => {
+        console.log(userId,'userId in chatuser join');
+        
         if (!userId) {
             console.error('Invalid user_join event: no userId provided')
             return
@@ -29,6 +34,8 @@ const chatSocketHandler = (server: Server, socket: Socket) => {
 
     socket.on('chat-private_message', async ({ to, message }, callback) => {
         try {
+            console.log(to,'to',message,'message');
+            
             const sender = socket.data.userId
             if (!sender || !to || !message) {
                 console.error('Invalid chat-private_message event:', { sender, to, message })
@@ -42,7 +49,7 @@ const chatSocketHandler = (server: Server, socket: Socket) => {
             // Get recipient's socket ID from our map
             const recipientSocketId = connectedUsers.get(to)
             if (recipientSocketId) {
-                server.to(recipientSocketId).emit('chat-private_message', {
+                namespace.to(recipientSocketId).emit('chat-private_message', {
                     message,
                     sender,
                     timestamp: new Date().toISOString()

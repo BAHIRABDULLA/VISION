@@ -10,11 +10,12 @@ const upload = multer({
 });
 
 
+router.post('/generate-signed-url', adminAuthenticateToken, resourceController.generateSignedUrl.bind(resourceController))
 router.get('/course/:courseId',resourceController.getResourcesByCourseId.bind(resourceController))
 router.get('/:id',resourceController.getResourceById.bind(resourceController))
 
 router.get('/',resourceController.getResources.bind(resourceController))
-router.post('/',adminAuthenticateToken,upload.single('content'),resourceController.createResource.bind(resourceController));
+router.post('/',adminAuthenticateToken,resourceController.createResource.bind(resourceController));
 
 
 export default router

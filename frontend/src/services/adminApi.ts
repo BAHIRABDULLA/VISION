@@ -94,3 +94,14 @@ export const updateCategory = async (id:string,data:object)=>{
         }
     }
 }
+
+
+export const getAdminDashbaordData = async()=>{
+    try {
+        const resposne = await adminPrivateApi.get('/')
+    } catch (error) {
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}

@@ -1,5 +1,5 @@
 import express from 'express';
-import { Server } from 'socket.io';
+import { DefaultEventsMap, Server, Socket } from 'socket.io';
 import http from 'http';
 import dotenv from 'dotenv';
 
@@ -28,50 +28,49 @@ connectMongodb().catch((err) => {
 })
 
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}));
+// app.use(cors({
+//   origin: 'http://localhost:5173',
+//   credentials: true
+// }));
 app.use(express.json());
 
 
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  path: '/messages',
+const io = require('socket.io')(server, {
   cors: {
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST'],
-    credentials: true
+      origin: 'http://localhost:5173',
+      methods: ['GET', 'POST'],
+      credentials: true,
   },
-  transports:['websocket','polling']
-  
-
 });
 
-const chatNamespace = io.of('/chat');
-const videoNamespace = io.of('/video');
+const chatNamespace = io.of('/messages/chat');
+const videoNamespace = io.of('/messages/video');
 
-// chatNamespace.on('connection', (socket) => {
-//   chatSocketHandler(chatNamespace, socket);
-// });
-
-// videoNamespace.on('connection', (socket) => {
-//   videoCallSocketHandler(videoNamespace, socket);
-// });
-
-io.on('connection', (socket) => {
-  console.log('Client connected');
-  videoCallSocketHandler(io, socket); 
-  chatSocketHandler(io, socket);
+chatNamespace.on('connection', (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) => {
+  chatSocketHandler(chatNamespace, socket);
 });
 
+videoNamespace.on('connection', (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) => {
+  videoCallSocketHandler(videoNamespace, socket);
+});
 
-app.use('/conversation',conversationRoute)
-app.use('/users',userRoute)
-app.use('/', messageRoute,(req,res)=>{
-  console.log(req.url);
-  
+// io.on('connection', (socket) => {
+//   console.log('Client connected');
+//   videoCallSocketHandler(io, socket); 
+//   chatSocketHandler(io, socket);
+// });
+
+
+app.use('/conversation', conversationRoute)
+app.use('/users', userRoute, (req, res, next) => {
+  console.log(req.url, 'req.url', req.baseUrl, 'req.baseUrl');
+  next()
+})
+app.use('/', messageRoute, (req, res, next) => {
+  console.log(req.url, 'req.url in /', req.baseUrl);
+  next()
 });
 app.use(errorHandler)
 

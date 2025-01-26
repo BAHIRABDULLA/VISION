@@ -5,7 +5,6 @@ dotenv.config()
 interface CustomeRequest extends Request {
     user?: string | JwtPayload
 }
-console.log(process.env.ACCESS_TOKEN_SECRET,'*******');
 
 
 const authenticateToken = (req: CustomeRequest, res: Response, next: NextFunction) => {
@@ -18,7 +17,6 @@ const authenticateToken = (req: CustomeRequest, res: Response, next: NextFunctio
         const secret = process.env.ACCESS_TOKEN_SECRET
         
         const decodedToken = jwt.decode(newToken, { complete: true });
-        console.log(decodedToken, 'decoded token ');
 
         if (!secret) {
             throw new Error('Access token secret is not defined')

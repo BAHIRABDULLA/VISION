@@ -1,4 +1,5 @@
 import ICourse from "../../interfaces/ICourse";
+import { IPayment } from "../../models/payment.model";
 
 export interface ICourseService {
 
@@ -7,5 +8,5 @@ export interface ICourseService {
     getCourseById(id:string):Promise<{success:boolean,message:string,data?:object}>
     editCourseData(data:object,id:string,imageFile?:Express.Multer.File):Promise<ICourse | null>
     courseStatusUpdate(id:string,status:'active'|'block'):Promise<ICourse | null>
-    getPurchasedCourses(userId:string):Promise<ICourse | null>
+    getPurchasedCourses(userId:string):Promise<IPayment[] | null>
 }

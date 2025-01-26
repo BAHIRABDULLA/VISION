@@ -1,101 +1,76 @@
-import { useState } from "react";
-
+import { useCallback, useEffect, useState } from "react";
+import { FaStar } from "react-icons/fa";
 import { PenTool, Star } from "lucide-react";
 import toast from "react-hot-toast";
-import { createCourseReview } from "@/services/paymentApi";
+import { createReview, getAllReviews } from "@/services/paymentApi";
+import { Rating, Typography } from "@mui/material";
 
-const RatingAndReview = (props) => {
+type reviewRatingType = {
+    _id: string
+    review: string,
+    rating: number,
+    createdAt: Date,
+    userId: {
+        fullName: string
+    }
+}
 
-    const review = props.review
-    const mentorr = {
-        reviews: [
-            {
-                id: 1,
-                author: 'Sarah Johnson',
-                rating: 5,
-                date: '2024-03-15',
-                content: 'John is an exceptional mentor. His deep knowledge and patient teaching style helped me grow significantly as a developer.',
-                position: 'Frontend Developer'
-            },
-            {
-                id: 2,
-                author: 'Mike Chen',
-                rating: 5,
-                date: '2024-03-10',
-                content: 'Incredibly knowledgeable and supportive. John helped me prepare for senior developer interviews and I landed my dream job!',
-                position: 'Senior Software Engineer'
-            },
-            {
-                id: 3,
-                author: 'Lisa Rodriguez',
-                rating: 4,
-                date: '2024-03-01',
-                content: 'Great mentor who provides practical advice and real-world examples. Very responsive and always prepared for our sessions.',
-                position: 'Full Stack Developer'
-            },
-            {
-                id: 4,
-                author: 'Sarah Johnson',
-                rating: 5,
-                date: '2024-03-15',
-                content: 'John is an exceptional mentor. His deep knowledge and patient teaching style helped me grow significantly as a developer.',
-                position: 'Frontend Developer'
-            },
-            {
-                id: 5,
-                author: 'Mike Chen',
-                rating: 5,
-                date: '2024-03-10',
-                content: 'Incredibly knowledgeable and supportive. John helped me prepare for senior developer interviews and I landed my dream job!',
-                position: 'Senior Software Engineer'
-            },
-            {
-                id: 6,
-                author: 'Lisa Rodriguez',
-                rating: 4,
-                date: '2024-03-01',
-                content: 'Great mentor who provides practical advice and real-world examples. Very responsive and always prepared for our sessions.',
-                position: 'Full Stack Developer'
-            }
-        ]
-    };
+const RatingAndReview = ({ id, reviewType }) => {
+
+    console.log(reviewType, 'reviewType in rating and review ');
+    const [review, setReview] = useState('')
+    const [starValue, setStarValue] = useState(2)
+    console.log(starValue, 'star value');
+    const [reviews, setReviews] = useState<reviewRatingType[]>([])
+    console.log(reviews, 'reviewsss');
+
+
 
 
     const [isAddingReview, setIsAddingReview] = useState(false)
-    // const [newReview, setNewReview] = useState({
-    //     author: '',
-    //     position: '',
-    //     rating: 0,
-    //     content: ''
-    // })
+
 
     const handleAddReview = async () => {
-
         try {
             if (!review) {
                 toast.error('Review is empty')
-                return
             }
             const data = {
-                courseId: 'id',
-                rating: 5,
-                review: review
+                courseIdOrMentorId: id,
+                rating: starValue,
+                review: review,
+                reviewType
             }
-            const response = await createCourseReview(data)
+            const response = await createReview(data)
+            console.log(response, 'response after creating review');
+
             if (response?.status && response?.status >= 400) {
                 toast.error(response?.data.message || 'Failed to add review')
+                setIsAddingReview(false)
                 return
             }
+            fetchGetAllReviews()
+            toast.success('Review successfully Added')
 
-            toast.success('Review added successfully')
+            setIsAddingReview(false)
         } catch (error) {
-
+            console.error('Error founded in handle add mentorshipe review', error);
+            setIsAddingReview(false)
         }
-        setIsAddingReview(false)
     }
+    const fetchGetAllReviews = useCallback(async () => {
+        const response = await getAllReviews(id, reviewType)
+        if (response?.status === 200) {
+            setReviews(response?.data.reviews)
+        }
+    }, [])
+ 
+    useEffect(() => {
+        fetchGetAllReviews()
+    }, [])
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 ">
             {/* Add Review Button */}
             <div className="flex gap-2 cursor-pointer hover:opacity-80"
                 onClick={() => setIsAddingReview(!isAddingReview)}>
@@ -108,17 +83,19 @@ const RatingAndReview = (props) => {
                 <div>
                     <div>
                         <div className="flex">
-                            <span className=" dark:text-gray-300 mr-2">Rating:</span>
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <Star key={star} className="w-6 h-6 cursor-pointer text-yellow-500" />
-                            ))}
+                            <Typography component="legend">Rating:</Typography>
+                            <Rating
+                                name="simple-uncontrolled"
+                                onChange={(_e, value) => setStarValue(value)}
+                                defaultValue={2}
+                            />
                         </div>
                     </div>
                     <div className="mt-3">
                         <textarea
-                            name="content"
+                            name="content" onChange={(e) => setReview(e.target.value)}
                             placeholder="Write your review here..."
-                            className="w-full bg-gray-200 dark:bg-gray-800 text-white dark:text-gray-300 p-2 rounded h-24"
+                            className="w-full bg-gray-200 dark:bg-gray-800 text-black dark:text-gray-300 p-2 rounded h-24"
                         />
                     </div>
                     <div className="flex justify-end space-x-2">
@@ -127,7 +104,7 @@ const RatingAndReview = (props) => {
                             onClick={() => setIsAddingReview(!isAddingReview)}>
                             Cancel
                         </button>
-                        <button
+                        <button onClick={handleAddReview}
                             className="bg-yellow-500 text-black dark:bg-yellow-400 dark:text-gray-800 px-4 py-1 rounded hover:bg-yellow-400 dark:hover:bg-yellow-500">
                             Submit Review
                         </button>
@@ -137,21 +114,30 @@ const RatingAndReview = (props) => {
 
             {/* Reviews List */}
             <div className="max-h-[400px] overflow-y-auto pr-2">
-                {mentorr.reviews.map((review) => (
-                    <div key={review.id} className="border-b border-gray-700 last:border-0 pb-6 last:pb-0 mb-4">
+                {reviews.map((review) => (
+                    <div key={review._id} className="border-b border-gray-700 last:border-0 pb-6 last:pb-0 mb-4">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="font-semibold text-black dark:text-gray-300">{review.author}</p>
-                                <p className="text-sm text-gray-700 dark:text-gray-500">{review.position}</p>
+                                <p className="font-semibold ">{review?.userId?.fullName}</p>
+                                {/* <p className="text-sm text-gray-700 dark:text-gray-500">{review.position}</p> */}
                             </div>
                             <div className="flex items-center">
-                                {Array.from({ length: review.rating }).map((_, i) => (
-                                    <Star key={i} className="w-4 h-4 text-yellow-500" />
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <FaStar
+                                        key={i}
+                                        className={`w-4 h-4 ${i < review?.rating ? "text-yellow-500" : "text-gray-400"
+                                            }`}
+                                    />
                                 ))}
                             </div>
                         </div>
-                        <p className=" dark:text-gray-200 mt-2">{review.content}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">{review.date}</p>
+                        <p className=" dark:text-gray-200 mt-2">{review?.review}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                            {new Date(review?.createdAt).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                            })}</p>
                     </div>
                 ))}
             </div>

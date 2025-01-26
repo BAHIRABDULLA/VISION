@@ -14,7 +14,9 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
 connectMongodb()
-rabbitmqConnect()
+rabbitmqConnect().then(()=>{
+    setupConsumer('userExchange', 'paymentQueue')
+})
 
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -25,6 +27,7 @@ import paymentRoute from './routes/payment.route'
 import reviewRoute from './routes/review.route'
 import bookingRoute from './routes/booking.route'
 import errorHandler from './middleware/error.handler'
+import { setupConsumer } from './events/rabbitmq/consumer/users.consumer'
 
 
 app.use('/review',reviewRoute)

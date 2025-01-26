@@ -5,12 +5,13 @@ import bodyParser from 'body-parser'
 import adminAuthenticateToken from '../middleware/admin.auth.middleware'
 
 
-const route = express.Router()
+const router = express.Router()
 
-route.post('/create-checkout-session',authenticateToken,paymentController.createSessionForStripe.bind(paymentController))
+router.post('/create-checkout-session',authenticateToken,paymentController.createSessionForStripe.bind(paymentController))
 // route.post('/webhook',express.raw({type:'application/json'}),paymentController.webhookHandle.bind(paymentController))
-route.post('/mentorship-plan',authenticateToken,paymentController.mentorshipCheckoutSession.bind(paymentController))
-route.get('/transactions',adminAuthenticateToken,paymentController.findTransactions.bind(paymentController))
-route.get('/course/:id',authenticateToken,paymentController.findCoursePayment.bind(paymentController))
+router.post('/mentorship-plan',authenticateToken,paymentController.mentorshipCheckoutSession.bind(paymentController))
+router.get('/transactions',adminAuthenticateToken,paymentController.findTransactions.bind(paymentController))
+router.get('/billing/history',authenticateToken,paymentController.getUserBillingHistory.bind(paymentController))
+router.get('/course/:id',authenticateToken,paymentController.findCoursePayment.bind(paymentController))
 
-export default route
+export default router

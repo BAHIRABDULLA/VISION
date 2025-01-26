@@ -109,7 +109,7 @@ const VideoCallList: React.FC = () => {
             {/* History Button */}
             <button
                 onClick={toggleHistory}
-                className="fixed top-10 right-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
+                className="fixed top-10 right-10 px-4 py-2  text-darkBg  darK:text-white rounded-lg border border-b border-cyan-800  transition-colors duration-300"
             >
                 History
             </button>

@@ -1,14 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { UserService } from "../services/implementation/user.service";
-import { User } from "../models/user.model";
-import { Jwt, JwtPayload } from "jsonwebtoken";
+import {  JwtPayload } from "jsonwebtoken";
 import { HttpStatus } from "../enums/http.status";
 import { IUserService } from "../services/interface/IUser.service";
-// import { uploadFileToS3 } from "../utils/upload";
-import { FileArray, UploadedFile } from "express-fileupload";
-import { s3, uploadFile } from "../utils/upload";
-import { sendEmail } from "../utils/email.util";
-import { sendUserData } from "../events/rabbitmq/producers/producer";
+import { s3 } from "../utils/upload";
 
 
 
@@ -101,40 +95,6 @@ export class UserController {
         }
     }
 
-
-    // async profileUpdate(req: CustomeRequest, res: Response, next: NextFunction) {
-    //     try {
-    //         const user = req.user as JwtPayload
-    //         if (!user) {
-    //             return res.json({ message: 'Not founded user' })
-    //         }
-    //         const id = user.id
-    //         const { fullName } = req.body
-    //         let s3FileUrl = ''
-    //         if (req.file) {
-    //             const file = req.file
-    //             const fileContent = file.buffer;
-    //             const fileType = file.mimetype;
-    //             const fileName = `uploads/${Date.now()}_${file.originalname}`;
-
-    //             const result = await uploadFile(fileContent, fileName, fileType);
-    //             if (!result) {
-    //                 return res.status(HttpStatus.NOTFOUND).json({ success: false, message: '' })
-    //             }
-    //             s3FileUrl = result.Location
-
-    //         }
-    //         if (s3FileUrl === '') {
-    //             s3FileUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'
-    //         }
-    //         const updateUser = await this.userService.updateUser(id, { fullName, profile: s3FileUrl })
-
-    //         res.status(HttpStatus.OK).json({ success: true, message: "update successfully", updateUser })
-    //     } catch (error) {
-    //         console.error('Error founded in profile update', error);
-    //         next(error)
-    //     }
-    // }
 
 
     async profileUpdate(req: CustomeRequest, res: Response, next: NextFunction) {

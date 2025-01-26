@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronLeft, Clock, PenTool, Star } from 'lucide-react';
+import { ChevronLeft, Star } from 'lucide-react';
 import Header from '@/components/Header';
 import { useParams } from 'react-router-dom';
 import { getCourseDetails } from '@/services/courseApi';
@@ -7,7 +7,7 @@ import Loading from '@/components/Loading';
 import toast, { Toaster } from 'react-hot-toast';
 import Footer from '@/components/Footer';
 import { loadStripe } from '@stripe/stripe-js'
-import { createCheckoutSession, createCourseReview, getAllCourseReviews, getCoursePaymentDetails } from '@/services/paymentApi';
+import { createCheckoutSession, getCoursePaymentDetails } from '@/services/paymentApi';
 import { Link } from 'react-router-dom';
 import RatingAndReview from '@/components/RatingAndReview';
 import CurriculumCard from '@/features/user/CurriculumCard';
@@ -39,9 +39,6 @@ const CourseDetails = () => {
     const [course, setCourse] = useState<CourseDetailProps | null>(null)
     const [loading, setLoading] = useState(true)
     const [isPurchase, setIsPurchase] = useState(true)
-    const [review, setReview] = useState('')
-    const [reviews, setReviews] = useState([])
-    const [isAddingReview, setIsAddingReview] = useState(false)
 
     useEffect(() => {
         const fetchPaymentDetails = async () => {
@@ -77,15 +74,7 @@ const CourseDetails = () => {
         }
         fetchCourseDetails()
     }, [id])
-    useEffect(() => {
-        const fetchCourseReviews = async () => {
-            const response = await getAllCourseReviews(id)
-            if (response?.status === 200) {
-                setReviews(response?.data.reviews)
-            }
-        }
-        fetchCourseReviews()
-    }, [])
+    
     const handleEnroll = async () => {
         const stripe = await stripePromise
         try {
@@ -117,29 +106,6 @@ const CourseDetails = () => {
             console.error('Error creating cehckout session', error);
         }
     }
-
-    const handleAddReview = async () => {
-    //     try {
-    //         if (!review) {
-    //             toast.error('Review is empty')
-    //             return
-    //         }
-    //         const data = {
-    //             courseId: id,
-    //             rating: 5,
-    //             review: review
-    //         }
-    //         const response = await createCourseReview(data)
-    //         if (response?.status && response?.status >= 400) {
-    //             toast.error(response?.data.message || 'Failed to add review')
-    //             return
-    //         }
-    //         toast.success('Review added successfully')
-    //     } catch (error) {
-    //     }
-    //     setIsAddingReview(false)
-    }
-
 
     if (loading) return <Loading />
     return (
@@ -211,12 +177,12 @@ const CourseDetails = () => {
                     {activeTab === 'reviews' && (
                         <div className="space-y-6">
                             {/* Reviews */}
-                            <RatingAndReview reviews={reviews} />
+                            <RatingAndReview id={id}  reviewType='course' />
                         </div>
                     )}
                 </div>
                 {/* Course Curriculum */}
-                <CurriculumCard course={course}/>
+                <CurriculumCard course={course} />
             </div>
             <Footer />
         </>

@@ -37,6 +37,16 @@ export class AdminController {
     }
 
 
+    async getDashbaordData(req:Request,res:Response,next:NextFunction) {
+        try {
+            const response = await this.adminService.getDashboardData()
+        } catch (error) {
+            console.error('Error founded in get dashboard data',error);
+            next(error)
+        }
+    }
+
+
     async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.adminService.users()

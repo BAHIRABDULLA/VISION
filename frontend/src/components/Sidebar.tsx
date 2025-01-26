@@ -47,12 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollapsed }) 
     { label: 'Video Call', icon: <FaVideo />, badge: '5', path: '/dashboard/video-call-users' },
     { label: 'Billing History', icon: <FaHistory />, path: '/dashboard/billing' },
     { label: 'My Courses', icon: <PiBooksFill />, path: '/dashboard/user-courses' },
-    ...(role === 'mentor' ?
-      [
-        { label: 'My Mentors', icon: <FaUsers />, path: '/dashboard/mentors' },
-        { label: 'Slot Management', icon: <FaCheckToSlot />, path: '/dashboard/slot-manage' }
-      ]
-      : [{ label: 'My Mentees', icon: <FaUsers />, path: '/dashboard/mentees' }]),
+    ...(role === 'mentor' ?[{ label: 'Slot Management', icon: <FaCheckToSlot />, path: '/dashboard/slot-manage' }]:[]),
     { label: 'Log out', icon: <FaSignOutAlt />, onClick: logoutUser },
     { label: theme === 'light' ? 'Dark Mode' : 'Light Mode', icon: theme === 'light' ? <DarkModeIcon /> : <LightModeIcon />, onClick: () => dispatch(toggleTheme()) }
 

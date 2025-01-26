@@ -10,9 +10,9 @@ const resourceSchema = new Schema<IResource>({
     topic: { type: String, required: true },
     content: { type: String, required: true },
     status: { type: Boolean, required: true, default: true },
-    nextResourceId: { type: Schema.Types.ObjectId, ref: 'Resource' },
+    // nextResourceId: { type:String,default:null },
 
 })
 
 
-export const Resource = mongoose.model('Resource', resourceSchema)
+export const Resource = mongoose.model<IResource>('Resource', resourceSchema)

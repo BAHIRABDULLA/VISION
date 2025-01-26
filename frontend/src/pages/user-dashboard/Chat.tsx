@@ -32,12 +32,12 @@ const Chat = () => {
 
   useEffect(() => {
     if (!socket && userId) {
-      socket = io('http://localhost:4000', {
+      socket = io('http://localhost:4000/messages/chat', {
         withCredentials: true,
-        path: '/messages/chat',
+        // path: '',
         transports: ['websocket', 'polling'],
         auth: { userId }
-      })
+      });
     }
 
     if (socket) {
@@ -90,23 +90,18 @@ const Chat = () => {
     }
   }, [userId])
 
-  // const fetchMessages = async (userId: string, participantId: string) => {
-  //   try {
-  //     // const response = await getMessages(userId, participantId)
-  //     // console.log(response, 'response in fetchmessages');
-
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
 
   const sendMessage = () => {
+    console.log('its here in send message');
+    
     if (!socket || !isConnected) {
       toast.error('Not connected to chat server')
       return
     }
 
     if (newMessage && selectedUser) {
+      console.log(newMessage,'new message',selectedUser,'selected user');
+      
       socket.emit('chat-private_message', {
         to: role === 'mentee' ? selectedUser.mentorId._id : selectedUser.menteeId._id,
         message: newMessage
@@ -167,8 +162,8 @@ const Chat = () => {
                 <div
                   key={index}
                   className={`max-w-[70%] rounded-lg p-1 px-4 ${msg.received
-                      ? "dark:bg-gray-700 bg-white dark:text-gray-200 text-black self-start"
-                      : "dark:bg-purple-800 bg-purple-100 dark:text-white text-black self-end"
+                    ? "dark:bg-gray-700 bg-white dark:text-gray-200 text-black self-start"
+                    : "dark:bg-purple-800 bg-purple-100 dark:text-white text-black self-end"
                     }`}
                 >
                   {msg.message}
@@ -209,8 +204,8 @@ const Chat = () => {
             <div
               key={user.id}
               className={`flex items-center p-4 cursor-pointer hover:dark:bg-gray-700 hover:bg-gray-500 ${selectedUser?._id === user._id
-                  ? "dark:bg-gray-700 bg-gray-600"
-                  : ""
+                ? "dark:bg-gray-700 bg-gray-600"
+                : ""
                 }`}
               onClick={() => handleUserSelect(user)}
             >

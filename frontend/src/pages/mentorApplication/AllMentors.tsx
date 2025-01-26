@@ -1,7 +1,7 @@
 import Header from '@/components/Header';
 // import Pagination from '@/components/Pagination';
 import Pagination from '@mui/material/Pagination';
-import { getAllMentorsWithParamsData } from '@/services/mentorApi';
+import { getAllCategories, getAllMentorsWithParamsData } from '@/services/mentorApi';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Loading from '@/components/Loading';
@@ -23,10 +23,11 @@ const MentorPage: React.FC = () => {
     // const handlePageChange = (page: number) => {
     //     setCurrentPage(page);
     // };
+    const [categories,setCategories] = useState([])
+    console.log(categories,'categories ');
+    
     const [mentors, setMentors] = useState([]);
-
-    useEffect(() => {
-        const fetchMentors = async () => {
+    const fetchMentors = useCallback(async() => {
             try {
                 setLoading(true)
                 const paramsData = {
@@ -51,9 +52,11 @@ const MentorPage: React.FC = () => {
             } finally {
                 setLoading(false)
             }
-        }
-        fetchMentors()
+        
     }, [searchQuery, filters, currentPage])
+    useEffect(() => {
+        fetchMentors()
+    }, [fetchMentors])
     const handleSearchChangeDebounced = useCallback(
         debounce((value: string) => {
             setSearchQuery(value);
@@ -82,6 +85,16 @@ const MentorPage: React.FC = () => {
         mentor.mentor.fullName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+
+    useEffect(()=>{
+        const fetchCategories = async()=>{
+            const response = await getAllCategories()
+            if(response.status<=400){
+                setCategories(response.data.response)
+            }
+        }
+        fetchCategories()
+    },[])
     return (
         <div className="min-h-screen ">
             <Header />
@@ -103,7 +116,7 @@ const MentorPage: React.FC = () => {
                                         onChange={(e) => handleFilterChange('priceRange', e.target.value)}
                                         className="w-full"
                                     />
-                                    <span className="text-sm text-gray-700 dark:text-gray-300">${filters.priceRange}</span>
+                                    <span className="text-sm text-gray-700 dark:text-gray-300">₹{filters.priceRange}</span>
                                 </div>
                             </div>
                             <div>
@@ -128,11 +141,15 @@ const MentorPage: React.FC = () => {
                                     onChange={(e) => handleFilterChange('expertise', e.target.value)}
                                 >
                                     <option value="any">Any</option>
-                                    <option value="frontend">Frontend Development</option>
+                                    {categories?.map((category)=>(
+                                        <option value={category?.name}>{category?.name}</option>
+                                        
+                                    ))}
+                                    {/* <option value="frontend">Frontend Development</option>
                                     <option value="backend">Backend Development</option>
                                     <option value="fullstack">Full Stack Development</option>
                                     <option value="cloud">Cloud Computing</option>
-                                    <option value="product">Product Management</option>
+                                    <option value="product">Product Management</option> */}
                                 </select>
                             </div>
 
@@ -144,9 +161,10 @@ const MentorPage: React.FC = () => {
                                     onChange={(e) => handleFilterChange('rating', e.target.value)}
                                 >
                                     <option value="any">Any</option>
-                                    <option value="4.5">4.5+ stars</option>
-                                    <option value="4">4+ stars</option>
-                                    <option value="3.5">3.5+ stars</option>
+                                    <option value="4.5">Above 4 stars</option>
+                                    <option value="4">Above 3  stars</option>
+                                    <option value="3.5">Above 2 stars</option>
+                                    <option value="3.5">Above 1 stars</option>
                                 </select>
                             </div>
 

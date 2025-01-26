@@ -1,6 +1,6 @@
 import {Server, Namespace, Socket } from 'socket.io'
 
-const videoCallSocketHandler = (server: Server, socket: Socket) => {
+const videoCallSocketHandler = (namespace: Namespace, socket: Socket) => {
     console.log('Video call socket initialized:', socket.id);
 
     const rooms = new Map();
@@ -22,7 +22,7 @@ const videoCallSocketHandler = (server: Server, socket: Socket) => {
 
     // Handle call initiation
     socket.on('video-call-user', ({ offer, bookingId, targetUserId }) => {
-        console.log('call user activated', offer, bookingId, targetUserId);
+        console.log('call user activated',  bookingId, targetUserId);
 
         socket.to(bookingId).emit('video-call-user', {
             offer,
@@ -32,7 +32,7 @@ const videoCallSocketHandler = (server: Server, socket: Socket) => {
 
     // Handle call acceptance
     socket.on('call-accepted', ({ answer, bookingId, targetUserId }) => {
-        console.log('call acccepted activated', answer, bookingId, targetUserId);
+        console.log('call acccepted activated', bookingId, targetUserId);
 
         socket.to(bookingId).emit('call-accepted', {
             answer,

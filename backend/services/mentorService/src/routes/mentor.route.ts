@@ -11,6 +11,7 @@ const upload = multer({dest:'src/uploads/'})
 
 router.post('/apply-mentor',upload.single('file'),mentorController.applyMentor.bind(mentorController))
 router.get('/mentors',mentorController.getAllMentors.bind(mentorController))
+router.get('/category',mentorController.getAllCategories.bind(mentorController))
 router.get('/users/:id',mentorController.getMentor.bind(mentorController))
 router.patch('/session-price',authenticateToken,mentorController.updateMentorSessionPrice.bind(mentorController))
 router.patch('/:id',mentorController.updateMentor.bind(mentorController))

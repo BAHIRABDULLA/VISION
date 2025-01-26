@@ -14,8 +14,8 @@ const VideoCall = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { bookingId, mentorId, menteeId, userId } = location.state || {};
-  console.log(bookingId,'bookdingId',mentorId,'mentorId',menteeId,'menteeid',userId);
-  
+  console.log(bookingId, 'bookdingId', mentorId, 'mentorId', menteeId, 'menteeid', userId);
+
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isCallStarted, setIsCallStarted] = useState(false);
@@ -105,9 +105,9 @@ const VideoCall = () => {
 
   // Initialize WebRTC peer connection
   const initPeerConnection = () => {
-    if(peerConnectionRef.current){
-      console.log(peerConnectionRef.current,'peercuoonec curre');
-      
+    if (peerConnectionRef.current) {
+      console.log(peerConnectionRef.current, 'peercuoonec curre');
+
       peerConnectionRef.current.close()
     }
     const configuration = {
@@ -121,7 +121,7 @@ const VideoCall = () => {
 
     if (localStream) {
       console.log('if (localStream) {');
-      
+
       localStream.getTracks().forEach(track => {
         pc.addTrack(track, localStream);
       });
@@ -133,10 +133,10 @@ const VideoCall = () => {
 
     pc.onicecandidate = (event) => {
       console.log('pc.onicecandidate = (event)');
-      
+
       if (event.candidate && socketRef.current) {
         console.log('event.candidate && socketRef.current');
-        
+
         socketRef.current.emit('ice-candidate', {
           candidate: event.candidate,
           bookingId,
@@ -155,6 +155,8 @@ const VideoCall = () => {
 
     const init = async () => {
       try {
+
+
         cleanup()
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -165,27 +167,27 @@ const VideoCall = () => {
           localVideoRef.current.srcObject = stream;
         }
 
-        const socket = io('http://localhost:4000', {
-          withCredentials:true,
-          path: '/messages',
-          transports: ['websocket'],
+        const socket = io('http://localhost:4000/messages/video', {
+          withCredentials: true,
+          // path: '',
+          transports: ['websocket', 'polling'],
         });
         socketRef.current = socket;
 
-        socket.on('connect',()=>{
-          console.log('Socket connected',socket.id);
-          
+        socket.on('connect', () => {
+          console.log('Socket connected', socket.id);
+
           console.log('Emitting video-join-room');
-          
+
           socket.emit('video-join-room', { bookingId, userId });
           console.log('after emitting video-join-room');
-          
+
         })
 
         socket.on('video-call-user', async ({ offer }) => {
           console.log('Received call offer');
           const pc = peerConnectionRef.current || initPeerConnection();
-          
+
           await pc.setRemoteDescription(new RTCSessionDescription(offer));
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
@@ -238,22 +240,13 @@ const VideoCall = () => {
   }, [remoteStream]);
 
   const startCall = async () => {
-    if (!sessionStatus.isValid) {
-      console.log('not time to start call');
-      return
-    };
+    if (!sessionStatus.isValid) return;
 
     try {
-      console.log('its entered in start call');
-      
-      if (!peerConnectionRef.current) {
-        console.log('its here in not peer connection ref');
-        
-        initPeerConnection();
-      }
+      const pc = peerConnectionRef.current || initPeerConnection();
 
-      const offer = await peerConnectionRef.current.createOffer();
-      await peerConnectionRef.current.setLocalDescription(offer);
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
 
       socketRef.current.emit('video-call-user', {
         offer,
@@ -266,6 +259,8 @@ const VideoCall = () => {
       console.error('Error starting call:', error);
     }
   };
+
+
   const handleBack = () => {
     cleanup();
     navigate('/dashboard/video-call-users');

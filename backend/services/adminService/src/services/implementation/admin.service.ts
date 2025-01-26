@@ -53,6 +53,15 @@ export class AdminService implements IAdminService {
     }
 
 
+    async getDashboardData(){
+        try {
+            const fetchTotalUsers = await axios.get('/')
+        } catch (error) {
+            console.error();
+            throw error
+        }
+    }
+
     async users(): Promise<{ users: object[] } | null> {
         try {
             const users = await userApi.get('/users')
@@ -146,6 +155,7 @@ export class AdminService implements IAdminService {
                 skills
             }
             const response = await this.categoryRepository.create(data)
+            await publishMessage('category_exchange',response)
             if(!response){
                 throw new CustomError('Unexpected error occuring to create category',HttpStatus.FORBIDDEN)
             }
@@ -164,7 +174,9 @@ export class AdminService implements IAdminService {
                 throw new CustomError('Category not founded',HttpStatus.NOTFOUND)
             }
             const response = await this.categoryRepository.update(id,{name:category,skills})
-
+            console.log(response,'response in update category');
+            
+            await publishMessage('category_exchange',response!)
             return response
         } catch (error) {
             console.error('Error founded in update category',error);

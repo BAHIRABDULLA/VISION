@@ -177,8 +177,8 @@ const CategoriesSkills: React.FC = () => {
                 </div>
             )}
 
-            {categories.map((category) => (
-                <div key={category.id} className="mb-6 mt-3 bg-white shadow p-4 rounded-lg">
+            {categories.map((category,index) => (
+                <div key={index} className="mb-6 mt-3 bg-white shadow p-4 rounded-lg">
                     <h2 className="text-xl font-semibold mb-3">{category.name}</h2>
                     <ul className="list-disc pl-6">
                         {category.skills.map((skill, index) => (

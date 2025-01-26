@@ -167,3 +167,14 @@ export const getBookingDetails = async (bookingId: string) => {
         }
     }
 }
+
+
+
+export const getAllCategories = async()=>{
+    try {
+        const response = await api.get('/category')
+        return response
+    } catch (error) {
+        console.error('Error founded in get all categories',error);
+    }
+}

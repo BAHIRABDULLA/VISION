@@ -170,5 +170,15 @@ export class MentorController {
             next(error)
         }
     }
+
+
+    async getAllCategories(req:Request,res:Response,next:NextFunction){
+        try {
+            const response = await this.mentorService.getAllCategoris()
+            return successResponse(res,HttpStatus.OK,"Category data sent",{response})
+        } catch (error) {
+            
+        }
+    }
 }
 

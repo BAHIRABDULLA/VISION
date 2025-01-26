@@ -2,6 +2,19 @@ import { IResourseService } from "../services/interface/IResource.service";
 import { NextFunction, Request, Response } from "express";
 import { successResponse } from "../utils/response.helper";
 import { HttpStatus } from "../enums/http.status";
+import AWS from 'aws-sdk'
+import dotenv from 'dotenv'
+dotenv.config()
+
+
+const accessKey = process.env.S3_BUCKET_ACCESS_KEY
+const secretKey = process.env.S3_BUCKET_SECRET
+export const s3 = new AWS.S3({
+    accessKeyId:accessKey,
+    secretAccessKey:secretKey,
+    region:'ap-south-1'
+})
+
 
 
 export class ResourseController {
@@ -9,6 +22,31 @@ export class ResourseController {
 
     constructor(resourceService: IResourseService) {
         this.resourceService = resourceService
+    }
+
+
+    async generateSignedUrl(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { fileName, fileType } = req.body            
+            if (!fileName || !fileType) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'fileName and fileType are required' 
+                });
+            }
+            const params = {
+                Bucket: process.env.BUCKET_NAME!,
+                Key: fileName,
+                Expires: 60,
+                ContentType: fileType,
+                
+            }
+            const signedUrl = await s3.getSignedUrlPromise('putObject', params)
+            res.status(HttpStatus.OK).json({ signedUrl ,key:fileName})
+        } catch (error) {
+            console.error('Error founded in generate signed url', error);
+            next(error)
+        }
     }
 
     async getResources(req: Request, res: Response, next: NextFunction) {
