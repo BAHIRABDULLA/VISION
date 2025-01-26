@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { TextField,  Container } from '@mui/material';
+import { TextField, Container } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '@/components/Button';
 import { z } from 'zod';
@@ -90,7 +90,7 @@ const AddCourse = () => {
         <div className="px-3 py-3">
           <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-32 rounded-lg
             border-2 border-dashed border-gray-300 text-gray-900 text-sm cursor-pointer hover:bg-zinc-200 transition duration-300"
-            >
+          >
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
               <svg
                 aria-hidden="true"

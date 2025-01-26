@@ -6,18 +6,8 @@ import { Link } from 'react-router-dom';
 
 const Resource = () => {
 
-  // const [resources,setResources] = useState([    { id: 1, title: "Tuples", type: "Image", course: 'Python', level: "Basic", status: "Active" },
-  //   { id: 2, title: "useContext", type: "Document", course: "Javascript", level: "Advanced", status: "Active" },
-  //   { id: 3, title: "Java Lambda", type: "Video", course: "Java", level: "Intermediate", status: "Inactive" }])
-
 
   const [resources,setResources] = useState([])
-  if(resources){
-    resources.map((res)=>{
-      console.log(res,'res');
-      
-    })
-  }
  
 
   useEffect(()=>{
@@ -65,7 +55,7 @@ const Resource = () => {
           <tbody>
             {resources && resources.length > 0 ? (
               resources.map((resource, index) => (
-                <tr key={resource.id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
+                <tr key={resource._id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
                   <td className="py-3 px-5 text-gray-700">{index + 1}</td>
                   <td className="py-3 px-5 text-gray-700">{resource.title}</td>
                   <td className="py-3 px-5 text-gray-700">{resource.type}</td>

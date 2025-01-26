@@ -21,4 +21,3 @@ export const consumerMentorQueue = async (exchange: string, queue: string) => {
         console.error('Failed to consume consumerMentorQuue', error);
     }
 }
-consumerMentorQueue('userExchange', 'mentorQueue')

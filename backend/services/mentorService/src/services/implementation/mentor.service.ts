@@ -10,6 +10,8 @@ import { IMentorRepository, IPopulatedMentor } from "../../repositories/interfac
 import { IUserRepository } from "../../repositories/interface/IUser.repository";
 import { ISlotRepository } from "../../repositories/interface/ISlot.repository";
 import { IBookingRepository } from "../../repositories/interface/IBooking.repository";
+import { ICategoryRepository } from "../../repositories/interface/ICategory.repository";
+import { ICategory } from "../../model/category.model";
 
 
 export interface mentorParamsData {
@@ -31,12 +33,15 @@ export class MentorService implements IMentorService {
     private mentorRepoistory: IMentorRepository
     private userRepository: IUserRepository
     private slotRepository: ISlotRepository
-    private bookingRepository:IBookingRepository
-    constructor(mentorRepository: IMentorRepository, userRepository: IUserRepository, slotRepository: ISlotRepository,bookingRepository:IBookingRepository) {
+    private bookingRepository: IBookingRepository
+    private categoryRepository: ICategoryRepository
+    constructor(mentorRepository: IMentorRepository, userRepository: IUserRepository, slotRepository: ISlotRepository,
+        bookingRepository: IBookingRepository, categoryRepository: ICategoryRepository) {
         this.mentorRepoistory = mentorRepository
         this.userRepository = userRepository
         this.slotRepository = slotRepository
         this.bookingRepository = bookingRepository
+        this.categoryRepository = categoryRepository
     }
 
 
@@ -192,6 +197,9 @@ export class MentorService implements IMentorService {
 
             const mentors = await this.mentorRepoistory.findAllWithUserData()
             const approvedMentors = mentors?.filter((mentor: IPopulatedMentor) => mentor.mentor !== null)
+            const findAllCategories = await this.categoryRepository.findAll()
+
+            const categoryNames = findAllCategories.map((category) => category.name)
 
             const slots = await this.slotRepository.findAll()
             const mentorsWithSlots = approvedMentors?.map((mentor: { mentor: { _id: { toString: () => string; }; }; toObject: () => any; }) => {
@@ -202,8 +210,8 @@ export class MentorService implements IMentorService {
                     slots: mentorSlots
                 }
             })
-            
-            const filteredMentors = mentorsWithSlots?.filter((mentor: { mentor: IUser; singleSessionPrice: number; experience: number ; location: string; }) => {
+
+            const filteredMentors = mentorsWithSlots?.filter((mentor: { mentor: IUser; category: string, singleSessionPrice: number; experience: number; location: string; }) => {
                 if (typeof mentor.mentor !== 'string') {
                     const user = mentor.mentor as IUser;
                     const mentorSearch = !search || user.fullName.toLowerCase().includes(search.toLowerCase())
@@ -212,14 +220,14 @@ export class MentorService implements IMentorService {
                         (experience === '1-3' && (mentor.experience ?? 0) >= 1 && (mentor.experience ?? 0) <= 3) ||
                         (experience === '4-7' && (mentor.experience ?? 0) >= 4 && (mentor.experience ?? 0) <= 7) ||
                         (experience === '8+' && (mentor.experience ?? 0) >= 8);
-
+                    const mathesExpertise = expertise === 'any' || categoryNames.includes(expertise) &&mentor.category===expertise
                     const matchesLocation = location === 'any' || mentor.location.toLowerCase().includes(location.toLowerCase())
 
-                    return (mentorSearch && matchesPriceRange && matchesExperience && matchesLocation)
+                    return (mentorSearch && matchesPriceRange && matchesExperience && mathesExpertise && matchesLocation)
                 }
 
             })
-    
+
             const totalResult = filteredMentors?.length || 0
             const pageSize = limit || 10
             const currentPage = page | 1
@@ -235,7 +243,7 @@ export class MentorService implements IMentorService {
     async getMentorSpecificData(id: string) {
         try {
             const mentor = await this.mentorRepoistory.findByIdWithBasicInfo(id)
-            
+
             if (mentor?.mentor._id) {
                 const mentorSlots = await this.slotRepository.findMentorSlots(mentor?.mentor._id.toString())
                 const bookingData = await this.bookingRepository.findBookingDataWithMentorId(mentor?.mentor._id.toString())
@@ -244,12 +252,31 @@ export class MentorService implements IMentorService {
                     slots: mentorSlots,
                     bookingData
                 }
-                
+
                 return mergedData
 
             }
         } catch (error) {
             console.error('Error founded in getMentorSpecificData service', error);
+            throw error
+        }
+    }
+
+
+    async addCategory(data: ICategory) {
+        try {
+            await this.categoryRepository.findOneAndUpdate(data)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getAllCategoris(){
+        try {
+            const response = await this.categoryRepository.findAll()
+            return response
+        } catch (error) {
+            console.error('Error founded in get all categories',error);
             throw error
         }
     }

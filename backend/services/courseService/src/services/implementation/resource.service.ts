@@ -35,7 +35,7 @@ export class ResourceService implements IResourseService {
         }
     }
     async createResourse(title: string , type: 'text' | 'image' | 'video', course: string,
-        level: string, topic: string, content: any): Promise<IResource | undefined> {
+        level: string, topic: string, content: string): Promise<IResource | undefined> {
         try {
             const courseDoc = await this.courseRepository.findByName(course)
             if (!courseDoc) {
@@ -51,22 +51,6 @@ export class ResourceService implements IResourseService {
             }
             const courseId = courseDoc._id as Types.ObjectId
             const data = { title,  type, course: courseId, level, topic, content }
-            if (type !== 'text') {
-                let s3FileUrl = ''
-                if (typeof content!=='string') {
-                    const fileContent = content.buffer;
-                    const fileType = content.mimetype;
-                    const fileName = `uploads/${Date.now()}_${content.originalname}`;
-                    const result = await uploadFile(fileContent, fileName, fileType);
-
-                    if (!result) {
-                        throw new Error('File upload failed');
-                    }
-                    s3FileUrl = result.Location
-
-                    data.content = s3FileUrl
-                }
-            }
             const createResourse = await this.resourceRepository.create(data)
 
             return createResourse

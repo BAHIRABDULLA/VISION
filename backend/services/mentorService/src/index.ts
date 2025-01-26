@@ -11,7 +11,8 @@ import { consumerMentorQueue } from './events/rabbitmq/consumers/consumer'
 import morgan from 'morgan'
 import errorHandler from './middleware/error.handler'
 import { consumerMentorApprovalQueue } from './events/rabbitmq/consumers/mentorApproval'
-import { receiveMessage } from './events/rabbitmq/consumers/paymentData'
+import { receiveMessage } from './events/rabbitmq/consumers/payment.consumer'
+import { receiveCategoryMessage } from './events/rabbitmq/consumers/category.consumer'
 
 dotenv.config()
 const app = express()
@@ -23,6 +24,7 @@ rabbitmqConnect()
     consumerMentorQueue('userExchange', 'mentorQueue')
     consumerMentorApprovalQueue()
     receiveMessage()    
+    receiveCategoryMessage('categoryQueue')
 }).catch((error)=>console.error('Failed to connect rabbitmq ',error))
 
 

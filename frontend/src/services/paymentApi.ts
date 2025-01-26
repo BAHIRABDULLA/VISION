@@ -1,5 +1,5 @@
 import { privateApi } from "./axiosConfig";
-import  axios, { AxiosError } from "axios"
+import axios, { AxiosError } from "axios"
 import { adminPrivateApi } from "./instance/adminInstance";
 const api = axios.create({
     baseURL: import.meta.env.VITE_PAYMENT_API_BASE_URL,
@@ -53,10 +53,10 @@ export const mentorshipPayment = async (data: object) => {
 
 export const getCoursePaymentDetails = async (courseId: string) => {
     try {
-        const response = await privateApi.get(`/payment/course/${courseId}` )
+        const response = await privateApi.get(`/payment/course/${courseId}`)
         return response
     } catch (error) {
-        if(error instanceof AxiosError){
+        if (error instanceof AxiosError) {
             return error.response
         }
         console.error('Error founded in get payment detaisl', error);
@@ -64,24 +64,26 @@ export const getCoursePaymentDetails = async (courseId: string) => {
 }
 
 
-export const getAllCourseReviews = async (courseId: string) => {
+
+export const createReview = async (data: { courseIdOrMentorId: string, rating: number, review: string, reviewType: 'course' | 'mentorship' }) => {
     try {
-        const response = await api.get(`/review/course/${courseId}`)
+        const response = await privateApi.post('/payment/review/create', data)
         return response
     } catch (error) {
-        console.error('Error founded in get all course reviews', error);
+        console.error('Error founded in create course review', error);
         if (error instanceof AxiosError) {
             return error.response
         }
     }
 }
 
-export const createCourseReview = async (data: { courseId: string, rating: number, review: string }) => {
+
+export const getAllReviews = async (courseIdOrMentorId: string, reviewType: 'course'|'mentorship') => {
     try {
-        const response = await privateApi.post('/payment/review/course/create', data)
+        const response = await api.get(`/review/${courseIdOrMentorId}`, { params: { reviewType } })
         return response
     } catch (error) {
-        console.error('Error founded in create course review', error);
+        console.error('Error founded in get all course reviews', error);
         if (error instanceof AxiosError) {
             return error.response
         }
@@ -98,5 +100,19 @@ export const getAllTransaction = async () => {
         if (error instanceof AxiosError) {
             return error.response
         }
+    }
+}
+
+
+export const getUserBillingHistory = async () => {
+    try {
+        const response = await privateApi.get('/payment/billing/history')
+        return response
+    } catch (error) {
+        console.error('ERror founded in get all user billing history ', error);
+        if (error instanceof AxiosError) {
+            return error.response
+        }
+
     }
 }

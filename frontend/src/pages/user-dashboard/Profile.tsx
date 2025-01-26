@@ -141,9 +141,7 @@ const Profile = () => {
         if (file) {
             setSelectedFile(file)
             setImagePreview(URL.createObjectURL(file))
-
             generateSignedUrl(file)
-
         }
     }
     const generateSignedUrl = async (file: File) => {
@@ -177,6 +175,7 @@ const Profile = () => {
                 uploadedFileKey = filekey;
                 data.fileKey = uploadedFileKey;
             }
+            
 
             // const formData = new FormData();
 
@@ -211,112 +210,55 @@ const Profile = () => {
 
 
     return (
-        <div className="p-6 mt-9 bg-gray-300 dark:bg-gray-600 rounded-lg shadow-md text-gray-900 dark:text-white max-w-4xl mx-auto">
+        <div className="mt-9">
             <h2 className="text-2xl font-bold mb-4 text-center dark:text-white">Personal Information</h2>
             <Toaster />
-
-            {/* Profile Picture Section */}
-            <form key={1} onSubmit={handleSubmit(handleCommonDataSubmit)}>
-                <div className="flex flex-col items-center mb-6">
-                    <div className="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-full mb-4 flex items-center justify-center text-gray-400 dark:text-gray-300">
-                        {imagePreview ? (
-                            <img
-                                src={imagePreview}
-                                alt="Profile"
-                                className="w-full h-full object-cover rounded-full"
-                            />
-                        ) : (
-                            <span>No Image</span>
-                        )}
-                    </div>
-                    <input
-                        type="file"
-                        onChange={handleChange}
-                        accept="image/*"
-                        hidden={!isEditingCommonData}
-                        className={`w-full p-2 text-gray-900 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md ${!isEditingCommonData ? 'hidden' : 'block'}`}
-                    />
-                </div>
-
-                {/* Full Name & Email Section */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <TextField
-                            label="Full Name"
-                            defaultValue={userData?.fullName || ''}
-                            variant="filled"
-                            fullWidth
-                            sx={{
-                                backgroundColor: 'white',
-                                borderRadius: '8px',
-                            }}
-                            disabled={!isEditingCommonData}
-                            {...register('fullName')}
-                        />
-                        {errors.fullName && <p className="text-red-500">{errors.fullName.message}</p>}
-                    </div>
-                    <div>
-                        <TextField
-                            label="Email"
-                            defaultValue={userData?.email}
-                            disabled
-                            variant="filled"
-                            fullWidth
-                            sx={{
-                                backgroundColor: 'white',
-                                borderRadius: '8px',
-                            }}
-                        />
-                    </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-4">
-                    {isEditingCommonData ? (
-                        <div className="flex gap-2">
-                            <button
-                                type="submit"
-                                disabled={uploading}
-                                className="bg-gray-500 dark:bg-gray-700 px-7 py-1 rounded-md text-white mb-6"
-                            >
-                                Save
-                            </button>
-                            <button
-                                type="button"
-                                onClick={toggleEditNameEmail}
-                                className="bg-gray-500 dark:bg-gray-700 px-7 py-1 rounded-md text-white mb-6"
-                            >
-                                Cancel
-                            </button>
+            <div className='p-6 mt-9 bg-gray-300 dark:bg-gray-600 rounded-lg shadow-md text-gray-900 dark:text-white max-w-4xl mx-auto'>
+                {/* Profile Picture Section */}
+                <form key={1} onSubmit={handleSubmit(handleCommonDataSubmit)}>
+                    <div className="flex flex-col items-center mb-6">
+                        <div className="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-full mb-4 flex items-center justify-center text-gray-400 dark:text-gray-300">
+                            {imagePreview ? (
+                                <img
+                                    src={imagePreview}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover rounded-full"
+                                />
+                            ) : (
+                                <span>No Image</span>
+                            )}
                         </div>
-                    ) : (
-                        <button
-                            onClick={toggleEditNameEmail}
-                            className="bg-gray-500 dark:bg-gray-700 px-7 py-1 rounded-md text-white mb-6"
-                        >
-                            Edit
-                        </button>
-                    )}
-                </div>
-            </form>
+                        <input
+                            type="file"
+                            onChange={handleChange}
+                            accept="image/*"
+                            hidden={!isEditingCommonData}
+                            className={`w-full p-2 text-gray-900 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md ${!isEditingCommonData ? 'hidden' : 'block'}`}
+                        />
+                    </div>
 
-            {userData?.role === 'mentor' && <MentorData userData={userData} />}
-
-            {/* Password Change Section */}
-            <div className="mt-6">
-                <button
-                    className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-900 px-4 py-2 rounded-md text-white"
-                    onClick={togglePasswordChange}
-                >
-                    Change Password
-                </button>
-
-                {showPasswordChange && (
-                    <form onSubmit={passowrdHandleSubmit(handleUpdatePassword)}>
-                        <div className="mt-4">
+                    {/* Full Name & Email Section */}
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div>
                             <TextField
-                                label="Current Password"
-                                {...passwordRegister('currentPassword')}
+                                label="Full Name"
+                                defaultValue={userData?.fullName || ''}
+                                variant="filled"
+                                fullWidth
+                                sx={{
+                                    backgroundColor: 'white',
+                                    borderRadius: '8px',
+                                }}
+                                disabled={!isEditingCommonData}
+                                {...register('fullName')}
+                            />
+                            {errors.fullName && <p className="text-red-500">{errors.fullName.message}</p>}
+                        </div>
+                        <div>
+                            <TextField
+                                label="Email"
+                                defaultValue={userData?.email}
+                                disabled
                                 variant="filled"
                                 fullWidth
                                 sx={{
@@ -324,61 +266,120 @@ const Profile = () => {
                                     borderRadius: '8px',
                                 }}
                             />
-                            {passwordError.currentPassword && (
-                                <p className="text-red-500">{passwordError.currentPassword.message}</p>
-                            )}
+                        </div>
+                    </div>
 
-                            <div className="grid grid-cols-2 gap-4 mt-3 mb-6">
-                                <div>
-                                    <TextField
-                                        label="New Password"
-                                        variant="filled"
-                                        fullWidth
-                                        {...passwordRegister('newPassword')}
-                                        sx={{
-                                            backgroundColor: 'white',
-                                            borderRadius: '8px',
-                                        }}
-                                    />
-                                    {passwordError.newPassword && (
-                                        <p className="text-red-500">{passwordError.newPassword.message}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <TextField
-                                        label="Confirm New Password"
-                                        variant="filled"
-                                        fullWidth
-                                        {...passwordRegister('confirmPassword')}
-                                        sx={{
-                                            backgroundColor: 'white',
-                                            borderRadius: '8px',
-                                        }}
-                                    />
-                                    {passwordError.confirmPassword && (
-                                        <p className="text-red-500">{passwordError.confirmPassword.message}</p>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="flex gap-3">
+                    {/* Action Buttons */}
+                    <div className="flex gap-4">
+                        {isEditingCommonData ? (
+                            <div className="flex gap-2">
                                 <button
                                     type="submit"
-                                    className="bg-gray-500 dark:bg-gray-700 text-white px-4 py-2 rounded-md"
+                                    disabled={uploading}
+                                    className="bg-gray-500 dark:bg-gray-700 px-7 py-1 rounded-md text-white mb-6"
                                 >
-                                    Update Password
+                                    Save
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={handleCancel}
-                                    className="bg-gray-500 dark:bg-gray-700 text-white px-4 py-2 rounded-md"
+                                    onClick={toggleEditNameEmail}
+                                    className="bg-gray-500 dark:bg-gray-700 px-7 py-1 rounded-md text-white mb-6"
                                 >
                                     Cancel
                                 </button>
                             </div>
-                        </div>
-                    </form>
-                )}
+                        ) : (
+                            <button
+                                onClick={toggleEditNameEmail}
+                                className="bg-gray-500 dark:bg-gray-700 px-7 py-1 rounded-md text-white mb-6"
+                            >
+                                Edit
+                            </button>
+                        )}
+                    </div>
+                </form>
+
+                {userData?.role === 'mentor' && <MentorData userData={userData} />}
+
+                {/* Password Change Section */}
+                <div className="mt-6">
+                    <button
+                        className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-900 px-4 py-2 rounded-md text-white"
+                        onClick={togglePasswordChange}
+                    >
+                        Change Password
+                    </button>
+
+                    {showPasswordChange && (
+                        <form onSubmit={passowrdHandleSubmit(handleUpdatePassword)}>
+                            <div className="mt-4">
+                                <TextField
+                                    label="Current Password"
+                                    {...passwordRegister('currentPassword')}
+                                    variant="filled"
+                                    fullWidth
+                                    sx={{
+                                        backgroundColor: 'white',
+                                        borderRadius: '8px',
+                                    }}
+                                />
+                                {passwordError.currentPassword && (
+                                    <p className="text-red-500">{passwordError.currentPassword.message}</p>
+                                )}
+
+                                <div className="grid grid-cols-2 gap-4 mt-3 mb-6">
+                                    <div>
+                                        <TextField
+                                            label="New Password"
+                                            variant="filled"
+                                            fullWidth
+                                            {...passwordRegister('newPassword')}
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderRadius: '8px',
+                                            }}
+                                        />
+                                        {passwordError.newPassword && (
+                                            <p className="text-red-500">{passwordError.newPassword.message}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <TextField
+                                            label="Confirm New Password"
+                                            variant="filled"
+                                            fullWidth
+                                            {...passwordRegister('confirmPassword')}
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderRadius: '8px',
+                                            }}
+                                        />
+                                        {passwordError.confirmPassword && (
+                                            <p className="text-red-500">{passwordError.confirmPassword.message}</p>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="flex gap-3">
+                                    <button
+                                        type="submit"
+                                        className="bg-gray-500 dark:bg-gray-700 text-white px-4 py-2 rounded-md"
+                                    >
+                                        Update Password
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleCancel}
+                                        className="bg-gray-500 dark:bg-gray-700 text-white px-4 py-2 rounded-md"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    )}
+                </div>
             </div>
+
         </div>
 
 

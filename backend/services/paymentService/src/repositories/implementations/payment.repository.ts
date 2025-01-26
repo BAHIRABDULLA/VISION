@@ -56,4 +56,14 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
             return null
         }
     }
+
+
+    async findUserPayments(userId:string){
+        try {
+            const response = await Payment.find({menteeId:userId})
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
 }

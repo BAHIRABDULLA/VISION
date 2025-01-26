@@ -226,6 +226,18 @@ export class PaymentService implements IPaymentService {
         }
     }
 
+
+    async getUserBillingHistory(userId:string){
+        try {
+            const response = await this.paymentRepository.findUserPayments(userId)
+            console.log(response,'response in get user billing history in service ');
+            return response 
+        } catch (error) {
+            console.error('Error founded in get suer billing history in paymenst service',error);
+            throw error
+        }
+    }
+
 }
 
 

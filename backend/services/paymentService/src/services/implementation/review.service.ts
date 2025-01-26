@@ -1,21 +1,51 @@
+import mongoose from "mongoose";
+import { HttpStatus } from "../../enums/http.status";
+import { IPaymentRepository } from "../../repositories/interface/IPayment.repository";
 import { IReviewRepository } from "../../repositories/interface/IReview.repository";
+import CustomError from "../../utils/custom.error";
 
 
 export class ReviewService {
-    constructor(private reviewRepository: IReviewRepository) {}
+    constructor(private reviewRepository: IReviewRepository, private paymentRepository: IPaymentRepository) { }
 
-    async getReviewsByCourseId(courseId: string) { 
+    async getReviewsBycourseIdOrMentorId(courseIdOrMentorId: string, reviewType: 'course' | 'mentorship') {
         try {
-            return await this.reviewRepository.findAllCoursesReviews(courseId)
+
+            const response = await this.reviewRepository.findAllReviews(courseIdOrMentorId, reviewType)
+            // return await this.reviewRepository.findAllCoursesReviews(courseIdOrMentorId)
+            return response
         } catch (error) {
             console.error('Error founded in get reviews by course id', error);
             throw error
         }
     }
 
-    async createCourseReview(data: { courseId: string, rating: number, review: string, userId: string }) {
+    async createReview(data: { courseId?: string, mentorId?: string, rating: number, review: string, userId: string, reviewType: 'course' | 'mentorship' }) {
         try {
-            return await this.reviewRepository.create(data)
+            // const {courseId,mentorId,rating,review,userId,reviewType} = data
+            const checkExistingReview = await this.reviewRepository.findExistingReview(data.userId, data.courseId, data.mentorId)
+            if (checkExistingReview) {
+                throw new CustomError('You already submited review, Thanks your effort', HttpStatus.FORBIDDEN)
+            }
+            if (data.reviewType === 'course') {
+                const isEligibleWriteReview = await this.paymentRepository.findIsUserBoughtCourse(data.courseId!, data.userId)
+                if (!isEligibleWriteReview) {
+                    throw new CustomError('Please purchase the course', HttpStatus.UNAUTHORIZED)
+                }
+            } else {
+                const isEligibleWriteReview = await this.paymentRepository.findOne({ menteeId: data.userId, type: { $ne: 'course_purchase' }, status: 'completed' })
+                if (!isEligibleWriteReview) {
+                    throw new CustomError('Please purchase any mentorship plans', HttpStatus.UNAUTHORIZED)
+                }
+            }
+            const reviewData = {
+                ...data,
+                userId: new mongoose.Types.ObjectId(data.userId)
+            }
+            const response = await this.reviewRepository.create(reviewData)
+            console.log(response, 'response in add review ');
+            return response
+
         } catch (error) {
             console.error('Error founded in create course review', error);
             throw error

@@ -1,6 +1,6 @@
 import { HttpStatus } from "../enums/http.status";
 import { IReviewService } from "../services/interface/IReview.service";
-import { NextFunction, Request,Response } from "express";
+import { NextFunction, Request, response, Response } from "express";
 import { successResponse } from "../utils/response.helper";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -9,29 +9,39 @@ interface CustomeRequest extends Request {
 }
 
 export class ReviewController {
-    constructor(private reviewService:IReviewService ) {}
+    constructor(private reviewService: IReviewService) { }
 
-    async getReviewsByCourseId(req: Request, res: Response ,next:NextFunction) {
+    async getReviewsBycourseIdOrMentorId(req: Request, res: Response, next: NextFunction) {
         try {
-            const {courseId} = req.params
-            const reviews = await this.reviewService.getReviewsByCourseId(courseId)
-            return successResponse(res, HttpStatus.OK,"Course reviews found " ,{reviews})
+            const { courseIdOrMentorId } = req.params
+            const {reviewType } = req.query
+            if (reviewType !== 'course' && reviewType !== 'mentorship') {
+                return res.status(400).json({ error: 'Invalid reviewType. Must be "course" or "mentorship".' });
+            }        
+            const reviews = await this.reviewService.getReviewsBycourseIdOrMentorId(
+                courseIdOrMentorId,reviewType as 'course' | 'mentorship')
+            return successResponse(res, HttpStatus.OK, "Course reviews found ", { reviews })
         } catch (error) {
             console.error('Error founded in get reviews by course id', error);
             next(error)
         }
     }
 
-    async createCourseReview(req: CustomeRequest, res: Response ,next:NextFunction) {
+    async createReview(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
-            const {courseId,rating,review} = req.body
+            const { courseIdOrMentorId, rating, review, reviewType } = req.body
             const user = req.user as JwtPayload
             const userId = user.id
-            if(!userId) {
-                return res.status(HttpStatus.UNAUTHORIZED).json({message:"Unauthorized"})
+            if (!userId) {
+                return res.status(HttpStatus.UNAUTHORIZED).json({ message: "Unauthorized" })
             }
-            await this.reviewService.createCourseReview({courseId,rating,review,userId})
-            return successResponse(res, HttpStatus.CREATED,"Course review created")
+            let response 
+            if(reviewType=='course'){
+               response = await this.reviewService.createReview({ courseId:courseIdOrMentorId, rating, review, userId, reviewType })
+            }else{
+                response = await this.reviewService.createReview({ mentorId:courseIdOrMentorId, rating, review, userId, reviewType })
+            }
+            return successResponse(res, HttpStatus.CREATED, "Course review created",{newReview:response})
         } catch (error) {
             console.error('Error founded in create course review', error);
             next(error)

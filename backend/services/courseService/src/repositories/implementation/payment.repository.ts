@@ -7,9 +7,11 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
     constructor(model: Model<IPayment>) {
         super(model);
     }
-   async findByUserId(userId: string): Promise<IPayment | null> {
+   async findBoughtCoursesByUserId(userId: string,type:string,status:'pending'|'completed'): Promise<IPayment[] | null> {
       try {
-         const payment = await this.model.findOne({ userId });
+         console.log(userId,'user id , k k k ');
+         
+         const payment = await this.model.find({ menteeId:userId ,type,status}).populate('courseId')
          return payment;
       } catch (error) {
          console.error("Error founded in findByUserId", error);

@@ -69,7 +69,9 @@ app.use('/messages', createProxyMiddleware({
     target: targets.messaging,
     changeOrigin: true,
     ws: true,
-    pathRewrite: { '^/messages': '/messages' }
+    
+    // pathRewrite: { '^/messages': '' },
+    // pathRewrite: { '^/messages': '/messages' }
 }))
-const port = process.env.GATEWAY_PORT
+const port = process.env.GATEWAY_PORT 
 app.listen(port, () => console.log(`server running on http://localhost:${port}`))

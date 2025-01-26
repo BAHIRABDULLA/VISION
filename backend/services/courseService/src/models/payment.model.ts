@@ -1,11 +1,11 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema,Types ,Document } from 'mongoose';
 
 export interface IPayment extends Document {
     userEmail: string;
     amount: number;
     status: 'pending' | 'completed';
     type: 'course_purchase' | 'mentorship_subscription' | 'one_time_payment';
-    courseId?: string;
+    courseId?: Types.ObjectId;
     menteeId:string;
     mentorId?: string;
     sessionCount: number;
@@ -18,7 +18,7 @@ const paymentSchema = new Schema<IPayment>({
     amount: { type: Number, required: true },
     status: { type: String, required: true, enum: ['pending', 'completed'] },
     type: { type: String, required: true, enum: ['course_purchase', 'mentorship_subscription', 'one_time_payment'] },
-    courseId: { type: String },
+    courseId: { type: Schema.Types.ObjectId ,ref:'Course'},
     menteeId: { type: String, required: true },
     mentorId: { type: String },
     sessionCount: { type: Number , default:0 },

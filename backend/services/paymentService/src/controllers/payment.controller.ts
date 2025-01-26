@@ -101,4 +101,17 @@ export class PaymentController {
         }
     }
 
+
+    async getUserBillingHistory(req:CustomeRequest,res:Response,next:NextFunction){
+        try {
+            const user = req.user as JwtPayload
+            const  response = await this.paymentService.getUserBillingHistory(user.id)
+            return successResponse(res,HttpStatus.OK,"Founded billing history ",{transaction:response})
+        } catch (error) {
+            console.error('Error founded in get user billing history ',error);
+            next(error)
+            
+        }
+    }
+
 }

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { TextField, MenuItem, Select, FormControl, InputLabel, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { addResource, getAllCourses } from "@/services/courseApi";
+import { addResource, getAllCourses, getSignedUrl } from "@/services/courseApi";
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { courseShemaType } from "./AddCourse";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
+import ImageCropper from "@/components/ImageCropper";
 
 
 export const resourceSchema = z.object({
@@ -23,16 +25,16 @@ export const resourceSchema = z.object({
         (data.type === 'image' && data.content instanceof File) ||
         (data.type === 'video' && data.content instanceof File),
     {
-        message: "Content is required based on type",
+        message: "Content is requir ed based on type",
         path: ["content"]
     }
 )
 
 type resourceSchemaType = z.infer<typeof resourceSchema>
 
-type levelCourses ={
-    level:'basic'|'intermediate'|'advanced',
-    topics:string[]
+type levelCourses = {
+    level: 'basic' | 'intermediate' | 'advanced',
+    topics: string[]
 }
 const AddResources = () => {
 
@@ -40,46 +42,47 @@ const AddResources = () => {
     const [contentType, setContentType] = useState("text");
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState('')
-
     const [selelctedLevel, setSelectedLevel] = useState('')
-
     const [topics, setTopics] = useState([])
-
-
-    // const [level, setLevel] = useState("Basic");
     const [content, setContent] = useState<File | null>(null);
     const levels = ["Basic", "Intermediate", "Advanced"];
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+    const [isImageCropCanvas,setIsImageCropCanvas] = useState(false)
 
+    const [signedUrl, setSignedUrl] = useState<string | null>(null);
+    console.log(signedUrl, 'signed url ');
 
+    const [filekey, setFileKey] = useState<string | null>(null);
+    console.log(filekey, 'file key');
+
+    const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
+    console.log(croppedImageUrl, 'cropped image url ');
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<resourceSchemaType>({
         resolver: zodResolver(resourceSchema)
     });
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.[0]) {
-            setContent(e.target.files[0])
-            setValue("content", e.target.files[0])
-        }
-    }
+
     useEffect(() => {
         console.log(errors, 'errors in use effecty ');
 
     })
-    useEffect(() => {
-        const fetchCourses = async () => {
-            const response = await getAllCourses()
-            if (response?.data) {
-                setCourses(response.data.data)
-            }
+
+    const fetchCourses = async () => {
+        const response = await getAllCourses()
+        if (response?.data) {
+            setCourses(response.data.data)
         }
+    }
+
+    useEffect(() => {
         fetchCourses()
     }, [])
 
     useEffect(() => {
         if (selectedCourse && selelctedLevel) {
-            const course:any  = courses.find((course:courseShemaType) => course.name === selectedCourse)
+            const course: any = courses.find((course: courseShemaType) => course.name === selectedCourse)
             if (course && course.curriculum) {
-                const levelTopics:levelCourses = course.curriculum.find((item) => {
+                const levelTopics: levelCourses = course.curriculum.find((item) => {
                     return item.level === selelctedLevel
                 })
                 setTopics(levelTopics ? levelTopics.topics : [])
@@ -92,34 +95,95 @@ const AddResources = () => {
     }, [selectedCourse, selelctedLevel, courses])
 
 
-
     const onSubmit = async (data: resourceSchemaType) => {
-        const formData = new FormData();
-        formData.append("title", data.title.trim());
-        formData.append("type", data.type.trim());
-        formData.append("course", data.course.trim());
-        formData.append("level", data.level.trim());
-        formData.append("topic", data.topic.trim());
-    
-        if (content) { 
-            formData.append("content", content);
-        }else{
-            formData.append("content",data.content)
+
+        if (contentType!=='text') {
+            await uploadFileToS3(content, signedUrl)
         }
-    
-        const response =  await addResource(formData); 
-        
-        if(response.status&& response.status>=400){
-            return toast.error(response.data.message||'There is an error occured')
-        }else{
+        const response = await addResource(data);
+
+        if (response.status && response.status >= 400) {
+            return toast.error(response.data.message || 'There is an error occured')
+        } else {
             navigate('/admin/resources')
         }
     };
-    
+
+    const generateSignedUrl = async (file: File) => {
+        try {
+            const response = await getSignedUrl(`${Date.now()}_${file.name}`, file.type)
+            if (response?.status && response.status === 200) {
+                const { signedUrl, key } = response.data
+                setSignedUrl(signedUrl)
+                setFileKey(key)
+            } else {
+                toast.error('Failed to generate signed url')
+            }
+        } catch (error) {
+            console.error('Error founded in common data saving', error);
+            toast.error('An error occurred while uploading the file')
+        }
+    }
+
+    const uploadFileToS3 = async (file, presignedUrl) => {
+        try {
+            const response = await axios.put(presignedUrl, file, {
+                headers: {
+                    "Content-Type": file.type
+                }
+            })
+            return response
+        } catch (error) {
+            console.error("Error uploading file:", error);
+        }
+    }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // const file = e.target.files[0]
+        // console.log(file, 'file file file');
+
+        // if (file) {
+        //     const reader = new FileReader();
+
+        //     reader.readAsDataURL(file);
+        //     console.log(imageSrc,'reader result')
+        //     setContent(file)
+        //     setValue("content", file)
+        //     generateSignedUrl(file)
+        // }
+        const file = e.target.files?.[0];
+        if (file) {
+            setContent(file)
+            const reader = new FileReader();
+            reader.onload = () => setImageSrc(reader.result as string);
+            setValue("content", file)
+            
+            reader.readAsDataURL(file);
+            setIsImageCropCanvas(true)
+        }
+    }
+
+
+    const handleCropComplete = (croppedBlob: Blob) => {
+        console.log(croppedBlob,'cropped blob');
+        
+        const croppedUrl = URL.createObjectURL(croppedBlob)
+        
+        setCroppedImageUrl(croppedUrl)
+        const croppedFile = new File([croppedBlob],"cropped-image.jpg",{
+            type:'image/jpeg'
+        })
+        console.log(content,'content in handle crope complete');
+        
+        generateSignedUrl(content)
+        setIsImageCropCanvas(false)
+
+    }
+
 
     return (
         <div className="max-w-3xl mx-auto p-6   rounded-md">
-            <Toaster/>
+            <Toaster />
             <Typography variant="h4" className="text-center font-bold mb-6">
                 Add Resource
             </Typography>
@@ -205,10 +269,11 @@ const AddResources = () => {
                             Upload Image
                             <input type="file" hidden accept="image/*" onChange={handleFileChange} />
                         </Button>
-                        {content && (
+                        {isImageCropCanvas && <ImageCropper imageSrc={imageSrc} onCropComplete={handleCropComplete} />}
+                        {croppedImageUrl && (
                             <div>
                                 <Typography>{content.name}</Typography>
-                                <img src={URL.createObjectURL(content)} alt="" className="mt-4 w-32" />
+                                <img src={croppedImageUrl} alt="" className="mt-4 w-32" />
                             </div>
                         )}
 

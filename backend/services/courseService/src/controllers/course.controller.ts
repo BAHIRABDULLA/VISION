@@ -108,7 +108,7 @@ export class CourseController {
             const user = req.user as JwtPayload
             const userId = user.id
             const response = await this.courseService.getPurchasedCourses(userId)
-            return successResponse(res,HttpStatus.OK,"Purchased courses fetched",response)
+            return successResponse(res,HttpStatus.OK,"Purchased courses fetched",{response})
         } catch (error) {
             console.error('Error founded in get purchased courses controller',error);
             next(error)

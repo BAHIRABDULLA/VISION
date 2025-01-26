@@ -3,6 +3,7 @@ import { ICourseRepository } from "../../repositories/interface/ICourse.reposito
 import { ICourseService } from "../interface/ICourse.service";
 import { uploadFile } from "../../utils/file.upload";
 import { IPaymentRepository } from "../../repositories/interface/IPayment.repository";
+import { IPayment } from "../../models/payment.model";
 interface courseData {
     _id:string
     name: string
@@ -126,10 +127,13 @@ export class CourseService implements ICourseService {
         }
     }
 
-    async getPurchasedCourses(userId:string):Promise<ICourse | null>{
+    async getPurchasedCourses(userId:string):Promise<IPayment[] | null>{
         try {
-            const response = await this.courseRepository.findByUserId(userId)
-            return response
+
+            const findBoughtCourseByUserId = await this.paymentRepository.findBoughtCoursesByUserId(userId,'course_purchase','completed')
+            console.log('- - --  -- - ',findBoughtCourseByUserId,'----------');
+            
+            return findBoughtCourseByUserId
         } catch (error) {
             console.error('Error founded in get purchased courses',error);
             return null

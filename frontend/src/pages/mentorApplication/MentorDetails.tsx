@@ -40,11 +40,8 @@ const MentorDetails: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState('about');
     const { id } = useParams()
-    // Mock mentor data
-    // const [mentor, setMentor] = useState<MentorData | undefined>(undefined)
+
     const [mentorData, setMentorData] = useState<MentorData | undefined>(undefined)
-
-
     const [groupedSlots, setGroupedSlots] = useState<Record<string, string[]>>({})
     const [bookingData , setBookingData]  = useState<BookingData[]>([])
     useEffect(() => {
@@ -175,7 +172,7 @@ const MentorDetails: React.FC = () => {
 
                             {activeTab === 'reviews' && (
                                 <div className="space-y-6">
-                                    <RatingAndReview  review='review'/>
+                                    <RatingAndReview id={id}  reviewType='mentorship'/>
                                 </div>
                             )}
                         </div>

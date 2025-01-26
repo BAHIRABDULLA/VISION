@@ -9,5 +9,5 @@ export interface IResource extends Document {
     topic: string
     content: string;
     status: boolean
-    nextResourceId: Types.ObjectId;
+    // nextResourceId: string | null
 }
