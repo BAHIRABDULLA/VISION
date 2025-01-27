@@ -170,9 +170,9 @@ const AddResources = () => {
         const croppedUrl = URL.createObjectURL(croppedBlob)
         
         setCroppedImageUrl(croppedUrl)
-        const croppedFile = new File([croppedBlob],"cropped-image.jpg",{
-            type:'image/jpeg'
-        })
+        // const croppedFile = new File([croppedBlob],"cropped-image.jpg",{
+        //     type:'image/jpeg'
+        // })
         console.log(content,'content in handle crope complete');
         
         generateSignedUrl(content)

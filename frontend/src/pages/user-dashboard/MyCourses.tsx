@@ -1,5 +1,5 @@
 import { getPurchasedCourses } from '@/services/courseApi';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const MyCourses = () => {

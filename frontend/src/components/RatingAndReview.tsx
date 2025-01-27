@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { PenTool, Star } from "lucide-react";
+import { PenTool} from "lucide-react";
 import toast from "react-hot-toast";
 import { createReview, getAllReviews } from "@/services/paymentApi";
 import { Rating, Typography } from "@mui/material";

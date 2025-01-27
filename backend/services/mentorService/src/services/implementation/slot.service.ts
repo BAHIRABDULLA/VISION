@@ -103,7 +103,7 @@ export class SlotService implements ISlotService {
                 time
             }
             const response = await this.bookingRepository.create(data)
-            const sendDataToPaymentService = await axios.post('http://localhost:4000/payment/booking/create',
+            const sendDataToPaymentService = await axios.post('https://apivision.bahirabdulla.online/payment/booking/create',
                 response,
                 {
                     headers:

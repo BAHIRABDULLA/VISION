@@ -1,5 +1,5 @@
 import { getUserBillingHistory } from '@/services/paymentApi';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Download, ChevronDown, ChevronUp } from 'lucide-react';
 
 
@@ -81,8 +81,8 @@ const BillingHistory = () => {
     };
 
     const sortedBillingData = [...billingData].sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
         return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
 

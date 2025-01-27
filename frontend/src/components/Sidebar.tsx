@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUserCircle, FaComments, FaVideo, FaHistory, FaUsers, FaSignOutAlt, FaBars } from 'react-icons/fa';
+import { FaUserCircle, FaComments, FaVideo, FaHistory, FaSignOutAlt, FaBars } from 'react-icons/fa';
 import { PiBooksFill } from "react-icons/pi";
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'

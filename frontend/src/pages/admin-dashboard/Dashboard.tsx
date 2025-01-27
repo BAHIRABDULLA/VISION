@@ -1,6 +1,5 @@
 
-import { getAdminDashbaordData } from "@/services/adminApi";
-import React from "react";
+// import { getAdminDashbaordData } from "@/services/adminApi";
 import {
   LineChart,
   Line,
@@ -19,9 +18,9 @@ import {
 
 const Dashboard = () => {
 
-  const fetchAdminDashboardData = async()=>{
-    const response = await getAdminDashbaordData()
-  }
+  // const fetchAdminDashboardData = async()=>{
+  //   const response = await getAdminDashbaordData()
+  // }
 
 
   const userGrowthData = [
@@ -116,7 +115,7 @@ const Dashboard = () => {
               outerRadius={100}
               label
             >
-              {coursePopularityData.map((entry, index) => (
+              {coursePopularityData.map((_entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>

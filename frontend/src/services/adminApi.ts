@@ -98,7 +98,8 @@ export const updateCategory = async (id:string,data:object)=>{
 
 export const getAdminDashbaordData = async()=>{
     try {
-        const resposne = await adminPrivateApi.get('/')
+        const resposne = await adminPrivateApi.get('/rr')
+        return resposne
     } catch (error) {
         if(error instanceof AxiosError){
             return error.response
