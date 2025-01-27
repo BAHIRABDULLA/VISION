@@ -1,9 +1,10 @@
-import { IResourseService } from "../services/interface/IResource.service";
+import { IResourseService } from "../../services/interface/IResource.service";
 import { NextFunction, Request, Response } from "express";
-import { successResponse } from "../utils/response.helper";
-import { HttpStatus } from "../enums/http.status";
+import { successResponse } from "../../utils/response.helper";
+import { HttpStatus } from "../../enums/http.status";
 import AWS from 'aws-sdk'
 import dotenv from 'dotenv'
+import { IResourceController } from "../interface/IResource.controller";
 dotenv.config()
 
 
@@ -17,7 +18,7 @@ export const s3 = new AWS.S3({
 
 
 
-export class ResourseController {
+export class ResourseController implements IResourceController{
     private resourceService: IResourseService;
 
     constructor(resourceService: IResourseService) {
@@ -81,19 +82,20 @@ export class ResourseController {
         try {
             const { id } = req.params
             const response = await this.resourceService.getResourceById(id)
-            return res.json(response)
+            return res.status(HttpStatus.OK).json(response)
         } catch (error) {
             console.error('Error founded in get resource by id', error);
         }
     }
 
-    async getResourcesByCourseId(req: Request, res: Response) {
+    async getResourcesByCourseId(req: Request, res: Response,next:NextFunction) {
         try {
             const { courseId } = req.params
             const response = await this.resourceService.getResourcesByCourseId(courseId)
-            return res.status(HttpStatus.OK).json(response)
+            return res.status(HttpStatus.OK).json({response})
         } catch (error) {
             console.error('Error founded in get resource by course id', error);
+            next(error)
         }
     }
 

@@ -1,4 +1,4 @@
-import { IMessageService } from "../services/interface/IMessage.service";
+import { IMessageService } from "../../services/interface/IMessage.service";
 
 
 export class MessageController {

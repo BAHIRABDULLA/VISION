@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { MentorService } from "../services/implementation/mentor.service";
-import { uploadFile } from "../utils/upload";
+import { MentorService } from "../../services/implementation/mentor.service";
+import { uploadFile } from "../../utils/upload";
 import fs from 'fs'
-import { HttpStatus } from "../enums/http.status";
+import { HttpStatus } from "../../enums/http.status";
 import { JwtPayload } from "jsonwebtoken";
-import { errorResponse, successResponse } from "../utils/response.handler";
-import CustomError from "../utils/custom.error";
+import { errorResponse, successResponse } from "../../utils/response.handler";
+import CustomError from "../../utils/custom.error";
+import { IMentorController } from "../interface/IMentor.controller";
 
 
 interface ParamsData {
@@ -23,7 +24,7 @@ interface customRequest extends Request {
     user?: string | JwtPayload
 }
 
-export class MentorController {
+export class MentorController implements IMentorController{
 
     private mentorService: MentorService
     constructor(mentorService: MentorService) {

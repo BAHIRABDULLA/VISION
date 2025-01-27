@@ -1,6 +1,6 @@
 import {Request,Response, NextFunction } from "express";
-import { ConversationService } from "../services/implementation/conversation.service";
-import { HttpStatus } from "../enums/http.status";
+import { ConversationService } from "../../services/implementation/conversation.service";
+import { HttpStatus } from "../../enums/http.status";
 
 
 export class ConversationController {

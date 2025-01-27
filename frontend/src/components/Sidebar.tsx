@@ -90,14 +90,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollapsed }) 
               <div className="text-2xl">{icon}</div>
               {!isCollapsed && <span>{label}</span>}
             </div>
-            {badge && (
-              <span
-                className={`absolute right-4 ${theme === 'light' ? 'bg-pink-500 text-white' : 'bg-pink-600 text-white'
-                  } px-2 py-1 rounded-full`}
-              >
-                {badge}
-              </span>
-            )}
           </Link>
         ))}
       </nav>

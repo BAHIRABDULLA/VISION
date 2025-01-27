@@ -3,7 +3,7 @@ import express from 'express'
 import { container } from '../config/inversify.config'
 const router = express.Router()
 
-import { AdminController } from '../controllers/admin.controller'
+import { AdminController } from '../controllers/implementation/admin.controller'
 import { TYPES } from '../types'
 import authMiddleware from '../middleware/auth.middleware'
 import authenticateToken from '../middleware/auth.middleware'

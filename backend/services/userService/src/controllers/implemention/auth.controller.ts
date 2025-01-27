@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
 // import { AuthService } from "../services/auth.service";
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { HttpStatus } from "../enums/http.status";
-import { setRefreshTokenCookie } from "../utils/tokenCookie.util";
-import { createResponse, sendResponse } from "../utils/response.handler";
-import { generateAccessToken } from "../utils/token.util";
-import { IAuthService } from "../services/interface/IAuth.service";
-import { signUpSchema } from "../validators/user.validator";
+import { HttpStatus } from "../../enums/http.status";
+import { setRefreshTokenCookie } from "../../utils/tokenCookie.util";
+import { createResponse, sendResponse } from "../../utils/response.handler";
+import { generateAccessToken } from "../../utils/token.util";
+import { IAuthService } from "../../services/interface/IAuth.service";
+import { signUpSchema } from "../../validators/user.validator";
+import { IAuthController } from "../interface/IAuth.controller";
 interface CustomeRequest extends Request {
     user?: string | JwtPayload,
 }
 
-export class AuthController {
+export class AuthController implements IAuthController {
     private authService: IAuthService
 
 
@@ -25,11 +26,11 @@ export class AuthController {
 
 
             const user = await this.authService.signUp(email)
-            return res.json(user)
+            res.json(user)
         } catch (error) {
             console.error('error showing in auth controller signup', error);
-            // return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' })
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(createResponse(false, 'Internal server error'))
+            //  res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' })
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(createResponse(false, 'Internal server error'))
         }
     }
 
@@ -37,27 +38,30 @@ export class AuthController {
     async verifyOtp(req: Request, res: Response) {
         try {
 
-            const { fullName, email, password, role, otp ,type} = req.body
+            const { fullName, email, password, role, otp, type } = req.body
             signUpSchema.safeParse(req.body)
 
 
-            const result = await this.authService.verifySignUpOtp(fullName, email, password, role, otp,type)
+            const result = await this.authService.verifySignUpOtp(fullName, email, password, role, otp, type)
             console.log(result, 'result in otp verification controller ');
 
             if (result?.success) {
 
                 if (result.data?.role === 'mentee') {
                     setRefreshTokenCookie(res, result.data.refreshToken!, role)
-                    
-                    return res.status(HttpStatus.OK).json({
+
+                    res.status(HttpStatus.OK).json({
                         success: true, message: result?.message, accessToken: result?.data.accessToken,
-                        role: result.data.role , user:result.data.user
+                        role: result.data.role, user: result.data.user
                     })
+                    return
                 } else {
-                    return res.json(result)
+                    res.json(result)
+                    return
                 }
             } else {
-                return res.json({ success: false, message: result?.message })
+                res.json({ success: false, message: result?.message })
+                return
             }
         } catch (error) {
             console.error('Error founded in verify otp ', error);
@@ -69,7 +73,7 @@ export class AuthController {
         try {
             const { email } = req.body
             const otpToService = await this.authService.resendOtpWork(email)
-            return res.json(otpToService)
+            res.json(otpToService)
         } catch (error) {
             console.error('Error founded in resend otp', error);
         }
@@ -119,7 +123,7 @@ export class AuthController {
         try {
             const { email } = req.body
             const response = await this.authService.sendMail(email)
-            return res.json(response)
+            res.json(response)
         } catch (error) {
             console.error('Error founded in forget password', error);
         }
@@ -130,7 +134,7 @@ export class AuthController {
         try {
             const { email, password, confirmPassword } = req.body
             const response = await this.authService.resetPassword(email, password, confirmPassword)
-            return res.json(response)
+            res.json(response)
         } catch (error) {
             console.error('Error founded in reset password', error);
         }
@@ -225,7 +229,7 @@ export class AuthController {
     async logout(req: Request, res: Response) {
         try {
             res.clearCookie('refreshToken')
-            return res.json({ message: "Logged out successfully" })
+            res.json({ message: "Logged out successfully" })
         } catch (error) {
             console.error('Error founded in logout', error);
         }

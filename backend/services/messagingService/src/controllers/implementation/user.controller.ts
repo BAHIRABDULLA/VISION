@@ -1,8 +1,9 @@
-import { HttpStatus } from "../enums/http.status";
-import { UserService } from "../services/implementation/user.service";
+import { HttpStatus } from "../../enums/http.status";
+import { UserService } from "../../services/implementation/user.service";
 import { NextFunction, Request,Response } from "express";
+import { IUserController } from "../interface/IUser.controller";
 
-export class UserController {
+export class UserController implements IUserController{
     constructor(private userService:UserService){}
 
     async getAllUsers(req:Request,res:Response,next:NextFunction){

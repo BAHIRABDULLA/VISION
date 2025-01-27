@@ -1,9 +1,9 @@
 
 
 
-import { BookingController } from "../controllers/booking.controller";
-import { PaymentController } from "../controllers/payment.controller";
-import { ReviewController } from "../controllers/review.controller";
+import { BookingController } from "../controllers/implementation/booking.controller";
+import { PaymentController } from "../controllers/implementation/payment.controller";
+import { ReviewController } from "../controllers/implementation/review.controller";
 import Booking from "../models/booking.model";
 import Payment from "../models/payment.model";
 import { Review } from "../models/review.model";

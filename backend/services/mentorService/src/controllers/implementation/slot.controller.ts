@@ -1,8 +1,9 @@
 import { NextFunction, Request,Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
-import { SlotService } from "../services/implementation/slot.service";
-import { errorResponse, successResponse } from "../utils/response.handler";
-import { HttpStatus } from "../enums/http.status";
+import { SlotService } from "../../services/implementation/slot.service";
+import { errorResponse, successResponse } from "../../utils/response.handler";
+import { HttpStatus } from "../../enums/http.status";
+import { ISlotController } from "../interface/ISlot.controller";
 
 
 
@@ -14,7 +15,7 @@ interface customRequest extends Request {
 
 
 
-export class SlotController {
+export class SlotController implements ISlotController{
 
     private slotService:SlotService
     constructor(slotService:SlotService){

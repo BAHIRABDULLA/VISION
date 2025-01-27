@@ -1,8 +1,8 @@
 
 
 // src/config/dependencyContainer.ts
-import { AuthController } from '../controllers/auth.controller';
-import { UserController } from '../controllers/user.controller';
+import { AuthController } from '../controllers/implemention/auth.controller';
+import { UserController } from '../controllers/implemention/user.controller';
 import { AuthService } from '../services/implementation/auth.service';
 import { UserService } from '../services/implementation/user.service';
 import { UserRepository } from '../repositories/implementation/user.repository';

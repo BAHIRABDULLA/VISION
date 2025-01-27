@@ -1,10 +1,11 @@
-import { IPaymentService } from "../services/interface/IPayment.service";
+import { IPaymentService } from "../../services/interface/IPayment.service";
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import Stripe from "stripe";
-import { successResponse } from "../utils/response.helper";
-import { HttpStatus } from "../enums/http.status";
-import CustomError from "../utils/custom.error";
+import { successResponse } from "../../utils/response.helper";
+import { HttpStatus } from "../../enums/http.status";
+import CustomError from "../../utils/custom.error";
+import { IPaymentController } from "../interface/IPayment.controller";
 
 
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-09-30.acacia' })
@@ -13,22 +14,22 @@ interface CustomeRequest extends Request {
     user?: string | JwtPayload,
 
 }
-export class PaymentController {
+export class PaymentController implements IPaymentController {
 
     private paymentService: IPaymentService
     constructor(paymentService: IPaymentService) {
         this.paymentService = paymentService
     }
 
-    async createSessionForStripe(req: CustomeRequest, res: Response , next : NextFunction) {
+    async createSessionForStripe(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
 
             const user = req.user as JwtPayload
 
             const userEmail = user.email
-            const menteeId = user.id 
+            const menteeId = user.id
             const { price, courseId } = req.body
-            const response = await this.paymentService.createSession(price, courseId, userEmail,menteeId)
+            const response = await this.paymentService.createSession(price, courseId, userEmail, menteeId)
             res.json(response)
         } catch (error) {
             console.error('ERror founded in create session in contro paymenservice', error);
@@ -36,7 +37,7 @@ export class PaymentController {
         }
     }
 
-    async webhookHandle(req: Request, res: Response ) {
+    async webhookHandle(req: Request, res: Response) {
         console.log('its here webhook handler');
         let event
         const sig = req.headers['stripe-signature'] as string;
@@ -45,9 +46,6 @@ export class PaymentController {
         }
 
         try {
-           
-            // const event = await this.paymentService.constructWebhookEvent(req.body, sig);
-            
             event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SIGNIN_SECRET!);
             if (event) {
                 await this.paymentService.webhookHandleSave(event);
@@ -62,55 +60,55 @@ export class PaymentController {
     }
 
 
-    async mentorshipCheckoutSession(req:CustomeRequest,res:Response ,next:NextFunction){
+    async mentorshipCheckoutSession(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user as JwtPayload
-            if(!user){
-                throw new CustomError("Please sign in",HttpStatus.BAD_REQUEST)
+            if (!user) {
+                throw new CustomError("Please sign in", HttpStatus.BAD_REQUEST)
             }
             const userEmail = user.email
-            const {planType,price,menteeId,mentorId}  = req.body            
-            const response = await this.paymentService.commonSession(userEmail,planType,menteeId,mentorId,price)
-            return res.status(200).json(response)
+            const { planType, price, menteeId, mentorId } = req.body
+            const response = await this.paymentService.commonSession(userEmail, planType, menteeId, mentorId, price)
+            res.status(200).json(response)
         } catch (error) {
-            console.error('Error founded in common checkout session',error);
+            console.error('Error founded in common checkout session', error);
             next(error)
         }
     }
 
-    async findCoursePayment(req:CustomeRequest,res:Response , next:NextFunction){
+    async findCoursePayment(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user as JwtPayload
-            const {id} = req.params
-            const response = await this.paymentService.findCoursePayment(id,user.id)
-            return successResponse(res,HttpStatus.OK,"Founded course",response)
+            const { id } = req.params
+            const response = await this.paymentService.findCoursePayment(id, user.id)
+            return successResponse(res, HttpStatus.OK, "Founded course", response)
         } catch (error) {
-            console.error('Error founded in find course payment',error);
+            console.error('Error founded in find course payment', error);
             next(error)
         }
     }
 
-    async findTransactions(req:Request,res:Response , next:NextFunction){
+    async findTransactions(req: Request, res: Response, next: NextFunction) {
         try {
-            
+
             const response = await this.paymentService.findAllTransactions()
-            return successResponse(res,HttpStatus.OK,"Founded transactions",{transactions:response})
+            return successResponse(res, HttpStatus.OK, "Founded transactions", { transactions: response })
         } catch (error) {
-            console.error('Error founded in find transactions',error);
+            console.error('Error founded in find transactions', error);
             next(error)
         }
     }
 
 
-    async getUserBillingHistory(req:CustomeRequest,res:Response,next:NextFunction){
+    async getUserBillingHistory(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user as JwtPayload
-            const  response = await this.paymentService.getUserBillingHistory(user.id)
-            return successResponse(res,HttpStatus.OK,"Founded billing history ",{transaction:response})
+            const response = await this.paymentService.getUserBillingHistory(user.id)
+            return successResponse(res, HttpStatus.OK, "Founded billing history ", { transaction: response })
         } catch (error) {
-            console.error('Error founded in get user billing history ',error);
+            console.error('Error founded in get user billing history ', error);
             next(error)
-            
+
         }
     }
 
