@@ -72,7 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollapsed }) 
       </div>
 
       <nav className="flex flex-col flex-grow space-y-2 mt-4">
-        {items.map(({ label, icon, path, onClick, badge }) => (
+        {items.map(({ label, icon, path, onClick }) => (
           <Link
             key={label}
             to={path || '#'}

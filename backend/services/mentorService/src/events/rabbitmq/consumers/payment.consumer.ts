@@ -8,7 +8,7 @@ export const receiveMessage = async () => {
         const exchange = 'logs_fanout'
         await channel.assertExchange(exchange, 'fanout', { durable: false })
 
-        const { queue } = await channel.assertQueue('', { exclusive: true })
+        const { queue } = await channel.assertQueue('', { exclusive: false })
         await channel.bindQueue(queue, exchange, '')
         console.log('Waiting for messages in mentor service');
         channel.consume(queue, async (msg) => {

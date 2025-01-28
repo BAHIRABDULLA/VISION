@@ -13,7 +13,9 @@ import videoCallSocketHandler from './sockets/video.call';
 import { rabbitmqConnect } from './config/rabbitmq';
 import { setupConsumer } from './events/rabbitmq/consumers/users.consumer';
 import errorHandler from './middleware/error.handler';
-
+import { createStream } from 'rotating-file-stream';
+import path from 'path';
+import morgan from 'morgan'
 
 
 dotenv.config()
@@ -34,7 +36,12 @@ connectMongodb().catch((err) => {
 // }));
 app.use(express.json());
 
+const accessLogStream = createStream('access.log', {
+  interval: '1d',
+  path: path.join(__dirname, 'logs') 
+});
 
+app.use(morgan('combined',{stream:accessLogStream}))
 
 const server = http.createServer(app);
 const io = require('socket.io')(server, {
@@ -57,12 +64,12 @@ videoNamespace.on('connection', (socket: Socket<DefaultEventsMap, DefaultEventsM
 });
 
 
-app.use('/conversation', conversationRoute)
-app.use('/users', userRoute, (req, res, next) => {
+app.use('/messages/conversation', conversationRoute)
+app.use('/messages/users', userRoute, (req, res, next) => {
   console.log(req.url, 'req.url', req.baseUrl, 'req.baseUrl');
   next()
 })
-app.use('/', messageRoute, (req, res, next) => {
+app.use('/messages/', messageRoute, (req, res, next) => {
   console.log(req.url, 'req.url in /', req.baseUrl);
   next()
 });

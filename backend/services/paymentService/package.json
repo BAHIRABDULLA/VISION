@@ -8,6 +8,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.3",
     "morgan": "^1.10.0",
+    "rotating-file-stream": "^3.2.5",
     "stripe": "^17.3.0",
     "uuid": "^11.0.5"
   },

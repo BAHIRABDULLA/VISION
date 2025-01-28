@@ -11,7 +11,7 @@ export const receiveCategoryMessage = async (queue:string) => {
             durable: false,
           });
       
-           await channel.assertQueue(queue, { exclusive: true });
+           await channel.assertQueue(queue, { exclusive: false });
       
           console.log(`Waiting for messages in queue: ${queue}`);
       

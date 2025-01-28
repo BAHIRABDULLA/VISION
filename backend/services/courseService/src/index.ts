@@ -39,8 +39,8 @@ app.use((req,res,next)=>{
     console.log(req.url,'req.url in app.use');
     next()
 })
-app.use('/resource',resourceRoute)
-app.use('/',courseRoute)
+app.use('/course/resource',resourceRoute)
+app.use('/course/',courseRoute)
 
 app.use(errorHandler)
 

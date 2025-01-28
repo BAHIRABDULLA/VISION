@@ -51,7 +51,7 @@ const AddResources = () => {
 
     const [signedUrl, setSignedUrl] = useState<string | null>(null);
 
-    const [filekey, setFileKey] = useState<string | null>(null);
+    const [_filekey, setFileKey] = useState<string | null>(null);
 
     const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<resourceSchemaType>({
@@ -166,9 +166,9 @@ const AddResources = () => {
         const croppedUrl = URL.createObjectURL(croppedBlob)
         
         setCroppedImageUrl(croppedUrl)
-        const croppedFile = new File([croppedBlob],"cropped-image.jpg",{
-            type:'image/jpeg'
-        })
+        // const croppedFile = new File([croppedBlob],"cropped-image.jpg",{
+        //     type:'image/jpeg'
+        // })
         
         generateSignedUrl(content)
         setIsImageCropCanvas(false)

@@ -40,8 +40,8 @@ const accessLogStream = createStream('access.log', {
 
 app.use(morgan('combined',{stream:accessLogStream}))
 
-app.use('/slots',slotRoute)
-app.use('/',mentorRoute)
+app.use('/mentor/slots',slotRoute)
+app.use('/mentor/',mentorRoute)
 app.use(errorHandler)
 const port = process.env.PORT
 
