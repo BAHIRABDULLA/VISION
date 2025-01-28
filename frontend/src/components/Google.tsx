@@ -20,37 +20,24 @@ const Google: React.FC<GoogleProps> = ({ type }) => {
     const handleGoogleSignIn = async () => {
         try {
             const role = type
-            console.log(role, 'role in google sign in ');
-
-            console.log('reached handle google sign in google page ');
 
             const result = await signInWithPopup(auth, googleProvider)
             const user = result.user
-            console.log('Google user:', user);
             if (user.email && user.displayName) {
                 const response = await googleSignIn(user.email, user.displayName, role);
-                console.log(response, 'Response in auth sign up .tsx');
                 if (response.data.success) {
-                    console.log(response.data.success, 'response.data.success')
-                    console.log(localStorage.getItem('accessToken'), 'localstorage access token ');
 
                     if (response.data.role === 'mentee') {
                         localStorage.setItem('accessToken', response.data.accessToken)
                         dispatch(menteeLogin({ token: response.data.accessToken, user: response.data.user }))
-                        console.log(response.data.role, 'response.data.role');
 
                         navigate('/')
                     } else {
                         localStorage.setItem('accessToken', response.data.accessToken)
-                        console.log(response.data.exist, 'response.data.exist');
                         dispatch(mentorLogin({ token: response.data.accessToken, user: response.data.user }))
-
                         if (response.data.exist === true) {
-                            console.log('its entered in if condition *****');
                             navigate('/mentor/dashboard')
                         } else {
-                            console.log('its entered in else condition ********');
-
                             navigate('/apply-mentor-1', { state: { email: user.email } })
                         }
                     }

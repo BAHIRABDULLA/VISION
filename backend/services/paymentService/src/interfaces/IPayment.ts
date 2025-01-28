@@ -11,5 +11,6 @@ export interface IPayment extends Document {
     subscriptionPeriod?: string;
     stripeSessionId?: string;
     stripePaymentIntentId?: string
+    invoiceCode?:string
     createdAt: Date;
 }

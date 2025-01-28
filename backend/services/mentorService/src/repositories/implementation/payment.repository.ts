@@ -9,7 +9,6 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
             const response = await Payment.findOne({menteeId,mentorId})
             return response
         } catch (error) {
-            console.error('Error founded in find by metee and mentor id ',error);
             throw error
         }
     }

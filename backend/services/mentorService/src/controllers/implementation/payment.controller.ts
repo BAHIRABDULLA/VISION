@@ -1,4 +1,4 @@
-import { IPaymentService } from "../services/interface/IPayment.service";
+import { IPaymentService } from "../../services/interface/IPayment.service";
 
 
 export class PaymentController {

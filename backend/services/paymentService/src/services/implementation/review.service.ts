@@ -51,4 +51,13 @@ export class ReviewService {
             throw error
         }
     }
+
+    async getTotalReview() {
+        try {
+            const response = await this.reviewRepository.findAll()
+            return response.length
+        } catch (error) {
+            throw error
+        }
+    }
 }

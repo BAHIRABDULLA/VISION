@@ -9,7 +9,6 @@ export class SlotRepository extends BaseRepository<ISlot>  implements ISlotRepos
             const response = await slotModel.findOne({mentorId:id})
             return response
         } catch (error) {
-            console.error('Error founded in findMentorSlots',error);
             throw error
         }
     }
@@ -29,7 +28,6 @@ export class SlotRepository extends BaseRepository<ISlot>  implements ISlotRepos
             }
             return null
         } catch (error) {
-            console.error('ERror founded in create or update slots',error);
             throw error
         }
     }
@@ -53,7 +51,6 @@ export class SlotRepository extends BaseRepository<ISlot>  implements ISlotRepos
             }
             return null
         } catch (error) {
-            console.error('Error founded in deleted slot',error);
             throw error
         }
     }

@@ -17,7 +17,6 @@ export class CategoryRepository extends BaseRepository<ICategory> implements ICa
         try {
             return await Cateogry.findOne({ name })
         } catch (error) {
-            console.error('Error founded in finding cateogry name', error);
             throw error
         }
     }

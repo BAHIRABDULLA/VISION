@@ -3,9 +3,6 @@ dotenv.config()
 
 import jwt from 'jsonwebtoken'
 
-console.log(process.env.ACCESS_TOKEN_SECRET,'secdre  t key');
-
-
 const secret_key = process.env.ACCESS_TOKEN_SECRET!
 export const generateAccessToken = (email:string):string=>{
     return jwt.sign(

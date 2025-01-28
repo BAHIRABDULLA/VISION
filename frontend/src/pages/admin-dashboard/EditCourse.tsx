@@ -81,9 +81,7 @@ const EditCourse = () => {
       if (selectedImage) {
         formData.append('image', selectedImage)
       }
-      for (let key of formData.keys()) {
-        console.log(key,formData.get(key), '}}}}}}}}');
-      }
+      
       if(params.id){
         const response = await editCourse(formData, params.id)
         if (response?.data) {

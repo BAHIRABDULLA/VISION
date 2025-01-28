@@ -1,5 +1,5 @@
-import { CourseController } from "../controllers/course.controller";
-import { ResourseController } from "../controllers/resource.controller";
+import { CourseController } from "../controllers/implementation/course.controller";
+import { ResourseController } from "../controllers/implementation/resource.controller";
 import { Course } from "../models/course.model";
 import Payment from "../models/payment.model";
 import { Resource } from "../models/resource.model";

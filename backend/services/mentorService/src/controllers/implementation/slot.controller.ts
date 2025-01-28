@@ -1,8 +1,9 @@
 import { NextFunction, Request,Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
-import { SlotService } from "../services/implementation/slot.service";
-import { errorResponse, successResponse } from "../utils/response.handler";
-import { HttpStatus } from "../enums/http.status";
+import { SlotService } from "../../services/implementation/slot.service";
+import { errorResponse, successResponse } from "../../utils/response.handler";
+import { HttpStatus } from "../../enums/http.status";
+import { ISlotController } from "../interface/ISlot.controller";
 
 
 
@@ -14,7 +15,7 @@ interface customRequest extends Request {
 
 
 
-export class SlotController {
+export class SlotController implements ISlotController{
 
     private slotService:SlotService
     constructor(slotService:SlotService){
@@ -33,7 +34,6 @@ export class SlotController {
             }
             return successResponse(res,HttpStatus.OK,"Mentor slot created",response)
         } catch (error) {
-            console.error('Error founded in create slot',error);
             next(error)
         }
     }
@@ -50,7 +50,6 @@ export class SlotController {
             
             return successResponse(res,HttpStatus.OK,"Founded all slots",{data:response})
         } catch (error) {
-            console.error('Error founded in get slots in slotController',error);
             next(error)
         }
     }
@@ -66,7 +65,6 @@ export class SlotController {
             }
             return successResponse(res,HttpStatus.OK,"Slot deleted")
         } catch (error) {
-            console.error('Error founded in delete slot in slot controller',error);
             next(error)
         }
     }
@@ -83,7 +81,6 @@ export class SlotController {
             const response = await this.slotService.bookSlot(mentorId,user.id,time,date,token)
             return successResponse(res,HttpStatus.OK,"created")
         } catch (error) {
-            console.error('Error founded in booking slot controller',error);
             next(error)
         }
     }
@@ -96,7 +93,6 @@ export class SlotController {
             const response  = await this.slotService.getBookingSlotDetails(bookingId)    
             return successResponse(res,HttpStatus.OK,"Founded booking slot details",{booking:response})
         } catch (error) {
-            console.error('Error founded in get booking slot details',error);
             next(error)
         }
     }
@@ -107,7 +103,6 @@ export class SlotController {
             const response = await this.slotService.getBookingSlot(user.id,user.role)
             return successResponse(res,HttpStatus.OK,"Founded all booking slots",{bookings:response})
         } catch (error) {
-            console.error('Error founded in get booking slot controller',error);
             next(error)
         }
     }

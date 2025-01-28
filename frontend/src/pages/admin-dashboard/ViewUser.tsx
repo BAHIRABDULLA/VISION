@@ -57,7 +57,6 @@ const ViewUser = () => {
 
       const newApprovalStatus = mentorDetails.isApproved == 'pending' ? 'approved' : 'pending';
       const updatedUser = { ...mentorDetails, isApproved: newApprovalStatus };
-      // await updateUserStatus(userId, { isApproved: newApprovalStatus });
       await updateMentorApproveStatus(userId, newApprovalStatus)
       setUserDetails(updatedUser);
     } catch (error) {

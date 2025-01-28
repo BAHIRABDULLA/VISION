@@ -1,6 +1,6 @@
-import { ConversationController } from "../controllers/conversation.controller";
-import { MessageController } from "../controllers/message.controller";
-import { UserController } from "../controllers/user.controller";
+import { ConversationController } from "../controllers/implementation/conversation.controller";
+import { MessageController } from "../controllers/implementation/message.controller";
+import { UserController } from "../controllers/implementation/user.controller";
 import Conversation from "../models/conversation.model";
 import { Message } from "../models/message.model";
 import { User } from "../models/user.model";

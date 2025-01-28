@@ -1,17 +1,18 @@
 import { NextFunction, Request, Response } from 'express'
-import { AdminService } from "../services/implementation/admin.service";
+import { AdminService } from "../../services/implementation/admin.service";
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../types';
-import { errorResponse, successResponse } from '../utils/response.helper';
-import { HttpStatus } from '../enums/http.status';
-import { IAdminService } from '../services/interface/IAdmin.service';
+import { TYPES } from '../../types';
+import { errorResponse, successResponse } from '../../utils/response.helper';
+import { HttpStatus } from '../../enums/http.status';
+import { IAdminService } from '../../services/interface/IAdmin.service';
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { generateAccessToken, generateRefreshToken } from '../utils/token';
-import { setRefreshTokenCookie } from '../utils/tokenSetCookie';
+import { generateAccessToken, generateRefreshToken } from '../../utils/token';
+import { setRefreshTokenCookie } from '../../utils/tokenSetCookie';
+import { IAdminController } from '../interface/IAdmin.controller';
 
 
 @injectable()
-export class AdminController {
+export class AdminController implements IAdminController {
 
     private adminService: IAdminService;
     constructor(@inject(TYPES.AdminService) adminService: IAdminService) {
@@ -31,17 +32,17 @@ export class AdminController {
             setRefreshTokenCookie(res, refreshToken)
             return successResponse(res, HttpStatus.OK, "Login successful", { token: response.token, user: email })
         } catch (error) {
-            console.error('Error founded in login adminController ', error);
             next(error)
         }
     }
 
 
-    async getDashbaordData(req:Request,res:Response,next:NextFunction) {
+    async getDashbaordData(req: Request, res: Response, next: NextFunction) {
         try {
-            const response = await this.adminService.getDashboardData()
+            const token = req.headers['authorization']?.split(' ')[1]!
+            const response = await this.adminService.getDashboardData(token)
+            return successResponse(res, HttpStatus.OK, "dashboard data sent", { dashboardData: response })
         } catch (error) {
-            console.error('Error founded in get dashboard data',error);
             next(error)
         }
     }
@@ -56,7 +57,6 @@ export class AdminController {
             // res.json(response)
             return successResponse(res, HttpStatus.OK, 'Users sent', { users: response.users })
         } catch (error) {
-            console.error("Error fetching all users", error);
             next(error)
         }
     }
@@ -71,31 +71,34 @@ export class AdminController {
             }
             return successResponse(res, HttpStatus.OK, "User data successfully sent", response.user)
         } catch (error) {
-            console.error('Error founded in get user', error);
             next(error)
         }
     }
 
 
-    async logout(req: Request, res: Response) {
+    async logout(req: Request, res: Response, next: NextFunction) {
         try {
             res.clearCookie('refreshToken-a')
             return successResponse(res, HttpStatus.OK, 'Logged out successfully')
         } catch (error) {
-            console.error('Error founded in admin logout', error);
+            next(error)
         }
     }
 
 
 
-    async setNewAccessToken(req: Request, res: Response) {
+    async setNewAccessToken(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const refreshToken = req.cookies['refreshToken-a']
 
-            if (!refreshToken) return res.status(HttpStatus.FORBIDDEN).json({ message: "No refresh token provided" })
+            if (!refreshToken) {
+                res.status(HttpStatus.FORBIDDEN).json({ message: "No refresh token provided" })
+                return
+            }
             const secret = process.env.REFRESH_TOKEN_SECRET
             if (!secret) {
-                return res.json({ message: "internal server error" })
+                res.json({ message: "internal server error" })
+                return
             }
             const decoded = jwt.verify(refreshToken, secret)
 
@@ -103,37 +106,38 @@ export class AdminController {
 
                 const newAccessToken = generateAccessToken((decoded as JwtPayload).email)
 
-                return res.json({ accessToken: newAccessToken });
+                res.json({ accessToken: newAccessToken });
             } else {
                 res.clearCookie('refreshToken-a')
-                return res.status(HttpStatus.FORBIDDEN).json({ message: "Invalid token payload" });
+                res.status(HttpStatus.FORBIDDEN).json({ message: "Invalid token payload" });
             }
         } catch (error) {
             if (error instanceof jwt.TokenExpiredError) {
                 res.clearCookie('refreshToken-a')
-                return res.status(HttpStatus.FORBIDDEN).json({ message: "Refresh token expired, please log in again" })
+                res.status(HttpStatus.FORBIDDEN).json({ message: "Refresh token expired, please log in again" })
             }
-            console.error("Error verifying refresh token:", error);
+            next(error)
         }
     }
 
-    async mentorApproval(req: Request, res: Response) {
+    async mentorApproval(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params;
         const { isApproved } = req.body;
         try {
             if (!['pending', 'approved', 'rejected'].includes(isApproved)) {
-                return res.status(400).json({ message: 'Invalid approval status' });
+                res.status(400).json({ message: 'Invalid approval status' });
+                return
             }
             const updateMentorApproval = await this.adminService.updateApproval(id, isApproved)
 
-            return successResponse(res, HttpStatus.OK, "Mentor approval done", successResponse)
+            return successResponse(res, HttpStatus.OK, "Mentor approval done", updateMentorApproval)
         } catch (error) {
-            console.error('Error founded in mentor approval');
+            next(error)
         }
     }
 
 
-    async updateUserActiveStatus(req: Request, res: Response) {
+    async updateUserActiveStatus(req: Request, res: Response, next: NextFunction) {
         try {
 
             const { id } = req.params
@@ -141,17 +145,17 @@ export class AdminController {
             const response = await this.adminService.updateUserStatus(id, isActive)
             return successResponse(res, HttpStatus.OK, "status updated")
         } catch (error) {
-            console.error('Error founded in update user active status', error);
+            next(error)
         }
     }
 
 
-    async getAllCategories(req: Request, res: Response) {
+    async getAllCategories(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.adminService.getAllCategories()
             return successResponse(res, HttpStatus.OK, "All categories fetched", { categories: response })
         } catch (error) {
-            console.error('Error founded in get all categories', error);
+            next(error)
         }
     }
 
@@ -162,7 +166,6 @@ export class AdminController {
             const response = await this.adminService.addNewCategory(category, skills)
             return successResponse(res, HttpStatus.CREATED, "New Category added", response)
         } catch (error) {
-            console.error('Error founded in addnew category controller', error);
             next(error)
         }
     }
@@ -174,7 +177,6 @@ export class AdminController {
             const response = await this.adminService.updateCategory(id, category, skills)
             return successResponse(res, HttpStatus.CREATED, 'Category updattion successfully done', response)
         } catch (error) {
-            console.error('Error founded in update category in controller', error);
             next(error)
         }
     }

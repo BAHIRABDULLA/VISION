@@ -1,6 +1,6 @@
-import { MentorController } from "../controllers/mentor.controller";
-import { PaymentController } from "../controllers/payment.controller";
-import { SlotController } from "../controllers/slot.controller";
+import { MentorController } from "../controllers/implementation/mentor.controller";
+import { PaymentController } from "../controllers/implementation/payment.controller";
+import { SlotController } from "../controllers/implementation/slot.controller";
 import bookingModel from "../model/booking.model";
 import Category from "../model/category.model";
 import { Mentor } from "../model/mentor.model";

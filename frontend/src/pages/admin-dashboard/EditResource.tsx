@@ -145,9 +145,7 @@ const EditResource = () => {
         } else {
             formData.append("content", data.content)
         }
-        for (let pair of formData.entries()) {
-            console.log(pair[0], pair[1], 'pair in form data');
-        }
+       
         try {
             // const response =  await editResource(formData, 'id'); 
 

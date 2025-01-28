@@ -12,7 +12,6 @@ export class UserRepository extends BaseRepository<IUser>  implements IUserRepos
             const user = await User.findOne({email})
             return user
         } catch (error) {
-            console.error('Error founded in finding emial',error);
             throw error
         }
     }
@@ -22,7 +21,6 @@ export class UserRepository extends BaseRepository<IUser>  implements IUserRepos
             const response  = await User.find({isApproved:'approved'})
             return response
         } catch (error) {
-            console.error('Error founded in find all approved mentors',error);
             return []
         }
     }

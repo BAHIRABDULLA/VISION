@@ -8,13 +8,10 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
         super(model);
     }
    async findBoughtCoursesByUserId(userId: string,type:string,status:'pending'|'completed'): Promise<IPayment[] | null> {
-      try {
-         console.log(userId,'user id , k k k ');
-         
+      try {         
          const payment = await this.model.find({ menteeId:userId ,type,status}).populate('courseId')
          return payment;
       } catch (error) {
-         console.error("Error founded in findByUserId", error);
          return null;
       }
    }

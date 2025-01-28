@@ -8,10 +8,9 @@ export class PaymentService implements IPaymentService {
     async savePaymentData(data:object){
         try {
             const response = await this.paymentRepository.create(data)
-            console.log(response,'response in save payment data ');
             return null
         } catch (error) {
-            console.error('Error founded in save payment data',error);
+            return error
         }
     }
 }

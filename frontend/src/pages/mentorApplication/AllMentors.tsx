@@ -24,7 +24,6 @@ const MentorPage: React.FC = () => {
     //     setCurrentPage(page);
     // };
     const [categories,setCategories] = useState([])
-    console.log(categories,'categories ');
     
     const [mentors, setMentors] = useState([]);
     const fetchMentors = useCallback(async() => {

@@ -15,7 +15,6 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
             
             return response
         } catch (error) {
-            console.error('errror founding in find by booking data ',error);
             throw error
         }
     }
@@ -24,7 +23,6 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
         try {
             return await bookingModel.find({mentorId})
         } catch (error) {
-            console.error('Error founded in find booking date with metnor id ',error);
             throw error
         }
     }
@@ -34,7 +32,6 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
             return await bookingModel.find({[`${role}Id`]:userId})
             .populate(role === 'mentee' ? 'mentorId' : 'menteeId');
         } catch (error) {
-            console.error('Error founded in find by user id ',error);
             throw error
         }
     }

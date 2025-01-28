@@ -4,7 +4,7 @@ import { Container, injectable } from "inversify";
 import { TYPES } from "../types";
 import { AdminRepository } from "../repositories/implementation/admin.repository";
 import { AdminService } from "../services/implementation/admin.service";
-import { AdminController } from "../controllers/admin.controller";
+import { AdminController } from "../controllers/implementation/admin.controller";
 import { IAdminRepository } from "../repositories/interface/IAdmin.repository";
 import { IAdminService } from "../services/interface/IAdmin.service";
 

@@ -50,13 +50,10 @@ const AddResources = () => {
     const [isImageCropCanvas,setIsImageCropCanvas] = useState(false)
 
     const [signedUrl, setSignedUrl] = useState<string | null>(null);
-    console.log(signedUrl, 'signed url ');
 
     const [filekey, setFileKey] = useState<string | null>(null);
-    console.log(filekey, 'file key');
 
     const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
-    console.log(croppedImageUrl, 'cropped image url ');
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<resourceSchemaType>({
         resolver: zodResolver(resourceSchema)
     });
@@ -165,15 +162,13 @@ const AddResources = () => {
 
 
     const handleCropComplete = (croppedBlob: Blob) => {
-        console.log(croppedBlob,'cropped blob');
         
         const croppedUrl = URL.createObjectURL(croppedBlob)
         
         setCroppedImageUrl(croppedUrl)
-        // const croppedFile = new File([croppedBlob],"cropped-image.jpg",{
-        //     type:'image/jpeg'
-        // })
-        console.log(content,'content in handle crope complete');
+        const croppedFile = new File([croppedBlob],"cropped-image.jpg",{
+            type:'image/jpeg'
+        })
         
         generateSignedUrl(content)
         setIsImageCropCanvas(false)

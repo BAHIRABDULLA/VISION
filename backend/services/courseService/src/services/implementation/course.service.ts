@@ -48,7 +48,6 @@ export class CourseService implements ICourseService {
             const response = await this.courseRepository.create(data)
             return response
         } catch (error) {
-            console.error('Error founded in ', error);
             return null
         }
     }
@@ -60,7 +59,6 @@ export class CourseService implements ICourseService {
 
             return { success: true, message: 'Courses fetched successfully', data }
         } catch (error) {
-            console.error('Error founded in ', error);
             return { success: false, message: 'Internal server error' }
         }
     }
@@ -76,7 +74,6 @@ export class CourseService implements ICourseService {
             }
             return { success: true, message: "Course founded", course: findCourse }
         } catch (error) {
-            console.error('Error founded in get course details in service', error);
             return { success: false, message: "Error retrieving course details" }
         }
     }
@@ -108,7 +105,6 @@ export class CourseService implements ICourseService {
             const response = await this.courseRepository.update(id,data)
             return response
         } catch (error) {
-            console.error('Error founded in edit course data',error);
             return null
 
         }
@@ -122,7 +118,6 @@ export class CourseService implements ICourseService {
             }
             return response
         } catch (error) {
-            console.error('Error founded in course update service',error);
             return null
         }
     }
@@ -130,12 +125,9 @@ export class CourseService implements ICourseService {
     async getPurchasedCourses(userId:string):Promise<IPayment[] | null>{
         try {
 
-            const findBoughtCourseByUserId = await this.paymentRepository.findBoughtCoursesByUserId(userId,'course_purchase','completed')
-            console.log('- - --  -- - ',findBoughtCourseByUserId,'----------');
-            
+            const findBoughtCourseByUserId = await this.paymentRepository.findBoughtCoursesByUserId(userId,'course_purchase','completed')            
             return findBoughtCourseByUserId
         } catch (error) {
-            console.error('Error founded in get purchased courses',error);
             return null
         }
     }

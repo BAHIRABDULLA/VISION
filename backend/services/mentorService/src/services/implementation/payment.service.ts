@@ -14,7 +14,7 @@ export class PaymentService implements IPaymentService {
             console.log(response,'response in save payment data ');
             return null
         } catch (error) {
-            console.error('Error founded in save payment data',error);
+            return null
         }
     }
 
