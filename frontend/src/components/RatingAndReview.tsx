@@ -17,12 +17,9 @@ type reviewRatingType = {
 
 const RatingAndReview = ({ id, reviewType }) => {
 
-    console.log(reviewType, 'reviewType in rating and review ');
     const [review, setReview] = useState('')
     const [starValue, setStarValue] = useState(2)
-    console.log(starValue, 'star value');
     const [reviews, setReviews] = useState<reviewRatingType[]>([])
-    console.log(reviews, 'reviewsss');
 
 
 
@@ -42,7 +39,6 @@ const RatingAndReview = ({ id, reviewType }) => {
                 reviewType
             }
             const response = await createReview(data)
-            console.log(response, 'response after creating review');
 
             if (response?.status && response?.status >= 400) {
                 toast.error(response?.data.message || 'Failed to add review')

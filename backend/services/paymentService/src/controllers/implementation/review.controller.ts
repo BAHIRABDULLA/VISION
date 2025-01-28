@@ -24,7 +24,6 @@ export class ReviewController implements IReviewController {
                 courseIdOrMentorId, reviewType as 'course' | 'mentorship')
             successResponse(res, HttpStatus.OK, "Course reviews found ", { reviews })
         } catch (error) {
-            console.error('Error founded in get reviews by course id', error);
             next(error)
         }
     }
@@ -46,7 +45,16 @@ export class ReviewController implements IReviewController {
             }
             successResponse(res, HttpStatus.CREATED, "Course review created", { newReview: response })
         } catch (error) {
-            console.error('Error founded in create course review', error);
+            next(error)
+        }
+    }
+
+
+    async getTotalReview(req:Request,res:Response,next:NextFunction){
+        try {            
+            const response  = await this.reviewService.getTotalReview()
+            successResponse(res,HttpStatus.OK,"Total review count sent",{reviewCount:response})
+        } catch (error) {
             next(error)
         }
     }

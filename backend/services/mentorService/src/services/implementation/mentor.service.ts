@@ -78,7 +78,6 @@ export class MentorService implements IMentorService {
 
             return newMentor
         } catch (error) {
-            console.error('Error founded saving mentor data', error);
             throw error
         }
     }
@@ -100,7 +99,6 @@ export class MentorService implements IMentorService {
             const mentors = await this.mentorRepoistory.findAllWithUserData()
             return mentors
         } catch (error) {
-            console.error('Error founded in fetching all mentors', error);
             throw error
         }
     }
@@ -110,7 +108,6 @@ export class MentorService implements IMentorService {
             const mentors = await this.mentorRepoistory.findAll()
             return mentors
         } catch (error) {
-            console.error('Error founded in fetching all mentors', error);
             throw error
         }
     }
@@ -121,7 +118,6 @@ export class MentorService implements IMentorService {
             const findMentor = await this.mentorRepoistory.findMentor(id)
             return findMentor
         } catch (error) {
-            console.error('Error founded in get mentor', error);
             throw error
         }
     }
@@ -137,13 +133,11 @@ export class MentorService implements IMentorService {
                 }
                 await sendMentorData(newMentor.toObject())
                 await this.userRepository.update(id, { isMentorFormFilled: true })
-                // return { success: true, message: "Mentor details is created" }
                 return newMentor
 
             } else {
                 const updatingMentor = await this.mentorRepoistory.update(id, data)
                 if (!updatingMentor) {
-                    // return { success: false, message: 'Mentor details not updated' }
                     throw new CustomError("Error facing to update mentor", HttpStatus.UNAUTHORIZED)
                 }
                 await sendMentorData(updatingMentor.toObject())
@@ -152,7 +146,6 @@ export class MentorService implements IMentorService {
                 return updatingMentor
             }
         } catch (error) {
-            console.error('Error founed in update mentor data', error);
             throw error
         }
     }
@@ -234,7 +227,6 @@ export class MentorService implements IMentorService {
             const paginatedMentors = filteredMentors?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
             return { data: paginatedMentors, pagination: { totalResult, totalPages: Math.ceil(totalResult / pageSize), currentPage } }
         } catch (error) {
-            console.error('Error founded in getAllmentorWithMergedUserData service', error);
             throw error
         }
     }
@@ -257,7 +249,6 @@ export class MentorService implements IMentorService {
 
             }
         } catch (error) {
-            console.error('Error founded in getMentorSpecificData service', error);
             throw error
         }
     }
@@ -276,7 +267,6 @@ export class MentorService implements IMentorService {
             const response = await this.categoryRepository.findAll()
             return response
         } catch (error) {
-            console.error('Error founded in get all categories',error);
             throw error
         }
     }

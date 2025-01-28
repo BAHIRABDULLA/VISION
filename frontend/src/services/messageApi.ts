@@ -1,5 +1,5 @@
 import  { AxiosError } from "axios";
-import { privateApi } from "./axiosConfig";
+import { privateApi } from "./instance/axiosConfig";
 
 
 // const api = axios.create({

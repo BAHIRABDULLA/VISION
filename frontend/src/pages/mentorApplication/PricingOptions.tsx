@@ -45,7 +45,6 @@ const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentor
 
             }
         } catch (error) {
-            console.error('Error founded in handlebooking', error);
             toast.error('Please sign in your account')
 
         }

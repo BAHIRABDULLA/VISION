@@ -16,7 +16,6 @@ const authenticateToken = (req: CustomeRequest, res: Response, next: NextFunctio
         const newToken = token?.split(' ')[1]
         const secret = process.env.ACCESS_TOKEN_SECRET
         const decodedToken = jwt.decode(newToken, { complete: true });
-        console.log(decodedToken, 'decoded token ');
 
         if (!secret) {
             throw new Error('Access token secret is not defined')

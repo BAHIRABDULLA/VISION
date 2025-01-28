@@ -158,6 +158,7 @@ const Profile = () => {
             console.error('Error founded in common data saving', error);
             toast.error('An error occurred while uploading the file')
         }
+        
     }
     useEffect(() => {
         console.log(errors, 'errors');

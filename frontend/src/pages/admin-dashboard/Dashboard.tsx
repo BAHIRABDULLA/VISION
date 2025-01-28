@@ -1,6 +1,6 @@
 
 import { getAdminDashbaordData } from "@/services/adminApi";
-import React from "react";
+import  { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -11,65 +11,78 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
+  // PieChart,
+  // Pie,
+  // Cell,
 } from "recharts";
 
+interface IDashboardData {
+  approvedMentors: number,
+  coursePurchased: number,
+  revenue: number,
+  totalMentors: number,
+  totalReviews: number,
+  totalUsers: number,
+}
 
 const Dashboard = () => {
 
-  const fetchAdminDashboardData = async()=>{
+  const [dashboardData, setDashbaordData] = useState<IDashboardData>()
+  const [usersGrowthData,setUsersGrowthData] = useState([])
+  const [monthlyRevenueData,setMonthlyRevenueData ]  = useState([])
+
+  const fetchAdminDashboardData = async () => {
     const response = await getAdminDashbaordData()
+    setDashbaordData(response?.data?.dashboardData?.dashBoardData)
+    setUsersGrowthData(response?.data?.dashboardData.userGrowthStats)
+    setMonthlyRevenueData(response?.data?.dashboardData.monthlyRevenueData)
+
   }
+  useEffect(() => {
+    fetchAdminDashboardData()
+  }, [])
 
+  // const coursePopularityData = [
+  //   { name: "Python", value: 30 },
+  //   { name: "Java", value: 25 },
+  //   { name: "JavaScript", value: 20 },
+  //   { name: "React", value: 15 },
+  //   { name: ".NET", value: 10 },
+  // ];
 
-  const userGrowthData = [
-    { name: "Week 1", users: 400 },
-    { name: "Week 2", users: 600 },
-    { name: "Week 3", users: 800 },
-    { name: "Week 4", users: 1200 },
-  ];
-
-  const revenueData = [
-    { name: "January", revenue: 4000 },
-    { name: "February", revenue: 5000 },
-    { name: "March", revenue: 7000 },
-    { name: "April", revenue: 8000 },
-  ];
-
-  const coursePopularityData = [
-    { name: "Python", value: 30 },
-    { name: "Java", value: 25 },
-    { name: "JavaScript", value: 20 },
-    { name: "React", value: 15 },
-    { name: ".NET", value: 10 },
-  ];
-
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#845EC2"];
+  // const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#845EC2"];
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
 
       {/* Top Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-white shadow rounded-lg p-4">
           <h2 className="text-gray-500">Total Users</h2>
-          <p className="text-3xl text-black font-bold">50,000</p>
+          <p className="text-3xl text-black font-bold">{dashboardData?.totalUsers || 0}</p>
         </div>
         <div className="bg-white shadow rounded-lg p-4">
           <h2 className="text-gray-500">Total Mentors</h2>
-          <p className="text-3xl font-bold">2,000</p>
+          <p className="text-3xl font-bold">{dashboardData?.totalMentors || 0}</p>
         </div>
         <div className="bg-white shadow rounded-lg p-4">
           <h2 className="text-gray-500">Courses Purchased</h2>
-          <p className="text-3xl font-bold">1,200</p>
+          <p className="text-3xl font-bold">{dashboardData?.coursePurchased || 0}</p>
         </div>
         <div className="bg-white shadow rounded-lg p-4">
           <h2 className="text-gray-500">Revenue This Month</h2>
-          <p className="text-3xl font-bold">$10,000</p>
+          <p className="text-3xl font-bold">₹  {dashboardData?.revenue || 0}</p>
+        </div>
+        <div className="bg-white shadow rounded-lg p-4">
+          <h2 className="text-gray-500">Approved Mentors</h2>
+          <p className="text-3xl font-bold">{dashboardData?.approvedMentors || 0}</p>
+        </div>
+        <div className="bg-white shadow rounded-lg p-4">
+          <h2 className="text-gray-500">Total Reviews</h2>
+          <p className="text-3xl font-bold">{dashboardData?.totalReviews || 0}</p>
         </div>
       </div>
+
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -77,7 +90,7 @@ const Dashboard = () => {
         <div className="bg-white shadow rounded-lg p-4">
           <h2 className="text-lg font-semibold mb-4">User Growth</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={userGrowthData}>
+            <LineChart data={usersGrowthData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
@@ -91,7 +104,7 @@ const Dashboard = () => {
         <div className="bg-white shadow rounded-lg p-4">
           <h2 className="text-lg font-semibold mb-4">Monthly Revenue</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={revenueData}>
+            <BarChart data={monthlyRevenueData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
@@ -103,7 +116,7 @@ const Dashboard = () => {
       </div>
 
       {/* Course Popularity */}
-      <div className="bg-white shadow rounded-lg p-4 mt-6">
+      {/* <div className="bg-white shadow rounded-lg p-4 mt-6">
         <h2 className="text-lg font-semibold mb-4">Course Popularity</h2>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
@@ -122,7 +135,7 @@ const Dashboard = () => {
             </Pie>
           </PieChart>
         </ResponsiveContainer>
-      </div>
+      </div> */}
     </div>
   );
 };

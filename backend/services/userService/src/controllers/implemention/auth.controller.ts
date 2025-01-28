@@ -28,8 +28,6 @@ export class AuthController implements IAuthController {
             const user = await this.authService.signUp(email)
             res.json(user)
         } catch (error) {
-            console.error('error showing in auth controller signup', error);
-            //  res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' })
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(createResponse(false, 'Internal server error'))
         }
     }
@@ -220,7 +218,6 @@ export class AuthController implements IAuthController {
             }
 
         } catch (error) {
-            console.error('Error founded in chagne password', error);
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' })
         }
     }

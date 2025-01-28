@@ -9,7 +9,6 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
         try {
             return await Payment.findOneAndUpdate(filter,data,{new:true})
         } catch (error) {
-            console.error('Error founded in findone and update',error);
             return null
         }
     }
@@ -20,7 +19,6 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
             const response =  await Payment.findOne(filter)
             return response
         } catch (error) {
-            console.error('Error founded IN find one ',error);
             return null
         }
     }
@@ -37,7 +35,6 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
             })
             return response
         } catch (error) {
-            console.error('Error founded in find user bouth session',error);
             return null
         }
     }
@@ -52,7 +49,6 @@ export class PaymentRepository extends BaseRepository<IPayment> implements IPaym
             })
             return response
         } catch (error) {
-            console.error('Error founded in find is use boughht course',error);
             return null
         }
     }

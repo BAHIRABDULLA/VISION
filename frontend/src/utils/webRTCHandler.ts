@@ -17,7 +17,6 @@ const servers = {
 
 async function initMedia() {
     try {
-        console.log('its entewre to init media_______');
         
         localStream = await navigator.mediaDevices.getUserMedia({
             video: true,

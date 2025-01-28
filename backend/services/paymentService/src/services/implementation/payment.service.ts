@@ -3,6 +3,7 @@ import stripe from "stripe";
 import Payment from "../../models/payment.model";
 import { IPaymentService } from "../interface/IPayment.service";
 import Stripe from "stripe";
+import { v4 as uuidv4 } from 'uuid';
 import CustomError from "../../utils/custom.error";
 import { HttpStatus } from "../../enums/http.status";
 import { publishMessage } from "../../events/rabbitmq/producer";
@@ -75,7 +76,6 @@ export class PaymentService implements IPaymentService {
 
             return { success: true, message: "payment session created", id: session.id }
         } catch (error) {
-            console.error('Error founded in create session', error);
             throw error
         }
     }
@@ -88,9 +88,14 @@ export class PaymentService implements IPaymentService {
             if (event.type === 'checkout.session.completed') {
                 const session = event.data.object as Stripe.Checkout.Session;
 
+                const datePart = new Date().toISOString().split('T')[0].replace(/-/g, '');
+                const randomPart = uuidv4().split('-')[0];
+                const invoiceCode = `INV-${datePart}-${randomPart}`;
+
                 const response = await this.paymentRepository.findOneAndUpdate({ stripeSessionId: session.id },
                     {
                         status: 'completed',
+                        invoiceCode: invoiceCode,
                         stripePaymentIntentId: session.payment_intent as string
                     }
                 )
@@ -101,7 +106,6 @@ export class PaymentService implements IPaymentService {
             }
             return null
         } catch (error) {
-            console.error('Error founded in webhoook handler');
             return null
         }
     }
@@ -121,7 +125,7 @@ export class PaymentService implements IPaymentService {
                 if (findUserBoughtMentorship?.status === 'completed') {
                     throw new CustomError(`${findUserBoughtMentorship.type} session already purchased`, HttpStatus.UNAUTHORIZED)
                 }
-            } 
+            }
 
 
             if (findUserBoughtMentorship?.status === 'pending') {
@@ -196,7 +200,6 @@ export class PaymentService implements IPaymentService {
                 return { url: session.url }
             }
         } catch (error) {
-            console.error('Error founded in commmon session', error);
             throw error
         }
     }
@@ -211,7 +214,6 @@ export class PaymentService implements IPaymentService {
             }
             return findCourse
         } catch (error) {
-            console.error('Error founded in find course payment', error);
             throw error
         }
     }
@@ -221,19 +223,17 @@ export class PaymentService implements IPaymentService {
             const allTransactions = await this.paymentRepository.findAll()
             return allTransactions
         } catch (error) {
-            console.error('Error founded in find all transactions', error);
             throw error
         }
     }
 
 
-    async getUserBillingHistory(userId:string){
+    async getUserBillingHistory(userId: string) {
         try {
             const response = await this.paymentRepository.findUserPayments(userId)
-            console.log(response,'response in get user billing history in service ');
-            return response 
+            console.log(response, 'response in get user billing history in service ');
+            return response
         } catch (error) {
-            console.error('Error founded in get suer billing history in paymenst service',error);
             throw error
         }
     }

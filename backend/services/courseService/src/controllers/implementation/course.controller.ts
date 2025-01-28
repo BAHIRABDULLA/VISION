@@ -10,14 +10,6 @@ import { ICourseController } from "../interface/ICourse.controller";
 interface CustomeRequest extends Request {
     user?: string | JwtPayload,
 }
-// interface courseData {
-//     name: string
-//     duration: string
-//     overview: string
-//     curriculum: string
-//     price: number
-//     image?: string
-// }
 
 
 export class CourseController implements ICourseController {
@@ -38,7 +30,6 @@ export class CourseController implements ICourseController {
             }
             return successResponse(res, HttpStatus.OK, "Course successfully created", response)
         } catch (error) {
-            console.error('Error founded in create course', error);
             next(error)
         }
     }
@@ -49,7 +40,6 @@ export class CourseController implements ICourseController {
             const response = await this.courseService.getAllCourses()
             return successResponse(res, HttpStatus.OK, "Course successfully created", response)
         } catch (error) {
-            console.error('Error founded in get all courses', error);
             next(error)
         }
     }
@@ -61,7 +51,6 @@ export class CourseController implements ICourseController {
             const response = await this.courseService.getCourseById(id)
             return successResponse(res, HttpStatus.OK, "Course successfully created", response)
         } catch (error) {
-            console.error('Error founded in get course details', error);
             next(error)
         }
     }
@@ -79,7 +68,6 @@ export class CourseController implements ICourseController {
             }
             return successResponse(res, HttpStatus.OK, "Course successfully updated", response)
         } catch (error) {
-            console.error('error founded in edit course', error);
             next(error)
 
         }
@@ -97,7 +85,6 @@ export class CourseController implements ICourseController {
             }
             return successResponse(res, HttpStatus.OK, "Status updated", response)
         } catch (error) {
-            console.error('Error founded in edit course controller', error);
             next(error)
         }
     }
@@ -111,7 +98,6 @@ export class CourseController implements ICourseController {
             const response = await this.courseService.getPurchasedCourses(userId)
             return successResponse(res, HttpStatus.OK, "Purchased courses fetched", { response })
         } catch (error) {
-            console.error('Error founded in get purchased courses controller', error);
             next(error)
         }
     }

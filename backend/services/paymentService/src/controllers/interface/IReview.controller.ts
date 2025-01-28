@@ -9,4 +9,5 @@ interface CustomeRequest extends Request {
 export interface IReviewController {
     getReviewsBycourseIdOrMentorId(req: Request, res: Response, next: NextFunction): Promise<void>
     createReview(req: CustomeRequest, res: Response, next: NextFunction): Promise<void>
+    getTotalReview(req: Request, res: Response, next: NextFunction): Promise<void>
 }

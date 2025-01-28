@@ -24,7 +24,6 @@ export class SlotService implements ISlotService {
             // const response = await this.slotRepository.create(data)
             return response
         } catch (error) {
-            console.error('Error founded in slot service', error);
             throw error
         }
     }
@@ -35,7 +34,6 @@ export class SlotService implements ISlotService {
             const getSlots = await this.slotRepository.findMentorSlots(userId)
             return getSlots
         } catch (error) {
-            console.error('Error founded in get slots', error);
             throw error
         }
     }
@@ -45,7 +43,6 @@ export class SlotService implements ISlotService {
             const resposne = await this.slotRepository.removeSlotById(mentorId, slotId)
             return resposne
         } catch (error) {
-            console.error('Error founded in delete slot in slot service', error);
             throw error
         }
     }
@@ -80,7 +77,6 @@ export class SlotService implements ISlotService {
             }
             const today = new Date()
             const providedDate = new Date(date)
-            console.log(providedDate, 'provided date');
             if (providedDate < today) {
                 throw new CustomError('Selected date cannot be in the past. Please choose a valid date', HttpStatus.UNAUTHORIZED)
             }
@@ -110,11 +106,9 @@ export class SlotService implements ISlotService {
                         { Authorization: `Bearer ${token}` }
                 }
             )
-            // console.log(sendDataToPaymentService,'sendDataToPaymentService');
             
             return response
         } catch (error) {
-            console.error('Error founded in bookslot service', error);
             throw error
         }
     }
@@ -125,7 +119,6 @@ export class SlotService implements ISlotService {
             const response = await this.bookingRepository.findById(bookingId)
             return response
         } catch (error) {
-            console.error('Error founded in get booking details in service', error);
             throw error
         }
     }
@@ -136,7 +129,6 @@ export class SlotService implements ISlotService {
             const response = await this.bookingRepository.findByUserId(userId, role)
             return response
         } catch (error) {
-            console.error('Error founded in get booking slot in slot service', error);
             throw error
         }
     }

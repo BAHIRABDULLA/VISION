@@ -10,13 +10,9 @@ class CourseRepository extends BaseRepository<ICourse> implements ICourseReposit
             const course = await Course.findOne({ name })
             return course
         } catch (error) {
-            console.error('Error founded in findbyname in repository',error);
+            throw error
         }   
-        throw new Error("Method not implemented.")
     }
 
-    async findByUserId(userId:string){
-        
-    }
 }
 export default CourseRepository

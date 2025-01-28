@@ -8,7 +8,6 @@ class ResourceRepository extends BaseRepository<IResource> implements IResourceR
         try {
             return await Resource.find().populate('course').exec()
         } catch (error) {
-            console.error('Error founded in get resource in service layer', error);
             throw error      
         }
     }
@@ -16,7 +15,6 @@ class ResourceRepository extends BaseRepository<IResource> implements IResourceR
         try {
             return await Resource.findById(id).populate('course')
         } catch (error) {
-            console.error('Error founded in get resource in service layer', error);
             throw error
         }
     }
@@ -25,7 +23,6 @@ class ResourceRepository extends BaseRepository<IResource> implements IResourceR
         try {
             return await Resource.find({ course: courseId }).populate('course')
         } catch (error) {
-            console.error('Error founded in get resource in service layer', error);
             throw error
         }   
     }

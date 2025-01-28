@@ -13,6 +13,7 @@ const paymentSchema = new Schema<IPayment>({
     subscriptionPeriod: { type: String },
     stripeSessionId: { type: String },
     stripePaymentIntentId: { type: String },
+    invoiceCode:{type:String},
     createdAt: { type: Date, default: Date.now }
 });
 

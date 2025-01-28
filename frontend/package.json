@@ -18,6 +18,7 @@
     "@radix-ui/react-navigation-menu": "^1.2.0",
     "@radix-ui/react-primitive": "^2.0.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@react-pdf/renderer": "^4.1.6",
     "@reduxjs/toolkit": "^2.2.7",
     "@stripe/stripe-js": "^4.9.0",
     "@toolpad/core": "^0.7.0",

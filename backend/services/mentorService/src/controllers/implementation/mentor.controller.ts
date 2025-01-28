@@ -53,7 +53,6 @@ export class MentorController implements IMentorController{
                     s3FileUrl = uploadResult.Location
 
                 } catch (error) {
-                    console.error('Error uploading to S3:', error);
                     res.status(500).json({ message: 'Error uploading file to S3', error });
                 }
             } 
@@ -65,7 +64,6 @@ export class MentorController implements IMentorController{
 
             return successResponse(res,HttpStatus.OK,"Mentor details updated",response)
         } catch (error) {
-            console.error('Error founded in apply mentor form ', error);
             next(error)
         }
     }
@@ -77,7 +75,6 @@ export class MentorController implements IMentorController{
             const response = await this.mentorService.getAllMentorsWithPopulatedData()
             return successResponse(res,HttpStatus.OK,"Sent all mentors",{response})
         } catch (error) {
-            console.error('Error founded in get all mentors ');
             next(error)
         }
     }
@@ -90,7 +87,6 @@ export class MentorController implements IMentorController{
             const response = await this.mentorService.getMentor(id)
             return successResponse(res,HttpStatus.OK,"Sent mentor",{mentor:response})
         } catch (error) {
-            console.error('Error founded in mentor.controller getMentor', error);
             next(error)
         }
     }
@@ -104,7 +100,6 @@ export class MentorController implements IMentorController{
             const response = await this.mentorService.updateMentorData(id, data)
             return successResponse(res,HttpStatus.OK,"Mentor updation successfully done",response)
         } catch (error) {
-            console.error('Error founded in update mentor', error);
             next(error)
         }
     }
@@ -128,7 +123,7 @@ export class MentorController implements IMentorController{
             const response = await this.mentorService.getMentor(user.id)
             return successResponse(res, HttpStatus.OK, "mentor data sent", response)
         } catch (error) {
-            console.error('Error founded in get mentor details', error);
+            next(error)
         }
     }
 
@@ -151,7 +146,6 @@ export class MentorController implements IMentorController{
             const response = await this.mentorService.getAllmentorWithMergedUserData(params)
             return successResponse(res, HttpStatus.OK, "Mentors with filtered data sent", response)
         } catch (error) {
-            console.error('Error founded in getAllmentorWithMergedUserData', error);
             next(error)
         }
     }
@@ -167,7 +161,6 @@ export class MentorController implements IMentorController{
 
             return successResponse(res, HttpStatus.OK, "Mentor data send", response)
         } catch (error) {
-            console.error('Error founded in get mentor specific data controller', error);
             next(error)
         }
     }

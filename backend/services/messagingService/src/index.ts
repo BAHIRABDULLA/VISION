@@ -56,12 +56,6 @@ videoNamespace.on('connection', (socket: Socket<DefaultEventsMap, DefaultEventsM
   videoCallSocketHandler(videoNamespace, socket);
 });
 
-// io.on('connection', (socket) => {
-//   console.log('Client connected');
-//   videoCallSocketHandler(io, socket); 
-//   chatSocketHandler(io, socket);
-// });
-
 
 app.use('/conversation', conversationRoute)
 app.use('/users', userRoute, (req, res, next) => {

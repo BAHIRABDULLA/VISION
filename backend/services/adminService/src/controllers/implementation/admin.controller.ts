@@ -32,7 +32,6 @@ export class AdminController implements IAdminController {
             setRefreshTokenCookie(res, refreshToken)
             return successResponse(res, HttpStatus.OK, "Login successful", { token: response.token, user: email })
         } catch (error) {
-            console.error('Error founded in login adminController ', error);
             next(error)
         }
     }
@@ -40,9 +39,10 @@ export class AdminController implements IAdminController {
 
     async getDashbaordData(req: Request, res: Response, next: NextFunction) {
         try {
-            const response = await this.adminService.getDashboardData()
+            const token = req.headers['authorization']?.split(' ')[1]!
+            const response = await this.adminService.getDashboardData(token)
+            return successResponse(res, HttpStatus.OK, "dashboard data sent", { dashboardData: response })
         } catch (error) {
-            console.error('Error founded in get dashboard data', error);
             next(error)
         }
     }
@@ -57,7 +57,6 @@ export class AdminController implements IAdminController {
             // res.json(response)
             return successResponse(res, HttpStatus.OK, 'Users sent', { users: response.users })
         } catch (error) {
-            console.error("Error fetching all users", error);
             next(error)
         }
     }
@@ -72,18 +71,17 @@ export class AdminController implements IAdminController {
             }
             return successResponse(res, HttpStatus.OK, "User data successfully sent", response.user)
         } catch (error) {
-            console.error('Error founded in get user', error);
             next(error)
         }
     }
 
 
-    async logout(req: Request, res: Response) {
+    async logout(req: Request, res: Response, next: NextFunction) {
         try {
             res.clearCookie('refreshToken-a')
             return successResponse(res, HttpStatus.OK, 'Logged out successfully')
         } catch (error) {
-            console.error('Error founded in admin logout', error);
+            next(error)
         }
     }
 
@@ -119,7 +117,6 @@ export class AdminController implements IAdminController {
                 res.status(HttpStatus.FORBIDDEN).json({ message: "Refresh token expired, please log in again" })
             }
             next(error)
-            console.error("Error verifying refresh token:", error);
         }
     }
 
@@ -128,20 +125,19 @@ export class AdminController implements IAdminController {
         const { isApproved } = req.body;
         try {
             if (!['pending', 'approved', 'rejected'].includes(isApproved)) {
-                 res.status(400).json({ message: 'Invalid approval status' });
-                 return
+                res.status(400).json({ message: 'Invalid approval status' });
+                return
             }
             const updateMentorApproval = await this.adminService.updateApproval(id, isApproved)
 
             return successResponse(res, HttpStatus.OK, "Mentor approval done", updateMentorApproval)
         } catch (error) {
-            console.error('Error founded in mentor approval');
             next(error)
         }
     }
 
 
-    async updateUserActiveStatus(req: Request, res: Response) {
+    async updateUserActiveStatus(req: Request, res: Response, next: NextFunction) {
         try {
 
             const { id } = req.params
@@ -149,17 +145,17 @@ export class AdminController implements IAdminController {
             const response = await this.adminService.updateUserStatus(id, isActive)
             return successResponse(res, HttpStatus.OK, "status updated")
         } catch (error) {
-            console.error('Error founded in update user active status', error);
+            next(error)
         }
     }
 
 
-    async getAllCategories(req: Request, res: Response) {
+    async getAllCategories(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.adminService.getAllCategories()
             return successResponse(res, HttpStatus.OK, "All categories fetched", { categories: response })
         } catch (error) {
-            console.error('Error founded in get all categories', error);
+            next(error)
         }
     }
 
@@ -170,7 +166,6 @@ export class AdminController implements IAdminController {
             const response = await this.adminService.addNewCategory(category, skills)
             return successResponse(res, HttpStatus.CREATED, "New Category added", response)
         } catch (error) {
-            console.error('Error founded in addnew category controller', error);
             next(error)
         }
     }
@@ -182,7 +177,6 @@ export class AdminController implements IAdminController {
             const response = await this.adminService.updateCategory(id, category, skills)
             return successResponse(res, HttpStatus.CREATED, 'Category updattion successfully done', response)
         } catch (error) {
-            console.error('Error founded in update category in controller', error);
             next(error)
         }
     }

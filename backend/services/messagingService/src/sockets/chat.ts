@@ -4,37 +4,29 @@ import { messageService } from '../config/container'
 const connectedUsers = new Map<string, string>()
 
 const chatSocketHandler = (namespace: Namespace, socket: Socket) => {
-    console.log('- - - - -  chat socket handler - - - - -');
     
     const userId = socket.handshake.auth.userId
-    console.log(userId,'userId in socker connection');
     
     if (!userId) {
-        console.log('No userId provided, disconnecting socket')
         socket.disconnect()
         return
     }
 
 
     connectedUsers.set(userId, socket.id)
-    console.log(connectedUsers,'connected users in chat ts - - - - - - -  -');
     
-    console.log(`User ${userId} connected with socket ${socket.id}`)
 
     socket.on('chat-user_join', ({ userId }) => {
-        console.log(userId,'userId in chatuser join');
         
         if (!userId) {
             console.error('Invalid user_join event: no userId provided')
             return
         }
         socket.data.userId = userId
-        console.log(`User ${userId} joined with socket ${socket.id}`)
     })
 
     socket.on('chat-private_message', async ({ to, message }, callback) => {
         try {
-            console.log(to,'to',message,'message');
             
             const sender = socket.data.userId
             if (!sender || !to || !message) {
@@ -43,7 +35,7 @@ const chatSocketHandler = (namespace: Namespace, socket: Socket) => {
                 return
             }
 
-            // Save message
+            
             await messageService.saveMessage(sender, to, message)
 
             // Get recipient's socket ID from our map

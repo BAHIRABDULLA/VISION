@@ -25,14 +25,12 @@ export class PaymentController implements IPaymentController {
         try {
 
             const user = req.user as JwtPayload
-
             const userEmail = user.email
             const menteeId = user.id
             const { price, courseId } = req.body
             const response = await this.paymentService.createSession(price, courseId, userEmail, menteeId)
             res.json(response)
         } catch (error) {
-            console.error('ERror founded in create session in contro paymenservice', error);
             next(error)
         }
     }
@@ -54,11 +52,9 @@ export class PaymentController implements IPaymentController {
                 return res.status(400).send('Webhook Error: Event verification failed');
             }
         } catch (error) {
-            console.error('Error in webhook signature verification:', error);
-            // return res.status(400).send(`Webhook Error: ${error.message}`);
+            return res.status(400).send(`Webhook Error`);
         }
     }
-
 
     async mentorshipCheckoutSession(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
@@ -71,7 +67,6 @@ export class PaymentController implements IPaymentController {
             const response = await this.paymentService.commonSession(userEmail, planType, menteeId, mentorId, price)
             res.status(200).json(response)
         } catch (error) {
-            console.error('Error founded in common checkout session', error);
             next(error)
         }
     }
@@ -83,7 +78,6 @@ export class PaymentController implements IPaymentController {
             const response = await this.paymentService.findCoursePayment(id, user.id)
             return successResponse(res, HttpStatus.OK, "Founded course", response)
         } catch (error) {
-            console.error('Error founded in find course payment', error);
             next(error)
         }
     }
@@ -94,11 +88,9 @@ export class PaymentController implements IPaymentController {
             const response = await this.paymentService.findAllTransactions()
             return successResponse(res, HttpStatus.OK, "Founded transactions", { transactions: response })
         } catch (error) {
-            console.error('Error founded in find transactions', error);
             next(error)
         }
     }
-
 
     async getUserBillingHistory(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
@@ -106,7 +98,6 @@ export class PaymentController implements IPaymentController {
             const response = await this.paymentService.getUserBillingHistory(user.id)
             return successResponse(res, HttpStatus.OK, "Founded billing history ", { transaction: response })
         } catch (error) {
-            console.error('Error founded in get user billing history ', error);
             next(error)
 
         }

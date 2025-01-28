@@ -42,7 +42,6 @@ const Chat = () => {
 
     if (socket) {
       socket.on('connect', () => {
-        console.log('Socket connected:', socket.id)
         setIsConnected(true)
 
         socket.emit('chat-user_join', { userId })
@@ -62,7 +61,6 @@ const Chat = () => {
       const fetchUsers = async () => {
         try {
           const response = await getAllUsers(userId)
-          console.log(response, 'response in fetch users chat');
 
           if (response?.status >= 400) {
             toast.error(response.data.message || 'Failed to fetch users')
@@ -92,7 +90,6 @@ const Chat = () => {
 
 
   const sendMessage = () => {
-    console.log('its here in send message');
     
     if (!socket || !isConnected) {
       toast.error('Not connected to chat server')
@@ -100,7 +97,6 @@ const Chat = () => {
     }
 
     if (newMessage && selectedUser) {
-      console.log(newMessage,'new message',selectedUser,'selected user');
       
       socket.emit('chat-private_message', {
         to: role === 'mentee' ? selectedUser.mentorId._id : selectedUser.menteeId._id,

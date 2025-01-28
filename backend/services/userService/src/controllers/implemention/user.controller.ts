@@ -38,7 +38,6 @@ export class UserController implements IUserController {
             const signedUrl = await s3.getSignedUrlPromise('putObject', params)
             res.status(HttpStatus.OK).json({ signedUrl, key: fileName })
         } catch (error) {
-            console.error('Error founded in generate signed url', error);
             next(error)
         }
     }
@@ -48,7 +47,6 @@ export class UserController implements IUserController {
             const response = await this.userService.getAllUsers()
             res.json(response)
         } catch (error) {
-            console.error('Error founded fetching all users', error);
             next(error)
         }
     }
@@ -60,7 +58,6 @@ export class UserController implements IUserController {
             const user = await this.userService.getUser(id)
             res.json(user)
         } catch (error) {
-            console.error('Error founded in get user', error);
             next(error)
         }
     }
@@ -73,7 +70,6 @@ export class UserController implements IUserController {
             const response = await this.userService.updateUserApproval({ id, isApproved })
             res.status(200).json({ success: true, response })
         } catch (error) {
-            console.error('Error founded in update user approval status', error);
             next(error)
         }
     }
@@ -88,7 +84,6 @@ export class UserController implements IUserController {
 
             return res.status(HttpStatus.OK).json(response)
         } catch (error) {
-            console.error('Error founded in get user', error);
             next(error)
         }
     }
@@ -116,7 +111,6 @@ export class UserController implements IUserController {
 
             res.status(HttpStatus.OK).json({ success: true, message: "update successfully", updateUser })
         } catch (error) {
-            console.error('Error founded in profile update', error);
             next(error)
         }
     }
@@ -128,7 +122,6 @@ export class UserController implements IUserController {
             const response = await this.userService.updateUserStatus(id, isActive)
             res.status(HttpStatus.OK).json(response)
         } catch (error) {
-            console.error('Error founded in update user status', error);
             next(error)
         }
     }

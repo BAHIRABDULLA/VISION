@@ -11,14 +11,27 @@ import CustomError from '../../utils/custom.error'
 import { HttpStatus } from '../../enums/http.status'
 import { publishMessage } from '../../events/rabbitmq/producer'
 
+const api = axios.create({
+    baseURL: 'http://localhost:4000'
+})
 
 
-const userApi = axios.create({
-    baseURL: 'http://localhost:4001/'
-})
-const mentorApi = axios.create({
-    baseURL: 'http://localhost:4002/'
-})
+interface User {
+    role: 'mentor' | 'mentee';
+    isApproved?: 'approved' | 'rejected';
+    createAt: Date
+}
+
+interface GetAllUsersResponse {
+    users: User[];
+}
+
+interface IPayment {
+    amount: number
+    status: 'pending' | 'completed'
+    type: 'one_time_payment' | 'mentorship_subscription' | 'course_purchase'
+    createdAt: Date
+}
 
 @injectable()
 export class AdminService implements IAdminService {
@@ -37,108 +50,171 @@ export class AdminService implements IAdminService {
             const admin = await this.adminRepository.findByEmail(email)
 
             if (!admin) return null
-            // return errorResponse('Admin not found')
-
             const passwordCheck = await bcrypt.compare(password, admin.password);
-
             if (!passwordCheck) return null
-            // return errorResponse("Invalid credentials, Please try again")
             const token = generateAccessToken(email)
-            // return successResponse("Login successful", { token:getAccessToken })
             return { token }
         } catch (error) {
-            console.error('Error founded in admin login', error);
             return null
         }
     }
 
 
-    async getDashboardData(){
+    async getDashboardData(token: string) {
         try {
-            const fetchTotalUsers = await axios.get('/')
+            const getAllUsers = await this.users() as GetAllUsersResponse
+            let dashBoardData = {
+                totalUsers: 0,
+                totalMentors: 0,
+                coursePurchased: 0,
+                revenue: 0,
+                totalReviews: 0,
+                approvedMentors: 0
+            }
+            dashBoardData.totalUsers = getAllUsers?.users?.length || 0
+            dashBoardData.totalMentors = getAllUsers.users.filter(user => user.role === 'mentor').length
+            dashBoardData.approvedMentors = getAllUsers?.users.filter(user => user.role === 'mentor' && user.isApproved === 'approved').length
+            const findPayment = await api.get('/payment/transactions', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            dashBoardData.coursePurchased = findPayment.data?.transactions.filter((payment: IPayment) => payment.type === 'course_purchase').length
+            const completedTransaction = findPayment.data.transactions
+                .filter((payment: any) => payment.status == 'completed')
+            const totalRevenue = completedTransaction.reduce((acc: number, curr: any) => acc + curr.amount, 0)
+            dashBoardData.revenue = totalRevenue
+            const getTotalReviews = await api.get('/payment/review/total')
+            dashBoardData.totalReviews = getTotalReviews.data.reviewCount
+            const userGrowthStats = await this.userGrowthStats(getAllUsers?.users)
+            const monthlyRevenueData = await this.monthlyRevenueData(completedTransaction)
+            return { dashBoardData, userGrowthStats ,monthlyRevenueData }
         } catch (error) {
-            console.error();
             throw error
         }
+    }
+    async userGrowthStats(users: User[]) {
+
+        const today = new Date();
+        const sevenDaysBefore = new Date();
+        sevenDaysBefore.setDate(today.getDate() - 7);
+        const recentUsers = users.filter(user => new Date(user?.createAt) >= sevenDaysBefore);
+
+        const userCountByDate: Record<string, number> = {}
+        for (const user of recentUsers) {
+            const createdAt = new Date(user.createAt)
+            const dateKey = createdAt.toISOString().split('T')[0]
+            userCountByDate[dateKey] = (userCountByDate[dateKey] || 0) + 1
+        }
+        const userGrowthStats = []
+
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date()
+            date.setDate(today.getDate() - i)
+            const dateKey = date.toISOString().split('T')[0]
+            userGrowthStats.push({
+                name: dateKey,
+                users: userCountByDate[dateKey] || 0
+            })
+        }
+        return userGrowthStats
+
+    }
+
+    async monthlyRevenueData(transactions: IPayment[]) {
+        
+        const currentDate = new Date()
+        const sixMonthsAgo = new Date()
+        sixMonthsAgo.setMonth(currentDate.getMonth()-6)
+        const completedTransaction = transactions.filter((transaction)=>{
+            const transactionDate = new Date(transaction.createdAt)
+            return (
+                transactionDate>=sixMonthsAgo
+            )
+        })
+        const revenueByMonth = completedTransaction.reduce((acc,transaction)=>{
+            const month = new Date(transaction.createdAt).toLocaleString('default',{
+                month:'short',
+                year:'numeric'
+            })
+            if(!acc[month]){
+                acc[month] = 0
+            }
+            acc[month]+=transaction.amount
+            return acc
+        },{} as {[key:string]:number})
+
+        const sortedMonths = Object.keys(revenueByMonth).sort((a,b)=>{
+            const dateA = new Date(`01 ${a}`)
+            const dateB = new Date(`01 ${b}`)
+            return dateA.getTime() - dateB.getTime()
+        })
+        const chartData = sortedMonths.map((month)=>({
+            name:month,
+            revenue:revenueByMonth[month]
+        }))
+        return chartData
     }
 
     async users(): Promise<{ users: object[] } | null> {
         try {
-            const users = await userApi.get('/users')
-            // const usersFromMentorService = await mentorApi.get('/mentors')
-
+            const users = await api.get('/user/users')
             let userData = users.data
-
-            // let dataFromMentorService = usersFromMentorService.data
-
-            // const mergedUsers = dataFromUserService.map((x: any) => {
-            //     const findMentor = dataFromMentorService.find((y: { mentor: any }) => y.mentor === x._id);
-            //     return findMentor ? { ...x, ...findMentor } : x;
-            // });
-
-            // return { users: mergedUsers };
             return { users: userData }
         } catch (error) {
-            console.error('Error founding on find users', error);
-            return null
+            throw error
         }
     }
 
 
     async getUser(id: string): Promise<{ user: object } | null> {
         try {
-            const commonData = await userApi.get(`/users/${id}`)
+            const commonData = await api.get(`/user/users/${id}`)
             if (!commonData) {
                 return null
             }
 
             if (commonData.data.role === 'mentor' && commonData.data.isMentorFormFilled === true) {
-                const mentorData = await mentorApi.get(`/users/${id}`)
+                const mentorData = await api.get(`/mentor/users/${id}`)
 
                 const mergedData = {
                     ...commonData.data,
                     mentorDetails: mentorData.data.mentor
                 }
-          
+
                 return { user: mergedData }
             }
             return { user: commonData.data }
         } catch (error) {
-            console.error('Error founded in get user in mentor service', error);
-            return null
+            throw error
         }
     }
 
     async updateApproval(id: string, isApproved: string) {
         try {
-
-            // await publishMessage({id,isApproved})
-            const sentRequestToUserService = await userApi.patch(`${id}/approval`, { isApproved })
-
-
+            const sentRequestToUserService = await api.patch(`user/${id}/approval`, { isApproved })
             return sentRequestToUserService.data
         } catch (error) {
-            console.error('Error founded in udpated approval adminservice', error);
+            throw error
         }
     }
 
 
     async updateUserStatus(id: string, isActive: boolean) {
         try {
-            const sentRequestToUserService = await userApi.patch(`${id}/status`, { isActive })
+            const sentRequestToUserService = await api.patch(`user/${id}/status`, { isActive })
             return sentRequestToUserService.data
         } catch (error) {
-            console.error('ERror founded in update user status', error);
+            throw error
         }
     }
 
 
-    async getAllCategories(){
+    async getAllCategories() {
         try {
             const response = await this.categoryRepository.findAll()
             return response
         } catch (error) {
-            console.error('Error founded in get all categories in service',error);
             throw error
         }
     }
@@ -147,48 +223,37 @@ export class AdminService implements IAdminService {
     async addNewCategory(category: string, skills: string[]) {
         try {
             const findExistingCategory = await this.categoryRepository.findByCategoryName(category)
-            if(findExistingCategory){
-                throw new CustomError('Category already exited',HttpStatus.FORBIDDEN)
+            if (findExistingCategory) {
+                throw new CustomError('Category already exited', HttpStatus.FORBIDDEN)
             }
             const data = {
-                name:category,
+                name: category,
                 skills
             }
             const response = await this.categoryRepository.create(data)
-            await publishMessage('category_exchange',response)
-            if(!response){
-                throw new CustomError('Unexpected error occuring to create category',HttpStatus.FORBIDDEN)
+            await publishMessage('category_exchange', response)
+            if (!response) {
+                throw new CustomError('Unexpected error occuring to create category', HttpStatus.FORBIDDEN)
             }
             return response
         } catch (error) {
-            console.error('Error founded in add new category in service', error);
             throw error
         }
     }
 
-    async updateCategory(id:string,category:string,skills:string[]){
+    async updateCategory(id: string, category: string, skills: string[]) {
         try {
 
             const findCategory = await this.categoryRepository.findById(id)
-            if(!findCategory){
-                throw new CustomError('Category not founded',HttpStatus.NOTFOUND)
+            if (!findCategory) {
+                throw new CustomError('Category not founded', HttpStatus.NOTFOUND)
             }
-            const response = await this.categoryRepository.update(id,{name:category,skills})
-            console.log(response,'response in update category');
-            
-            await publishMessage('category_exchange',response!)
+            const response = await this.categoryRepository.update(id, { name: category, skills })
+            await publishMessage('category_exchange', response!)
             return response
         } catch (error) {
-            console.error('Error founded in update category',error);
             throw error
         }
     }
 
-    // async registerUser(data: any) {
-    //     try {
-
-    //     } catch (error) {
-
-    //     }
-    // }
 }

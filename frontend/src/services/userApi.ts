@@ -1,8 +1,9 @@
 import axios from 'axios'
-import { privateApi } from './axiosConfig';
+import { privateApi } from './instance/axiosConfig';
 
 
 console.log(import.meta.env.VITE_USER_API_BASE_URL, 'IMPORT mete ENV viteapivaseurl');
+
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_USER_API_BASE_URL,
@@ -20,9 +21,8 @@ export const signUpRequest = async (email: string) => {
     return response.data
 }
 
-
-export const otpVerify = async (fullName: string, email: string, password: string, role: string, otp: string,type:string) => {
-    const response = await api.post('/otp-signup', { fullName, email, password, role, otp ,type})
+export const otpVerify = async (fullName: string, email: string, password: string, role: string, otp: string, type: string) => {
+    const response = await api.post('/otp-signup', { fullName, email, password, role, otp, type })
     return response
 
 }
@@ -31,7 +31,6 @@ export const resendOtp = async (email: string) => {
     const response = await api.post('/otp-resend', { email })
     return response
 }
-
 
 export const googleSignIn = async (email: string, name: string, role: string) => {
     try {
@@ -48,10 +47,9 @@ export const sendMail = async (email: string) => {
         return response
 
     } catch (error) {
-        console.error('Error founding on send email', error);
+        return error
     }
 }
-
 
 export const resetPassword = async (email: string, password: string, confirmPassword: string) => {
     try {
@@ -59,12 +57,9 @@ export const resetPassword = async (email: string, password: string, confirmPass
         return response
 
     } catch (error) {
-        console.error('Error founding in reset password', error);
+        return error
     }
 }
-
-
-
 
 export const getUserDetails = async () => {
     try {
@@ -75,39 +70,38 @@ export const getUserDetails = async () => {
     }
 }
 
-
 export const logout = async () => {
     try {
         const response = await api.post('/logout')
         return response
     } catch (error) {
-        console.error('Error in logout', error);
+        return error
     }
 }
 
-export const updateCommonData = async ( data: object) => {
+export const updateCommonData = async (data: object) => {
     try {
         const response = await privateApi.put(`/user`, data)
         return response
     } catch (error) {
-        console.error('Error in update common data', error);
+        return error
     }
 }
 
-export const passwordUpdate = async(data:object)=>{
+export const passwordUpdate = async (data: object) => {
     try {
-        const response = await privateApi.patch('/user/change-password',data)
+        const response = await privateApi.patch('/user/change-password', data)
         return response
     } catch (error) {
-        console.error('Error founded in password update ',error);
+        return error
     }
 }
 
-export const getSignedUrl = async (fileName:string,fileType:any) => {
+export const getSignedUrl = async (fileName: string, fileType: any) => {
     try {
-        const response = await privateApi.post('/user/generate-signed-url', { fileName,fileType })
+        const response = await privateApi.post('/user/generate-signed-url', { fileName, fileType })
         return response
     } catch (error) {
-        console.error('Error in get signed url', error);
+        return error
     }
 }

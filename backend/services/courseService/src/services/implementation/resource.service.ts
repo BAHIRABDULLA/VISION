@@ -30,7 +30,6 @@ export class ResourceService implements IResourseService {
             }
             return getResourceData
         } catch (error) {
-            console.error('Error founded in get resource in service layer', error);
             throw error
         }
     }
@@ -55,7 +54,6 @@ export class ResourceService implements IResourseService {
 
             return createResourse
         } catch (error) {
-            console.error('Error founded in create course', error);
             throw error
         }
     }
@@ -68,7 +66,6 @@ export class ResourceService implements IResourseService {
             }
             return resourceData
         } catch (error) {
-            console.error('Error founded in get resource by id', error);
             throw error
         }
     }
@@ -85,7 +82,6 @@ export class ResourceService implements IResourseService {
             }
             return resourceData
         } catch (error) {
-            console.error('Error founded in get resource by course id', error);
             throw error
         }
     }
