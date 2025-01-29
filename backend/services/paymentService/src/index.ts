@@ -4,6 +4,8 @@ import dotenv from 'dotenv'
 import connectMongodb from './config/db.config'
 import { rabbitmqConnect } from './config/rabbitmq'
 import morgan from 'morgan'
+import { createStream } from 'rotating-file-stream'
+import path from 'path'
 
 dotenv.config()
 
@@ -31,14 +33,16 @@ rabbitmqConnect().then(()=>{
 //     origin: 'https://vision.bahirabdulla.online',
 //     credentials: true
 // }))
+console.log(process.env.STRIPE_WEBHOOK_SIGNIN_SECRET,'----');
+console.log(process.env.MONGO_URI,'++++');
+
 
 import paymentRoute from './routes/payment.route'
 import reviewRoute from './routes/review.route'
 import bookingRoute from './routes/booking.route'
 import errorHandler from './middleware/error.handler'
 import { setupConsumer } from './events/rabbitmq/consumer/users.consumer'
-import { createStream } from 'rotating-file-stream'
-import path from 'path'
+
 
 
 app.use('/payment/review',reviewRoute)

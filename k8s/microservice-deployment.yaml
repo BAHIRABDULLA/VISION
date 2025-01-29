@@ -19,6 +19,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 4001
+        # env:
+        # - name: MONGO_URI
+          # value: mongodb+srv://bahir_abdulla:u35mOO5ewIF6jhYD@vision-cluster.qubo8.mongodb.net/vision_user?retryWrites=true&w=majority&appName=vision-cluster
 
 
 ---
@@ -179,6 +182,11 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 4005
+        env:
+        - name: STRIPE_SECRET_KEY
+          value: sk_test_51QFurFCrQBo8i86XTwF84xjs4AnnyeOmrgGVG6eKM0XFxNd2oNwW3YgIlf9LmOors7GA8MDXpQqx4TaQyX6aFGNg00gOkt3BEp
+        - name: STRIPE_WEBHOOK_SIGNIN_SECRET
+          value: whsec_sVTMl5aZPXmjUsR9qnoZJJJzyl5Us1C5
 
 
 ---

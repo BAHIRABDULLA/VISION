@@ -82,7 +82,7 @@ spec:
           #       port:
           #         number: 80
           - path: /
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: frontend-service

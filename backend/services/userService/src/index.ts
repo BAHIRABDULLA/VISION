@@ -5,6 +5,9 @@ import { rabbitmqConnect } from './config/rabbitmq'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
+import { createStream } from 'rotating-file-stream'
+import path from 'path'
+
 
 
 const app = express()
@@ -19,12 +22,20 @@ connectMongodb().then(()=>{
     console.log('its connected boro');
     
 })
+console.log(process.env.ACCESS_TOKEN_SECRET,'libuv check')
 app.use(cookieParser())
 
 // app.use(cors({
 //     origin:'https://vision.bahirabdulla.online',
 //     credentials:true
 // }))
+
+const accessLogStream = createStream('access.log', {
+    interval: '1d',
+    path: path.join(__dirname, 'logs') 
+  });
+  
+  app.use(morgan('combined',{stream:accessLogStream}))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
