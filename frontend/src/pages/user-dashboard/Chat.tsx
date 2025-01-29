@@ -196,9 +196,9 @@ const Chat = () => {
       {/* Users Panel (Right Side) */}
       <div className="w-1/4 dark:bg-gray-800 bg-gray-300 border-l dark:border-gray-700 border-gray-300 overflow-y-auto">
         <div className="overflow-y-auto">
-          {users?.map((user) => (
+          {users?.map((user,index:number) => (
             <div
-              key={user.id}
+              key={index}
               className={`flex items-center p-4 cursor-pointer hover:dark:bg-gray-700 hover:bg-gray-500 ${selectedUser?._id === user._id
                 ? "dark:bg-gray-700 bg-gray-600"
                 : ""

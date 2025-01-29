@@ -21,11 +21,11 @@ const EditResource = React.lazy(() => import('@/pages/admin-dashboard/EditResour
 const Transaction = React.lazy(() => import('@/pages/admin-dashboard/Transaction'))
 const CategoriesSkills = React.lazy(() => import('@/pages/admin-dashboard/Categories'))
 
-const AdminRoute = () => {
+const AdminRoute = () => {    
     return (
         <Suspense fallback={<Loading/>} >
             <Routes>
-                <Route path='/admin' element={<AdminPrivateRoute><Admin /></AdminPrivateRoute>}>
+                <Route path='/' element={<AdminPrivateRoute><Admin /></AdminPrivateRoute>}>
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="users" element={<Users />} />
                     <Route path='users/:id' element={<ViewUser />} />
@@ -39,7 +39,7 @@ const AdminRoute = () => {
                     <Route path='transaction' element={<Transaction />} />
 
                 </Route>
-                <Route path='/admin/login' element={<AdminPublicRoute><Login /></AdminPublicRoute>} />
+                <Route path='/login' element={<AdminPublicRoute><Login /></AdminPublicRoute>} />
             </Routes>
         </Suspense>
     )

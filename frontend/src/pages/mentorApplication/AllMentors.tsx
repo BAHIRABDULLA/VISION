@@ -140,8 +140,8 @@ const MentorPage: React.FC = () => {
                                     onChange={(e) => handleFilterChange('expertise', e.target.value)}
                                 >
                                     <option value="any">Any</option>
-                                    {categories?.map((category)=>(
-                                        <option value={category?.name}>{category?.name}</option>
+                                    {categories?.map((category,index:number)=>(
+                                        <option key={index} value={category?.name}>{category?.name}</option>
                                         
                                     ))}
                                     {/* <option value="frontend">Frontend Development</option>

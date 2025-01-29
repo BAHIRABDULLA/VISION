@@ -44,10 +44,10 @@ const CourseDetails = () => {
         const fetchPaymentDetails = async () => {
             if (id) {
                 const response = await getCoursePaymentDetails(id)
-                if (response?.status === 200) {
-                    setIsPurchase(false)
-                } else {
+                if(!response ||response?.status>=400){                    
                     setIsPurchase(true)
+                }else{
+                    setIsPurchase(false)
                 }
             }
         }
