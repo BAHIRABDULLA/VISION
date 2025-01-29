@@ -13,6 +13,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
 import { resetSkills } from '@/redux/slices/mentorApplicationSlice';
 
+{/* <ImageCropper imageSrc={imageSrc} onCropComplete={handleCropComplete} /> */}
+
+// const handleCropComplete = (croppedBlob: Blob) => {
+//     const croppedUrl = URL.createObjectURL(croppedBlob)
+// }
+
 
 const applyMentorSchema = z.object({
     file: z.optional(z.any()),

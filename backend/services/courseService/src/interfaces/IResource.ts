@@ -9,5 +9,6 @@ export interface IResource extends Document {
     topic: string
     content: string;
     status: boolean
+    createAt: Date
     // nextResourceId: string | null
 }

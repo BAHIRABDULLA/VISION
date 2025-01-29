@@ -18,7 +18,7 @@ const loginSchema = z.object({
     password: z.string().min(8, { message: "Password must be 8 character" })
 })
 type loginSchemaType = z.infer<typeof loginSchema>
-const AdminLogin = () => {
+const AdminLogin = () => {    
     const dispatch = useDispatch()
 
     const { register, handleSubmit, formState: { errors } } = useForm<loginSchemaType>({

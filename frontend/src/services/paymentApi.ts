@@ -52,9 +52,10 @@ export const getCoursePaymentDetails = async (courseId: string) => {
         const response = await privateApi.get(`/payment/course/${courseId}`)
         return response
     } catch (error) {
-        if (error instanceof AxiosError) {
+        if (error instanceof AxiosError) {            
             return error.response
         }
+        return null
     }
 }
 

@@ -4,7 +4,6 @@ import { IResource } from "../../interfaces/IResource";
 import { ICourseRepository } from "../../repositories/interface/ICourse.repository";
 import { IResourceRepository } from "../../repositories/interface/IResource.repository";
 import CustomError from "../../utils/custom.error";
-import { uploadFile } from "../../utils/file.upload";
 import { IResourseService } from "../interface/IResource.service";
 
 interface IFileContent {

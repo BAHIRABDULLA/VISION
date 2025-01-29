@@ -25,8 +25,7 @@ interface IDashboardData {
   totalUsers: number,
 }
 
-const Dashboard = () => {
-
+const Dashboard = () => {  
   const [dashboardData, setDashbaordData] = useState<IDashboardData>()
   const [usersGrowthData,setUsersGrowthData] = useState([])
   const [monthlyRevenueData,setMonthlyRevenueData ]  = useState([])

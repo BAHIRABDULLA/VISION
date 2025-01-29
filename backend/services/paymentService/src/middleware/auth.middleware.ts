@@ -23,6 +23,8 @@ const authenticateToken = (req: CustomeRequest, res: Response, next: NextFunctio
         }
         jwt.verify(newToken, secret, (err, user) => {
             if (err) {
+                console.log(err,'err',user,'user');
+                
                 return res.status(401).json({ message: 'Invalid token' });
             }
             req.user = user as JwtPayload

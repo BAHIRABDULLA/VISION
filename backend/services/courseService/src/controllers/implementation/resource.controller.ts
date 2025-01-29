@@ -38,7 +38,7 @@ export class ResourseController implements IResourceController {
             const params = {
                 Bucket: process.env.BUCKET_NAME!,
                 Key: fileName,
-                Expires: 60,
+                Expires: 3600,
                 ContentType: fileType,
 
             }
@@ -62,16 +62,14 @@ export class ResourseController implements IResourceController {
     async createResource(req: Request, res: Response, next: NextFunction) {
         try {
             let { title, type, course, level, topic, content } = req.body
-            const data = req.body
+            console.log(content, 'content ');
 
-            if (type !== 'text') {
-                content = req.file
-            }
+            const data = req.body
             const response = await this.resourceService.createResourse(title, type, course, level, topic, content)
             return successResponse(res, HttpStatus.CREATED, "Resource created")
 
         } catch (error) {
-            throw error
+            next(error)
         }
     }
 

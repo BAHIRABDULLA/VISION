@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { courseShemaType } from "./AddCourse";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
-import ImageCropper from "@/components/ImageCropper";
 
 
 export const resourceSchema = z.object({
@@ -45,15 +44,17 @@ const AddResources = () => {
     const [selelctedLevel, setSelectedLevel] = useState('')
     const [topics, setTopics] = useState([])
     const [content, setContent] = useState<File | null>(null);
+    console.log(content, 'content +++++');
+
     const levels = ["Basic", "Intermediate", "Advanced"];
-    const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const [isImageCropCanvas,setIsImageCropCanvas] = useState(false)
+
 
     const [signedUrl, setSignedUrl] = useState<string | null>(null);
+    console.log(signedUrl, 'signed url ');
 
     const [filekey, setFileKey] = useState<string | null>(null);
+    console.log(filekey, 'file key = = = ');
 
-    const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<resourceSchemaType>({
         resolver: zodResolver(resourceSchema)
     });
@@ -94,10 +95,20 @@ const AddResources = () => {
 
     const onSubmit = async (data: resourceSchemaType) => {
 
-        if (contentType!=='text') {
-            await uploadFileToS3(content, signedUrl)
+        if (contentType !== 'text') {
+            await generateSignedUrl(content)
+
+            console.log(content, 'content', signedUrl, 'signed url ');
+
+            const uploadFile = await uploadFileToS3(content, signedUrl)
+            console.log(uploadFile, 'uploadf file');
+            console.log(filekey, 'file key ', content.name, 'content.name');
+
+            data.content = filekey
+
         }
         const response = await addResource(data);
+        console.log(response, 'response ');
 
         if (response.status && response.status >= 400) {
             return toast.error(response.data.message || 'There is an error occured')
@@ -108,11 +119,16 @@ const AddResources = () => {
 
     const generateSignedUrl = async (file: File) => {
         try {
+            console.log(file.name, 'file.name - - - ',file.type,'file.type - - - ');
+
             const response = await getSignedUrl(`${Date.now()}_${file.name}`, file.type)
+            console.log(response, 'response in generate signed url');
+
             if (response?.status && response.status === 200) {
                 const { signedUrl, key } = response.data
                 setSignedUrl(signedUrl)
                 setFileKey(key)
+
             } else {
                 toast.error('Failed to generate signed url')
             }
@@ -126,9 +142,12 @@ const AddResources = () => {
         try {
             const response = await axios.put(presignedUrl, file, {
                 headers: {
-                    "Content-Type": file.type
+                    "Content-Type": file.type,
+                    "Accept": "application/json"
                 }
             })
+            console.log(response, 'rsponse _++_=======');
+
             return response
         } catch (error) {
             console.error("Error uploading file:", error);
@@ -136,44 +155,19 @@ const AddResources = () => {
     }
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // const file = e.target.files[0]
-        // console.log(file, 'file file file');
+        const file = e.target.files[0]
+        console.log(file, 'file file file');
 
-        // if (file) {
-        //     const reader = new FileReader();
-
-        //     reader.readAsDataURL(file);
-        //     console.log(imageSrc,'reader result')
-        //     setContent(file)
-        //     setValue("content", file)
-        //     generateSignedUrl(file)
-        // }
-        const file = e.target.files?.[0];
         if (file) {
-            setContent(file)
             const reader = new FileReader();
-            reader.onload = () => setImageSrc(reader.result as string);
-            setValue("content", file)
-            
             reader.readAsDataURL(file);
-            setIsImageCropCanvas(true)
+            setContent(file)
+            setValue("content", file)
+            // generateSignedUrl(file)
         }
     }
 
 
-    const handleCropComplete = (croppedBlob: Blob) => {
-        
-        const croppedUrl = URL.createObjectURL(croppedBlob)
-        
-        setCroppedImageUrl(croppedUrl)
-        const croppedFile = new File([croppedBlob],"cropped-image.jpg",{
-            type:'image/jpeg'
-        })
-        
-        generateSignedUrl(content)
-        setIsImageCropCanvas(false)
-
-    }
 
 
     return (
@@ -208,7 +202,7 @@ const AddResources = () => {
                         onChange={(e) => setSelectedCourse(e.target.value)}
                         variant="outlined"
                     >
-                        {courses.map((course) => (
+                        {courses && courses.map((course) => (
                             <MenuItem key={course.name} value={course.name}>
                                 {course.name}
                             </MenuItem>
@@ -238,7 +232,7 @@ const AddResources = () => {
                         variant="outlined"  {...register('topic')}
                         disabled={!topics.length}
                     >
-                        {topics.map((topic, index) => (
+                        {topics && topics.map((topic, index) => (
                             <MenuItem key={index} value={topic}>
                                 {topic}
                             </MenuItem>
@@ -264,16 +258,14 @@ const AddResources = () => {
                             Upload Image
                             <input type="file" hidden accept="image/*" onChange={handleFileChange} />
                         </Button>
-                        {isImageCropCanvas && <ImageCropper imageSrc={imageSrc} onCropComplete={handleCropComplete} />}
-                        {croppedImageUrl && (
+                        {content && (
                             <div>
                                 <Typography>{content.name}</Typography>
-                                <img src={croppedImageUrl} alt="" className="mt-4 w-32" />
+                                <img src={URL.createObjectURL(content)} alt={content.name} className="mt-4 w-32" />
                             </div>
                         )}
 
                     </div>
-
                 )}
                 {contentType === "video" && (
                     <div>
