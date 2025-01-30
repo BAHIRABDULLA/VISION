@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
 
-const AdminPrivateRoute= ({children}:any) => {
-  const isAuthenticated= useSelector((state:RootState)=>state.adminAuth.isAuthenticated)
-  return isAuthenticated?children:<Navigate to='/admin/login'/>;
+const AdminPrivateRoute = ({ children }: any) => {
+  const isAuthenticated = useSelector((state: RootState) => state.adminAuth.isAuthenticated)
+  return isAuthenticated ? children : <Navigate to='/admin/login' />;
 }
 
 export default AdminPrivateRoute
