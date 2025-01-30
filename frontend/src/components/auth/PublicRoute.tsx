@@ -11,7 +11,7 @@ interface PublicRouteProps {
 
 
 const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
-    
+
     const isMenteeAuthenticated = useSelector(
         (state: RootState) => state.menteeAuth.isAuthenticated
     );
@@ -25,10 +25,10 @@ const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
         return <Navigate to="/" />;
     }
 
-    if (isMentorAuthenticated ) {        
+    if (isMentorAuthenticated) {
         return <Navigate to="/dashboard" />;
     }
-    
+
     return <>{children}</>;
 
 };
