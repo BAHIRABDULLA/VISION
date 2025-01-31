@@ -31,47 +31,47 @@ const limiter = rateLimit({
 // app.use(limiter)
 app.use(cookieParser())
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://vision.bahirabdulla.online',
     credentials: true
 }))
 
 const targets = {
-    user: process.env.USER_API_BASE_URL,
-    mentor: process.env.MENTOR_API_BASE_URL,
-    admin: process.env.ADMIN_API_BASE_URL,
-    course: process.env.COURSE_API_BASE_URL,
-    payment: process.env.PAYMENT_API_BASE_URL,
-    messaging: process.env.MESSAGING_API_BASE_URL
+    user: process.env.USER_SERVICE_URL,
+    mentor: process.env.MENTOR_SERVICE_URL,
+    admin: process.env.ADMIN_SERVICE_URL,
+    course: process.env.COURSE_SERVICE_URL,
+    payment: process.env.PAYMENT_SERVICE_URL,
+    messaging: process.env.MESSAGING_SERVICE_URL
 }
 
 
-app.use('/user', createProxyMiddleware({
+app.use('/api/user', createProxyMiddleware({
     target: targets.user,
     changeOrigin: true
 }))
-app.use('/mentor', createProxyMiddleware({
+app.use('/api/mentor', createProxyMiddleware({
     target: targets.mentor,
     changeOrigin: true
 }))
-app.use('/admin', createProxyMiddleware({
+app.use('/api/admin', createProxyMiddleware({
     target: targets.admin,
     changeOrigin: true
 }))
-app.use('/course', createProxyMiddleware({
+app.use('/api/course', createProxyMiddleware({
     target: targets.course,
     changeOrigin: true
 }));
-app.use('/payment', createProxyMiddleware({
+app.use('/api/payment', createProxyMiddleware({
     target: targets.payment,
     changeOrigin: true
 }));
-app.use('/messages', createProxyMiddleware({
+app.use('/api/messages', createProxyMiddleware({
     target: targets.messaging,
     changeOrigin: true,
     ws: true,
     
     // pathRewrite: { '^/messages': '' },
-    // pathRewrite: { '^/messages': '/messages' }
 }))
+
 const port = process.env.GATEWAY_PORT 
 app.listen(port, () => console.log(`server running on http://localhost:${port}`))

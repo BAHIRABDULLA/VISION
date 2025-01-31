@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec ts-node index.ts",
+    "build":"tsc",
+    "start": "node index.js",
     "dev": "concurrently \"npm run dev --prefix ../services/userService\" \"npm run dev --prefix ../services/mentorService\" \"npm run dev --prefix ../services/adminService\" \"npm run dev --prefix ../services/courseService\" \"npm run start --prefix .\"  \"npm run dev --prefix ../services/paymentService\"  \"npm run dev --prefix ../services/messagingService\""
   },
   "keywords": [],

@@ -19,9 +19,7 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 4001
-        # env:
-        # - name: MONGO_URI
-          # value: mongodb+srv://bahir_abdulla:u35mOO5ewIF6jhYD@vision-cluster.qubo8.mongodb.net/vision_user?retryWrites=true&w=majority&appName=vision-cluster
+        
 
 
 ---

@@ -29,7 +29,7 @@ const CommonProfile = ({ userData }) => {
 
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [isEditingCommonData, setIsEditingCommonData] = useState(false);
-    const [signedUrl, setSignedUrl] = useState<string | null>(null);
+    const [_signedUrl, setSignedUrl] = useState<string | null>(null);
     const [filekey, setFileKey] = useState<string | null>(null);
 
 
@@ -107,7 +107,7 @@ const CommonProfile = ({ userData }) => {
                     toast.error('Failed to get signed URL')
                     return
                 }
-                const {signedUrl,key} = signedUrlData
+                const {signedUrl} = signedUrlData
                 console.log();
                 
                 const uploadImageToS3 = await axios.put(signedUrl, selectedFile, {
