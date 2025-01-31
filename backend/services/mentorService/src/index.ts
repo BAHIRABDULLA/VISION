@@ -40,9 +40,9 @@ const accessLogStream = createStream('access.log', {
 
 app.use(morgan('combined',{stream:accessLogStream}))
 
-app.use('/mentor/slots',slotRoute)
-app.use('/mentor/',mentorRoute)
+app.use('/slots',slotRoute)
+app.use('/',mentorRoute)
 app.use(errorHandler)
-const port = process.env.PORT
+const port = 4002
 
 app.listen(port,()=>console.log(`server running on http://localhost:${port}`))

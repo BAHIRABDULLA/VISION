@@ -39,10 +39,10 @@ app.use((req,res,next)=>{
     console.log(req.url,'req.url in app.use');
     next()
 })
-app.use('/course/resource',resourceRoute)
-app.use('/course/',courseRoute)
+app.use('/resource',resourceRoute)
+app.use('/',courseRoute)
 
 app.use(errorHandler)
 
-const port = process.env.PORT
+const port = 4004
 app.listen(port,()=>console.log(`server listening on http://localhost:4004`))

@@ -30,7 +30,7 @@ const accessLogStream = createStream('access.log', {
 app.use(morgan('combined',{stream:accessLogStream}))
 
 
-app.use('/admin/', router)
+app.use('/', router)
 app.use(errorHandler)
 
 connectMongodb()

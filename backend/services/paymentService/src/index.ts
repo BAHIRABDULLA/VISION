@@ -45,9 +45,9 @@ import { setupConsumer } from './events/rabbitmq/consumer/users.consumer'
 
 
 
-app.use('/payment/review',reviewRoute)
-app.use('/payment/booking',bookingRoute)
-app.use('/payment/',paymentRoute)
+app.use('/review',reviewRoute)
+app.use('/booking',bookingRoute)
+app.use('/',paymentRoute)
 
 app.use(errorHandler)
 

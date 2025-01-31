@@ -3,3 +3,5 @@ node_modules
 secrets/
 dist
 logs/
+k8s/configMap.yaml
+k8s/secret.yaml

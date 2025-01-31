@@ -46,8 +46,8 @@ import userRoute from './routes/user.route'
 import { consumerMentorQueue } from './events/rabbitmq/consumers/consumer'
 import errorHandler from './middleware/error.handler'
 
-app.use('/user/', authRoute)
-app.use('/user/', userRoute)
+app.use('/', authRoute)
+app.use('/', userRoute)
 app.use(errorHandler)
 
 

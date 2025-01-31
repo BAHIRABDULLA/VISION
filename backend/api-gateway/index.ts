@@ -49,7 +49,7 @@ app.use('/api/user', createProxyMiddleware({
     target: targets.user,
     changeOrigin: true
 }))
-app.use('/api/mentor', createProxyMiddleware({
+app.use('/api/mentor/', createProxyMiddleware({
     target: targets.mentor,
     changeOrigin: true
 }))
