@@ -32,7 +32,7 @@ const Chat = () => {
 
   useEffect(() => {
     if (!socket && userId) {
-      socket = io('https://apivision.bahirabdulla.online/api/messages/chat', {
+      socket = io('https://apivision.bahirabdulla.online/messages/chat', {
         withCredentials: true,
         // path: '',
         transports: ['websocket', 'polling'],
