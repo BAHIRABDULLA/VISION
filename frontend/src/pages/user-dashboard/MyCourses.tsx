@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 
 const MyCourses = () => {
   const [myCourse, setMyCourse] = useState([])
+  console.log(myCourse, 'mycours in my course');
+
   useEffect(() => {
     fetchCourses()
   }, []);
@@ -34,7 +36,7 @@ const MyCourses = () => {
               Explore our wide range of courses and start your learning journey today.
             </p>
 
-            
+
             <Link
               to="/courses"
               className="bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700 transition-colors"

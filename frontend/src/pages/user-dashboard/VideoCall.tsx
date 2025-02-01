@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { Card, CardContent, Button, Alert } from '@mui/material';
+import { Card, CardContent, Button, Alert, AlertTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { ArrowLeft, ArrowBigLeftIcon } from 'lucide-react';
+
 import { getBookingDetails } from '@/services/mentorApi';
 
 interface SessionValidation {
@@ -259,7 +261,11 @@ const VideoCall = () => {
       console.error('Error starting call:', error);
     }
   };
+  const [isLocalMainVideo, setIsLocalMainVideo] = useState(false);
 
+  const swapVideos = () => {
+    setIsLocalMainVideo(!isLocalMainVideo);
+  };
 
   const handleBack = () => {
     cleanup();
@@ -267,46 +273,70 @@ const VideoCall = () => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      {/* <Link  to='/dashboard/video-call-users' >
-        ← Back to Sessions
-      </Link> */}
-      <Button onClick={handleBack} className="p-4 inline-block"> ← Back to Sessions</Button>
+    <Card className="w-full max-w-6xl mx-auto">
+      <div className="p-4">
+        <Button
+          onClick={handleBack}
+          className="flex items-center gap-2"
+          variant="contained"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Sessions
+        </Button>
+      </div>
 
       {!sessionStatus.isValid ? (
-        <Alert severity="warning" className="m-4">
-          {sessionStatus.message}
+        <Alert className="m-4">
+          <AlertTitle>{sessionStatus.message}</AlertTitle>
         </Alert>
       ) : (
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative">
+          <div className="relative w-full aspect-video bg-gray-900 rounded-lg overflow-hidden">
+            {/* Main Video */}
+            <video
+              ref={isLocalMainVideo ? localVideoRef : remoteVideoRef}
+              autoPlay
+              playsInline
+              muted={isLocalMainVideo}
+              className="w-full h-full object-cover"
+            />
+
+            {/* PiP Video */}
+            <div className="absolute top-4 right-4 w-1/4 aspect-video">
               <video
-                ref={localVideoRef}
+                ref={isLocalMainVideo ? remoteVideoRef : localVideoRef}
                 autoPlay
                 playsInline
-                muted
-                className="w-full rounded-lg bg-gray-800"
+                muted={!isLocalMainVideo}
+                className="w-full h-full object-cover rounded-lg border-2 border-white/20 shadow-lg"
               />
-              <p className="absolute bottom-2 left-2 text-white">You</p>
+
+              {/* Swap Button */}
+              <Button
+                onClick={swapVideos}
+                className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-gray-900/80 hover:bg-gray-900 p-2 h-8 w-8"
+                size="small"
+              >
+                <ArrowBigLeftIcon className="w-4 h-4" />
+              </Button>
             </div>
-            <div className="relative">
-              <video
-                ref={remoteVideoRef}
-                autoPlay
-                playsInline
-                className="w-full rounded-lg bg-gray-800"
-              />
-              <p className="absolute bottom-2 left-2 text-white">Remote User</p>
+
+            {/* Video Labels */}
+            <div className="absolute bottom-4 left-4 text-white bg-black/50 px-3 py-1 rounded-full text-sm">
+              {isLocalMainVideo ? 'You' : 'Remote User'}
+            </div>
+            <div className="absolute top-5 right-5 text-white bg-black/50 px-3 py-1 rounded-full text-sm">
+              {isLocalMainVideo ? 'Remote User' : 'You'}
             </div>
           </div>
-          <div className="mt-4 flex justify-center">
+
+          {/* Call Controls */}
+          <div className="mt-6 flex justify-center">
             {!isCallStarted && (
               <Button
-                variant="contained"
-                color="primary"
                 onClick={startCall}
                 disabled={!sessionStatus.isValid}
+                className="bg-purple-600 hover:bg-purple-700"
               >
                 Start Call
               </Button>
