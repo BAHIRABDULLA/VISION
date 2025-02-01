@@ -242,7 +242,7 @@ spec:
     spec:
       containers:
       - name: messaging-service
-        image: bahirk/vision-messagingservice:latest  
+        image: bahirk/vision-messagingservice:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 4006

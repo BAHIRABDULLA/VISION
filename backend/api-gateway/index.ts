@@ -28,7 +28,7 @@ const limiter = rateLimit({
     max:100,
     message:'Too many requests, please try again later'
 })
-// app.use(limiter)
+app.use(limiter)
 app.use(cookieParser())
 app.use(cors({
     origin: 'https://vision.bahirabdulla.online',

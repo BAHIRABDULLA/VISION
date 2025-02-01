@@ -6,7 +6,7 @@ import { IUserService } from "../interface/IUser.service";
 
 
 const mentorApi = axios.create({
-    baseURL: 'https://apivision.bahirabdulla.online/mentor'
+    baseURL: 'https://apivision.bahirabdulla.online/api/mentor'
 })
 
 

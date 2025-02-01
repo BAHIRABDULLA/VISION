@@ -9,7 +9,12 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/websocket-services: "messaging-service"
-    
+    # cors
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://vision.bahirabdulla.online"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   tls:
@@ -20,6 +25,13 @@ spec:
     - host: apivision.bahirabdulla.online
       http:
         paths:
+          - path: /socket.io
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: messaging-service
+                port:
+                  number: 4006
           - path: /api/
             pathType: Prefix
             backend:
@@ -27,3 +39,4 @@ spec:
                 name: api-gateway
                 port:
                   number: 4000
+          

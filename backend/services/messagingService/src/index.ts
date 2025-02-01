@@ -65,10 +65,7 @@ videoNamespace.on('connection', (socket: Socket<DefaultEventsMap, DefaultEventsM
 
 
 app.use('/conversation', conversationRoute)
-app.use('/users', userRoute, (req, res, next) => {
-  console.log(req.url, 'req.url', req.baseUrl, 'req.baseUrl');
-  next()
-})
+app.use('/users', userRoute)
 app.use('/', messageRoute, (req, res, next) => {
   console.log(req.url, 'req.url in /', req.baseUrl);
   next()

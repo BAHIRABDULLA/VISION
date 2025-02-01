@@ -166,7 +166,7 @@ const VideoCall = () => {
           localVideoRef.current.srcObject = stream;
         }
 
-        const socket = io('https://apivision.bahirabdulla.online/api/messages/video', {
+        const socket = io('https://apivision.bahirabdulla.online/messages/video', {
           withCredentials: true,
           // path: '',
           transports: ['websocket', 'polling'],

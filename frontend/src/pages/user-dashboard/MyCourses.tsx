@@ -25,7 +25,7 @@ const MyCourses = () => {
 
 
         {/* Course Grid */}
-        {myCourse.length == 0 ?
+        {!myCourse&& myCourse.length == 0 ?
           (<div className="flex flex-col items-center justify-center h-80">
             <p className="text-lg font-semibold text-gray-700 dark:text-white mb-4">
               You haven’t purchased any courses yet!
@@ -34,7 +34,7 @@ const MyCourses = () => {
               Explore our wide range of courses and start your learning journey today.
             </p>
 
-            
+
             <Link
               to="/courses"
               className="bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700 transition-colors"
@@ -44,7 +44,7 @@ const MyCourses = () => {
           </div>) :
           (<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            {myCourse.map(course => (
+            {myCourse && myCourse.map(course => (
               <div key={course._id} className="bg-gray-300 dark:bg-gray-600 rounded-lg shadow overflow-hidden">
                 <img
                   src={course?.courseId.image}

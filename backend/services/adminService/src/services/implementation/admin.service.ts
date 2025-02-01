@@ -12,7 +12,7 @@ import { HttpStatus } from '../../enums/http.status'
 import { publishMessage } from '../../events/rabbitmq/producer'
 
 const api = axios.create({
-    baseURL: 'https://apivision.bahirabdulla.online'
+    baseURL: 'https://apivision.bahirabdulla.online/api'
 })
 
 
