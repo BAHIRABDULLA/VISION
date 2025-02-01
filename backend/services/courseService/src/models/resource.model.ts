@@ -9,7 +9,7 @@ const resourceSchema = new Schema<IResource>({
     level: { type: String, required: true },
     topic: { type: String, required: true },
     content: { type: String, required: true },
-    status: { type: Boolean, required: true, default: true },
+    status: {type:String,enum:['active','block'],required:true ,default:'active'},
     createAt: { type: Date, default: Date.now }
     // nextResourceId: { type:String,default:null },
 

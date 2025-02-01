@@ -11,6 +11,7 @@ const upload = multer({
 
 
 router.post('/generate-signed-url', adminAuthenticateToken, resourceController.generateSignedUrl.bind(resourceController))
+router.patch('/status/:resourceId',adminAuthenticateToken,resourceController.updateResourceStatus.bind(resourceController))
 router.get('/course/:courseId',resourceController.getResourcesByCourseId.bind(resourceController))
 router.get('/:id',resourceController.getResourceById.bind(resourceController))
 

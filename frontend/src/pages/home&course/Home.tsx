@@ -10,8 +10,6 @@ import React, { useEffect, useRef } from 'react'
 
 
 
-
-
 const Home: React.FC = () => {
 
   const sections = useRef<HTMLDivElement[]>([]); // Store section references

@@ -21,9 +21,9 @@ const Hero = () => {
                 Get personalized mentorship from industry experts and access
                 cutting-edge courses designed to accelerate your professional growth.
               </p>
-              <button className="bg-purple-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-purple-700 transition-colors">
+              {/* <button className="bg-purple-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-purple-700 transition-colors">
                 Start Learning
-              </button>
+              </button> */}
 
               <div className="flex gap-16 mt-12">
                 <div>

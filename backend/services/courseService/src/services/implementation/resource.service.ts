@@ -57,6 +57,18 @@ export class ResourceService implements IResourseService {
         }
     }
 
+    async updateResourceStatus(resourceId:string,status:'active' | 'block'){
+        try {
+            const response = await this.resourceRepository.update(resourceId,{status})
+            if(!response?.isModified){
+                return null
+            }
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
+
     async getResourceById(id: string): Promise<Partial<IResource> | null> {
         try {
             const resourceData = await this.resourceRepository.findByIdWithCourse(id)

@@ -1,6 +1,6 @@
 import { IResourseService } from "../../services/interface/IResource.service";
 import { NextFunction, Request, Response } from "express";
-import { successResponse } from "../../utils/response.helper";
+import { errorResponse, successResponse } from "../../utils/response.helper";
 import { HttpStatus } from "../../enums/http.status";
 import AWS from 'aws-sdk'
 import dotenv from 'dotenv'
@@ -73,6 +73,20 @@ export class ResourseController implements IResourceController {
         }
     }
 
+
+    async updateResourceStatus(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { resourceId } = req.params
+            const { status } = req.body
+            const response = await this.resourceService.updateResourceStatus(resourceId, status)
+            if (!response) {
+                return errorResponse(res, HttpStatus.NOTFOUND, "There is an issue to update status")
+            }
+            return successResponse(res, HttpStatus.OK, "Resource status updated")
+        } catch (error) {
+            next(error)
+        }
+    }
 
     async getResourceById(req: Request, res: Response, next: NextFunction) {
         try {

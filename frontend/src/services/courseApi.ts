@@ -89,6 +89,17 @@ export const editResource = async (data: object, id: string) => {
     }
 }
 
+export const updateResourceStatus = async (resourceId: string, status: string) => {
+    try {
+        const response = await adminPrivateApi.patch(`/course/resource/status/${resourceId}`, { status })
+        return response
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            return error.response
+        }
+    }
+}
+
 export const getResourceDetails = async (id: string) => {
     try {
         const response = await api.get(`/resource/${id}`)

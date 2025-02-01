@@ -168,21 +168,12 @@ export class AdminService implements IAdminService {
 
 
     async getUser(id: string): Promise<{ user: object } | null> {
-        try {
+        try {            
             const commonData = await api.get(`/user/users/${id}`)
+            console.log(commonData.data,'common data .data');
+
             if (!commonData) {
                 return null
-            }
-
-            if (commonData.data.role === 'mentor' && commonData.data.isMentorFormFilled === true) {
-                const mentorData = await api.get(`/mentor/users/${id}`)
-
-                const mergedData = {
-                    ...commonData.data,
-                    mentorDetails: mentorData.data.mentor
-                }
-
-                return { user: mergedData }
             }
             return { user: commonData.data }
         } catch (error) {

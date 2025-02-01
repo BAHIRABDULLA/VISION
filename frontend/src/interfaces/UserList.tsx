@@ -1,7 +1,7 @@
 export interface CommonDetails {
     fullName: string;
     email: string;
-    id: string;
+    _id: string;
     role: 'mentor' | 'mentee';
     isVerified: boolean;
     createAt: string;
@@ -17,7 +17,7 @@ export interface MenteeDetails extends CommonDetails {
     mentors?: string[];
 }
 export interface MentorDetails extends CommonDetails {
-    mentorDetails: any;
+    mentor:string
     jobTitle: string;
     category: string;
     company: string;

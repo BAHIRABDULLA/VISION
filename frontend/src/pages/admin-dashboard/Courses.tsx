@@ -131,9 +131,9 @@ const Courses = () => {
                                         >
                                             Edit
                                         </Link>
-                                        <button className="text-red-500 hover:text-red-700">
+                                        {/* <button className="text-red-500 hover:text-red-700">
                                             Delete
-                                        </button>
+                                        </button> */}
                                     </td>
                                 </tr>
                             ))
