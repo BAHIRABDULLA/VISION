@@ -36,12 +36,12 @@ app.use(cors({
 }))
 
 const targets = {
-    user: process.env.USER_API_BASE_URL,
-    mentor: process.env.MENTOR_API_BASE_URL,
-    admin: process.env.ADMIN_API_BASE_URL,
-    course: process.env.COURSE_API_BASE_URL,
-    payment: process.env.PAYMENT_API_BASE_URL,
-    messaging: process.env.MESSAGING_API_BASE_URL
+    user: process.env.USER_SERVICE_URL,
+    mentor: process.env.MENTOR_SERVICE_URL,
+    admin: process.env.ADMIN_SERVICE_URL,
+    course: process.env.COURSE_SERVICE_URL,
+    payment: process.env.PAYMENT_SERVICE_URL,
+    messaging: process.env.MESSAGING_SERVICE_URL
 }
 
 

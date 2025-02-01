@@ -32,7 +32,7 @@ export class UserController implements IUserController {
                 Bucket: process.env.BUCKET_NAME!,
                 Key: fileName,
                 Expires: 60,
-                ContentType: fileType,
+                // ContentType: fileType,
 
             }
             const signedUrl = await s3.getSignedUrlPromise('putObject', params)
@@ -100,14 +100,15 @@ export class UserController implements IUserController {
             const id = user.id
 
             const { fullName, fileKey } = req.body
+            console.log(fileKey,'file key ');
+            
+            // let profileUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png';
+            // if (fileKey) {
+            //     profileUrl = fileKey
+            //     // profileUrl = `https://${process.env.BUCKET_NAME}.s3.ap-south-1.amazonaws.com/${fileKey}`
+            // }
 
-            let profileUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png';
-            if (fileKey) {
-                profileUrl = fileKey
-                // profileUrl = `https://${process.env.BUCKET_NAME}.s3.ap-south-1.amazonaws.com/${fileKey}`
-            }
-
-            const updateUser = await this.userService.updateUser(id, { fullName, profile: profileUrl })
+            const updateUser = await this.userService.updateUser(id, { fullName, profile: fileKey })
 
             res.status(HttpStatus.OK).json({ success: true, message: "update successfully", updateUser })
         } catch (error) {

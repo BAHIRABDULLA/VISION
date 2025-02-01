@@ -2,7 +2,11 @@
 import { z } from 'zod'
 
 export const common = z.object({
-    fullName: z.string().min(1, { message: "Name cannot be empty" }),
+    fullName: z
+        .string()
+        .min(1, { message: "Name cannot be empty" })
+        .trim()
+        .regex(/^[a-zA-Z\s]+$/, { message: "Name must contain only letters and spaces" }),
     fileKey: z.optional(z.any()),
 })
 export type commonType = z.infer<typeof common>

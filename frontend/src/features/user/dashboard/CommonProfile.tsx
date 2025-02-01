@@ -98,7 +98,6 @@ const CommonProfile = ({ userData }) => {
 
     const handleCommonDataSubmit = async (data: commonType) => {
         try {
-            let uploadedFileKey = filekey;
             // if (selectedFile && signedUrl) {
             if (selectedFile) {
                 const signedUrlData =await generateSignedUrl(selectedFile)
@@ -118,8 +117,10 @@ const CommonProfile = ({ userData }) => {
                     return
                 }
                 // setUploading(false);
-                uploadedFileKey = filekey;
-                data.fileKey = uploadedFileKey;
+                // uploadedFileKey = filekey;
+                data.fileKey = key;
+            }else{
+                data.fileKey=userData.profile
             }
             // const formData = new FormData();
             // formData.append('fullName', data.fullName);

@@ -8,7 +8,7 @@ export interface IResource extends Document {
     level: string;
     topic: string
     content: string;
-    status: boolean
+    status: 'active'|'block'
     createAt: Date
     // nextResourceId: string | null
 }

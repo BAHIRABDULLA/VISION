@@ -4,6 +4,7 @@ import { JwtPayload } from "jsonwebtoken";
 
 
 export interface IResourceController {
-    getResources(req: Request, res: Response, next: NextFunction):Promise<void>
-    createResource(req: Request, res: Response , next:NextFunction):Promise<void>
+    getResources(req: Request, res: Response, next: NextFunction): Promise<void>
+    createResource(req: Request, res: Response, next: NextFunction): Promise<void>
+    updateResourceStatus(req: Request, res: Response, next: NextFunction): Promise<void>
 }
