@@ -1,3 +1,5 @@
+import { ERROR_MESSAGES } from "../../constants/error.message";
+import { USER_IMAGE } from "../../constants/user.role";
 import { HttpStatus } from "../../enums/http.status";
 import { sendUserData } from "../../events/rabbitmq/producers/producer";
 import { IMentor } from "../../interfaces/IMentor";
@@ -7,6 +9,7 @@ import { MentorRepository } from "../../repositories/implementation/mentor.repos
 import IUserRepository from "../../repositories/interface/IUser.repository";
 import CustomError from "../../utils/custom.error";
 import { sendEmail } from "../../utils/email.util";
+import { generateDownloadPresignedUrl } from "../../utils/upload";
 import { IUserService } from "../interface/IUser.service";
 
 export class UserService implements IUserService {
@@ -30,7 +33,13 @@ export class UserService implements IUserService {
     async getUser(id: string) {
         try {
             const user = await this.userRepository.findById(id)
-
+            if(!user){
+                throw new CustomError(ERROR_MESSAGES.USER_NOT_FOUND,HttpStatus.NOTFOUND)
+            }
+            if(user?.profile&&user?.profile!==USER_IMAGE){
+                const getImageUrl = await generateDownloadPresignedUrl(user?.profile)
+                user.profile = getImageUrl
+            }
             if (user?.role === 'mentor') {
                 const mentorData = await this.mentorRepository.findMentor(id)
                 const mergedData = {

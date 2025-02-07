@@ -13,4 +13,5 @@ export interface ISlotController {
     bookingSlot(req: customRequest, res: Response, next: NextFunction): Promise<void>
     getBookingSlotDetails(req: Request, res: Response, next: NextFunction): Promise<void>
     getBookingSlot(req: customRequest, res: Response, next: NextFunction): Promise<void>
+    handleBookingSessionStatus(req: Request, res: Response, next: NextFunction): Promise<void>
 }

@@ -5,7 +5,6 @@ import dotenv from 'dotenv';
 
 import cors from 'cors';
 import messageRoute from './routes/message.route'
-import conversationRoute from './routes/conversation.route'
 import userRoute from './routes/user.route'
 import connectMongodb from './config/db.config';
 import chatSocketHandler from './sockets/chat';
@@ -64,8 +63,10 @@ videoNamespace.on('connection', (socket: Socket<DefaultEventsMap, DefaultEventsM
 });
 
 
-app.use('/conversation', conversationRoute)
-app.use('/users', userRoute)
+app.use('/users', userRoute, (req, res, next) => {
+  console.log(req.url, 'req.url', req.baseUrl, 'req.baseUrl');
+  next()
+})
 app.use('/', messageRoute, (req, res, next) => {
   console.log(req.url, 'req.url in /', req.baseUrl);
   next()

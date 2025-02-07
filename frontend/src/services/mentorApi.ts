@@ -151,9 +151,30 @@ export const getBookingDetails = async (bookingId: string) => {
     }
 }
 
+export const handleBookingSessionStatus  = async(bookingId:string,status:string)=>{
+    try {
+        const response = await privateApi.patch(`/mentor/slots/booking/${bookingId}`,{status})
+        return response
+    } catch (error) {
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}
+
 export const getAllCategories = async () => {
     try {
         const response = await api.get('/category')
+        return response
+    } catch (error) {
+        return error
+    }
+}
+
+
+export const getSignedUrl = async (fileName: string, fileType: any) => {
+    try {
+        const response = await api.post('/generate-signed-url', { fileName, fileType })
         return response
     } catch (error) {
         return error

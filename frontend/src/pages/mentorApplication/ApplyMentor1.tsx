@@ -12,8 +12,9 @@ import { getAllCategories } from '@/services/adminApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
 import { resetSkills } from '@/redux/slices/mentorApplicationSlice';
+import { getSignedUrl } from '@/services/mentorApi';
 
-{/* <ImageCropper imageSrc={imageSrc} onCropComplete={handleCropComplete} /> */}
+{/* <ImageCropper imageSrc={imageSrc} onCropComplete={handleCropComplete} /> */ }
 
 // const handleCropComplete = (croppedBlob: Blob) => {
 //     const croppedUrl = URL.createObjectURL(croppedBlob)
@@ -68,13 +69,14 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     const dispatch = useDispatch()
 
     const [imagePreview, setImagePreview] = useState<string | null>(null)
-    
+    // console.log(imagePreview, 'imagePreview');
+
 
     // const location = useLocation()
     const { register, handleSubmit, setValue, formState: { errors }, } = useForm<applyMentorSchemaType>({
         resolver: zodResolver(applyMentorSchema),
         defaultValues: {
-            file: firstComponentData?.file[0] || '',
+            file: firstComponentData?.file || null,
             jobTitle: firstComponentData?.jobTitle || '',
             category: firstComponentData?.category || '',
             country: firstComponentData?.country || '',
@@ -108,24 +110,27 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     }, [])
 
     useEffect(() => {
-        // Handle file preview when firstComponentData changes
-        if (firstComponentData?.file) {
-            // Check if it's a FileList or array-like object
-            if (typeof firstComponentData?.file[0] == 'object') {
-                const file = firstComponentData.file[0] 
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setImagePreview(reader.result as string);
-                };
-                reader.readAsDataURL(file);
-            } 
-            else if (typeof firstComponentData.file === 'string') {
-                setImagePreview(firstComponentData.file);
-            }
+        console.log(firstComponentData?.file, 'firstComponentData file');
+
+        if (firstComponentData?.file instanceof Blob) {
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(firstComponentData.file);
+
+        } else {
+            console.error("Invalid file type", firstComponentData?.file);
         }
     }, [firstComponentData?.file]);
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
+        if (!file) return
+        console.log(file, '  file');
+        setValue("file", file);
+
+
         if (file) {
             const reader = new FileReader()
             reader.onloadend = () => {
@@ -185,7 +190,7 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
                         <input type="file" className="block w-full text-sm text-slate-500
                             file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold
                              file:bg-violet-50 file:text-violet-700
-                             hover:file:bg-violet-100w" {...register("file")} onChange={handleFileChange}  />
+                             hover:file:bg-violet-100w"   onChange={handleFileChange} />
                     </label>
                     {/* <input type='file' className='ml-4 px-4 py-2 text-sm border rounded-md'{...register("file")}
                         onChange={handleFileChange} /> */}
@@ -226,22 +231,27 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
                             onChange={(_event, value) => {
                                 setValue("country", value?.label || "")
                             }}
-                            renderOption={(props, option) => (
-                                <Box
-                                    component="li"
-                                    sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
-                                    {...props}
-                                >
-                                    <img
-                                        loading="lazy"
-                                        width="20"
-                                        srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                                        src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                                        alt=""
-                                    />
-                                    {option.label} ({option.code}) +{option.phone}
-                                </Box>
-                            )}
+                            renderOption={(props, option) => {
+                                const { key, ...restProps } = props
+                                return (
+                                    <Box
+                                        component="li"
+                                        sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+                                        key={key}
+                                        {...restProps}
+                                    >
+                                        <img
+                                            loading="lazy"
+                                            width="20"
+                                            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                                            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                                            alt=""
+                                        />
+                                        {option.label} ({option.code}) +{option.phone}
+                                    </Box>
+                                )
+
+                            }}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}

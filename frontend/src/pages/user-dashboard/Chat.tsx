@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
 import { getAllUsers } from '@/services/messageApi';
 import toast, { Toaster } from 'react-hot-toast';
+import ChatInterface from './ChatInterface';
 
 
 type Message = {
@@ -90,14 +91,14 @@ const Chat = () => {
 
 
   const sendMessage = () => {
-    
+
     if (!socket || !isConnected) {
       toast.error('Not connected to chat server')
       return
     }
 
     if (newMessage && selectedUser) {
-      
+
       socket.emit('chat-private_message', {
         to: role === 'mentee' ? selectedUser.mentorId._id : selectedUser.menteeId._id,
         message: newMessage
@@ -120,11 +121,23 @@ const Chat = () => {
 
 
   return (
-    <div className="flex h-screen">
+    <div className="">
       <Toaster />
       {/* Chat Area (Left Side) */}
-      <div className="flex flex-col w-3/4 dark:bg-gray-800 bg-gray-100">
-        {/* Chat Header */}
+      <ChatInterface
+        users={users}
+        selectedUser={selectedUser}
+        messages={messages}
+        newMessage={newMessage}
+        setNewMessage={setNewMessage}
+        handleUserSelect={handleUserSelect}
+        sendMessage={sendMessage}
+        role={role}
+        hasMentorship={true} // Set to false to show the purchase prompt
+      />
+
+      {/* <div className="flex flex-col w-3/4 dark:bg-gray-800 bg-gray-100">
+       
         <div className="flex items-center justify-between dark:bg-gray-700 bg-gray-300 p-4 shadow-md">
           {selectedUser ? (
             <div className="flex items-center">
@@ -148,10 +161,10 @@ const Chat = () => {
               Select a chat to start messaging
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Chat Messages */}
-        <div className="flex-grow px-4 py-2 space-y-2 dark:bg-gray-800 bg-gray-100">
+        {/* <div className="flex-grow px-4 py-2 space-y-2 dark:bg-gray-800 bg-gray-100">
           {selectedUser ? (
             <div className="flex flex-col space-y-2">
               {messages.map((msg, index) => (
@@ -171,10 +184,10 @@ const Chat = () => {
               No chat selected
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Message Input */}
-        <div className="flex items-center p-4 dark:bg-gray-700 bg-gray-300 border-t dark:border-gray-600">
+        {/* <div className="flex items-center p-4 dark:bg-gray-700 bg-gray-300 border-t dark:border-gray-600">
           <input
             type="text"
             placeholder="Type a message"
@@ -191,12 +204,12 @@ const Chat = () => {
             Send
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Users Panel (Right Side) */}
-      <div className="w-1/4 dark:bg-gray-800 bg-gray-300 border-l dark:border-gray-700 border-gray-300 overflow-y-auto">
+      {/* <div className="w-1/4 dark:bg-gray-800 bg-gray-300 border-l dark:border-gray-700 border-gray-300 overflow-y-auto">
         <div className="overflow-y-auto">
-          {users?.map((user,index:number) => (
+          {users?.map((user, index: number) => (
             <div
               key={index}
               className={`flex items-center p-4 cursor-pointer hover:dark:bg-gray-700 hover:bg-gray-500 ${selectedUser?._id === user._id
@@ -220,7 +233,7 @@ const Chat = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
 
   )

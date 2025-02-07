@@ -10,6 +10,7 @@ import { publishMessage } from "../../events/rabbitmq/producer";
 import { IPayment } from "../../interfaces/IPayment";
 import { IBookingRepository } from "../../repositories/interface/IBooking.respository";
 import { IPaymentRepository } from "../../repositories/interface/IPayment.repository";
+import { ERROR_MESSAGES } from "../../constant";
 
 export interface mentorshipPaymentData {
 
@@ -34,7 +35,7 @@ export class PaymentService implements IPaymentService {
         try {
             const findUserBuyCourse = await this.paymentRepository.findOne({ courseId, menteeId })
             if (findUserBuyCourse?.status === 'completed') {
-                throw new CustomError("Course already purchased", HttpStatus.UNAUTHORIZED)
+                throw new CustomError(ERROR_MESSAGES.COURSE_ALREADY_EXISTS, HttpStatus.UNAUTHORIZED)
             } else if (findUserBuyCourse?.status === 'pending') {
                 await this.paymentRepository.delete(findUserBuyCourse._id as string)
             }
@@ -99,6 +100,7 @@ export class PaymentService implements IPaymentService {
                         stripePaymentIntentId: session.payment_intent as string
                     }
                 )
+
                 if (response?.isModified) {
                     await publishMessage(response)
                 }

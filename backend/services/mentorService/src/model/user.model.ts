@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IUser } from "../interface/IUser";
+import { USER_IMAGE } from "../constants";
 
 
 const userSchema = new Schema<IUser>({
@@ -8,11 +9,12 @@ const userSchema = new Schema<IUser>({
     email: { type: String, required: true },
     profile: {
         type: String,
-        default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'
+        default: USER_IMAGE
     },
     password: { type: String, required: true },
     isApproved: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
-    isMentorFormFilled:{type:Boolean}
+    isMentorFormFilled:{type:Boolean},
+    sessionCount:{type:Number,default:0},
 })
 
 export const User = mongoose.model<IUser>('User', userSchema)

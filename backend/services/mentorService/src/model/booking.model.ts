@@ -12,9 +12,8 @@ const bookingSchema = new Schema<IBooking>({
     date: { type: Date, required: true, },
     time: { type: String, required: true, },
     sessions: { type: Number, default: 0 },
-    status: { type: String, enum: ['pending', 'completed', 'expired'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'attending', 'completed', 'expired'], default: 'pending' },
     bookedAt: { type: Date, default: Date.now() },
-    sessionCount: { type: Number },
     sessionDates: [{ type: Date }]
 })
 

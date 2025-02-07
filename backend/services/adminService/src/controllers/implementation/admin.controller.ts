@@ -9,6 +9,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 import { generateAccessToken, generateRefreshToken } from '../../utils/token';
 import { setRefreshTokenCookie } from '../../utils/tokenSetCookie';
 import { IAdminController } from '../interface/IAdmin.controller';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../../constants';
 
 
 @injectable()
@@ -25,12 +26,12 @@ export class AdminController implements IAdminController {
             const { email, password } = req.body;
             const response = await this.adminService.login(email, password);
             if (!response?.token) {
-                return errorResponse(res, HttpStatus.UNAUTHORIZED, 'Invalid credentials')
+                return errorResponse(res, HttpStatus.UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREADENTIALS)
             }
             const refreshToken = generateRefreshToken(email)
 
             setRefreshTokenCookie(res, refreshToken)
-            return successResponse(res, HttpStatus.OK, "Login successful", { token: response.token, user: email })
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.LOGIN_SUCCESS, { token: response.token, user: email })
         } catch (error) {
             next(error)
         }
@@ -41,7 +42,7 @@ export class AdminController implements IAdminController {
         try {
             const token = req.headers['authorization']?.split(' ')[1]!
             const response = await this.adminService.getDashboardData(token)
-            return successResponse(res, HttpStatus.OK, "dashboard data sent", { dashboardData: response })
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.DASHBOARD_DETAILS_FETCHED, { dashboardData: response })
         } catch (error) {
             next(error)
         }
@@ -52,10 +53,10 @@ export class AdminController implements IAdminController {
         try {
             const response = await this.adminService.users()
             if (!response) {
-                return errorResponse(res, HttpStatus.NOTFOUND, 'Users not founded')
+                return errorResponse(res, HttpStatus.NOTFOUND, ERROR_MESSAGES.USERS_NOT_FOUND)
             }
             // res.json(response)
-            return successResponse(res, HttpStatus.OK, 'Users sent', { users: response.users })
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_USERS_FETCHED, { users: response.users })
         } catch (error) {
             next(error)
         }
@@ -67,9 +68,9 @@ export class AdminController implements IAdminController {
             const { id } = req.params
             const response = await this.adminService.getUser(id)
             if (!response?.user) {
-                return errorResponse(res, HttpStatus.NOTFOUND, "User data not found")
+                return errorResponse(res, HttpStatus.NOTFOUND, ERROR_MESSAGES.USER_NOT_FOUND)
             }
-            return successResponse(res, HttpStatus.OK, "User data successfully sent", response.user)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.USER_DETAILS_FETCHED, response.user)
         } catch (error) {
             next(error)
         }
@@ -79,7 +80,7 @@ export class AdminController implements IAdminController {
     async logout(req: Request, res: Response, next: NextFunction) {
         try {
             res.clearCookie('refreshToken-a')
-            return successResponse(res, HttpStatus.OK, 'Logged out successfully')
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.LOGOUT_SUCCESS)
         } catch (error) {
             next(error)
         }
@@ -97,7 +98,7 @@ export class AdminController implements IAdminController {
             }
             const secret = process.env.REFRESH_TOKEN_SECRET
             if (!secret) {
-                res.json({ message: "internal server error" })
+                res.json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR })
                 return
             }
             const decoded = jwt.verify(refreshToken, secret)
@@ -130,7 +131,7 @@ export class AdminController implements IAdminController {
             }
             const updateMentorApproval = await this.adminService.updateApproval(id, isApproved)
 
-            return successResponse(res, HttpStatus.OK, "Mentor approval done", updateMentorApproval)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.MENTOR_APPROVED, updateMentorApproval)
         } catch (error) {
             next(error)
         }
@@ -143,7 +144,7 @@ export class AdminController implements IAdminController {
             const { id } = req.params
             const { isActive } = req.body
             const response = await this.adminService.updateUserStatus(id, isActive)
-            return successResponse(res, HttpStatus.OK, "status updated")
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.STATUS_UPDATED)
         } catch (error) {
             next(error)
         }
@@ -153,7 +154,7 @@ export class AdminController implements IAdminController {
     async getAllCategories(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.adminService.getAllCategories()
-            return successResponse(res, HttpStatus.OK, "All categories fetched", { categories: response })
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_CATEGORYS_FETCHED, { categories: response })
         } catch (error) {
             next(error)
         }
@@ -164,7 +165,7 @@ export class AdminController implements IAdminController {
             const { data } = req.body
             const { category, skills } = req.body
             const response = await this.adminService.addNewCategory(category, skills)
-            return successResponse(res, HttpStatus.CREATED, "New Category added", response)
+            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.CATEGORY_CREATED, response)
         } catch (error) {
             next(error)
         }
@@ -175,7 +176,7 @@ export class AdminController implements IAdminController {
             const { id } = req.params
             const { category, skills } = req.body
             const response = await this.adminService.updateCategory(id, category, skills)
-            return successResponse(res, HttpStatus.CREATED, 'Category updattion successfully done', response)
+            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.CATEGORY_UPDATED, response)
         } catch (error) {
             next(error)
         }

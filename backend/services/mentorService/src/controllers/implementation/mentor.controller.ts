@@ -1,12 +1,13 @@
-import { NextFunction, Request, Response } from "express";
+import e, { NextFunction, Request, Response } from "express";
 import { MentorService } from "../../services/implementation/mentor.service";
-import { uploadFile } from "../../utils/upload";
+import { generateUploadPresignedUrl } from "../../utils/upload";
 import fs from 'fs'
 import { HttpStatus } from "../../enums/http.status";
 import { JwtPayload } from "jsonwebtoken";
 import { errorResponse, successResponse } from "../../utils/response.handler";
 import CustomError from "../../utils/custom.error";
 import { IMentorController } from "../interface/IMentor.controller";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants";
 
 
 interface ParamsData {
@@ -24,46 +25,51 @@ interface customRequest extends Request {
     user?: string | JwtPayload
 }
 
-export class MentorController implements IMentorController{
+export class MentorController implements IMentorController {
 
     private mentorService: MentorService
     constructor(mentorService: MentorService) {
         this.mentorService = mentorService
     }
 
+
+    async generateSignedUrl(req:Request,res:Response,next:NextFunction){
+        try {
+            const { fileName, fileType } = req.body
+            if (!fileName || !fileType) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'fileName and fileType are required'
+                });
+            }
+            const response = await generateUploadPresignedUrl(fileName,fileType)
+            res.status(HttpStatus.OK).json({ signedUrl:response.url, key: fileName })
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async applyMentor(req: Request, res: Response, next: NextFunction) {
         try {
-
-            let { email, jobTitle,country, location, category,experience, skills, bio,
-                whyBecomeMentor, greatestAchievement, company, profilePhoto,
+         
+            let { email, jobTitle, country, location, category, experience, skills, bio,
+                whyBecomeMentor, greatestAchievement, company, file,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl,
             } = req.body;
-            if(socialMediaUrls){
+            
+            if (socialMediaUrls) {
                 socialMediaUrls = JSON.parse(socialMediaUrls)
             }
-            let s3FileUrl = ''
-            if (req.file) {
+            
 
-                const file = req.file
-                const fileContent = fs.readFileSync(file.path)
-                const fileType = file.mimetype
-                const fileName = `mentor/${Date.now()}_${file.originalname}`
-                try {
-                    const uploadResult = await uploadFile(fileContent, fileName, fileType)
-                    s3FileUrl = uploadResult.Location
-
-                } catch (error) {
-                    res.status(500).json({ message: 'Error uploading file to S3', error });
-                }
-            } 
-
-
-            const response = await this.mentorService.mentorDetails(email, jobTitle,country, location, category,experience, JSON.parse(skills), bio,
-                whyBecomeMentor, greatestAchievement, company, s3FileUrl,
+            const response = await this.mentorService.mentorDetails(email, jobTitle, country, location, category, experience, JSON.parse(skills), bio,
+                whyBecomeMentor, greatestAchievement, company, file,
                 socialMediaUrls, introductionVideoUrl, featuredArticleUrl)
 
-            return successResponse(res,HttpStatus.OK,"Mentor details updated",response)
+            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.MENTOR_UPDATED, response)
         } catch (error) {
+            console.error(error,'err or  = = = =  ');
+            
             next(error)
         }
     }
@@ -73,7 +79,7 @@ export class MentorController implements IMentorController{
         try {
 
             const response = await this.mentorService.getAllMentorsWithPopulatedData()
-            return successResponse(res,HttpStatus.OK,"Sent all mentors",{response})
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_MENTORS_FETCHED, { response })
         } catch (error) {
             next(error)
         }
@@ -85,7 +91,7 @@ export class MentorController implements IMentorController{
         try {
             const { id } = req.params
             const response = await this.mentorService.getMentor(id)
-            return successResponse(res,HttpStatus.OK,"Sent mentor",{mentor:response})
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.MENTOR_DETAILS_FETCHED, { mentor: response })
         } catch (error) {
             next(error)
         }
@@ -98,7 +104,7 @@ export class MentorController implements IMentorController{
 
             const data = req.body
             const response = await this.mentorService.updateMentorData(id, data)
-            return successResponse(res,HttpStatus.OK,"Mentor updation successfully done",response)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.MENTOR_UPDATED, response)
         } catch (error) {
             next(error)
         }
@@ -121,7 +127,7 @@ export class MentorController implements IMentorController{
 
             const user = req.user as JwtPayload
             const response = await this.mentorService.getMentor(user.id)
-            return successResponse(res, HttpStatus.OK, "mentor data sent", response)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.MENTOR_DETAILS_FETCHED, response)
         } catch (error) {
             next(error)
         }
@@ -144,7 +150,7 @@ export class MentorController implements IMentorController{
             }
 
             const response = await this.mentorService.getAllmentorWithMergedUserData(params)
-            return successResponse(res, HttpStatus.OK, "Mentors with filtered data sent", response)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_MENTORS_FETCHED, response)
         } catch (error) {
             next(error)
         }
@@ -156,22 +162,22 @@ export class MentorController implements IMentorController{
             const { id } = req.params
             const response = await this.mentorService.getMentorSpecificData(id)
             if (!response) {
-                return errorResponse(res, HttpStatus.NOT_FOUND, "Not founded mentor details")
+                return errorResponse(res, HttpStatus.NOT_FOUND, ERROR_MESSAGES.MENTOR_NOT_FOUND)
             }
 
-            return successResponse(res, HttpStatus.OK, "Mentor data send", response)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.MENTOR_DETAILS_FETCHED, response)
         } catch (error) {
             next(error)
         }
     }
 
 
-    async getAllCategories(req:Request,res:Response,next:NextFunction){
+    async getAllCategories(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.mentorService.getAllCategoris()
-            return successResponse(res,HttpStatus.OK,"Category data sent",{response})
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.CATEGORY_DETAILS_FETCHED, { response })
         } catch (error) {
-            
+
         }
     }
 }

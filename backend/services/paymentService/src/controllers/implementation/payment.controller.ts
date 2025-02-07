@@ -6,6 +6,7 @@ import { successResponse } from "../../utils/response.helper";
 import { HttpStatus } from "../../enums/http.status";
 import CustomError from "../../utils/custom.error";
 import { IPaymentController } from "../interface/IPayment.controller";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constant";
 
 
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-09-30.acacia' })
@@ -60,7 +61,7 @@ export class PaymentController implements IPaymentController {
         try {
             const user = req.user as JwtPayload
             if (!user) {
-                throw new CustomError("Please sign in", HttpStatus.BAD_REQUEST)
+                throw new CustomError(ERROR_MESSAGES.SIGNIN_WARNING, HttpStatus.BAD_REQUEST)
             }
             const userEmail = user.email
             const { planType, price, menteeId, mentorId } = req.body
@@ -76,7 +77,7 @@ export class PaymentController implements IPaymentController {
             const user = req.user as JwtPayload
             const { id } = req.params
             const response = await this.paymentService.findCoursePayment(id, user.id)
-            return successResponse(res, HttpStatus.OK, "Founded course", response)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.COURSE_DETAILS_FETCHED, response)
         } catch (error) {
             next(error)
         }
@@ -86,7 +87,7 @@ export class PaymentController implements IPaymentController {
         try {
 
             const response = await this.paymentService.findAllTransactions()
-            return successResponse(res, HttpStatus.OK, "Founded transactions", { transactions: response })
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_TRANSACTION_FETCHED, { transactions: response })
         } catch (error) {
             next(error)
         }
@@ -96,7 +97,7 @@ export class PaymentController implements IPaymentController {
         try {
             const user = req.user as JwtPayload
             const response = await this.paymentService.getUserBillingHistory(user.id)
-            return successResponse(res, HttpStatus.OK, "Founded billing history ", { transaction: response })
+            return successResponse(res, HttpStatus.OK,SUCCESS_MESSAGES.ALL_BILLING_HISTORY_PER_USER_FETCHED, { transaction: response })
         } catch (error) {
             next(error)
 

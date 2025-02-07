@@ -5,6 +5,8 @@ import { HttpStatus } from "../../enums/http.status";
 import AWS from 'aws-sdk'
 import dotenv from 'dotenv'
 import { IResourceController } from "../interface/IResource.controller";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants";
+import { generateUploadPresignedUrl } from "../../utils/file.upload";
 dotenv.config()
 
 
@@ -35,25 +37,41 @@ export class ResourseController implements IResourceController {
                     message: 'fileName and fileType are required'
                 });
             }
-            const params = {
-                Bucket: process.env.BUCKET_NAME!,
-                Key: fileName,
-                Expires: 3600,
-                ContentType: fileType,
-
-            }
-            const signedUrl = await s3.getSignedUrlPromise('putObject', params)
-            res.status(HttpStatus.OK).json({ signedUrl, key: fileName })
+            const response = await generateUploadPresignedUrl(fileName,fileType)
+            res.status(HttpStatus.OK).json({ signedUrl:response.url, key: fileName })
         } catch (error) {
             next(error)
         }
     }
 
+    // async generateSignedUrl(req: Request, res: Response, next: NextFunction) {
+    //     try {
+    //         const { fileName, fileType } = req.body
+    //         if (!fileName || !fileType) {
+    //             return res.status(400).json({
+    //                 success: false,
+    //                 message: 'fileName and fileType are required'
+    //             });
+    //         }
+    //         const params = {
+    //             Bucket: process.env.BUCKET_NAME!,
+    //             Key: fileName,
+    //             Expires: 3600,
+    //             ContentType: fileType,
+
+    //         }
+    //         const signedUrl = await s3.getSignedUrlPromise('putObject', params)
+    //         res.status(HttpStatus.OK).json({ signedUrl, key: fileName })
+    //     } catch (error) {
+    //         next(error)
+    //     }
+    // }
+
     async getResources(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.resourceService.getResources()
 
-            return successResponse(res, HttpStatus.OK, "Resource successfully sent", { resources: response })
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_RESOURCE_FETCHED, { resources: response })
         } catch (error) {
             next(error)
         }
@@ -66,7 +84,7 @@ export class ResourseController implements IResourceController {
 
             const data = req.body
             const response = await this.resourceService.createResourse(title, type, course, level, topic, content)
-            return successResponse(res, HttpStatus.CREATED, "Resource created")
+            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.RESOURCE_CREATED)
 
         } catch (error) {
             next(error)
@@ -80,9 +98,9 @@ export class ResourseController implements IResourceController {
             const { status } = req.body
             const response = await this.resourceService.updateResourceStatus(resourceId, status)
             if (!response) {
-                return errorResponse(res, HttpStatus.NOTFOUND, "There is an issue to update status")
+                return errorResponse(res, HttpStatus.NOTFOUND, ERROR_MESSAGES.ERROR_UPDATING_STATUS)
             }
-            return successResponse(res, HttpStatus.OK, "Resource status updated")
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.RESOURCE_UPDATED, response)
         } catch (error) {
             next(error)
         }

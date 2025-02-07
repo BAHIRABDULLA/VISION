@@ -5,6 +5,8 @@ import { ICourseRepository } from "../../repositories/interface/ICourse.reposito
 import { IResourceRepository } from "../../repositories/interface/IResource.repository";
 import CustomError from "../../utils/custom.error";
 import { IResourseService } from "../interface/IResource.service";
+import { ERROR_MESSAGES } from "../../constants";
+import { generateDownloadPresignedUrl } from "../../utils/file.upload";
 
 interface IFileContent {
     buffer: Buffer;
@@ -25,14 +27,14 @@ export class ResourceService implements IResourseService {
         try {
             const getResourceData = await this.resourceRepository.findAllWithPopulateCourse()
             if (!getResourceData || getResourceData.length <= 0) {
-                throw new CustomError('Not founded resources', HttpStatus.NOTFOUND)
+                throw new CustomError(ERROR_MESSAGES.RESOURCE_NOT_FOUND, HttpStatus.NOTFOUND)
             }
             return getResourceData
         } catch (error) {
             throw error
         }
     }
-    async createResourse(title: string , type: 'text' | 'image' | 'video', course: string,
+    async createResourse(title: string, type: 'text' | 'image' | 'video', course: string,
         level: string, topic: string, content: string): Promise<IResource | undefined> {
         try {
             const courseDoc = await this.courseRepository.findByName(course)
@@ -48,7 +50,7 @@ export class ResourceService implements IResourseService {
                 throw new CustomError(`Topic ${topic} not found in level ${level} of ${course}`, HttpStatus.NOTFOUND)
             }
             const courseId = courseDoc._id as Types.ObjectId
-            const data = { title,  type, course: courseId, level, topic, content }
+            const data = { title, type, course: courseId, level, topic, content }
             const createResourse = await this.resourceRepository.create(data)
 
             return createResourse
@@ -57,10 +59,10 @@ export class ResourceService implements IResourseService {
         }
     }
 
-    async updateResourceStatus(resourceId:string,status:'active' | 'block'){
+    async updateResourceStatus(resourceId: string, status: 'active' | 'block') {
         try {
-            const response = await this.resourceRepository.update(resourceId,{status})
-            if(!response?.isModified){
+            const response = await this.resourceRepository.update(resourceId, { status })
+            if (!response?.isModified) {
                 return null
             }
             return response
@@ -73,7 +75,7 @@ export class ResourceService implements IResourseService {
         try {
             const resourceData = await this.resourceRepository.findByIdWithCourse(id)
             if (!resourceData) {
-                throw new CustomError('Resource not found', HttpStatus.NOTFOUND)
+                throw new CustomError(ERROR_MESSAGES.RESOURCE_NOT_FOUND, HttpStatus.NOTFOUND)
             }
             return resourceData
         } catch (error) {
@@ -85,13 +87,31 @@ export class ResourceService implements IResourseService {
         try {
             const courseData = await this.courseRepository.findById(courseId)
             if (!courseData) {
-                throw new CustomError('Course not found', HttpStatus.NOTFOUND)
+                throw new CustomError(ERROR_MESSAGES.COURSE_NOT_FOUND, HttpStatus.NOTFOUND)
             }
             const resourceData = await this.resourceRepository.findByCourseId(courseId)
             if (!resourceData || resourceData.length <= 0) {
-                throw new CustomError('Resource not found', HttpStatus.NOTFOUND)
+                throw new CustomError(ERROR_MESSAGES.RESOURCE_NOT_FOUND, HttpStatus.NOTFOUND)
             }
-            return resourceData
+            console.log(resourceData, 'resourcedata');
+
+            const resources = await Promise.all(
+                resourceData.map(async resource => {
+                    if (!resource) return null
+
+                    const generateImageUrl = resource?.type !== 'text' ?
+                    await generateDownloadPresignedUrl(resource.content) 
+                    : null
+                    return {
+
+                        ...resource.toObject(),
+                        content: generateImageUrl
+                    }
+                }).filter(Boolean)
+            )
+            console.log(resources, 'resouces');
+
+            return resources
         } catch (error) {
             throw error
         }

@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     firstComponentData: {
-        file: '',
+        file: null as File | null,
         jobTitle: '',
         company: '',
         location: '',
