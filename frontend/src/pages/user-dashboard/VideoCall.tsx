@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Card, CardContent, Button, Alert, AlertTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowBigLeftIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRightLeft } from 'lucide-react';
 
-import { getBookingDetails } from '@/services/mentorApi';
+import { getBookingDetails, handleBookingSessionStatus } from '@/services/mentorApi';
 
 interface SessionValidation {
   isValid: boolean;
@@ -15,7 +15,7 @@ interface SessionValidation {
 const VideoCall = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { bookingId, mentorId, menteeId, userId } = location.state || {};
+  const { bookingId, mentorId, menteeId, userId, status } = location.state || {};
   console.log(bookingId, 'bookdingId', mentorId, 'mentorId', menteeId, 'menteeid', userId);
 
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
@@ -33,6 +33,12 @@ const VideoCall = () => {
 
   // Validate session time
   const validateSessionTime = (sessionTime: string, sessionDate: string): SessionValidation => {
+    if (status == 'completed' || status == 'expired') {
+      return {
+        isValid: false,
+        message: `session has ${status}`
+      }
+    }
     const now = new Date();
     console.log(sessionTime, 'sessiontime', sessionDate, 'session data');
     const bb = new Date(sessionDate)
@@ -48,9 +54,11 @@ const VideoCall = () => {
     } else if (now < sessionDateTime) {
       return {
         isValid: false,
-        message: `Session will start at ${sessionTime} on ${sessionDate}`
+        message: `Session will start at ${sessionTime} on ${new Date(sessionDate).toLocaleDateString('en-US', { dateStyle: 'full' })}`
       };
     } else {
+
+      handleBookingSessionStatus(bookingId, 'expired')
       return {
         isValid: false,
         message: 'Session has expired'
@@ -257,6 +265,7 @@ const VideoCall = () => {
       });
 
       setIsCallStarted(true);
+      await handleBookingSessionStatus(bookingId, 'attending')
     } catch (error) {
       console.error('Error starting call:', error);
     }
@@ -317,7 +326,7 @@ const VideoCall = () => {
                 className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-gray-900/80 hover:bg-gray-900 p-2 h-8 w-8"
                 size="small"
               >
-                <ArrowBigLeftIcon className="w-4 h-4" />
+                <ArrowRightLeft className="w-4 h-4" />
               </Button>
             </div>
 

@@ -7,14 +7,7 @@ import { privateApi } from "./instance/axiosConfig";
 //     withCredentials:true
 // })
 
-export const getMessages = async(userId:string,particpantId:string)=>{
-    try {
-        const response = await privateApi.get(`/messages/conversations/${userId}/${particpantId}`)
-        return response
-    } catch (error) {
-        console.error('Error founded in get messages',error);
-    }
-}
+
 
 export const getAllUsers = async (userId:string) => {
     try {

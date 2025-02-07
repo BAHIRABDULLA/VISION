@@ -13,6 +13,10 @@ import IUser from "../../interfaces/IUser";
 import Otp from "../../models/otp.model";
 import { createResponse } from "../../utils/response.handler";
 import { IAuthService } from "../interface/IAuth.service";
+import { ERROR_MESSAGES } from "../../constants/error.message";
+import { SUCCESS_MESSAGES } from "../../constants/success.message";
+import { USER_ROLES } from "../../constants/user.role";
+
 
 
 export type SignInResult = {
@@ -47,12 +51,12 @@ export class AuthService implements IAuthService {
             const existingUser = await this.userRepository.findByEmail(email)
 
             if (existingUser && existingUser.isVerified) {
-                return createResponse(false, "User already exits")
+                return createResponse(false, ERROR_MESSAGES.USER_ALREADY_EXISTS)
             }
             const otp = generateOtp()
             await sentOTPEmail(email, otp)
             await this.otpRepository.create({ email, otp })
-            return createResponse(true, "Sent to otp verification")
+            return createResponse(true, SUCCESS_MESSAGES.SENT_OTP_VERIFICATION)
         } catch (error) {
             console.error('Error founded in sign up', error);
         }
@@ -64,17 +68,17 @@ export class AuthService implements IAuthService {
         try {
             const checkUser = await this.userRepository.findByEmail(email)
             if (checkUser && checkUser.isVerified && type !== 'forgetPassword') {
-                return { success: false, message: "User already existed" }
+                return { success: false, message: ERROR_MESSAGES.USER_ALREADY_EXISTS}
             }
 
 
             const getOtp = await this.otpRepository.findOtpByEmail(email)
             if (!getOtp) {
-                return { success: false, message: 'OTP expired or invalid' }
+                return { success: false, message: ERROR_MESSAGES.OTP_EXPIRED_OR_INVALID }
             }
             const findOtp = getOtp.find(x => x.otp == otp)
             if (findOtp && type === 'forgetPassword') {
-                return createResponse(true, 'OTP verified successfully', checkUser?.role)
+                return createResponse(true, SUCCESS_MESSAGES.OTP_VERIFIED_SUCCESSFULLY, checkUser?.role)
             }
             const hashedPassword = await hashPassword(password)
             if (findOtp) {
@@ -85,7 +89,7 @@ export class AuthService implements IAuthService {
                     role: role as 'mentee' | 'mentor',
                     isVerified: true
                 }
-                if (role === 'mentor') {
+                if (role === USER_ROLES.MENTOR) {
                     userData.isApproved = 'pending';
                     userData.isMentorFormFilled = false
                 }
@@ -97,15 +101,15 @@ export class AuthService implements IAuthService {
                 const refreshToken = generateRefreshToken({ id: newUser._id.toString(), email, role: newUser.role })
 
                 await sendUserData('userExchange', newUser)
-                if (newUser.role === 'mentee') {
-                    return createResponse(true, 'OTP verified successfully', { role: newUser.role, accessToken, refreshToken, user: newUser })
+                if (newUser.role === USER_ROLES.MENTEE) {
+                    return createResponse(true, SUCCESS_MESSAGES.OTP_VERIFIED_SUCCESSFULLY, { role: newUser.role, accessToken, refreshToken, user: newUser })
                     // return { success: true, message: 'OTP verified successfully', role: newUser.role, accessToken, refreshToken}
                 } else {
-                    return createResponse(true, 'OTP verified successfully', { role: newUser.role })
+                    return createResponse(true, SUCCESS_MESSAGES.OTP_VERIFIED_SUCCESSFULLY, { role: newUser.role })
                     // return { success: true, message: 'OTP verified successfully', role: newUser.role }
                 }
             } else {
-                return { success: false, message: 'Invalid otp' }
+                return { success: false, message: ERROR_MESSAGES.OTP_EXPIRED_OR_INVALID}
             }
         } catch (error) {
             console.error('Error founded in verify otp service', error);
@@ -166,14 +170,14 @@ export class AuthService implements IAuthService {
         try {
             const checkuser = await this.userRepository.findByEmail(email)
             if (!checkuser || role !== checkuser.role) {
-                return { success: false, message: "User not existed" }
+                return { success: false, message: ERROR_MESSAGES.USER_NOT_FOUND }
             }
             if (checkuser.isVerified === false) {
                 return { success: false, message: "User not verified" }
             }
             const passwordCheck = await bcrypt.compare(password, checkuser.password)
             if (!passwordCheck) {
-                return { success: false, message: "Invalid credentials , please try again" }
+                return { success: false, message: ERROR_MESSAGES.INVALID_CREADENTIALS }
             }
             // if (checkuser.role === 'mentor' && checkuser.isApproved == 'pending') {
             //     return { success: false, message: "Mentor approval pending. Please wait for admin approval" }

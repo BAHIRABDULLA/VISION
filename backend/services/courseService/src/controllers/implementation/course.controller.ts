@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { errorResponse, successResponse } from "../../utils/response.helper";
 import { JwtPayload } from "jsonwebtoken";
 import { ICourseController } from "../interface/ICourse.controller";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants";
 
 
 
@@ -21,14 +22,14 @@ export class CourseController implements ICourseController {
     async createCourse(req: Request, res: Response, next: NextFunction) {
         try {
 
-            const { name, duration, overview, price, curriculum } = req.body
+            const { name, duration, overview, price,image, curriculum } = req.body
             const data = { name, duration, overview, price, curriculum: JSON.parse(curriculum) }
 
-            const response = await this.courseService.createCourse(data, req.file)
+            const response = await this.courseService.createCourse(data)
             if (!response) {
-                return errorResponse(res, HttpStatus.CONFLICT, "course already existed")
+                return errorResponse(res, HttpStatus.CONFLICT, ERROR_MESSAGES.COURSE_ALREADY_EXISTS)
             }
-            return successResponse(res, HttpStatus.OK, "Course successfully created", response)
+            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.COURSE_CREATED, response)
         } catch (error) {
             next(error)
         }
@@ -38,7 +39,7 @@ export class CourseController implements ICourseController {
         try {
 
             const response = await this.courseService.getAllCourses()
-            return successResponse(res, HttpStatus.OK, "Course successfully created", response)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_COURSES_FETCHED, response)
         } catch (error) {
             next(error)
         }
@@ -49,7 +50,7 @@ export class CourseController implements ICourseController {
         try {
             const { id } = req.params
             const response = await this.courseService.getCourseById(id)
-            return successResponse(res, HttpStatus.OK, "Course successfully created", response)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.COURSE_DETAILS_FETCHED, response)
         } catch (error) {
             next(error)
         }
@@ -64,9 +65,9 @@ export class CourseController implements ICourseController {
             const data = { name, duration, overview, price, curriculum: JSON.parse(curriculum) }
             const response = await this.courseService.editCourseData(data, id, req.file)
             if (!response) {
-                return errorResponse(res, HttpStatus.NOTFOUND, "Course already existed")
+                return errorResponse(res, HttpStatus.NOTFOUND, ERROR_MESSAGES.COURSE_NOT_FOUND)
             }
-            return successResponse(res, HttpStatus.OK, "Course successfully updated", response)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.COURSE_UPDATED, response)
         } catch (error) {
             next(error)
 
@@ -81,9 +82,9 @@ export class CourseController implements ICourseController {
 
             const response = await this.courseService.courseStatusUpdate(courseId, status)
             if (!response) {
-                return errorResponse(res, HttpStatus.NOTFOUND, "There is an issue to update status")
+                return errorResponse(res, HttpStatus.NOTFOUND, ERROR_MESSAGES.ERROR_UPDATING_STATUS)
             }
-            return successResponse(res, HttpStatus.OK, "Status updated", response)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.COURSE_UPDATED, response)
         } catch (error) {
             next(error)
         }
@@ -96,7 +97,7 @@ export class CourseController implements ICourseController {
             const user = req.user as JwtPayload
             const userId = user.id
             const response = await this.courseService.getPurchasedCourses(userId)
-            return successResponse(res, HttpStatus.OK, "Purchased courses fetched", { response })
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.PURCHASED_COURSE_FETCHED, { response })
         } catch (error) {
             next(error)
         }

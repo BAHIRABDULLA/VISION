@@ -1,13 +1,18 @@
 import Header from '@/components/Header';
 // import Pagination from '@/components/Pagination';
-import Pagination from '@mui/material/Pagination';
+import { Pagination, MenuItem, Select } from '@mui/material';
 import { getAllCategories, getAllMentorsWithParamsData } from '@/services/mentorApi';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Loading from '@/components/Loading';
 import { debounce } from 'lodash'
+import Search from '@/components/Search';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store/store';
 
 const MentorPage: React.FC = () => {
+    const mode = useSelector((state: RootState) => state.theme.mode)
+    const [sortBy, setSortBy] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(0)
     const [searchQuery, setSearchQuery] = useState('');
@@ -23,35 +28,35 @@ const MentorPage: React.FC = () => {
     // const handlePageChange = (page: number) => {
     //     setCurrentPage(page);
     // };
-    const [categories,setCategories] = useState([])
-    
+    const [categories, setCategories] = useState([])
+
     const [mentors, setMentors] = useState([]);
-    const fetchMentors = useCallback(async() => {
-            try {
-                setLoading(true)
-                const paramsData = {
-                    search: searchQuery,
-                    priceRange: filters.priceRange,
-                    experience: filters.experience,
-                    expertise: filters.expertise,
-                    rating: filters.rating,
-                    location: filters.location,
-                    page: currentPage,
-                    limit: 10
-                }
-
-                const resposne = await getAllMentorsWithParamsData(paramsData)
-                if (resposne?.data) {
-                    setMentors(resposne.data.data)
-                    setTotalPages(resposne?.data.pagination.totalPages)
-                }
-            } catch (error) {
-                console.error('Error fetching mentors', error);
-
-            } finally {
-                setLoading(false)
+    const fetchMentors = useCallback(async () => {
+        try {
+            setLoading(true)
+            const paramsData = {
+                search: searchQuery,
+                priceRange: filters.priceRange,
+                experience: filters.experience,
+                expertise: filters.expertise,
+                rating: filters.rating,
+                location: filters.location,
+                page: currentPage,
+                limit: 10
             }
-        
+
+            const resposne = await getAllMentorsWithParamsData(paramsData)
+            if (resposne?.data) {
+                setMentors(resposne.data.data)
+                setTotalPages(resposne?.data.pagination.totalPages)
+            }
+        } catch (error) {
+            console.error('Error fetching mentors', error);
+
+        } finally {
+            setLoading(false)
+        }
+
     }, [searchQuery, filters, currentPage])
     useEffect(() => {
         fetchMentors()
@@ -85,15 +90,15 @@ const MentorPage: React.FC = () => {
     );
 
 
-    useEffect(()=>{
-        const fetchCategories = async()=>{
+    useEffect(() => {
+        const fetchCategories = async () => {
             const response = await getAllCategories()
-            if(response.status<=400){
+            if (response.status <= 400) {
                 setCategories(response.data.response)
             }
         }
         fetchCategories()
-    },[])
+    }, [])
     return (
         <div className="min-h-screen ">
             <Header />
@@ -140,9 +145,9 @@ const MentorPage: React.FC = () => {
                                     onChange={(e) => handleFilterChange('expertise', e.target.value)}
                                 >
                                     <option value="any">Any</option>
-                                    {categories?.map((category,index:number)=>(
+                                    {categories?.map((category, index: number) => (
                                         <option key={index} value={category?.name}>{category?.name}</option>
-                                        
+
                                     ))}
                                     {/* <option value="frontend">Frontend Development</option>
                                     <option value="backend">Backend Development</option>
@@ -187,14 +192,31 @@ const MentorPage: React.FC = () => {
 
                 {/* Mentor Cards Section */}
                 <div className="w-8/12 space-y-6">
-                    <div className="flex justify-end mb-6">
-                        <input
-                            type="text"
-                            placeholder="Search for mentors..."
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                            className="p-2 border border-gray-700 dark:border-gray-300 rounded w-1/2 bg-white dark:bg-gray-800 text-gray-700 dark:text-white"
-                        />
+                    <div className="flex gap-3 justify-end mb-6">
+                    <Search value={searchQuery} placeholder='Search for mentors..' onChange={handleSearchChange} />
+
+                        <Select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            variant="outlined"
+                            sx={{
+                                backgroundColor: mode==='dark' ? "rgba(255,255,255,0.1)" : "white",
+                                color: mode==='dark' ? "white" : "black",
+                                borderColor: mode==='dark' ? "gray" : "black",
+                            }}
+                        >
+                            {/* Name Sorting */}
+                            <MenuItem value="name-asc">A to Z </MenuItem>
+                            <MenuItem value="name-desc">Z to A </MenuItem>
+
+                            {/* Price Sorting */}
+                            <MenuItem value="price-asc">Price: Low to High</MenuItem>
+                            <MenuItem value="price-desc">Price: High to Low</MenuItem>
+
+                            {/* Experience Sorting */}
+                            <MenuItem value="experience-asc">Experience: Low to High</MenuItem>
+                            <MenuItem value="experience-desc">Experience: High to Low</MenuItem>
+                        </Select>
                     </div>
 
                     {filteredMentors.map((mentor) => (
@@ -246,20 +268,22 @@ const MentorPage: React.FC = () => {
 
             {/* Pagination */}
             <div className='flex justify-center'>
-                <Pagination count={10} variant="outlined" size='large'
+                <Pagination count={totalPages} variant="outlined" size='large'
                     page={currentPage}
                     onChange={(_event, value) => setCurrentPage(value)}
                     sx={{
                         "& .MuiPaginationItem-root": {
-                            color: "white", // Change text color
-                            borderColor: "white", // Change border color
+                            color: mode === 'dark' ? "white" : "purple", // Light text in dark mode
+                            borderColor: mode === 'dark' ? "lightgray" : "purple", // Adjust border color
                         },
                         "& .MuiPaginationItem-root:hover": {
-                            backgroundColor: "rgba(255, 255, 255, 0.1)", // Hover effect
+                            backgroundColor: mode === 'dark'
+                                ? "rgba(255, 255, 255, 0.2)" // Slightly lighter hover in dark mode
+                                : "rgba(0, 0, 0, 0.1)", // Darker hover in light mode
                         },
                         "& .Mui-selected": {
-                            backgroundColor: "white", // Selected page background
-                            color: "darkblue", // Selected page text color
+                            backgroundColor: mode === 'dark' ? "rgb(75 85 99);" : 'white', // Keep contrast
+                            color: mode === 'dark' ? 'white' : 'purple',
                         },
                     }}
                 />

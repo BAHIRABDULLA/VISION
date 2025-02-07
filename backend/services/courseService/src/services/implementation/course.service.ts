@@ -4,8 +4,9 @@ import { ICourseService } from "../interface/ICourse.service";
 import { uploadFile } from "../../utils/file.upload";
 import { IPaymentRepository } from "../../repositories/interface/IPayment.repository";
 import { IPayment } from "../../models/payment.model";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants";
 interface courseData {
-    _id:string
+    _id: string
     name: string
     duration: string
     overview: string
@@ -19,7 +20,7 @@ export class CourseService implements ICourseService {
 
     private courseRepository: ICourseRepository
     private paymentRepository: IPaymentRepository
-    constructor(courseRepository: ICourseRepository,paymentRepository:IPaymentRepository) {
+    constructor(courseRepository: ICourseRepository, paymentRepository: IPaymentRepository) {
         this.courseRepository = courseRepository
         this.paymentRepository = paymentRepository
     }
@@ -30,7 +31,7 @@ export class CourseService implements ICourseService {
             if (checkCourse) {
                 return null
             }
-                        
+
             let s3FileUrl = ''
             if (imageFile) {
                 const fileContent = imageFile.buffer;
@@ -57,36 +58,36 @@ export class CourseService implements ICourseService {
         try {
             const data = await this.courseRepository.findAll()
 
-            return { success: true, message: 'Courses fetched successfully', data }
+            return { success: true, message: SUCCESS_MESSAGES.ALL_COURSES_FETCHED, data }
         } catch (error) {
-            return { success: false, message: 'Internal server error' }
+            return { success: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR }
         }
     }
 
 
     async getCourseById(id: string) {
         try {
-            
+
             const findCourse = await this.courseRepository.findById(id)
 
             if (!findCourse) {
-                return { success: false, message: "Course not founded " }
+                return { success: false, message: ERROR_MESSAGES.COURSE_NOT_FOUND }
             }
-            return { success: true, message: "Course founded", course: findCourse }
+            return { success: true, message: ERROR_MESSAGES.COURSE_NOT_FOUND, course: findCourse }
         } catch (error) {
-            return { success: false, message: "Error retrieving course details" }
+            return { success: false, message: ERROR_MESSAGES.ERROR_RETRIEVING_COURSE_DETAILS }
         }
     }
 
 
-    async editCourseData(data: courseData,id:string, imageFile?: Express.Multer.File): Promise<ICourse | null>{
+    async editCourseData(data: courseData, id: string, imageFile?: Express.Multer.File): Promise<ICourse | null> {
         try {
             const checkCourse = await this.courseRepository.findById(id)
 
             if (!checkCourse) {
                 return null
             }
-            
+
             let s3FileUrl = ''
             if (imageFile) {
                 const fileContent = imageFile.buffer;
@@ -101,8 +102,8 @@ export class CourseService implements ICourseService {
 
                 data.image = s3FileUrl
             }
-            
-            const response = await this.courseRepository.update(id,data)
+
+            const response = await this.courseRepository.update(id, data)
             return response
         } catch (error) {
             return null
@@ -110,10 +111,10 @@ export class CourseService implements ICourseService {
         }
     }
 
-    async courseStatusUpdate(id:string,status:'active' | 'block'):Promise<ICourse | null>{
+    async courseStatusUpdate(id: string, status: 'active' | 'block'): Promise<ICourse | null> {
         try {
-            const response = await this.courseRepository.update(id,{status})
-            if(!response?.isModified){
+            const response = await this.courseRepository.update(id, { status })
+            if (!response?.isModified) {
                 return null
             }
             return response
@@ -122,10 +123,10 @@ export class CourseService implements ICourseService {
         }
     }
 
-    async getPurchasedCourses(userId:string):Promise<IPayment[] | null>{
+    async getPurchasedCourses(userId: string): Promise<IPayment[] | null> {
         try {
 
-            const findBoughtCourseByUserId = await this.paymentRepository.findBoughtCoursesByUserId(userId,'course_purchase','completed')            
+            const findBoughtCourseByUserId = await this.paymentRepository.findBoughtCoursesByUserId(userId, 'course_purchase', 'completed')
             return findBoughtCourseByUserId
         } catch (error) {
             return null

@@ -10,7 +10,7 @@ export type socialMediaUrl= {
 
 export interface IMentorService {
     mentorDetails(email: string, jobTitle: string,country:string, location: string, category: string, experience:number,skills: string[], bio: string,
-        whyBecomeMentor: string, greatestAchievement: string, company?: string, profilePhoto?: string, socialMediaUrls?:socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string):Promise<IMentor | null>
+        whyBecomeMentor: string, greatestAchievement: string, company?: string, file?: string, socialMediaUrls?:socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string):Promise<IMentor | null>
     registerUser(userData:object):Promise< IUser | null>
     getAllMentors():Promise<IMentor[] | null>
     getMentor(id:string):Promise<IMentor | null>

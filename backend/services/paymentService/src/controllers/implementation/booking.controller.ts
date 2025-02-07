@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { IBookingService } from "../../services/interface/IBooking.service";
 import { IBookingController } from "../interface/IBooking.controller";
+import { HttpStatus } from "../../enums/http.status";
+import { SUCCESS_MESSAGES } from "../../constant";
 
 
 export class BookingController implements IBookingController {
@@ -10,9 +12,8 @@ export class BookingController implements IBookingController {
     async createBooking(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await this.bookingService.createBookingData(req.body)
-            res.status(201).json({ message: "booking data created", response })
+            res.status(HttpStatus.CREATED).json({ message: SUCCESS_MESSAGES.BOOKING_CREATED, response })
         } catch (error) {
-            console.error('Error founded in create booking', error);
             next(error)
         }
     }

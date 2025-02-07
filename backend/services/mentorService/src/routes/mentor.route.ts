@@ -9,6 +9,7 @@ import { mentorController } from '../config/container'
 const upload = multer({dest:'src/uploads/'})
 
 
+router.post('/generate-signed-url',mentorController.generateSignedUrl.bind(mentorController))
 router.post('/apply-mentor',upload.single('file'),mentorController.applyMentor.bind(mentorController))
 router.get('/mentors',mentorController.getAllMentors.bind(mentorController))
 router.get('/category',mentorController.getAllCategories.bind(mentorController))

@@ -26,15 +26,16 @@ const Google: React.FC<GoogleProps> = ({ type }) => {
             if (user.email && user.displayName) {
                 const response = await googleSignIn(user.email, user.displayName, role);
                 if (response.data.success) {
+                    const id = response.data.user._id
 
                     if (response.data.role === 'mentee') {
                         localStorage.setItem('accessToken', response.data.accessToken)
-                        dispatch(menteeLogin({ token: response.data.accessToken, user: response.data.user }))
+                        dispatch(menteeLogin({ token: response.data.accessToken, user: {email:user.email,role,id} }))
 
                         navigate('/')
                     } else {
                         localStorage.setItem('accessToken', response.data.accessToken)
-                        dispatch(mentorLogin({ token: response.data.accessToken, user: response.data.user }))
+                        dispatch(mentorLogin({ token: response.data.accessToken, user: {email:user.email,role,id} }))
                         if (response.data.exist === true) {
                             navigate('/mentor/dashboard')
                         } else {

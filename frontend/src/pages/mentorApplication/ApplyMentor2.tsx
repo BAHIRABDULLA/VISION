@@ -37,7 +37,7 @@ const ApplyMentor2: React.FC<applyMentor2Props> = ({ prevStep, onFinish }) => {
     return (
 
         <div className='min-h-screen flex flex-col items-center justify-center bg-gray-50'>
-            <form onSubmit={(handleSubmit(onFinish))} className='w-full max-w-4xl p-8   rounded-lg'>
+            <form onSubmit={(handleSubmit(onFinish))} className='w-full max-w-4xl p-8   rounded-lg' encType='multipart/form-data' >
                 <div>
                     <div className='ms-2'>
                         <img src={visionLogo} alt="Vision logo" />

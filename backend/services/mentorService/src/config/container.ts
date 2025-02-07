@@ -28,8 +28,8 @@ const categoryRepository  = new CategoryRepository(Category)
 
 
 const mentorService = new MentorService(mentorRepository,userRepository,slotRepository,bookingRepository,categoryRepository)
-const slotService = new SlotService(slotRepository,bookingRepository,paymentRepository)
-const paymentService = new PaymentService(paymentRepository,bookingRepository)
+const slotService = new SlotService(slotRepository,bookingRepository,paymentRepository,userRepository)
+const paymentService = new PaymentService(paymentRepository,bookingRepository,userRepository)
 
 const mentorController = new MentorController(mentorService)
 const slotController = new SlotController(slotService)

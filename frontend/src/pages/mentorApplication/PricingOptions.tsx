@@ -3,8 +3,9 @@ import { Check } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
 // import { loadStripe } from '@stripe/stripe-js';
-import {  mentorshipPayment } from '@/services/paymentApi';
+import { mentorshipPayment } from '@/services/paymentApi';
 import toast, { Toaster } from 'react-hot-toast';
+import { monthlyKeys, singleKeys } from '@/constants/mentorPlansKeys';
 
 type PlanType = 'subscription' | 'one-time' | null;
 
@@ -75,18 +76,12 @@ const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentor
                         </div>
                     </div>
                     <ul className="space-y-2 mt-4">
-                        <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                            <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
-                            4 one-hour sessions per month
-                        </li>
-                        <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                            <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
-                            Direct message access
-                        </li>
-                        <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                            <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
-                            Code review support
-                        </li>
+                        {monthlyKeys?.map((monthlyKey: string,index:number) => (
+                            <li key={index} className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                                <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
+                                {monthlyKey}
+                            </li>
+                        ))}
                     </ul>
                 </div>
 
@@ -108,18 +103,13 @@ const PricingOptions: React.FC<PricingOptionsProps> = ({ single, monthly, mentor
                         </div>
                     </div>
                     <ul className="space-y-2 mt-4">
-                        <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                            <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
-                            1 one-hour session
-                        </li>
-                        <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                            <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
-                            Session recording
-                        </li>
-                        <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                            <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
-                            Follow-up notes
-                        </li>
+                        {singleKeys?.map((singKey: string,index:number) => (
+                            <li key={index} className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                                <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
+                                {singKey}
+                            </li>
+                        ))}
+
                     </ul>
                 </div>
 

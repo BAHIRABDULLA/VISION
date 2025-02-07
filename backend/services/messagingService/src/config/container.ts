@@ -1,13 +1,9 @@
-import { ConversationController } from "../controllers/implementation/conversation.controller";
 import { MessageController } from "../controllers/implementation/message.controller";
 import { UserController } from "../controllers/implementation/user.controller";
-import Conversation from "../models/conversation.model";
 import { Message } from "../models/message.model";
 import { User } from "../models/user.model";
-import { ConversationRepository } from "../repositories/implementation/conversation.repository";
 import { MessageRepository } from "../repositories/implementation/message.repository";
 import { UserRepository } from "../repositories/implementation/user.repository";
-import { ConversationService } from "../services/implementation/conversation.service";
 import { MessageService } from "../services/implementation/message.service";
 import { UserService } from "../services/implementation/user.service";
 
@@ -22,8 +18,6 @@ const messageRepository = new MessageRepository(Message)
 const messageService = new MessageService(messageRepository)
 const messageController = new MessageController(messageService)
 
-const conversationRepository = new ConversationRepository(Conversation)
-const conversationService = new ConversationService(conversationRepository)
-const conversationController = new ConversationController(conversationService)
 
-export {userService,userRepository,userController,messageController,messageService,conversationController}
+
+export {userService,userRepository,userController,messageController,messageService}

@@ -3,7 +3,7 @@
 
 
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
 import { Card, CardHeader, CardContent, Typography } from '@mui/material';
@@ -11,14 +11,19 @@ import { Card, CardHeader, CardContent, Typography } from '@mui/material';
 
 const Success = () => {
   const navigate = useNavigate();
-
+  const [count, setCount] = useState(5)
   useEffect(() => {
+    if (count <= 0) {
+      navigate("/dashboard/billing");
+      return;
+    }
+
     const timer = setTimeout(() => {
-      navigate('/');
-    }, 5000);
+      setCount((prevCount) => prevCount - 1);
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [count, navigate]);
 
   return (
 
@@ -35,7 +40,7 @@ const Success = () => {
               Thank you for your purchase!
             </Typography>
             <Typography variant="body2" className="text-gray-600 mb-6">
-              This page will be closed in 5 seconds.
+              This page will be closed in {count} seconds.
             </Typography>
           </div>
         </CardContent>

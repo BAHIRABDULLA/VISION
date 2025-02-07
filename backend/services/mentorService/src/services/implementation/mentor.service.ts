@@ -12,6 +12,7 @@ import { ISlotRepository } from "../../repositories/interface/ISlot.repository";
 import { IBookingRepository } from "../../repositories/interface/IBooking.repository";
 import { ICategoryRepository } from "../../repositories/interface/ICategory.repository";
 import { ICategory } from "../../model/category.model";
+import { ERROR_MESSAGES, USER_IMAGE } from "../../constants";
 
 
 export interface mentorParamsData {
@@ -46,11 +47,11 @@ export class MentorService implements IMentorService {
 
 
     async mentorDetails(email: string, jobTitle: string, country: string, location: string, category: string, experience: number, skills: string[], bio: string,
-        whyBecomeMentor: string, greatestAchievement: string, company?: string, profilePhoto?: string, socialMediaUrls?: socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string,) {
+        whyBecomeMentor: string, greatestAchievement: string, company?: string, file?: string, socialMediaUrls?: socialMediaUrl, introductionVideoUrl?: string, featuredArticleUrl?: string,) {
         try {
             const checkUser = await this.userRepository.isMentor(email)
             if (!checkUser) {
-                throw new CustomError("User does not existed", HttpStatus.UNAUTHORIZED)
+                throw new CustomError(ERROR_MESSAGES.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED)
             }
 
             const mentorData = {
@@ -61,16 +62,16 @@ export class MentorService implements IMentorService {
             }
 
             const newMentor = await this.mentorRepoistory.create(mentorData);
-            await this.userRepository.update(checkUser._id.toString(), { isMentorFormFilled: true })
-
+            
             const data = {
                 id: newMentor.mentor
             }
-
-            if (profilePhoto == '') {
-                profilePhoto = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'
+            
+            if (file == '') {
+                file = USER_IMAGE
             }
-            await sendMentorData(newMentor.toObject(), profilePhoto)
+            await this.userRepository.update(checkUser._id.toString(), { isMentorFormFilled: true ,profile:file})
+            await sendMentorData(newMentor.toObject(), file)
 
             if (!newMentor) {
                 throw new CustomError("Mentor details not updated", HttpStatus.UNAUTHORIZED)
@@ -87,7 +88,7 @@ export class MentorService implements IMentorService {
         try {
             const mentor = this.userRepository.create(userData)
             if (!mentor) {
-                throw new CustomError("Error facing to register mentor", HttpStatus.UNAUTHORIZED)
+                throw new CustomError(ERROR_MESSAGES.ERROR_UPDAING_MENTOR, HttpStatus.UNAUTHORIZED)
             }
             return mentor
         } catch (error) {
@@ -129,7 +130,7 @@ export class MentorService implements IMentorService {
                 data.mentor = new mongoose.Types.ObjectId(id)
                 const newMentor = await this.mentorRepoistory.create(data)
                 if (!newMentor) {
-                    throw new CustomError("Error facing to update mentor", HttpStatus.UNAUTHORIZED)
+                    throw new CustomError(ERROR_MESSAGES.ERROR_UPDAING_MENTOR, HttpStatus.UNAUTHORIZED)
                 }
                 await sendMentorData(newMentor.toObject())
                 await this.userRepository.update(id, { isMentorFormFilled: true })
@@ -138,7 +139,7 @@ export class MentorService implements IMentorService {
             } else {
                 const updatingMentor = await this.mentorRepoistory.update(id, data)
                 if (!updatingMentor) {
-                    throw new CustomError("Error facing to update mentor", HttpStatus.UNAUTHORIZED)
+                    throw new CustomError(ERROR_MESSAGES.ERROR_UPDAING_MENTOR, HttpStatus.UNAUTHORIZED)
                 }
                 await sendMentorData(updatingMentor.toObject())
                 await this.userRepository.update(updatingMentor.mentor.toString(), { isMentorFormFilled: true })
@@ -178,7 +179,7 @@ export class MentorService implements IMentorService {
             const { id, isApproved } = data
             await this.userRepository.update(id, { isApproved })
         } catch (error) {
-            console.error('Error founded in mentor approval', error);
+            console.error(ERROR_MESSAGES.ERROR_FOUND_APPROVE_MENTOR, error);
         }
     }
 

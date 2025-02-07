@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { LuView } from "react-icons/lu";
+import Search from '@/components/Search';
 
 
 
@@ -14,16 +15,21 @@ interface User {
   role: string;
   isApproved: boolean;
   isActive: boolean;
+  createAt: Date
 }
 
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
+  console.log(users, 'users');
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const allUsers = async () => {
     try {
       const response = await getAllUsers()
       if (response && Array.isArray(response.data.users)) {
+
         setUsers(response.data.users)
       } else {
         console.error('Api response is not an array:', response);
@@ -41,8 +47,12 @@ const Users: React.FC = () => {
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
-      <h2 className="text-4xl font-bold mb-8 text-gray-800">Users List</h2>
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-4xl font-bold text-gray-800">Users List</h2>
+        <Search placeholder="Search for users" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+      </div>
       <div className="shadow-lg rounded-lg overflow-hidden">
+
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 text-white">
             <tr>
@@ -57,26 +67,33 @@ const Users: React.FC = () => {
           </thead>
           <tbody>
             {users && users.length > 0 ? (
-              users.map((user, index) => (
-                <tr key={index} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
-                  <td className="py-3 px-5 text-gray-700">{index + 1}</td>
-                  <td className="py-3 px-5 text-gray-700">{user.fullName}</td>
-                  <td className="py-3 px-5 text-gray-700">{user.email}</td>
-                  <td className="py-3 px-5 text-gray-700">{user.role}</td>
-                  {/* <td className="py-3 px-5 text-gray-700">{user.isApproved ? 'Approved' : 'Pending'}</td> */}
-                  <td className="py-3 px-5 text-gray-700">{user.role === 'mentor' ? user.isApproved : ''}</td>
-                  <td className="py-3 px-5">
-                    <span
-                      className={`px-3 py-1 inline-block text-sm rounded-full ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
-                    >
-                      {user.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                  <td className="py-3 px-9">
-                    <Link to={`/admin/users/${user.role}-${user._id}`} className="text-blue-500 hover:text-blue-700">
-                      <LuView className='w-6 h-6' />
-                    </Link>
-                    {/* {
+              users
+                .sort((a, b) => {
+                  const dateA = new Date(a.createAt).getTime() || 0;
+                  const dateB = new Date(b.createAt).getTime() || 0;
+                  return dateB - dateA;
+
+                })
+                .map((user, index) => (
+                  <tr key={index} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
+                    <td className="py-3 px-5 text-gray-700">{index + 1}</td>
+                    <td className="py-3 px-5 text-gray-700">{user.fullName}</td>
+                    <td className="py-3 px-5 text-gray-700">{user.email}</td>
+                    <td className="py-3 px-5 text-gray-700">{user.role}</td>
+                    {/* <td className="py-3 px-5 text-gray-700">{user.isApproved ? 'Approved' : 'Pending'}</td> */}
+                    <td className="py-3 px-5 text-gray-700">{user.role === 'mentor' ? user.isApproved : ''}</td>
+                    <td className="py-3 px-5">
+                      <span
+                        className={`px-3 py-1 inline-block text-sm rounded-full ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                      >
+                        {user.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-9">
+                      <Link to={`/admin/users/${user.role}-${user._id}`} className="text-blue-500 hover:text-blue-700">
+                        <LuView className='w-6 h-6' />
+                      </Link>
+                      {/* {
                       user.role === 'mentor' ? (<Link to={`/admin/users/${user.role}-${user.mentor}`} className="text-blue-500 hover:text-blue-700">
                         <LuView className='w-6 h-6' /></Link>)
                         :
@@ -85,10 +102,10 @@ const Users: React.FC = () => {
                         </Link>)
                     } */}
 
-                 
-                  </td>
-                </tr>
-              ))
+
+                    </td>
+                  </tr>
+                ))
             ) : (
               <tr>
                 <td colSpan={7} className="py-4 text-center font-semibold text-gray-500">
@@ -99,6 +116,7 @@ const Users: React.FC = () => {
           </tbody>
         </table>
       </div>
+
     </div>
 
   );

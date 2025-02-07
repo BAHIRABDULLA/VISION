@@ -4,6 +4,7 @@ import { SlotService } from "../../services/implementation/slot.service";
 import { errorResponse, successResponse } from "../../utils/response.handler";
 import { HttpStatus } from "../../enums/http.status";
 import { ISlotController } from "../interface/ISlot.controller";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants";
 
 
 
@@ -30,9 +31,9 @@ export class SlotController implements ISlotController{
           
             const response = await this.slotService.createSlot(time,availableDays,user.id)
             if(!response){
-                return errorResponse(res,HttpStatus.NOT_FOUND,"Mentor slot not created")
+                return errorResponse(res,HttpStatus.NOT_FOUND,ERROR_MESSAGES.MENTOR_SLOT_CREATION_FAILED)
             }
-            return successResponse(res,HttpStatus.OK,"Mentor slot created",response)
+            return successResponse(res,HttpStatus.CREATED,SUCCESS_MESSAGES.MENTOR_SLOT_CREATED,response)
         } catch (error) {
             next(error)
         }
@@ -48,7 +49,7 @@ export class SlotController implements ISlotController{
             
             const response = await this.slotService.getSlotByUser(user.id)
             
-            return successResponse(res,HttpStatus.OK,"Founded all slots",{data:response})
+            return successResponse(res,HttpStatus.OK,SUCCESS_MESSAGES.ALL_SLOTS_FETCHED,{data:response})
         } catch (error) {
             next(error)
         }
@@ -61,9 +62,9 @@ export class SlotController implements ISlotController{
             const {id} = req.params
             const response = await this.slotService.removeSlot(user.id,id)
             if(!response){
-                return errorResponse(res,HttpStatus.NOT_FOUND,"Slot not founded")
+                return errorResponse(res,HttpStatus.NOT_FOUND,ERROR_MESSAGES.MENTOR_SLOT_NOT_FOUND)
             }
-            return successResponse(res,HttpStatus.OK,"Slot deleted")
+            return successResponse(res,HttpStatus.OK,SUCCESS_MESSAGES.SLOT_DELETED)
         } catch (error) {
             next(error)
         }
@@ -79,7 +80,7 @@ export class SlotController implements ISlotController{
             const user = req.user as JwtPayload
             const token = req.headers['authorization']?.split(' ')[1]!
             const response = await this.slotService.bookSlot(mentorId,user.id,time,date,token)
-            return successResponse(res,HttpStatus.OK,"created")
+            return successResponse(res,HttpStatus.CREATED,SUCCESS_MESSAGES.SLOT_BOOKING_SUCCESS)
         } catch (error) {
             next(error)
         }
@@ -91,7 +92,7 @@ export class SlotController implements ISlotController{
             const {bookingId}  = req.params
             
             const response  = await this.slotService.getBookingSlotDetails(bookingId)    
-            return successResponse(res,HttpStatus.OK,"Founded booking slot details",{booking:response})
+            return successResponse(res,HttpStatus.OK,SUCCESS_MESSAGES.BOOKING_SLOT_DETAILS_FETCHED,{booking:response})
         } catch (error) {
             next(error)
         }
@@ -101,7 +102,18 @@ export class SlotController implements ISlotController{
         try {
             const user = req.user as JwtPayload 
             const response = await this.slotService.getBookingSlot(user.id,user.role)
-            return successResponse(res,HttpStatus.OK,"Founded all booking slots",{bookings:response})
+            return successResponse(res,HttpStatus.OK,SUCCESS_MESSAGES.BOOKING_SLOTS_FETCHED,{bookings:response})
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async handleBookingSessionStatus(req:Request,res:Response,next:NextFunction){
+        try {
+            const {bookingId} = req.params
+            const {status} = req.body
+          const response = await this.slotService.handleBookingSessionStatus(bookingId,status)
+          return successResponse(res,HttpStatus.OK,'Updated status',response)  
         } catch (error) {
             next(error)
         }

@@ -8,6 +8,8 @@ import CustomError from "../../utils/custom.error";
 import { HttpStatus } from "../../enums/http.status";
 import { IPaymentRepository } from "../../repositories/interface/IPayment.repository";
 import axios from "axios";
+import { ERROR_MESSAGES, PAYMENT_TYPE } from "../../constants";
+import { IUserRepository } from "../../repositories/interface/IUser.repository";
 
 
 
@@ -16,7 +18,8 @@ export class SlotService implements ISlotService {
 
     constructor(private slotRepository: SlotRepository,
         private bookingRepository: BookingRepository,
-        private paymentRepository: IPaymentRepository) { }
+        private paymentRepository: IPaymentRepository,
+        private userRepository:IUserRepository) { }
 
     async createSlot(time: string, availableDays: string[], mentorId: string) {
         try {
@@ -54,27 +57,22 @@ export class SlotService implements ISlotService {
 
             const findAnyoneBookedSession = await this.bookingRepository.findByBookingData(mentorId, date, time)
             if (findAnyoneBookedSession) {
-                throw new CustomError("Session already purchased ", HttpStatus.BAD_REQUEST)
+                throw new CustomError(ERROR_MESSAGES.SESSION_ALREADY_BOOKED, HttpStatus.BAD_REQUEST)
 
             }
             const givenDate = new Date(date)
             const dayIndex = givenDate.getDay()
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const dayName = days[dayIndex]
-            const checkSessionBooked = await this.paymentRepository.findByMenteeAndMentorId(menteeId, mentorId)
+            // const checkSessionBooked = await this.paymentRepository.findByMenteeAndMentorId(menteeId, mentorId)
+            const checkSessionBooked = await this.userRepository.findById(menteeId)
             if (!checkSessionBooked) {
-                throw new CustomError('Please purchase any Mentorship plans', HttpStatus.NOT_FOUND)
+                throw new CustomError(ERROR_MESSAGES.USER_NOT_FOUND, HttpStatus.NOT_FOUND)
             }
-            if ((checkSessionBooked.type === 'mentorship_subscription' || checkSessionBooked.type === 'one_time_payment')
-                && checkSessionBooked.sessionCount == 0) {
-                throw new CustomError('Please purchase any Mentorship plans', HttpStatus.UNAUTHORIZED)
+            if(checkSessionBooked.sessionCount==0){
+                throw new CustomError(ERROR_MESSAGES.PURCHASE_MENTORSHIP_PLAN_REQUIRED, HttpStatus.UNAUTHORIZED)
             }
-            if (checkSessionBooked.type === 'mentorship_subscription' && checkSessionBooked.sessionCount > 4) {
-                throw new CustomError('You already booked session', HttpStatus.CONFLICT)
-            }
-            if (checkSessionBooked.type === 'one_time_payment' && checkSessionBooked.sessionCount > 1) {
-                throw new CustomError('You already booked session', HttpStatus.CONFLICT)
-            }
+            
             const today = new Date()
             const providedDate = new Date(date)
             if (providedDate < today) {
@@ -99,6 +97,7 @@ export class SlotService implements ISlotService {
                 time
             }
             const response = await this.bookingRepository.create(data)
+            await this.userRepository.update(menteeId,{sessionCount:checkSessionBooked.sessionCount-1})
             const sendDataToPaymentService = await axios.post('http://localhost:4000/payment/booking/create',
                 response,
                 {
@@ -106,7 +105,7 @@ export class SlotService implements ISlotService {
                         { Authorization: `Bearer ${token}` }
                 }
             )
-            
+
             return response
         } catch (error) {
             throw error
@@ -127,6 +126,23 @@ export class SlotService implements ISlotService {
         try {
 
             const response = await this.bookingRepository.findByUserId(userId, role)
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async handleBookingSessionStatus(bookingId: string, status: 'pending' | 'attending' | 'completed' | 'expired') {
+        try {
+            const booking = await this.bookingRepository.findById(bookingId)
+            if (!booking) {
+                throw new CustomError(ERROR_MESSAGES.BOOKING_NOT_FOUND, HttpStatus.NOT_FOUND)
+            }
+            let newStatus = status
+            if (status === 'expired' && booking.status === 'attending') {
+                newStatus = 'completed'
+            }
+            const response = await this.bookingRepository.update(bookingId, { status: newStatus })
             return response
         } catch (error) {
             throw error

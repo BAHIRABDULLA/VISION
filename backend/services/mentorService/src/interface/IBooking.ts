@@ -1,7 +1,7 @@
 import { Document, Types } from 'mongoose'
 
 
-export interface IBooking extends Document{
+export interface IBooking extends Document {
     mentorId: Types.ObjectId;
     menteeId: Types.ObjectId;
     date: Date
@@ -9,8 +9,7 @@ export interface IBooking extends Document{
     // planType:'monthly' | 'single';
     // price:number;
     sessions: number;
-    status: 'pending' | 'completed';
+    status: 'pending' | 'attending' | 'completed' | 'expired';
     bookedAt?: Date;
-    sessionCount:number
     sessionDates?: Date[],
 } 

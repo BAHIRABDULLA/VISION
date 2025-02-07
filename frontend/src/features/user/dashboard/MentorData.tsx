@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import {  mentorSchema, mentorSchemaType} from '@/utils/userValidator';
-import { updateMentorData } from '@/services/mentorApi';
-import {  TextField } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import toast from 'react-hot-toast'
-
-
-
-
+import { updateMentorData } from "@/services/mentorApi";
+import { mentorSchema, mentorSchemaType } from "@/utils/userValidator";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 interface MentorDataProps {
     userData: mentorSchemaType | null;
 }
 
 const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
-    const { register, handleSubmit, formState: { errors } } = useForm<mentorSchemaType>({
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<mentorSchemaType>({
         resolver: zodResolver(mentorSchema),
         defaultValues: {
             jobTitle: userData?.jobTitle,
@@ -32,15 +32,13 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                 linkedin: userData?.socialMediaUrls?.linkedin,
                 x: userData?.socialMediaUrls?.x,
                 portfolio: userData?.socialMediaUrls?.portfolio,
-            }
+            },
             // userData?.socialMediaUrls
-
-        }
-    })
+        },
+    });
     useEffect(() => {
-        console.log(errors, 'errors');
-
-    },[])
+        console.log(errors, "errors");
+    }, []);
 
     const [isEditingMentorData, setIsEditingMentorData] = useState(false);
 
@@ -51,64 +49,84 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
         setIsEditingMentorData(true);
     };
 
-
     const handleMentorDataSubmit = async (data: mentorSchemaType) => {
         try {
-            const response = await updateMentorData(userData?._id!, data)
+            const response = await updateMentorData(userData?._id!, data);
             if (response?.data.success) {
-                toast.success(response.data.message)
+                toast.success(response.data.message);
                 setIsEditingMentorData(false);
             } else {
-                toast.error(response?.data.message)
+                toast.error(response?.data.message);
             }
         } catch (error) {
-            console.error('Error founded in handle mentor data submit', error);
+            console.error("Error founded in handle mentor data submit", error);
             toast.error("Failed to update data.");
         }
-    }
+    };
     return (
         <>
             {/* Job Title to Personal Website Section */}
             <form onSubmit={handleSubmit(handleMentorDataSubmit)}>
-
-
                 <div className="grid grid-cols-2 gap-4 mb-6">
                     <div>
                         <TextField
-                            label="Job Title:" defaultValue={userData?.jobTitle} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData} {...register('jobTitle')}
+                            label="Job Title:"
+                            defaultValue={userData?.jobTitle}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
+                            {...register("jobTitle")}
                         />
-                        {errors.jobTitle && <p className='text-red-500'>{errors.jobTitle.message}</p>}
-
-
+                        {errors.jobTitle && (
+                            <p className="text-red-500">{errors.jobTitle.message}</p>
+                        )}
                     </div>
                     <div>
                         <TextField
-                            label="Location:" defaultValue={userData?.location} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData} {...register('location')}
+                            label="Location:"
+                            defaultValue={userData?.location}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
+                            {...register("location")}
                         />
-                        {errors.location && <p className='text-red-500'>{errors.location.message}</p>}
+                        {errors.location && (
+                            <p className="text-red-500">{errors.location.message}</p>
+                        )}
                     </div>
-
                 </div>
 
                 {/* Additional fields for Job Title to Personal Website */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
                     <div>
                         <TextField
-                            label="Category:" defaultValue={userData?.category || ''} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData} {...register('category')}
+                            label="Category:"
+                            defaultValue={userData?.category || ""}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
+                            {...register("category")}
                         />
-                        {errors.category && <p className='text-red-500'>{errors.category.message}</p>}
-
+                        {errors.category && (
+                            <p className="text-red-500">{errors.category.message}</p>
+                        )}
                     </div>
                     <div>
                         <TextField
-                            label="Company  (optional):" defaultValue={userData?.company || ""} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData} {...register('company')}
+                            label="Company  (optional):"
+                            defaultValue={userData?.company || ""}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
+                            {...register("company")}
                         />
-                        {errors?.company && <p className='text-red-500'>{errors?.company.message}</p>}
-
+                        {errors?.company && (
+                            <p className="text-red-500">{errors?.company.message}</p>
+                        )}
                     </div>
                 </div>
 
@@ -116,92 +134,146 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                     <div>
                         <TextField
                             label="Featured Article URL  (optional):"
-                            defaultValue={userData?.featuredArticleUrl ?? ''} {...register('featuredArticleUrl')}
-                            variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
+                            defaultValue={userData?.featuredArticleUrl ?? ""}
+                            {...register("featuredArticleUrl")}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
                         />
-                        {errors?.featuredArticleUrl && <p className='text-red-500'>{errors?.featuredArticleUrl.message}</p>}
-
+                        {errors?.featuredArticleUrl && (
+                            <p className="text-red-500">
+                                {errors?.featuredArticleUrl.message}
+                            </p>
+                        )}
                     </div>
                     <div>
                         <TextField
-                            label="Introduction Video URL (optional)  :" defaultValue={userData?.introductionVideoUrl || ''} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
-                            {...register('introductionVideoUrl')}
+                            label="Introduction Video URL (optional)  :"
+                            defaultValue={userData?.introductionVideoUrl || ""}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
+                            {...register("introductionVideoUrl")}
                         />
                     </div>
-                    {errors?.introductionVideoUrl && <p className='text-red-500'>{errors?.introductionVideoUrl.message}</p>}
-
+                    {errors?.introductionVideoUrl && (
+                        <p className="text-red-500">
+                            {errors?.introductionVideoUrl.message}
+                        </p>
+                    )}
                 </div>
 
                 {/* skills */}
-                <div className='mb-3'>
+                <div className="mb-3">
                     <TextField
-                        label="Skills:" defaultValue={userData?.skills || ''} variant="filled" fullWidth multiline
-                        sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
-                        {...register('skills')}
+                        label="Skills:"
+                        defaultValue={userData?.skills || ""}
+                        variant="filled"
+                        fullWidth
+                        multiline
+                        sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                        disabled={!isEditingMentorData}
+                        {...register("skills")}
                     />
-                    {errors.skills && <p className="text-red-500">{errors.skills.message}</p>}
+                    {errors.skills && (
+                        <p className="text-red-500">{errors.skills.message}</p>
+                    )}
                 </div>
 
                 {/* Bio and Other Mentor-Specific Fields */}
                 <div>
                     <TextField
-                        label="Bio:" defaultValue={userData?.bio || ''} variant="filled" fullWidth {...register('bio')}
-                        sx={{ backgroundColor: "white", borderRadius: "8px" }} maxRows={3} multiline disabled={!isEditingMentorData}
+                        label="Bio:"
+                        defaultValue={userData?.bio || ""}
+                        variant="filled"
+                        fullWidth
+                        {...register("bio")}
+                        sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                        maxRows={3}
+                        multiline
+                        disabled={!isEditingMentorData}
                     />
-                    {errors.bio && <p className='text-red-500'>{errors.bio.message}</p>}
-
-
+                    {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
                 </div>
-                <div className='mt-3'>
+                <div className="mt-3">
                     <TextField
-                        label="Why Become Mentor:" defaultValue={userData?.whyBecomeMentor || ''} variant="filled" fullWidth
-                        sx={{ backgroundColor: "white", borderRadius: "8px" }} maxRows={3} multiline disabled={!isEditingMentorData}
-                        {...register('whyBecomeMentor')}
+                        label="Why Become Mentor:"
+                        defaultValue={userData?.whyBecomeMentor || ""}
+                        variant="filled"
+                        fullWidth
+                        sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                        maxRows={3}
+                        multiline
+                        disabled={!isEditingMentorData}
+                        {...register("whyBecomeMentor")}
                     />
-                    {errors.whyBecomeMentor && <p className='text-red-500'>{errors.whyBecomeMentor.message}</p>}
-
+                    {errors.whyBecomeMentor && (
+                        <p className="text-red-500">{errors.whyBecomeMentor.message}</p>
+                    )}
                 </div>
-                <div className='mt-3'>
+                <div className="mt-3">
                     <TextField
-                        label="Greatest Achievement:" defaultValue={userData?.greatestAchievement || ''} variant="filled" fullWidth
-                        {...register('greatestAchievement')} disabled={!isEditingMentorData}
-                        sx={{ backgroundColor: "white", borderRadius: "8px" }} maxRows={3} multiline
+                        label="Greatest Achievement:"
+                        defaultValue={userData?.greatestAchievement || ""}
+                        variant="filled"
+                        fullWidth
+                        {...register("greatestAchievement")}
+                        disabled={!isEditingMentorData}
+                        sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                        maxRows={3}
+                        multiline
                     />
-                    {errors.greatestAchievement && <p className='text-red-500'>{errors.greatestAchievement.message}</p>}
-
+                    {errors.greatestAchievement && (
+                        <p className="text-red-500">{errors.greatestAchievement.message}</p>
+                    )}
                 </div>
 
-                <div className='grid grid-cols-2 gap-4 mt-3'>
+                <div className="grid grid-cols-2 gap-4 mt-3">
                     <div>
                         <TextField
-                            label="GitHub URL (optional):" defaultValue={userData?.socialMediaUrls?.github || ''} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
-                            {...register('socialMediaUrls.github')}
+                            label="GitHub URL (optional):"
+                            defaultValue={userData?.socialMediaUrls?.github || ""}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
+                            {...register("socialMediaUrls.github")}
                         />
                         {errors?.socialMediaUrls?.github && (
-                            <p className="text-red-500">{errors.socialMediaUrls.github.message}</p>
+                            <p className="text-red-500">
+                                {errors.socialMediaUrls.github.message}
+                            </p>
                         )}
                     </div>
                     <div>
                         <TextField
-                            label="LinkedIn URL (optional):" defaultValue={userData?.socialMediaUrls?.linkedin || ''} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
-                            {...register('socialMediaUrls.linkedin')}
+                            label="LinkedIn URL (optional):"
+                            defaultValue={userData?.socialMediaUrls?.linkedin || ""}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
+                            {...register("socialMediaUrls.linkedin")}
                         />
                         {errors?.socialMediaUrls?.linkedin && (
-                            <p className="text-red-500">{errors.socialMediaUrls.linkedin.message}</p>
+                            <p className="text-red-500">
+                                {errors.socialMediaUrls.linkedin.message}
+                            </p>
                         )}
                     </div>
-
                 </div>
-                <div className='grid grid-cols-2 gap-4 mt-3'>
+                <div className="grid grid-cols-2 gap-4 mt-3">
                     <div>
                         <TextField
-                            label="Twitter/X URL (optional):" defaultValue={userData?.socialMediaUrls?.x || ''} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
-                            {...register('socialMediaUrls.x')}
+                            label="Twitter/X URL (optional):"
+                            defaultValue={userData?.socialMediaUrls?.x || ""}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
+                            {...register("socialMediaUrls.x")}
                         />
                         {errors?.socialMediaUrls?.x && (
                             <p className="text-red-500">{errors.socialMediaUrls.x.message}</p>
@@ -209,12 +281,18 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                     </div>
                     <div>
                         <TextField
-                            label="Portfolio URL (optional):" defaultValue={userData?.socialMediaUrls?.portfolio || ''} variant="filled" fullWidth
-                            sx={{ backgroundColor: "white", borderRadius: "8px" }} disabled={!isEditingMentorData}
-                            {...register('socialMediaUrls.portfolio')}
+                            label="Portfolio URL (optional):"
+                            defaultValue={userData?.socialMediaUrls?.portfolio || ""}
+                            variant="filled"
+                            fullWidth
+                            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                            disabled={!isEditingMentorData}
+                            {...register("socialMediaUrls.portfolio")}
                         />
                         {errors?.socialMediaUrls?.portfolio && (
-                            <p className="text-red-500">{errors.socialMediaUrls.portfolio.message}</p>
+                            <p className="text-red-500">
+                                {errors.socialMediaUrls.portfolio.message}
+                            </p>
                         )}
                     </div>
                 </div>
@@ -249,7 +327,7 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                 )}
             </form>
         </>
-    )
-}
+    );
+};
 
-export default MentorData
+export default MentorData;

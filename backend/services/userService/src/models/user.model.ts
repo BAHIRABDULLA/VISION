@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import IUser from "../interfaces/IUser";
+import { USER_IMAGE } from "../constants/user.role";
 
 
 const userSchema = new Schema<IUser>({
@@ -10,7 +11,7 @@ const userSchema = new Schema<IUser>({
     isVerified: { type: Boolean, required: true, default: false },
     profile: {
         type: String,
-        default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'
+        default: USER_IMAGE
     },
     isActive: { type: Boolean, required: true, default: true },
     isApproved: {

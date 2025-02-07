@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { successResponse } from "../../utils/response.helper";
 import { JwtPayload } from "jsonwebtoken";
 import { IReviewController } from "../interface/IReview.controller";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constant";
 
 interface CustomeRequest extends Request {
     user?: string | JwtPayload,
@@ -22,7 +23,7 @@ export class ReviewController implements IReviewController {
             }
             const reviews = await this.reviewService.getReviewsBycourseIdOrMentorId(
                 courseIdOrMentorId, reviewType as 'course' | 'mentorship')
-            successResponse(res, HttpStatus.OK, "Course reviews found ", { reviews })
+            successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.COURSE_REVIEWS_FETCHED, { reviews })
         } catch (error) {
             next(error)
         }
@@ -34,7 +35,7 @@ export class ReviewController implements IReviewController {
             const user = req.user as JwtPayload
             const userId = user.id
             if (!userId) {
-                res.status(HttpStatus.UNAUTHORIZED).json({ message: "Unauthorized" })
+                res.status(HttpStatus.UNAUTHORIZED).json({ message: ERROR_MESSAGES.ACCESS_DENIED})
                 return
             }
             let response
@@ -43,7 +44,7 @@ export class ReviewController implements IReviewController {
             } else {
                 response = await this.reviewService.createReview({ mentorId: courseIdOrMentorId, rating, review, userId, reviewType })
             }
-            successResponse(res, HttpStatus.CREATED, "Course review created", { newReview: response })
+            successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.COURSE_CREATED, { newReview: response })
         } catch (error) {
             next(error)
         }

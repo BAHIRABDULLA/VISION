@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import { HttpStatus } from "../../enums/http.status";
 import { IUserService } from "../../services/interface/IUser.service";
-import { s3 } from "../../utils/upload";
+import { generateUploadPresignedUrl} from "../../utils/upload";
 import { IUserController } from "../interface/IUser.controller";
 
 
@@ -28,19 +28,35 @@ export class UserController implements IUserController {
                     message: 'fileName and fileType are required'
                 });
             }
-            const params = {
-                Bucket: process.env.BUCKET_NAME!,
-                Key: fileName,
-                Expires: 60,
-                // ContentType: fileType,
-
-            }
-            const signedUrl = await s3.getSignedUrlPromise('putObject', params)
-            res.status(HttpStatus.OK).json({ signedUrl, key: fileName })
+            const response = await generateUploadPresignedUrl(fileName,fileType)
+            res.status(HttpStatus.OK).json({ signedUrl:response.url, key: fileName })
         } catch (error) {
             next(error)
         }
     }
+
+    // async generateSignedUrl(req: Request, res: Response, next: NextFunction) {
+    //     try {
+    //         const { fileName, fileType } = req.body
+    //         if (!fileName || !fileType) {
+    //             return res.status(400).json({
+    //                 success: false,
+    //                 message: 'fileName and fileType are required'
+    //             });
+    //         }
+    //         const params = {
+    //             Bucket: process.env.S3_BUCKET_NAME!,
+    //             Key: fileName,
+    //             Expires: 60,
+    //             // ContentType: fileType,
+
+    //         }
+    //         const signedUrl = await s3.getSignedUrlPromise('putObject', params)
+    //         res.status(HttpStatus.OK).json({ signedUrl, key: fileName })
+    //     } catch (error) {
+    //         next(error)
+    //     }
+    // }
 
     async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
@@ -105,7 +121,7 @@ export class UserController implements IUserController {
             // let profileUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png';
             // if (fileKey) {
             //     profileUrl = fileKey
-            //     // profileUrl = `https://${process.env.BUCKET_NAME}.s3.ap-south-1.amazonaws.com/${fileKey}`
+            //     // profileUrl = `https://${process.env.S3_BUCKET_NAME}.s3.ap-south-1.amazonaws.com/${fileKey}`
             // }
 
             const updateUser = await this.userService.updateUser(id, { fullName, profile: fileKey })

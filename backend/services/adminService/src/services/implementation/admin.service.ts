@@ -10,6 +10,7 @@ import { ICategoryRepository } from '../../repositories/interface/ICategory.repo
 import CustomError from '../../utils/custom.error'
 import { HttpStatus } from '../../enums/http.status'
 import { publishMessage } from '../../events/rabbitmq/producer'
+import { ERROR_MESSAGES, RABBITMQ_EXCHANGE } from '../../constants'
 
 const api = axios.create({
     baseURL: 'http://localhost:4000'
@@ -88,7 +89,7 @@ export class AdminService implements IAdminService {
             dashBoardData.totalReviews = getTotalReviews.data.reviewCount
             const userGrowthStats = await this.userGrowthStats(getAllUsers?.users)
             const monthlyRevenueData = await this.monthlyRevenueData(completedTransaction)
-            return { dashBoardData, userGrowthStats ,monthlyRevenueData }
+            return { dashBoardData, userGrowthStats, monthlyRevenueData }
         } catch (error) {
             throw error
         }
@@ -122,36 +123,36 @@ export class AdminService implements IAdminService {
     }
 
     async monthlyRevenueData(transactions: IPayment[]) {
-        
+
         const currentDate = new Date()
         const sixMonthsAgo = new Date()
-        sixMonthsAgo.setMonth(currentDate.getMonth()-6)
-        const completedTransaction = transactions.filter((transaction)=>{
+        sixMonthsAgo.setMonth(currentDate.getMonth() - 6)
+        const completedTransaction = transactions.filter((transaction) => {
             const transactionDate = new Date(transaction.createdAt)
             return (
-                transactionDate>=sixMonthsAgo
+                transactionDate >= sixMonthsAgo
             )
         })
-        const revenueByMonth = completedTransaction.reduce((acc,transaction)=>{
-            const month = new Date(transaction.createdAt).toLocaleString('default',{
-                month:'short',
-                year:'numeric'
+        const revenueByMonth = completedTransaction.reduce((acc, transaction) => {
+            const month = new Date(transaction.createdAt).toLocaleString('default', {
+                month: 'short',
+                year: 'numeric'
             })
-            if(!acc[month]){
+            if (!acc[month]) {
                 acc[month] = 0
             }
-            acc[month]+=transaction.amount
+            acc[month] += transaction.amount
             return acc
-        },{} as {[key:string]:number})
+        }, {} as { [key: string]: number })
 
-        const sortedMonths = Object.keys(revenueByMonth).sort((a,b)=>{
+        const sortedMonths = Object.keys(revenueByMonth).sort((a, b) => {
             const dateA = new Date(`01 ${a}`)
             const dateB = new Date(`01 ${b}`)
             return dateA.getTime() - dateB.getTime()
         })
-        const chartData = sortedMonths.map((month)=>({
-            name:month,
-            revenue:revenueByMonth[month]
+        const chartData = sortedMonths.map((month) => ({
+            name: month,
+            revenue: revenueByMonth[month]
         }))
         return chartData
     }
@@ -168,9 +169,9 @@ export class AdminService implements IAdminService {
 
 
     async getUser(id: string): Promise<{ user: object } | null> {
-        try {            
+        try {
             const commonData = await api.get(`/user/users/${id}`)
-            console.log(commonData.data,'common data .data');
+            console.log(commonData.data, 'common data .data');
 
             if (!commonData) {
                 return null
@@ -215,16 +216,16 @@ export class AdminService implements IAdminService {
         try {
             const findExistingCategory = await this.categoryRepository.findByCategoryName(category)
             if (findExistingCategory) {
-                throw new CustomError('Category already exited', HttpStatus.FORBIDDEN)
+                throw new CustomError(ERROR_MESSAGES.CATEGORY_ALREADY_EXISTS, HttpStatus.FORBIDDEN)
             }
             const data = {
                 name: category,
                 skills
             }
             const response = await this.categoryRepository.create(data)
-            await publishMessage('category_exchange', response)
+            await publishMessage(RABBITMQ_EXCHANGE.CATEGORY_EXCHANGE, response)
             if (!response) {
-                throw new CustomError('Unexpected error occuring to create category', HttpStatus.FORBIDDEN)
+                throw new CustomError(ERROR_MESSAGES.ERROR_CREATING_CATEGORY, HttpStatus.FORBIDDEN)
             }
             return response
         } catch (error) {
@@ -237,10 +238,10 @@ export class AdminService implements IAdminService {
 
             const findCategory = await this.categoryRepository.findById(id)
             if (!findCategory) {
-                throw new CustomError('Category not founded', HttpStatus.NOTFOUND)
+                throw new CustomError(ERROR_MESSAGES.CATEGORY_NOT_FOUND, HttpStatus.NOTFOUND)
             }
             const response = await this.categoryRepository.update(id, { name: category, skills })
-            await publishMessage('category_exchange', response!)
+            await publishMessage(RABBITMQ_EXCHANGE.CATEGORY_EXCHANGE, response!)
             return response
         } catch (error) {
             throw error

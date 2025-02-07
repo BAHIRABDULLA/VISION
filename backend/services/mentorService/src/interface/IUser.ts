@@ -8,4 +8,5 @@ export interface IUser extends Document{
     password:string;
     isApproved: 'pending' | 'approved' | 'rejected',
     isMentorFormFilled:boolean
+    sessionCount:number
 }

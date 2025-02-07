@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  useNavigate ,useLocation} from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '@/components/Button';
 import vision_logo from '@/assets/auth/vision_logo.svg'
 import Password from '@/components/Password';
@@ -29,7 +29,7 @@ type resetPassSchemaType = z.infer<typeof resetPassSchema>;
 
 const PasswordReset: React.FC = () => {
   const location = useLocation()
-  const {email} = location.state
+  const { email } = location.state
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +40,7 @@ const PasswordReset: React.FC = () => {
 
   const onSubmit: SubmitHandler<resetPassSchemaType> = async (data) => {
     const { password, confirmPassword } = data
-    const response = await resetPassword(email,password, confirmPassword)
+    const response = await resetPassword(email, password, confirmPassword)
     if (response?.data.success) {
       navigate('/signin')
     } else {

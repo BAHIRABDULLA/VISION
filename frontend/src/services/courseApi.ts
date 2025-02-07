@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { adminPrivateApi } from './instance/adminInstance';
 import { privateApi } from './instance/axiosConfig';
+import { ROUTES } from '@/constants/routeConstants';
 
 
 console.log(import.meta.env.VITE_COURSE_API_BASE_URL, 'IMPORT mete course ENV viteapivaseurl');
@@ -13,7 +14,7 @@ const api = axios.create({
 
 export const addCourse = async (data: object) => {
     try {
-        const response = await adminPrivateApi.post('/course', data)
+        const response = await adminPrivateApi.post(`${ROUTES.COURSE}`, data)
         return response
     } catch (error) {
         return error
@@ -22,7 +23,7 @@ export const addCourse = async (data: object) => {
 
 export const editCourse = async (data: object, id: string) => {
     try {
-        const response = adminPrivateApi.patch(`/course/${id}`, data)
+        const response = adminPrivateApi.patch(`${ROUTES.COURSE}/${id}`, data)
         return response
     } catch (error) {
         return error
@@ -51,7 +52,7 @@ export const getCourseDetails = async (id: string) => {
 
 export const updateCourseStatus = async (id: string, status: string) => {
     try {
-        const response = await adminPrivateApi.patch(`/course/status/${id}`, { status: status })
+        const response = await adminPrivateApi.patch(`${ROUTES.COURSE}/status/${id}`, { status: status })
         return response
     } catch (error) {
         return error
@@ -69,7 +70,7 @@ export const getResources = async () => {
 
 export const addResource = async (data: object) => {
     try {
-        const response = await adminPrivateApi.post('/course/resource', data)
+        const response = await adminPrivateApi.post(`${ROUTES.COURSE}/resource`, data)
         return response
     } catch (error) {
         if (error instanceof AxiosError) {
@@ -80,7 +81,7 @@ export const addResource = async (data: object) => {
 
 export const editResource = async (data: object, id: string) => {
     try {
-        const response = await adminPrivateApi.patch(`/course/resource/${id}`, data)
+        const response = await adminPrivateApi.patch(`${ROUTES.COURSE}/resource/${id}`, data)
         return response
     } catch (error) {
         if (error instanceof AxiosError) {
@@ -91,7 +92,7 @@ export const editResource = async (data: object, id: string) => {
 
 export const updateResourceStatus = async (resourceId: string, status: string) => {
     try {
-        const response = await adminPrivateApi.patch(`/course/resource/status/${resourceId}`, { status })
+        const response = await adminPrivateApi.patch(`${ROUTES.COURSE}/resource/status/${resourceId}`, { status })
         return response
     } catch (error) {
         if (error instanceof AxiosError) {
@@ -124,7 +125,7 @@ export const getAllResourceWithCourseId = async (courseId: string) => {
 
 export const getPurchasedCourses = async () => {
     try {
-        const response = await privateApi.get(`/course/user/`)
+        const response = await privateApi.get(`${ROUTES.COURSE}/user/`)
         return response
     } catch (error) {
         if (error instanceof AxiosError) {
@@ -135,7 +136,7 @@ export const getPurchasedCourses = async () => {
 
 export const getSignedUrl = async (fileName: string, fileType: any) => {
     try {
-        const response = await adminPrivateApi.post('/course/resource/generate-signed-url', { fileName, fileType })
+        const response = await adminPrivateApi.post(`${ROUTES.COURSE}/resource/generate-signed-url`, { fileName, fileType })
         return response
     } catch (error) {
         return error
