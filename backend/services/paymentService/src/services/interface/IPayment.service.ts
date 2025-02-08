@@ -7,5 +7,5 @@ export interface IPaymentService {
     commonSession(userEmail: string, planType: string, menteeId: string, mentorId: string, sessionPrice: number): Promise<{ url: string | null; } | undefined>
     findCoursePayment(courseId: string, menteeId: string): Promise<IPayment | null>
     findAllTransactions(): Promise<IPayment[] | null>
-    getUserBillingHistory(userId: string): Promise<IPayment[] | null>
+    getUserBillingHistory(userId: string, role: 'mentee' | 'mentor'): Promise<IPayment[] | null>
 }

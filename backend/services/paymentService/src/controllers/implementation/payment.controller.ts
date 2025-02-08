@@ -99,7 +99,8 @@ export class PaymentController implements IPaymentController {
     async getUserBillingHistory(req: CustomeRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user as JwtPayload
-            const response = await this.paymentService.getUserBillingHistory(user.id)
+            const role = user.role
+            const response = await this.paymentService.getUserBillingHistory(user.id,role)
             return successResponse(res, HttpStatus.OK,SUCCESS_MESSAGES.ALL_BILLING_HISTORY_PER_USER_FETCHED, { transaction: response })
         } catch (error) {
             next(error)

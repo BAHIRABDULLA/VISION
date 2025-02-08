@@ -9,10 +9,6 @@ export const publishMessage = async (data: object, exchangeName: string = 'logs_
         channel.publish(exchangeName, "", Buffer.from(message))
         console.log(`Message sent ${message}`);
 
-        setTimeout(() => {
-            connection.close()
-        }, 500);
-
     } catch (error) {
         console.error('Error in publish message',error);
     } 

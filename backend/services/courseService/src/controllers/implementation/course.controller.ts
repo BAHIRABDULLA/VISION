@@ -25,9 +25,14 @@ export class CourseController implements ICourseController {
             const { name, duration, overview, price,image, curriculum } = req.body
             const data = { name, duration, overview, price, curriculum: JSON.parse(curriculum) }
 
-            const response = await this.courseService.createCourse(data)
+            const file = req.file
+            console.log(file,'file in create course');
+            
+            const response = await this.courseService.createCourse(data,file)
+            console.log(response,'response in create coruse');
+            
             if (!response) {
-                return errorResponse(res, HttpStatus.CONFLICT, ERROR_MESSAGES.COURSE_ALREADY_EXISTS)
+                return errorResponse(res, HttpStatus.CONFLICT, ERROR_MESSAGES.INVALID_CREADENTIALS)
             }
             return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.COURSE_CREATED, response)
         } catch (error) {

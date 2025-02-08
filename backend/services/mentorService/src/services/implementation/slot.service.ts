@@ -56,6 +56,8 @@ export class SlotService implements ISlotService {
 
 
             const findAnyoneBookedSession = await this.bookingRepository.findByBookingData(mentorId, date, time)
+            console.log(findAnyoneBookedSession, 'findAnyoneBookedSession');
+            
             if (findAnyoneBookedSession) {
                 throw new CustomError(ERROR_MESSAGES.SESSION_ALREADY_BOOKED, HttpStatus.BAD_REQUEST)
 
