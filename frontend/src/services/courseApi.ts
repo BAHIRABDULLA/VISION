@@ -125,7 +125,7 @@ export const getAllResourceWithCourseId = async (courseId: string) => {
 
 export const getPurchasedCourses = async () => {
     try {
-        const response = await privateApi.get(`${ROUTES.COURSE}/user/`)
+        const response = await privateApi.get(`${ROUTES.COURSE}/user`)
         return response
     } catch (error) {
         if (error instanceof AxiosError) {
