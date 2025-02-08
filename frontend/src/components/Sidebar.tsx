@@ -46,8 +46,8 @@ const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollapsed }) 
     { label: 'Chat', icon: <FaComments />, badge: '5', path: '/dashboard/chat' },
     { label: 'Video Call', icon: <FaVideo />, badge: '5', path: '/dashboard/video-call-users' },
     { label: 'Billing History', icon: <FaHistory />, path: '/dashboard/billing' },
-    { label: 'My Courses', icon: <PiBooksFill />, path: '/dashboard/user-courses' },
-    ...(role === 'mentor' ?[{ label: 'Slot Management', icon: <FaCheckToSlot />, path: '/dashboard/slot-manage' }]:[]),
+    ...(role === 'mentee' ? [{ label: 'My Courses', icon: <PiBooksFill />, path: '/dashboard/user-courses' }] : []),
+    ...(role === 'mentor' ? [{ label: 'Slot Management', icon: <FaCheckToSlot />, path: '/dashboard/slot-manage' }] : []),
     { label: 'Log out', icon: <FaSignOutAlt />, onClick: logoutUser },
     { label: theme === 'light' ? 'Dark Mode' : 'Light Mode', icon: theme === 'light' ? <DarkModeIcon /> : <LightModeIcon />, onClick: () => dispatch(toggleTheme()) }
 
@@ -78,12 +78,12 @@ const Sidebar: React.FC<SidebarProps> = ({ role, isCollapsed, setIsCollapsed }) 
             to={path || '#'}
             onClick={onClick ? () => onClick() : undefined}
             className={`w-full flex items-center justify-between p-4 ${location.pathname === path
-                ? theme === 'light'
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-purple-600 text-white'
-                : theme === 'light'
-                  ? 'hover:bg-purple-400 hover:text-white'
-                  : 'hover:bg-purple-600'
+              ? theme === 'light'
+                ? 'bg-purple-500 text-white'
+                : 'bg-purple-600 text-white'
+              : theme === 'light'
+                ? 'hover:bg-purple-400 hover:text-white'
+                : 'hover:bg-purple-600'
               } rounded-md transition cursor-pointer relative ${isCollapsed ? 'justify-center' : ''}`}
           >
             <div className="flex items-center space-x-3">

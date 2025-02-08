@@ -5,6 +5,8 @@ import { uploadFile } from "../../utils/file.upload";
 import { IPaymentRepository } from "../../repositories/interface/IPayment.repository";
 import { IPayment } from "../../models/payment.model";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants";
+import CustomError from "../../utils/custom.error";
+import { HttpStatus } from "../../enums/http.status";
 interface courseData {
     _id: string
     name: string
@@ -29,7 +31,7 @@ export class CourseService implements ICourseService {
 
             const checkCourse = await this.courseRepository.findByName(data.name)
             if (checkCourse) {
-                return null
+                throw new CustomError(ERROR_MESSAGES.COURSE_ALREADY_EXISTS, HttpStatus.CONFLICT)
             }
 
             let s3FileUrl = ''
@@ -43,13 +45,16 @@ export class CourseService implements ICourseService {
                     throw new Error('File upload failed');
                 }
                 s3FileUrl = result.Location
-
+                console.log(s3FileUrl, 's3FileUrl');
                 data.image = s3FileUrl
             }
+            console.log(data, 'data in create course');
+            console.log(s3FileUrl, 's3FileUrl in create course');
+            
             const response = await this.courseRepository.create(data)
             return response
         } catch (error) {
-            return null
+            throw error
         }
     }
 
@@ -60,7 +65,7 @@ export class CourseService implements ICourseService {
 
             return { success: true, message: SUCCESS_MESSAGES.ALL_COURSES_FETCHED, data }
         } catch (error) {
-            return { success: false, message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR }
+            throw error
         }
     }
 
@@ -75,7 +80,7 @@ export class CourseService implements ICourseService {
             }
             return { success: true, message: ERROR_MESSAGES.COURSE_NOT_FOUND, course: findCourse }
         } catch (error) {
-            return { success: false, message: ERROR_MESSAGES.ERROR_RETRIEVING_COURSE_DETAILS }
+            throw error
         }
     }
 
@@ -107,7 +112,6 @@ export class CourseService implements ICourseService {
             return response
         } catch (error) {
             return null
-
         }
     }
 

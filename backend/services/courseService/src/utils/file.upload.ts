@@ -75,7 +75,7 @@ const s3 = new AWS.S3({
 export const uploadFile = (fileContent: Buffer,fileName: string,fileType: string)=>{
     try {
         const params = {
-            Bucket:process.env.BUCKET_NAME!,
+            Bucket:bucketName!,
             Key: fileName,
             Body: fileContent,
             ContentType: fileType
