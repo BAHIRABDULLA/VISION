@@ -32,6 +32,13 @@ spec:
                 name: messaging-service
                 port:
                   number: 4006
+          - path: /payment/webhook
+            pathType: Prefix
+            backend:
+              service:
+                name: payment-service
+                port:
+                  number: 4005
           - path: /api/
             pathType: Prefix
             backend:
