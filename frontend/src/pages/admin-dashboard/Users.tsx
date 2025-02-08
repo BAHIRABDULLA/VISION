@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { LuView } from "react-icons/lu";
-import Search from '@/components/Search';
+// import Search from '@/components/Search';
 
 
 
@@ -23,7 +23,7 @@ const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
   console.log(users, 'users');
 
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [searchQuery, setSearchQuery] = useState('');
 
   const allUsers = async () => {
     try {
@@ -49,7 +49,7 @@ const Users: React.FC = () => {
     <div className="p-8 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-4xl font-bold text-gray-800">Users List</h2>
-        <Search placeholder="Search for users" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+        {/* <Search placeholder="Search for users" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} /> */}
       </div>
       <div className="shadow-lg rounded-lg overflow-hidden">
 

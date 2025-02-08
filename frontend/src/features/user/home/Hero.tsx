@@ -25,7 +25,7 @@ const Hero = () => {
                 Start Learning
               </button> */}
 
-              <div className="flex gap-16 mt-12">
+              {/* <div className="flex gap-16 mt-12">
                 <div>
                   <h3 className="text-3xl font-bold mb-2 text-lightText dark:text-white">5,000+</h3>
                   <p className="text-gray-500 dark:text-gray-400">Active Students</p>
@@ -34,7 +34,7 @@ const Hero = () => {
                   <h3 className="text-3xl font-bold mb-2 text-lightText dark:text-white">300+</h3>
                   <p className="text-gray-500 dark:text-gray-400">Expert Mentors</p>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Right Image */}
