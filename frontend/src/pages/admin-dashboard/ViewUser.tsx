@@ -289,7 +289,7 @@ const ViewUser = () => {
       <div className="lg:col-span-2 space-y-6 mt-3">
 
         {/* Recent Activity */}
-        <Card>
+        {/* <Card>
           <h2>Recent Activity</h2>
           <CardContent>
             <div className="space-y-4">
@@ -304,9 +304,7 @@ const ViewUser = () => {
               ))}
             </div>
           </CardContent>
-        </Card>
-
-        {/* Engagement Chart Placeholder */}
+        </Card> */}
 
       </div>
     </div>
