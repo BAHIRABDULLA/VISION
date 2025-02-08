@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { TextField, MenuItem, Select, FormControl, InputLabel, Button, Typography } from "@mui/material";
-import {useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import {  useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { courseShemaType } from "./AddCourse";
 import toast, { Toaster } from "react-hot-toast";
 import {  getAllCourses, getResourceDetails } from "@/services/courseApi";
-
 
 
 export const resourceSchema = z.object({
@@ -40,7 +39,6 @@ type levelCourses = {
 
 const EditResource = () => {
 
-    // const navigate = useNavigate()
     const [contentType, setContentType] = useState("text");
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState('')

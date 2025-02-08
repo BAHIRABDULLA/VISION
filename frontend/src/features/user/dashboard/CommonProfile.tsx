@@ -31,8 +31,6 @@ const CommonProfile = ({ userData }) => {
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isEditingCommonData, setIsEditingCommonData] = useState(false);
-  const [signedUrl, setSignedUrl] = useState<string | null>(null);
-  const [filekey, setFileKey] = useState<string | null>(null);
   useEffect(() => {
     const dataSetting = async () => {
 
@@ -40,32 +38,7 @@ const CommonProfile = ({ userData }) => {
     };
     dataSetting();
   }, [userData, selectedFile]);
-  // useEffect(() => {
-  //   const dataSetting = async () => {
-  //     if (!selectedFile) {
-  //       if (
-  //         userData?.profile &&
-  //         userData.profile !==
-  //           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
-  //       ) {
-  //         const filePath = userData.profile;
-  //         const fileType = getFileTypeFromUrl(filePath);
-  //         console.log(fileType, "file pate");
-
-  //         const response = await getSignedUrl(filePath, fileType);
-
-  //         if (response?.status === 200) {
-  //           const { signedUrl } = response.data;
-  //           setImagePreview(signedUrl);
-  //         }
-  //       } else {
-  //         setImagePreview(userData.profile);
-  //       }
-  //     }
-  //   };
-  //   dataSetting();
-  // }, [userData, selectedFile]);
-
+ 
 
 
   useEffect(() => {
@@ -84,8 +57,6 @@ const CommonProfile = ({ userData }) => {
       );
       if (response?.status && response.status === 200) {
         const { signedUrl, key } = response.data;
-        setSignedUrl(signedUrl);
-        setFileKey(key);
         return { signedUrl, key };
       } else {
         toast.error("Failed to generate signed url");
@@ -157,20 +128,7 @@ const CommonProfile = ({ userData }) => {
       // setUploading(false);
     }
   };
-  const getFileTypeFromUrl = (url) => {
-    const fileExtension = url.split(".").pop();
-    console.log(fileExtension, "file extions");
-
-    switch (fileExtension.toLowerCase()) {
-      case "jpg":
-      case "jpeg":
-        return "image/jpeg";
-      case "png":
-        return "image/png";
-      default:
-        return "application/octet-stream";
-    }
-  };
+  
   return (
     <>
       <form key={1} onSubmit={handleSubmit(handleCommonDataSubmit)}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './Header'; // Make sure this path is correct
+import Header from './Header';
 
 const NotFoundPage: React.FC = () => {
     return (

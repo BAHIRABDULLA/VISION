@@ -5,9 +5,9 @@ import { Link, useParams } from 'react-router-dom';
 import { CommonDetails } from '@/interfaces/UserList';
 import { MenteeDetails } from '@/interfaces/UserList';
 import { MentorDetails } from '@/interfaces/UserList';
-import { Card, CardHeader, CardContent } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 import {
-  Mail, User, Shield, Check, X, Calendar, Book, Users, Award, Building2,
+  Mail, User, Shield, Check, X, Calendar,  Building2,
   MapPin, ChartBarStacked, Briefcase, ListTodo
 } from 'lucide-react';
 import { updateUserActiveStatus } from '@/services/adminApi';
@@ -18,6 +18,7 @@ const ViewUser = () => {
 
 
   const { id } = useParams()
+  // const role = id?.slice(0, 6)
 
   const userId = id?.slice(7)
   if (!userId) {
@@ -70,9 +71,9 @@ const ViewUser = () => {
     return <div>Loading user details...</div>;
   }
 
-  const isMentor = (user: CommonDetails | MentorDetails | MenteeDetails): user is MentorDetails => {
-    return user.role === 'mentor' && 'isApproved' in user;
-  };
+  // const isMentor = (user: CommonDetails | MentorDetails | MenteeDetails): user is MentorDetails => {
+  //   return user.role === 'mentor' && 'isApproved' in user;
+  // };
 
   return (
     <div className="min-h-screen  p-6">

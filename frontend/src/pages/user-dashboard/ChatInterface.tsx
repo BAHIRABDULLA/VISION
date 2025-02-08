@@ -1,5 +1,3 @@
-import React from 'react';
-import { Alert, AlertTitle } from '@mui/material';
 import { Button } from '@mui/material';
 import { Card, CardContent} from '@mui/material';
 import { MessageCircle, Send, ShoppingCart, Users } from 'lucide-react';
