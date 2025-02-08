@@ -14,7 +14,7 @@ const MentorPage: React.FC = () => {
     const mode = useSelector((state: RootState) => state.theme.mode)
     const [sortBy, setSortBy] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
-    const [_totalPages, setTotalPages] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState({
