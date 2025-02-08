@@ -14,7 +14,7 @@ router.post('/generate-signed-url', adminAuthenticateToken, resourceController.g
 router.patch('/status/:resourceId',adminAuthenticateToken,resourceController.updateResourceStatus.bind(resourceController))
 router.get('/course/:courseId',resourceController.getResourcesByCourseId.bind(resourceController))
 router.get('/:id',resourceController.getResourceById.bind(resourceController))
-
+router.patch('/:id',adminAuthenticateToken,upload.single('file'),resourceController.editResource.bind(resourceController))
 router.get('/',resourceController.getResources.bind(resourceController))
 router.post('/',adminAuthenticateToken,resourceController.createResource.bind(resourceController));
 

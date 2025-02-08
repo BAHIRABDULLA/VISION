@@ -44,28 +44,22 @@ export class ResourseController implements IResourceController {
         }
     }
 
-    // async generateSignedUrl(req: Request, res: Response, next: NextFunction) {
-    //     try {
-    //         const { fileName, fileType } = req.body
-    //         if (!fileName || !fileType) {
-    //             return res.status(400).json({
-    //                 success: false,
-    //                 message: 'fileName and fileType are required'
-    //             });
-    //         }
-    //         const params = {
-    //             Bucket: process.env.BUCKET_NAME!,
-    //             Key: fileName,
-    //             Expires: 3600,
-    //             ContentType: fileType,
+    
 
-    //         }
-    //         const signedUrl = await s3.getSignedUrlPromise('putObject', params)
-    //         res.status(HttpStatus.OK).json({ signedUrl, key: fileName })
-    //     } catch (error) {
-    //         next(error)
-    //     }
-    // }
+    async editResource(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params
+            console.log(id, 'id');
+            
+            const data = req.body
+            console.log(data, 'data');
+            
+            const response = await this.resourceService.editResource(id, data)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.RESOURCE_UPDATED, response)
+        } catch (error) {
+            next(error)
+        }
+    }
 
     async getResources(req: Request, res: Response, next: NextFunction) {
         try {
@@ -82,9 +76,8 @@ export class ResourseController implements IResourceController {
             let { title, type, course, level, topic, content } = req.body
             console.log(content, 'content ');
 
-            const data = req.body
             const response = await this.resourceService.createResourse(title, type, course, level, topic, content)
-            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.RESOURCE_CREATED)
+            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.RESOURCE_CREATED,response)
 
         } catch (error) {
             next(error)

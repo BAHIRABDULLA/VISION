@@ -85,7 +85,8 @@ export class PaymentService implements IPaymentService {
 
     async webhookHandleSave(event: Stripe.Event): Promise<null> {
         try {
-
+            console.log('}}}}}}       {{{{{{{{{{{{{');
+            
             if (event.type === 'checkout.session.completed') {
                 const session = event.data.object as Stripe.Checkout.Session;
 
@@ -100,11 +101,12 @@ export class PaymentService implements IPaymentService {
                         stripePaymentIntentId: session.payment_intent as string
                     }
                 )
-
-                if (response?.isModified) {
+                console.log('- - - -  - - webhook service  - - - --  ',response );
+                if (response) {
+                    console.log(response, 'response in webhook handle save in service ');
+                    // if (response?.isModified) {
                     await publishMessage(response)
                 }
-
             }
             return null
         } catch (error) {
@@ -233,7 +235,7 @@ export class PaymentService implements IPaymentService {
     async getUserBillingHistory(userId: string) {
         try {
             const response = await this.paymentRepository.findUserPayments(userId)
-            console.log(response, 'response in get user billing history in service ');
+            // console.log(response, 'response in get user billing history in service ');
             return response
         } catch (error) {
             throw error
