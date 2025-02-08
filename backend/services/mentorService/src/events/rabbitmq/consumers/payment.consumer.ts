@@ -6,7 +6,7 @@ export const receiveMessage = async () => {
         const channel = getChannel()
 
         const exchange = 'logs_fanout'
-        await channel.assertExchange(exchange, 'fanout', { durable: true })
+        await channel.assertExchange(exchange, 'fanout', { durable: false })
 
         const { queue } = await channel.assertQueue('', { exclusive: false })
         await channel.bindQueue(queue, exchange, '')
