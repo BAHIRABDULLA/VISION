@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Card, CardContent, Button, Alert, AlertTitle } from '@mui/material';
-import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRightLeft } from 'lucide-react';
 
 import { getBookingDetails, handleBookingSessionStatus } from '@/services/mentorApi';

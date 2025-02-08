@@ -14,7 +14,7 @@ import ForgetPassEmail from '@/pages/authentication/ForgetPassEmail'
 import ForgetPassOtp from '@/pages/authentication/ForgetPassOtp'
 import NewPassword from '@/pages/authentication/NewPassword'
 import SignUpOtp from '@/pages/authentication/SignUpOtp'
-import NotFoundPage from '@/components/NotFound'
+// import NotFoundPage from '@/components/NotFound'
 import Loading from '@/components/Loading'
 
 

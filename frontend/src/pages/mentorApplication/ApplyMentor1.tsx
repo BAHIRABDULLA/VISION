@@ -3,16 +3,14 @@ import visionLogo from '../../assets/auth/vison_logo_black.svg'
 import Input from '@/components/Input'
 import { TextField, Autocomplete, Box } from '@mui/material'
 
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useLocation } from 'react-router-dom';
 import { countries } from '@/constants/countries';
 import { getAllCategories } from '@/services/adminApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
 import { resetSkills } from '@/redux/slices/mentorApplicationSlice';
-import { getSignedUrl } from '@/services/mentorApi';
 
 {/* <ImageCropper imageSrc={imageSrc} onCropComplete={handleCropComplete} /> */ }
 
@@ -72,8 +70,7 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     // console.log(imagePreview, 'imagePreview');
 
 
-    const location = useLocation()
-    const { register, control, handleSubmit, setValue, getValues, formState: { errors }, } = useForm<applyMentorSchemaType>({
+    const { register, handleSubmit, setValue, formState: { errors }, } = useForm<applyMentorSchemaType>({
         resolver: zodResolver(applyMentorSchema),
         defaultValues: {
             file: firstComponentData?.file || null,

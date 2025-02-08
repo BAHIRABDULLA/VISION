@@ -8,10 +8,9 @@ import { loginApi } from '@/services/adminApi'
 import { z } from 'zod'
 import { zodResolver, } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import loginPhoto from '@/assets/auth/3d-isometric-flat-of-mentoring-vector-50068473.jpg'
 import { useDispatch } from 'react-redux'
 import { login } from '@/redux/slices/adminAuthSlice'
-import { Alert, Card, CardContent } from '@mui/material'
+import {  Card, CardContent } from '@mui/material'
 
 
 const loginSchema = z.object({

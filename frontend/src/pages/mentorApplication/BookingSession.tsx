@@ -4,17 +4,16 @@ import React, { useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast';
 
 
-interface BookingData {
-    date: Date;
-    time: string
-}
+// interface BookingData {
+//     date: Date;
+//     time: string
+// }
 interface BookingProps {
     slots: any,
     mentorId: string;
-    bookingData: BookingData[]
 }
 
-const BookingSession: React.FC<BookingProps> = ({ slots, mentorId, bookingData }) => {
+const BookingSession: React.FC<BookingProps> = ({ slots, mentorId }) => {
 
 
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
@@ -152,8 +151,7 @@ const BookingSession: React.FC<BookingProps> = ({ slots, mentorId, bookingData }
         }
     }
 
-    availableSlots.map((slot, i)=>{        
-    })
+   
     return (
         <>
             <Toaster />
