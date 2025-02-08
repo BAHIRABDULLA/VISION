@@ -1,7 +1,7 @@
 import { connection, getChannel } from "../../config/rabbitmq"
 
 
-export const publishMessage = async (data: object, exchangeName: string = 'logs_fanout') => {
+export const publishMessage = async (data: object, exchangeName: string = 'logs_fanoutt') => {
     try {
         const channel =  getChannel()
         await channel.assertExchange(exchangeName, 'fanout', { durable: false })
