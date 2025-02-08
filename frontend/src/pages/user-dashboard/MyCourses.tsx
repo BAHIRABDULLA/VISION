@@ -12,9 +12,10 @@ const MyCourses = () => {
   const fetchCourses = async () => {
     try {
       const response = await getPurchasedCourses();
-      setMyCourse(response.data?.response)
+      setMyCourse(response.data?.response || [])
     } catch (error) {
       console.error('Error fetching courses: ', error);
+      setMyCourse([])
     }
   }
 
