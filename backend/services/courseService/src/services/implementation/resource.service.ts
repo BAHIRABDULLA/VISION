@@ -59,6 +59,18 @@ export class ResourceService implements IResourseService {
         }
     }
 
+    async editResource(id: string, data: Partial<IResource>): Promise<Partial<IResource> | null> {
+        try {
+            const response = await this.resourceRepository.update(id, data)
+            if (!response?.isModified) {
+                return null
+            }
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
+
     async updateResourceStatus(resourceId: string, status: 'active' | 'block') {
         try {
             const response = await this.resourceRepository.update(resourceId, { status })
@@ -74,9 +86,13 @@ export class ResourceService implements IResourseService {
     async getResourceById(id: string): Promise<Partial<IResource> | null> {
         try {
             const resourceData = await this.resourceRepository.findByIdWithCourse(id)
-            if (!resourceData) {
+            if(!resourceData) {
                 throw new CustomError(ERROR_MESSAGES.RESOURCE_NOT_FOUND, HttpStatus.NOTFOUND)
             }
+            if(resourceData?.type !== 'text' && resourceData.content) {
+                resourceData.content = await generateDownloadPresignedUrl(resourceData.content)
+            }
+        
             return resourceData
         } catch (error) {
             throw error

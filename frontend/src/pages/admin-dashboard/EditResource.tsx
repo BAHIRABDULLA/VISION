@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { TextField, MenuItem, Select, FormControl, InputLabel, Button, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { z } from 'zod';
-import {  useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { courseShemaType } from "./AddCourse";
 import toast, { Toaster } from "react-hot-toast";
-import {  getAllCourses, getResourceDetails } from "@/services/courseApi";
+import { editResource, getAllCourses, getResourceDetails, getSignedUrl } from "@/services/courseApi";
+import axios from "axios";
 
 
 export const resourceSchema = z.object({
@@ -38,63 +39,100 @@ type levelCourses = {
 
 
 const EditResource = () => {
-
+    const navigate = useNavigate();
     const [contentType, setContentType] = useState("text");
     const [courses, setCourses] = useState([]);
-    const [selectedCourse, setSelectedCourse] = useState('')
-    const [resource, setResource] = useState<resourceSchemaType>()
-
-    const [selelctedLevel, setSelectedLevel] = useState('')
-
-    const [topics, setTopics] = useState([])
-    const params = useParams()
-
-    // const [level, setLevel] = useState("Basic");
+    const [selectedCourse, setSelectedCourse] = useState('');
+    const [resource, setResource] = useState<resourceSchemaType>();
+    const [selectedLevel, setSelectedLevel] = useState('');
+    const [topics, setTopics] = useState([]);
+    const [selectedTopic, setSelectedTopic] = useState('');
+    const params = useParams();
     const [content, setContent] = useState<File | null>(null);
+    const [signedUrl, setSignedUrl] = useState<string | null>(null);
+    const [fileKey, setFileKey] = useState<string | null>(null);
     const levels = ["Basic", "Intermediate", "Advanced"];
-
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<resourceSchemaType>({
         resolver: zodResolver(resourceSchema),
-        defaultValues: {
-            title: resource?.title,
-            type: resource?.type,
-            course: resource?.course,
-            level: resource?.level,
-            topic: resource?.topic,
-            content: resource?.content
-        }
+        // defaultValues: {
+        //     title: resource?.title,
+        //     type: resource?.type,
+        //     course: resource?.course,
+        //     level: resource?.level,
+        //     topic: resource?.topic,
+        //     content: resource?.content
+        // }
     });
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.[0]) {
-            setContent(e.target.files[0])
-            setValue("content", e.target.files[0])
+    const generateSignedUrl = async (file: File) => {
+        try {
+            const response = await getSignedUrl(`${Date.now()}_${file.name}`, file.type);
+            if (response?.status && response.status === 200) {
+                const { signedUrl, key } = response.data;
+                setSignedUrl(signedUrl);
+                setFileKey(key);
+            } else {
+                toast.error('Failed to generate signed url');
+            }
+        } catch (error) {
+            console.error('Error generating signed URL:', error);
+            toast.error('An error occurred while preparing the file upload');
         }
-    }
-    useEffect(() => {
-        console.log(errors, 'errors in use effecty ');
+    };
 
-    })
+    const uploadFileToS3 = async (file: File, presignedUrl: string) => {
+        try {
+            const response = await axios.put(presignedUrl, file, {
+                headers: {
+                    "Content-Type": file.type,
+                    "Accept": "application/json"
+                }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error uploading file:", error);
+            throw error;
+        }
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files?.[0]) {
+            const file = e.target.files[0];
+            setContent(file);
+            setValue("content", file);
+        }
+    };
+
     useEffect(() => {
         const fetchResource = async () => {
             const response = await getResourceDetails(params.id);
+            console.log(response, 'response in edit resource');
+
             if (response?.status && response?.status >= 400) {
                 toast.error(response?.data?.message || 'An error occurred');
             } else if (response?.data) {
-                const resourceData = {
-                    ...response.data,
-                };
+                const resourceData = response.data;
                 setResource(resourceData);
-                // setValue("title", resourceData.title);
-                // setValue("type", resourceData.type);
                 setSelectedCourse(resourceData.course.name);
                 setSelectedLevel(resourceData.level);
-                // setValue("topic", resourceData.topic);
+                setSelectedTopic(resourceData.topic);
+                setContentType(resourceData.type);
+                setValue("topic", resourceData.topic);
+                setValue("title", resourceData.title);
+                setValue("type", resourceData.type);
+                setValue("course", resourceData.course.name);
+                setValue("level", resourceData.level);
+                setValue("content", resourceData.content || '');
 
-                if (resourceData.content && resourceData.type !== "text") {
-                    setContent(resourceData.content);
-                    setContentType(resourceData.type);
+
+
+                if (resourceData.content) {
+                    if (resourceData.type === 'text') {
+                        setValue("content", resourceData.content);
+                    } else {
+                        setValue("content", resourceData.content);
+                    }
                 }
             }
         };
@@ -103,60 +141,74 @@ const EditResource = () => {
 
     useEffect(() => {
         const fetchCourses = async () => {
-            const response = await getAllCourses()
+            const response = await getAllCourses();
             if (response?.data) {
-                setCourses(response.data.data)
+                setCourses(response.data.data);
             }
-        }
-        fetchCourses()
-    }, [])
+        };
+        fetchCourses();
+    }, []);
 
     useEffect(() => {
-        if (selectedCourse && selelctedLevel) {
-            const course: any = courses.find((course: courseShemaType) => course.name === selectedCourse)
+        if (selectedCourse && selectedLevel) {
+            const course: any = courses.find((course: courseShemaType) => course.name === selectedCourse);
             if (course && course.curriculum) {
                 const levelTopics: levelCourses = course.curriculum.find((item) => {
-                    return item.level === selelctedLevel
-                })
-                setTopics(levelTopics ? levelTopics.topics : [])
-                setValue('topic', resource?.topic)
+                    return item.level === selectedLevel;
+                });
+                setTopics(levelTopics ? levelTopics.topics : []);
             } else {
-                setTopics([])
+                setTopics([]);
             }
         } else {
-            setTopics([])
+            setTopics([]);
         }
-    }, [selectedCourse, selelctedLevel, courses, resource?.topic])
-
-
+    }, [selectedCourse, selectedLevel, courses]);
 
     const onSubmit = async (data: resourceSchemaType) => {
-        const formData = new FormData();
-        formData.append("title", data.title.trim());
-        formData.append("type", data.type.trim());
-        formData.append("course", data.course.trim());
-        formData.append("level", data.level.trim());
-        formData.append("topic", data.topic.trim());
-
-        if (content) {
-            formData.append("content", content);
-        } else {
-            formData.append("content", data.content)
-        }
-       
         try {
-            // const response =  await editResource(formData, 'id'); 
+            if (contentType !== 'text' && content) {
+                // Only generate signed URL and upload if there's a new file
+                await generateSignedUrl(content);
+                if (signedUrl) {
+                    await uploadFileToS3(content, signedUrl);
+                    data.content = fileKey;
+                }
+            }
+            console.log(data.course, 'data.course');
 
-            // if(response.status&& response.status>=400){
-            //     return toast.error(response.data.message||'There is an error occured')
-            // }else{
-            //     navigate('/admin/resources')
-            // }
+            const formData = new FormData();
+            formData.append("title", data.title.trim());
+            formData.append("type", data.type.trim());
+            const selectedCourseObj = courses.find((course) => course.name === selectedCourse);
+            if (!selectedCourseObj) {
+                toast.error('Invalid course selection');
+                return;
+            }
+            formData.append("course", selectedCourseObj._id);
+            formData.append("level", data.level);
+            formData.append("topic", data.topic);
+
+            // If it's a text content or no new file was uploaded, use the existing content
+            if (contentType === 'text' || !content) {
+                formData.append("content", data.content as string);
+            } else {
+                formData.append("content", fileKey || '');
+            }
+
+            const response = await editResource(formData, params.id);
+            if (response.status && response.status >= 400) {
+                toast.error(response.data.message || 'An error occurred');
+            } else {
+                toast.success('Resource updated successfully');
+                navigate('/admin/resources');
+            }
         } catch (error) {
-            console.error('Error founded in edit resource', error);
+            console.error('Error updating resource:', error);
+            toast.error('Failed to update resource');
         }
-
     };
+
 
 
     return (
@@ -204,7 +256,7 @@ const EditResource = () => {
                 <FormControl fullWidth className="bg-white">
                     <InputLabel>Level</InputLabel>
                     <Select
-                        value={selelctedLevel}  {...register('level')}
+                        value={selectedLevel}  {...register('level')}
                         onChange={(e) => setSelectedLevel(e.target.value)} variant="outlined"
                     >
                         {levels.map((lvl) => (
@@ -218,7 +270,8 @@ const EditResource = () => {
                 <FormControl fullWidth className="bg-white mb-4">
                     <InputLabel>Topic</InputLabel>
                     <Select
-                        value={resource?.topic}
+                        // value={resource?.topic}
+                        value={selectedTopic}
                         variant="outlined"  {...register('topic')}
                         disabled={!topics.length}
                     >

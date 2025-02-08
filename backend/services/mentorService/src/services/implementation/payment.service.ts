@@ -24,6 +24,8 @@ export class PaymentService implements IPaymentService {
 
     async savePaymentData(data:IPaymentData): Promise<null> {
         try {
+            console.log('its herer in save payment data ');
+            
             const response = await this.paymentRepository.create(data)
             let count = 0
             if(data.type=='mentorship_subscription'){

@@ -43,10 +43,13 @@ export class PaymentController implements IPaymentController {
         if (!sig) {
             return res.status(400).send('Webhook Error: Missing signature or secret');
         }
-
+        console.log(sig,'++++++++++    sig ++++++++++');
+        
         try {
             event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SIGNIN_SECRET!);
+            console.log('event',   event,'-----=-',process.env.STRIPE_WEBHOOK_SIGNIN_SECRET!);
             if (event) {
+                
                 await this.paymentService.webhookHandleSave(event);
                 res.json({ received: true });
             } else {

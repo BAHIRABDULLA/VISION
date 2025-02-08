@@ -20,9 +20,10 @@ const MentorSlider: React.FC = () => {
     const fetchMentors = async () => {
       try {
         const response = await getAllMentors();
-        setMentors(response.data.response);
+        setMentors(response.data.response||[]);
       } catch (error) {
         console.error(error);
+        setMentors([]);
       }
     };
     fetchMentors();
