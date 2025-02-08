@@ -27,7 +27,7 @@ const MyCourses = () => {
 
 
         {/* Course Grid */}
-        {!myCourse&& myCourse.length == 0 ?
+        {myCourse.length == 0 ?
           (<div className="flex flex-col items-center justify-center h-80">
             <p className="text-lg font-semibold text-gray-700 dark:text-white mb-4">
               You haven’t purchased any courses yet!
@@ -46,7 +46,7 @@ const MyCourses = () => {
           </div>) :
           (<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            {myCourse && myCourse.map(course => (
+            {myCourse.map(course => (
               <div key={course._id} className="bg-gray-300 dark:bg-gray-600 rounded-lg shadow overflow-hidden">
                 <img
                   src={course?.courseId.image}
