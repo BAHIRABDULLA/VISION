@@ -101,7 +101,7 @@ export class SlotService implements ISlotService {
             }
             const response = await this.bookingRepository.create(data)
             await this.userRepository.update(menteeId, { sessionCount: checkSessionBooked.sessionCount - 1 })
-            const sendDataToPaymentService = await axios.post('https://apivision.bahirabdulla.online/payment/booking/create',
+            const sendDataToPaymentService = await axios.post('https://apivision.bahirabdulla.online/api/payment/booking/create',
                 response,
                 {
                     headers:
