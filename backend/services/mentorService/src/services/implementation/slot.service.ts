@@ -19,7 +19,7 @@ export class SlotService implements ISlotService {
     constructor(private slotRepository: SlotRepository,
         private bookingRepository: BookingRepository,
         private paymentRepository: IPaymentRepository,
-        private userRepository:IUserRepository) { }
+        private userRepository: IUserRepository) { }
 
     async createSlot(time: string, availableDays: string[], mentorId: string) {
         try {
@@ -57,7 +57,7 @@ export class SlotService implements ISlotService {
 
             const findAnyoneBookedSession = await this.bookingRepository.findByBookingData(mentorId, date, time)
             console.log(findAnyoneBookedSession, 'findAnyoneBookedSession');
-            
+
             if (findAnyoneBookedSession) {
                 throw new CustomError(ERROR_MESSAGES.SESSION_ALREADY_BOOKED, HttpStatus.BAD_REQUEST)
 
@@ -67,30 +67,33 @@ export class SlotService implements ISlotService {
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const dayName = days[dayIndex]
             // const checkSessionBooked = await this.paymentRepository.findByMenteeAndMentorId(menteeId, mentorId)
-            const checkSessionBooked = await this.userRepository.findById(menteeId)
-            if (!checkSessionBooked) {
-                throw new CustomError(ERROR_MESSAGES.USER_NOT_FOUND, HttpStatus.NOT_FOUND)
-            }
-            if(checkSessionBooked.sessionCount==0){
-                throw new CustomError(ERROR_MESSAGES.PURCHASE_MENTORSHIP_PLAN_REQUIRED, HttpStatus.UNAUTHORIZED)
-            }
-            
+
             const today = new Date()
             const providedDate = new Date(date)
             if (providedDate < today) {
                 throw new CustomError('Selected date cannot be in the past. Please choose a valid date', HttpStatus.UNAUTHORIZED)
             }
-            const mentorSlots = await this.slotRepository.findMentorSlots(mentorId)
-            if (!mentorSlots || mentorSlots.slots.length === 0) {
-                throw new CustomError('There are no available slots for the mentor. Please try again', HttpStatus.NOT_FOUND)
+
+            const checkSessionBooked = await this.userRepository.findById(menteeId)
+            if (!checkSessionBooked) {
+                throw new CustomError(ERROR_MESSAGES.USER_NOT_FOUND, HttpStatus.NOT_FOUND)
             }
-            const isSlotAvailable = mentorSlots.slots.some(slot => {
-                const slotTime = slot.time
-                return slot.availableDays.includes(dayName) && slotTime === time
-            })
-            if (!isSlotAvailable) {
-                throw new CustomError('The selected date and time are not available . Please choose a valid slot', HttpStatus.CONFLICT)
+            if (checkSessionBooked.sessionCount == 0) {
+                throw new CustomError(ERROR_MESSAGES.PURCHASE_MENTORSHIP_PLAN_REQUIRED, HttpStatus.UNAUTHORIZED)
             }
+
+
+            // const mentorSlots = await this.slotRepository.findMentorSlots(mentorId)
+            // if (!mentorSlots || mentorSlots.slots.length === 0) {
+            //     throw new CustomError('There are no available slots for the mentor. Please try again', HttpStatus.NOT_FOUND)
+            // }
+            // const isSlotAvailable = mentorSlots.slots.some(slot => {
+            //     const slotTime = slot.time
+            //     return slot.availableDays.includes(dayName) && slotTime === time
+            // })
+            // if (!isSlotAvailable) {
+            //     throw new CustomError('The selected date and time are not available . Please choose a valid slot', HttpStatus.CONFLICT)
+            // }
 
             const data: Partial<IBooking> = {
                 mentorId: new mongoose.Types.ObjectId(mentorId),
@@ -99,7 +102,7 @@ export class SlotService implements ISlotService {
                 time
             }
             const response = await this.bookingRepository.create(data)
-            await this.userRepository.update(menteeId,{sessionCount:checkSessionBooked.sessionCount-1})
+            await this.userRepository.update(menteeId, { sessionCount: checkSessionBooked.sessionCount - 1 })
             const sendDataToPaymentService = await axios.post('https://apivision.bahirabdulla.online/payment/booking/create',
                 response,
                 {
