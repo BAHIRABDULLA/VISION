@@ -6,9 +6,11 @@ export class BookingService implements IBookingService{
 
 
     async createBookingData(data:object){
-        try {            
-            const response = await this.bookingRepository.create(data)
-            return response
+        try {   
+            console.log(data, 'data in booking service in paymentService');
+                     
+             await this.bookingRepository.create(data)
+            return null
         } catch (error) {
             console.error('Error founded in create booking data in booking service in paymentService',error)
             throw error            

@@ -74,8 +74,6 @@ export class SlotController implements ISlotController{
 
     async bookingSlot(req:customRequest,res:Response ,next:NextFunction){
         try {
-
-            
             const {mentorId,time,date} = req.body
             const user = req.user as JwtPayload
             const token = req.headers['authorization']?.split(' ')[1]!
