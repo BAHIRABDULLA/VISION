@@ -66,23 +66,21 @@ export class SlotService implements ISlotService {
             const dayIndex = givenDate.getDay()
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const dayName = days[dayIndex]
-            // const checkSessionBooked = await this.paymentRepository.findByMenteeAndMentorId(menteeId, mentorId)
-
             const today = new Date()
             const providedDate = new Date(date)
             if (providedDate < today) {
                 throw new CustomError('Selected date cannot be in the past. Please choose a valid date', HttpStatus.UNAUTHORIZED)
             }
-
+            // const checkSessionBooked = await this.paymentRepository.findByMenteeAndMentorId(menteeId, mentorId)
             const checkSessionBooked = await this.userRepository.findById(menteeId)
             if (!checkSessionBooked) {
                 throw new CustomError(ERROR_MESSAGES.USER_NOT_FOUND, HttpStatus.NOT_FOUND)
             }
-            if (checkSessionBooked.sessionCount == 0) {
+            if(checkSessionBooked.sessionCount==0){
                 throw new CustomError(ERROR_MESSAGES.PURCHASE_MENTORSHIP_PLAN_REQUIRED, HttpStatus.UNAUTHORIZED)
             }
-
-
+            
+           
             // const mentorSlots = await this.slotRepository.findMentorSlots(mentorId)
             // if (!mentorSlots || mentorSlots.slots.length === 0) {
             //     throw new CustomError('There are no available slots for the mentor. Please try again', HttpStatus.NOT_FOUND)

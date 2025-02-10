@@ -15,7 +15,7 @@ import Google from '@/components/Google';
 
 // Zod schema validation
 const signUpSchema = z.object({
-  fullName: z.string().min(1, { message: "Name cannot be empty" }),
+  fullName: z.string().trim().min(1, { message: "Name cannot be empty" }),
   email: z.string().email({ message: 'Invalid email address' }),
   password: z.string()
     .min(8, { message: "Password must be at least 8 characters long" })

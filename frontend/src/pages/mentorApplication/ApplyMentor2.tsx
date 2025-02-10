@@ -16,8 +16,8 @@ const applyMentorSchema = z.object({
         (val) => (val === '' ? undefined : val),
         z.string().url({ message: "Invalid URL" }).optional(),
     ),
-    whyBecomeMentor: z.string().min(1, { message: "This filed is required" }),
-    greatestAchievement: z.string().min(1, { message: "This filed is required" })
+    whyBecomeMentor: z.string().trim().min(10, { message: "This filed is required , please write atleast 10 letter" }),
+    greatestAchievement: z.string().trim().min(10, { message: "This filed is required , please write atleast 10 letter" })
 });
 
 type applyMentorSchemaType = z.infer<typeof applyMentorSchema>
