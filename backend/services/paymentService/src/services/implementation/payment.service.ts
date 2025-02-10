@@ -118,22 +118,21 @@ export class PaymentService implements IPaymentService {
     async commonSession(userEmail: string, planType: string, menteeId: string, mentorId: string, sessionPrice: number) {
 
         try {
-            const checkBookingSessionExpired = await this.bookingRepository.findUserBookedSession(menteeId, mentorId)
-            const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000)
-            // const oneMinuteAgo = new Date(Date.now() - 1 * 60 * 1000);
+            // const checkBookingSessionExpired = await this.bookingRepository.findUserBookedSession(menteeId, mentorId)
+            // const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000)
 
-            const findUserBoughtMentorship = await this.paymentRepository.findUserBoughtPlans(menteeId)
-            if (checkBookingSessionExpired && (checkBookingSessionExpired?.date > twoHoursAgo)) {
+            // const findUserBoughtMentorship = await this.paymentRepository.findUserBoughtPlans(menteeId)
+            // if (checkBookingSessionExpired && (checkBookingSessionExpired?.date > twoHoursAgo)) {
 
-                if (findUserBoughtMentorship?.status === 'completed') {
-                    throw new CustomError(`${findUserBoughtMentorship.type} session already purchased`, HttpStatus.UNAUTHORIZED)
-                }
-            }
+            //     if (findUserBoughtMentorship?.status === 'completed') {
+            //         throw new CustomError(`${findUserBoughtMentorship.type} session already purchased`, HttpStatus.UNAUTHORIZED)
+            //     }
+            // }
 
 
-            if (findUserBoughtMentorship?.status === 'pending') {
-                await this.paymentRepository.delete(findUserBoughtMentorship.id)
-            }
+            // if (findUserBoughtMentorship?.status === 'pending') {
+            //     await this.paymentRepository.delete(findUserBoughtMentorship.id)
+            // }
             if (planType === 'one-time') {
                 const session = await this.stripe.checkout.sessions.create({
                     payment_method_types: ['card'],

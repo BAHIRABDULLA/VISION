@@ -66,6 +66,11 @@ export class SlotService implements ISlotService {
             const dayIndex = givenDate.getDay()
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const dayName = days[dayIndex]
+            const today = new Date()
+            const providedDate = new Date(date)
+            if (providedDate < today) {
+                throw new CustomError('Selected date cannot be in the past. Please choose a valid date', HttpStatus.UNAUTHORIZED)
+            }
             // const checkSessionBooked = await this.paymentRepository.findByMenteeAndMentorId(menteeId, mentorId)
             const checkSessionBooked = await this.userRepository.findById(menteeId)
             if (!checkSessionBooked) {
@@ -75,22 +80,18 @@ export class SlotService implements ISlotService {
                 throw new CustomError(ERROR_MESSAGES.PURCHASE_MENTORSHIP_PLAN_REQUIRED, HttpStatus.UNAUTHORIZED)
             }
             
-            const today = new Date()
-            const providedDate = new Date(date)
-            if (providedDate < today) {
-                throw new CustomError('Selected date cannot be in the past. Please choose a valid date', HttpStatus.UNAUTHORIZED)
-            }
-            const mentorSlots = await this.slotRepository.findMentorSlots(mentorId)
-            if (!mentorSlots || mentorSlots.slots.length === 0) {
-                throw new CustomError('There are no available slots for the mentor. Please try again', HttpStatus.NOT_FOUND)
-            }
-            const isSlotAvailable = mentorSlots.slots.some(slot => {
-                const slotTime = slot.time
-                return slot.availableDays.includes(dayName) && slotTime === time
-            })
-            if (!isSlotAvailable) {
-                throw new CustomError('The selected date and time are not available . Please choose a valid slot', HttpStatus.CONFLICT)
-            }
+           
+            // const mentorSlots = await this.slotRepository.findMentorSlots(mentorId)
+            // if (!mentorSlots || mentorSlots.slots.length === 0) {
+            //     throw new CustomError('There are no available slots for the mentor. Please try again', HttpStatus.NOT_FOUND)
+            // }
+            // const isSlotAvailable = mentorSlots.slots.some(slot => {
+            //     const slotTime = slot.time
+            //     return slot.availableDays.includes(dayName) && slotTime === time
+            // })
+            // if (!isSlotAvailable) {
+            //     throw new CustomError('The selected date and time are not available . Please choose a valid slot', HttpStatus.CONFLICT)
+            // }
 
             const data: Partial<IBooking> = {
                 mentorId: new mongoose.Types.ObjectId(mentorId),

@@ -21,11 +21,11 @@ import { resetSkills } from '@/redux/slices/mentorApplicationSlice';
 
 const applyMentorSchema = z.object({
     file: z.optional(z.any()),
-    jobTitle: z.string().min(1, { message: "Job Title is required" }),
+    jobTitle: z.string().trim().min(1, { message: "Job Title is required" }),
     category: z.string().min(1, { message: "Category is required" }),
     country: z.string().min(1, { message: "Country is required" }),
     location: z.string().min(1, { message: "Location is required" }),
-    company: z.string().optional(),
+    company: z.string().trim().optional(),
     experience: z.preprocess(
         (val) => (val !== null && val !== undefined ? parseFloat(val as string) : undefined),
         z.number().min(1, { message: "Experience is required" })
@@ -33,7 +33,7 @@ const applyMentorSchema = z.object({
     skills: z
         .array(z.string().min(1, { message: "Skills are required" }))
         .min(1, { message: "At least one skill is required" }),
-    bio: z.string().min(1, { message: "Bio is required" }),
+    bio: z.string().trim().min(10, { message: "Bio is required , please write atleast 10 letter" }),
     socialMediaUrls: z.object({
         github: z.preprocess(
             (val) => (val === '' ? undefined : val),

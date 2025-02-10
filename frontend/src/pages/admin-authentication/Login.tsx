@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import vision_logo2 from '@/assets/auth/vison_logo_black.svg'
 import Input from '@/components/Input'
@@ -29,6 +29,14 @@ const AdminLogin = () => {
 
     const [error, setError] = useState('')
 
+    useEffect(() => {
+        if(error){
+            setTimeout(() => {
+                setError('')
+            }, 4000);
+        }
+    }
+    , [error])
 
     const onSubmit = async (data: object) => {
         try {
@@ -38,10 +46,12 @@ const AdminLogin = () => {
                 dispatch(login({ token: response.data.token, admin: response.data }))
                 navigate('/admin/dashboard')
             } else {
-                setError(response?.data.message)
+                setError(response?.data.message || 'Invalide credentials, Please try again')
             }
         } catch (error) {
             console.error('Error founded in admin login', error);
+            setError( 'Invalide credentials, Please try again')
+            
         }
 
     }

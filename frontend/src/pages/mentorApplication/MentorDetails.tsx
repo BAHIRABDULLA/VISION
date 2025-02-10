@@ -42,6 +42,8 @@ const MentorDetails: React.FC = () => {
     const { id } = useParams()
 
     const [mentorData, setMentorData] = useState<MentorData | undefined>(undefined)
+    console.log(mentorData, 'mentorData');  
+    
     const [groupedSlots, setGroupedSlots] = useState<Record<string, string[]>>({})
     // const [bookingData , setBookingData]  = useState<BookingData[]>([])
     useEffect(() => {
@@ -49,9 +51,15 @@ const MentorDetails: React.FC = () => {
             try {
                 if (id) {
                     const respnose = await mentorSpecificData(id)
+                    console.log(respnose, 'mentor data');
+                    
                     const { mentor, slots} = respnose?.data || {}
                     // const formattedBookings  = bookingData.map(({date,time})=>({date,time}))
                     // setBookingData(formattedBookings)
+                    if(!slots) {
+                        setMentorData({ ...mentor })
+                        return
+                    }
                     const slotGrouped: Record<string, string[]> = {}
 
                     slots.slots.forEach((slot:{availableDays:string[],time:any}) => {
@@ -72,6 +80,8 @@ const MentorDetails: React.FC = () => {
                 }
             } catch (error) {
                 console.error('Error founded in fetchmentor data', error);
+                
+
             }
         }
         fetchMentorData()
