@@ -20,3 +20,14 @@ export const getAllUsers = async (userId:string) => {
     }
    
 }
+
+export const getChatHistory = async (userId:string,selectedUserId:string) => {
+    try {
+        const response = await privateApi.get(`/messages/chat-history/${userId}/${selectedUserId}`)
+        return response
+    } catch (error) {
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}

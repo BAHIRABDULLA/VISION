@@ -24,7 +24,6 @@ export class PaymentService implements IPaymentService {
 
     async savePaymentData(data:IPaymentData): Promise<null> {
         try {
-            console.log('its herer in save payment data ');
             
             const response = await this.paymentRepository.create(data)
             let count = 0
@@ -42,7 +41,6 @@ export class PaymentService implements IPaymentService {
                 count = user.sessionCount + count
             }
             await this.userRepository.update(data.menteeId,{sessionCount:count})
-            console.log(response,'response in save payment data ');
             return null
         } catch (error) {
             return null

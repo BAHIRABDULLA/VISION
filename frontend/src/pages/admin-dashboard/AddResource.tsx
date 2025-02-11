@@ -11,9 +11,9 @@ import axios from "axios";
 
 
 export const resourceSchema = z.object({
-    title: z.string().min(1, { message: "Resource title is required" }),
+    title: z.string().trim().min(1, { message: "Resource title is required" }),
     type: z.enum(['text', 'image', 'video'], { message: "Resource type is required" }),
-    course: z.string().min(1, { message: "Course is required" }),
+    course: z.string().trim().min(1, { message: "Course is required" }),
     level: z.string().min(1, { message: "Course level is required" }),
     topic: z.string().min(1, { message: "Course topic is required" }),
     content: z.union([z.string().optional(), z.instanceof(File).optional()]).optional(),
@@ -44,16 +44,12 @@ const AddResources = () => {
     const [selelctedLevel, setSelectedLevel] = useState('')
     const [topics, setTopics] = useState([])
     const [content, setContent] = useState<File | null>(null);
-    console.log(content, 'content +++++');
 
     const levels = ["Basic", "Intermediate", "Advanced"];
 
 
-    const [signedUrl, setSignedUrl] = useState<string | null>(null);
-    console.log(signedUrl, 'signed url ');
 
     const [filekey, setFileKey] = useState<string | null>(null);
-    console.log(filekey, 'file key = = = ');
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<resourceSchemaType>({
         resolver: zodResolver(resourceSchema)
@@ -62,7 +58,6 @@ const AddResources = () => {
 
     useEffect(() => {
         console.log(errors, 'errors in use effecty ');
-
     })
 
     const fetchCourses = async () => {
@@ -96,20 +91,17 @@ const AddResources = () => {
     const onSubmit = async (data: resourceSchemaType) => {
 
         if (contentType !== 'text') {
-            await generateSignedUrl(content)
-
-            console.log(content, 'content', signedUrl, 'signed url ');
-
-            const uploadFile = await uploadFileToS3(content, signedUrl)
-            console.log(uploadFile, 'uploadf file');
-            console.log(filekey, 'file key ', content.name, 'content.name');
-
+            const signedUrlData = await generateSignedUrl(content)
+            if (!signedUrlData) {
+                toast.error("Failed to get signed URL");
+                return;
+              }
+              const { signedUrl } = signedUrlData;
+            await uploadFileToS3(content, signedUrl)
             data.content = filekey
 
         }
         const response = await addResource(data);
-        console.log(response, 'response ');
-
         if (response.status && response.status >= 400) {
             return toast.error(response.data.message || 'There is an error occured')
         } else {
@@ -119,16 +111,13 @@ const AddResources = () => {
 
     const generateSignedUrl = async (file: File) => {
         try {
-            console.log(file.name, 'file.name - - - ',file.type,'file.type - - - ');
 
             const response = await getSignedUrl(`${Date.now()}_${file.name}`, file.type)
-            console.log(response, 'response in generate signed url');
 
             if (response?.status && response.status === 200) {
                 const { signedUrl, key } = response.data
-                setSignedUrl(signedUrl)
                 setFileKey(key)
-
+                return { signedUrl, key }
             } else {
                 toast.error('Failed to generate signed url')
             }
@@ -146,8 +135,6 @@ const AddResources = () => {
                     "Accept": "application/json"
                 }
             })
-            console.log(response, 'rsponse _++_=======');
-
             return response
         } catch (error) {
             console.error("Error uploading file:", error);
@@ -156,8 +143,6 @@ const AddResources = () => {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files[0]
-        console.log(file, 'file file file');
-
         if (file) {
             const reader = new FileReader();
             reader.readAsDataURL(file);

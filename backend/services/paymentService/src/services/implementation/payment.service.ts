@@ -100,10 +100,7 @@ export class PaymentService implements IPaymentService {
                         stripePaymentIntentId: session.payment_intent as string
                     }
                 )
-                console.log('- - - -  - - webhook service  - - - --  ', response);
                 if (response) {
-                    console.log(response, 'response in webhook handle save in service ');
-                    // if (response?.isModified) {
                     await publishMessage(response)
                 }
             }
@@ -233,7 +230,6 @@ export class PaymentService implements IPaymentService {
     async getUserBillingHistory(userId: string, role: 'mentee' | 'mentor') {
         try {
             const response = await this.paymentRepository.findUserPayments(userId, role)
-            console.log(response, 'response in get user billing history in service ');
             return response
         } catch (error) {
             throw error

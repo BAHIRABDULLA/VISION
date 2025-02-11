@@ -14,14 +14,12 @@ const Profile = () => {
 
     const [userData, setUserData] = useState<userSchemaType | null>(null)
     const [loading, setLoading] = useState(true)
-    console.log('its here');
 
     useEffect(() => {
         const fetchUserDetails = async () => {
             try {
                 const userDetails = await getUserDetails()
                 setUserData(userDetails.data)
-                console.log(userData, 'user data', userDetails.data, '-------');
             } catch (error) {
                 console.error('Error founded in user details', error);
             } finally {

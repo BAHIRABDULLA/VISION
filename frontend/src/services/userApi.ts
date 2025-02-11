@@ -105,3 +105,13 @@ export const getSignedUrl = async (fileName: string, fileType: any) => {
         return error
     }
 }
+
+
+export const getCountUserAndMentor = async () => {
+    try {
+        const response = await api.get('/count-user-mentor')
+        return response
+    } catch (error) {
+        return error
+    }
+}

@@ -32,7 +32,6 @@ const Resource: React.FC = () => {
   }, [])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedResource, setSelectedResource] = useState(null)
-  console.log(selectedResource, 'sleceted resource');
 
   const [selectedStatus, setSelectedStatus] = useState<string>("")
   const openModal = (resource: any, status: string) => {

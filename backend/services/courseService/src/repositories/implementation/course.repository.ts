@@ -7,7 +7,7 @@ import { BaseRepository } from "./base.repository"
 class CourseRepository extends BaseRepository<ICourse> implements ICourseRepository {
     async findByName(name: string): Promise<ICourse | null> {
         try {
-            const course = await Course.findOne({ name })
+            const course = await Course.findOne({ name :{ $regex: new RegExp(`^${name}$`, 'i')}})
             return course
         } catch (error) {
             throw error

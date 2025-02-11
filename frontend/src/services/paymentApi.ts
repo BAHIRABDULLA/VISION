@@ -92,6 +92,15 @@ export const getAllTransaction = async () => {
     }
 }
 
+export const getTopReviews = async ()=>{
+    try {
+        const response = await api.get('/review/top')
+        return response
+    } catch (error) {
+        return null
+    }
+}
+
 export const getUserBillingHistory = async () => {
     try {
         const response = await privateApi.get('/payment/billing/history')

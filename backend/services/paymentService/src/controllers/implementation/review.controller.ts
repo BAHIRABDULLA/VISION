@@ -50,6 +50,14 @@ export class ReviewController implements IReviewController {
         }
     }
 
+    async getTopReviews(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response = await this.reviewService.getTopReviews()
+            successResponse(res, HttpStatus.OK, 'Reviews fetched', { reviews: response })
+        } catch (error) {
+            next(error)
+        }
+    }
 
     async getTotalReview(req:Request,res:Response,next:NextFunction){
         try {            

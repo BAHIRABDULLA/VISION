@@ -1,8 +1,25 @@
 
 import heroImage from '@/assets/becomementor_pre_head_img.png'
+import { getCountUserAndMentor } from '@/services/userApi';
+import { useEffect, useState } from 'react';
 
 const Hero = () => {
 
+  const [userCount,setUserCount] = useState<number>(0);
+  const [mentorCount,setMentorCount] = useState<number>(0);
+  useEffect(()=>{
+    const countUserAndMentor = async () => {
+      try {
+        const response = await getCountUserAndMentor();
+        const {userCount,mentorCount} = response?.data || {userCount:0,mentorCount:0};
+        setUserCount(userCount);
+        setMentorCount(mentorCount);
+      } catch (error) {
+        console.error('Error fetching billing history:', error);
+      }
+    };
+    countUserAndMentor();
+  },[])
 
   return (
     <>
@@ -27,11 +44,11 @@ const Hero = () => {
 
               <div className="flex gap-16 mt-12">
                 <div>
-                  <h3 className="text-3xl font-bold mb-2 text-lightText dark:text-white">5,000+</h3>
+                  <h3 className="text-3xl font-bold mb-2 text-lightText dark:text-white">{userCount}+</h3>
                   <p className="text-gray-500 dark:text-gray-400">Active Students</p>
                 </div>
                 <div>
-                  <h3 className="text-3xl font-bold mb-2 text-lightText dark:text-white">300+</h3>
+                  <h3 className="text-3xl font-bold mb-2 text-lightText dark:text-white">{mentorCount}+</h3>
                   <p className="text-gray-500 dark:text-gray-400">Expert Mentors</p>
                 </div>
               </div>

@@ -8,11 +8,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
 
     async findByBookingData(mentorId:string,date:Date,time:string){
         try {
-            console.log(mentorId,'mentorId');
-            
-            const response = await bookingModel.findOne({mentorId,date,time})
-            console.log(response,'response');
-            
+            const response = await bookingModel.findOne({mentorId,date,time})            
             return response
         } catch (error) {
             throw error

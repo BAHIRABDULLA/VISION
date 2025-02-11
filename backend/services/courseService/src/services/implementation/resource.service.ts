@@ -89,8 +89,9 @@ export class ResourceService implements IResourseService {
             if(!resourceData) {
                 throw new CustomError(ERROR_MESSAGES.RESOURCE_NOT_FOUND, HttpStatus.NOTFOUND)
             }
+            
             if(resourceData?.type !== 'text' && resourceData.content) {
-                resourceData.content = await generateDownloadPresignedUrl(resourceData.content)
+                resourceData.content = await generateDownloadPresignedUrl(resourceData.content)                
             }
         
             return resourceData
@@ -109,7 +110,6 @@ export class ResourceService implements IResourseService {
             if (!resourceData || resourceData.length <= 0) {
                 throw new CustomError(ERROR_MESSAGES.RESOURCE_NOT_FOUND, HttpStatus.NOTFOUND)
             }
-            console.log(resourceData, 'resourcedata');
 
             const resources = await Promise.all(
                 resourceData.map(async resource => {
@@ -125,8 +125,6 @@ export class ResourceService implements IResourseService {
                     }
                 }).filter(Boolean)
             )
-            console.log(resources, 'resouces');
-
             return resources
         } catch (error) {
             throw error

@@ -17,7 +17,9 @@ export const addCourse = async (data: object) => {
         const response = await adminPrivateApi.post(`${ROUTES.COURSE}`, data)
         return response
     } catch (error) {
-        return error
+        if(error instanceof AxiosError){
+            return error.response
+        }
     }
 }
 

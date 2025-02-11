@@ -52,7 +52,7 @@ export class ResourseController implements IResourceController {
             console.log(id, 'id');
             
             const data = req.body
-            console.log(data, 'data');
+            console.log(data, 'data',req.body.title);
             
             const response = await this.resourceService.editResource(id, data)
             return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.RESOURCE_UPDATED, response)

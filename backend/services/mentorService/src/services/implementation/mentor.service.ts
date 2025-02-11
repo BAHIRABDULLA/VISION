@@ -13,6 +13,7 @@ import { IBookingRepository } from "../../repositories/interface/IBooking.reposi
 import { ICategoryRepository } from "../../repositories/interface/ICategory.repository";
 import { ICategory } from "../../model/category.model";
 import { ERROR_MESSAGES, USER_IMAGE } from "../../constants";
+import { generateDownloadPresignedUrl } from "../../utils/upload";
 
 
 export interface mentorParamsData {
@@ -62,15 +63,15 @@ export class MentorService implements IMentorService {
             }
 
             const newMentor = await this.mentorRepoistory.create(mentorData);
-            
+
             const data = {
                 id: newMentor.mentor
             }
-            
+
             if (file == '') {
                 file = USER_IMAGE
             }
-            await this.userRepository.update(checkUser._id.toString(), { isMentorFormFilled: true ,profile:file})
+            await this.userRepository.update(checkUser._id.toString(), { isMentorFormFilled: true, profile: file })
             await sendMentorData(newMentor.toObject(), file)
 
             if (!newMentor) {
@@ -98,6 +99,16 @@ export class MentorService implements IMentorService {
     async getAllMentorsWithPopulatedData() {
         try {
             const mentors = await this.mentorRepoistory.findAllWithUserData()
+            if (!mentors) {
+                return []
+            }
+            await Promise.all(mentors.map(async (mentor) => {
+                if (mentor?.mentor?.profile && mentor?.mentor?.profile !== USER_IMAGE) {
+                    const getImageUrl = await generateDownloadPresignedUrl(mentor?.mentor?.profile)
+                    mentor.mentor.profile = getImageUrl
+                }
+            })
+            )
             return mentors
         } catch (error) {
             throw error
@@ -189,8 +200,15 @@ export class MentorService implements IMentorService {
             const { search, priceRange, experience, expertise, rating, location, page, limit } = params;
 
 
-            const mentors = await this.mentorRepoistory.findAllWithUserData()
+            const mentors = await this.mentorRepoistory.findAllWithUserData() ?? []
             const approvedMentors = mentors?.filter((mentor: IPopulatedMentor) => mentor.mentor !== null)
+            await Promise.all(approvedMentors.map(async (mentor) => {
+                if (mentor?.mentor?.profile && mentor?.mentor?.profile !== USER_IMAGE) {
+                    const getImageUrl = await generateDownloadPresignedUrl(mentor?.mentor?.profile)
+                    mentor.mentor.profile = getImageUrl
+                }
+            })
+            )
             const findAllCategories = await this.categoryRepository.findAll()
 
             const categoryNames = findAllCategories.map((category) => category.name)
@@ -214,7 +232,7 @@ export class MentorService implements IMentorService {
                         (experience === '1-3' && (mentor.experience ?? 0) >= 1 && (mentor.experience ?? 0) <= 3) ||
                         (experience === '4-7' && (mentor.experience ?? 0) >= 4 && (mentor.experience ?? 0) <= 7) ||
                         (experience === '8+' && (mentor.experience ?? 0) >= 8);
-                    const mathesExpertise = expertise === 'any' || categoryNames.includes(expertise) &&mentor.category===expertise
+                    const mathesExpertise = expertise === 'any' || categoryNames.includes(expertise) && mentor.category === expertise
                     const matchesLocation = location === 'any' || mentor.location.toLowerCase().includes(location.toLowerCase())
 
                     return (mentorSearch && matchesPriceRange && matchesExperience && mathesExpertise && matchesLocation)
@@ -263,7 +281,7 @@ export class MentorService implements IMentorService {
         }
     }
 
-    async getAllCategoris(){
+    async getAllCategoris() {
         try {
             const response = await this.categoryRepository.findAll()
             return response

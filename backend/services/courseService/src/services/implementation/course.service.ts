@@ -30,6 +30,7 @@ export class CourseService implements ICourseService {
         try {
 
             const checkCourse = await this.courseRepository.findByName(data.name)
+            
             if (checkCourse) {
                 throw new CustomError(ERROR_MESSAGES.COURSE_ALREADY_EXISTS, HttpStatus.CONFLICT)
             }
@@ -45,12 +46,8 @@ export class CourseService implements ICourseService {
                     throw new Error('File upload failed');
                 }
                 s3FileUrl = result.Location
-                console.log(s3FileUrl, 's3FileUrl');
                 data.image = s3FileUrl
-            }
-            console.log(data, 'data in create course');
-            console.log(s3FileUrl, 's3FileUrl in create course');
-            
+            }            
             const response = await this.courseRepository.create(data)
             return response
         } catch (error) {

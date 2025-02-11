@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 const CommonProfile = ({ userData }) => {
-  console.log(userData, "user data in common profile");
 
   const {
     register,
