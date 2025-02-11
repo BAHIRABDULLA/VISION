@@ -4,19 +4,16 @@ import { messageService } from '../config/container'
 const connectedUsers = new Map<string, string>()
 
 const chatSocketHandler = (namespace: Namespace, socket: Socket) => {
-    
+
     const userId = socket.handshake.auth.userId
-    
     if (!userId) {
         socket.disconnect()
         return
     }
-
-
     connectedUsers.set(userId, socket.id)
-    
 
     socket.on('chat-user_join', ({ userId }) => {
+        console.log(userId, 'joined');
         
         if (!userId) {
             console.error('Invalid user_join event: no userId provided')
@@ -27,6 +24,7 @@ const chatSocketHandler = (namespace: Namespace, socket: Socket) => {
 
     socket.on('chat-private_message', async ({ to, message }, callback) => {
         try {
+            console.log('Received private message:', { to, message });
             
             const sender = socket.data.userId
             if (!sender || !to || !message) {
@@ -35,7 +33,7 @@ const chatSocketHandler = (namespace: Namespace, socket: Socket) => {
                 return
             }
 
-            
+
             await messageService.saveMessage(sender, to, message)
 
             // Get recipient's socket ID from our map
@@ -46,11 +44,14 @@ const chatSocketHandler = (namespace: Namespace, socket: Socket) => {
                     sender,
                     timestamp: new Date().toISOString()
                 })
-                callback?.({ success: true })
-            } else {
-                console.log(`User ${to} is not connected`)
-                callback?.({ error: 'User is offline' })
+
+
             }
+            callback?.({ success: true })
+            //  else {
+            //     console.log(`User ${to} is not connected`)
+            //     callback?.({ error: 'User is offline' })
+            // }
         } catch (error) {
             console.error('Error handling private message:', error)
             callback?.({ error: 'Failed to process message' })

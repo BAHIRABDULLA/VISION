@@ -14,7 +14,6 @@ import { updateUserActiveStatus } from '@/services/adminApi';
 
 const ViewUser = () => {
   const [userDetails, setUserDetails] = useState<CommonDetails | MentorDetails | MenteeDetails | null>(null);
-  console.log(userDetails, 'userdetails in view user ');
 
 
   const { id } = useParams()

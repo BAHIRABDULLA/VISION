@@ -42,7 +42,6 @@ const MentorDetails: React.FC = () => {
     const { id } = useParams()
 
     const [mentorData, setMentorData] = useState<MentorData | undefined>(undefined)
-    console.log(mentorData, 'mentorData');  
     
     const [groupedSlots, setGroupedSlots] = useState<Record<string, string[]>>({})
     // const [bookingData , setBookingData]  = useState<BookingData[]>([])
@@ -51,7 +50,6 @@ const MentorDetails: React.FC = () => {
             try {
                 if (id) {
                     const respnose = await mentorSpecificData(id)
-                    console.log(respnose, 'mentor data');
                     
                     const { mentor, slots} = respnose?.data || {}
                     // const formattedBookings  = bookingData.map(({date,time})=>({date,time}))

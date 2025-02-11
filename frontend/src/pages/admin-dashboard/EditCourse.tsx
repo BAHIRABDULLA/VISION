@@ -24,7 +24,7 @@ const EditCourse = () => {
   const params = useParams()
 
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<courseShemaType>({
+  const { register,setValue, handleSubmit, formState: { errors }, reset } = useForm<courseShemaType>({
     resolver: zodResolver(courseSchema)
   });
   useEffect(() => {
@@ -105,6 +105,7 @@ const EditCourse = () => {
 
     if (file) {
       setSelectedImage(file)
+      setValue('image', file)
       // setSelectedImage(URL.createObjectURL(file))
       // setImageFile(file)
     }
@@ -238,7 +239,7 @@ const EditCourse = () => {
 
           <div className='flex gap-4'>
             <div>
-              <TextField label="Duration" {...register("duration")} fullWidth defaultValue={course?.duration} margin="normal" />
+              <TextField label="Duration (in months)" {...register("duration")} fullWidth defaultValue={course?.duration} margin="normal" />
               {errors.duration && <p className="text-red-500">{errors.duration.message}</p>}
             </div>
             <div>

@@ -104,6 +104,18 @@ export class UserService implements IUserService {
         }
     }
 
+    async getCountUserAndMentor() {
+        try {
+            const users= await this.userRepository.findAll()
+            const userCount = users.filter(user => user.role === 'mentee').length
+            const mentorCount = users.filter(user => (user.role === 'mentor'&& user.isApproved==='approved' ) ).length            
+            return { userCount, mentorCount }
+        } catch (error) {
+            console.error('Error founded in get count of user and mentor', error);
+            throw error
+        }
+    }
+
 
     async updateUserStatus(id: string, isActive: boolean) {
         try {

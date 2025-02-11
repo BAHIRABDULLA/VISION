@@ -43,11 +43,19 @@ export class ReviewService {
                 userId: new mongoose.Types.ObjectId(data.userId)
             }
             const response = await this.reviewRepository.create(reviewData)
-            console.log(response, 'response in add review ');
             return response
 
         } catch (error) {
             console.error('Error founded in create course review', error);
+            throw error
+        }
+    }
+
+    async getTopReviews() {
+        try {
+            const response = await this.reviewRepository.findTopReviews()            
+            return response
+        } catch (error) {
             throw error
         }
     }

@@ -132,6 +132,15 @@ export class UserController implements IUserController {
         }
     }
 
+    async getCountUserAndMentor(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response = await this.userService.getCountUserAndMentor()
+            res.status(HttpStatus.OK).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async updateUserStatus(req: Request, res: Response, next: NextFunction) {
         try {
             const { isActive } = req.body

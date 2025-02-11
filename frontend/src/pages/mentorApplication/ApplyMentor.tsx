@@ -18,8 +18,6 @@ const ApplyMentor = () => {
 
     const handleNextstep = (data: any) => {
         dispatch(setFirstComponentData(data))
-        console.log(data, 'data', formData, 'formData');
-
         setFormData({ ...formData, ...data })
         setStep(step + 1)
     }
@@ -32,7 +30,6 @@ const ApplyMentor = () => {
         dispatch(resetApplicationData())
         const finalData = { ...formData, ...data }
         const formDataObj = new FormData()
-        console.log(finalData, 'finalData');
 
         for (const keys in finalData) {
             if (keys === 'file') {
@@ -45,16 +42,13 @@ const ApplyMentor = () => {
                     );
                     if (response?.status && response.status === 200) {
                         const { signedUrl, key } = response.data;
-                        console.log(signedUrl, 'signedUrl', key, 'key');
 
-                        const uploadImageToS3 = await axios.put(signedUrl, file, {
+                        await axios.put(signedUrl, file, {
                             headers: { "Content-Type": file.type },
                         });
-                        console.log(uploadImageToS3, 'uplaod image to s3');
 
                         finalData[keys] = key
                     }
-                    console.log(finalData[keys], 'finalData key', keys, 'key');
 
                 }
 
@@ -69,9 +63,7 @@ const ApplyMentor = () => {
             }
         }
         formDataObj.append('email', email)
-        for (let [key, value] of formDataObj.entries()) {
-            console.log(`${key}:`, value);
-        }
+
 
         const response = await applyMentor(formDataObj)
         if (response.data.success) {

@@ -2,28 +2,34 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import { getAllResourceWithCourseId } from '@/services/courseApi';
+import Loading from '@/components/Loading';
 
 const Resources = () => {
     const { id } = useParams<{ id: string }>();
     const [activeLevel, setActiveLevel] = useState('Basic');
     const [resources, setResources] = useState([]);
-    
+    const [loading,setLoading] = useState(false)
     const levels = ['Basic', 'Intermediate', 'Advanced'];
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true)
                 const response = await getAllResourceWithCourseId(id);
                 setResources(response.data.response);
+                setLoading(false)
             } catch (error) {
                 console.error('Error fetching resources:', error);
+                setLoading(false)
             }
         };
         fetchData();
     }, [id]);
 
     const filteredResources = resources.filter((resource: any) => resource.level === activeLevel);
-
+    if(loading){
+        return <Loading/>
+    }
     return (
         <>
             <Header />

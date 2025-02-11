@@ -16,19 +16,34 @@ export const resourceSchema = z.object({
     type: z.enum(['text', 'image', 'video'], { message: "Resource type is required" }),
     course: z.string().min(1, { message: "Course is required" }),
     level: z.string().min(1, { message: "Course level is required" }),
-    topic: z.string().min(1, { message: "Course topic is required" }),
-    content: z.union([z.string().optional(), z.instanceof(File).optional()]).optional(),
-
-}).refine(
-    (data) =>
-        (data.type === 'text' && typeof data.content === 'string' && data.content.trim().length > 0) ||
-        (data.type === 'image' && data.content instanceof File) ||
-        (data.type === 'video' && data.content instanceof File),
-    {
-        message: "Content is required based on type",
-        path: ["content"]
+    topic: z.string().trim().min(1, { message: "Course topic is required" }),
+    content: z.union([z.string(), z.instanceof(File)]).optional(), // content can be string (URL) or File
+}).superRefine((data, ctx) => {
+    if (data.type === 'text' && (!data.content || typeof data.content !== 'string' || data.content.trim().length === 0)) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Content is required for text type",
+            path: ["content"]
+        });
     }
-)
+
+    if (data.type === 'image' && (!data.content || (typeof data.content !== 'string' && !(data.content instanceof File)))) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Image file required",
+            path: ["content"]
+        });
+    }
+
+    if (data.type === 'video' && (!data.content || (typeof data.content !== 'string' && !(data.content instanceof File)))) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Video file required",
+            path: ["content"]
+        });
+    }
+});
+
 
 type resourceSchemaType = z.infer<typeof resourceSchema>
 
@@ -49,8 +64,6 @@ const EditResource = () => {
     const [selectedTopic, setSelectedTopic] = useState('');
     const params = useParams();
     const [content, setContent] = useState<File | null>(null);
-    const [signedUrl, setSignedUrl] = useState<string | null>(null);
-    const [fileKey, setFileKey] = useState<string | null>(null);
     const levels = ["Basic", "Intermediate", "Advanced"];
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<resourceSchemaType>({
@@ -64,14 +77,15 @@ const EditResource = () => {
         //     content: resource?.content
         // }
     });
-
+    useEffect(() => {
+        console.log(errors, 'errors in edit resource');
+    })
     const generateSignedUrl = async (file: File) => {
         try {
             const response = await getSignedUrl(`${Date.now()}_${file.name}`, file.type);
             if (response?.status && response.status === 200) {
                 const { signedUrl, key } = response.data;
-                setSignedUrl(signedUrl);
-                setFileKey(key);
+                return {signedUrl, key};
             } else {
                 toast.error('Failed to generate signed url');
             }
@@ -107,7 +121,6 @@ const EditResource = () => {
     useEffect(() => {
         const fetchResource = async () => {
             const response = await getResourceDetails(params.id);
-            console.log(response, 'response in edit resource');
 
             if (response?.status && response?.status >= 400) {
                 toast.error(response?.data?.message || 'An error occurred');
@@ -164,19 +177,33 @@ const EditResource = () => {
             setTopics([]);
         }
     }, [selectedCourse, selectedLevel, courses]);
+    const extractFileName = (url: string) => {
+        try {
+            return url.split("/").pop()?.split("?")[0];
+        } catch {
+            return url;
+        };
+    }
+
 
     const onSubmit = async (data: resourceSchemaType) => {
+
         try {
+            let updatedContent = data.content;
             if (contentType !== 'text' && content) {
-                // Only generate signed URL and upload if there's a new file
-                await generateSignedUrl(content);
+
+                const getSignedUrl = await generateSignedUrl(content);
+                const {signedUrl, key} = getSignedUrl;
+
+
                 if (signedUrl) {
                     await uploadFileToS3(content, signedUrl);
-                    data.content = fileKey;
-                }
-            }
-            console.log(data.course, 'data.course');
 
+                    updatedContent = key;
+                }
+            } else if (resource.content && typeof resource.content === 'string' && resource.content.includes('https')) {
+                updatedContent = extractFileName(resource.content);
+            }
             const formData = new FormData();
             formData.append("title", data.title.trim());
             formData.append("type", data.type.trim());
@@ -189,11 +216,10 @@ const EditResource = () => {
             formData.append("level", data.level);
             formData.append("topic", data.topic);
 
-            // If it's a text content or no new file was uploaded, use the existing content
-            if (contentType === 'text' || !content) {
+            if (contentType === 'text') {
                 formData.append("content", data.content as string);
             } else {
-                formData.append("content", fileKey || '');
+                formData.append("content", updatedContent || '');
             }
 
             const response = await editResource(formData, params.id);
@@ -215,7 +241,7 @@ const EditResource = () => {
         <div className="max-w-3xl mx-auto p-6   rounded-md">
             <Toaster />
             <Typography variant="h4" className="text-center font-bold mb-6">
-                Add Resource
+                Edit Resource
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" encType="multipart/form-data">
                 <TextField label="Title" defaultValue={resource?.title} fullWidth className="bg-white" variant="outlined" {...register('title')} />
@@ -272,7 +298,9 @@ const EditResource = () => {
                     <Select
                         // value={resource?.topic}
                         value={selectedTopic}
-                        variant="outlined"  {...register('topic')}
+                        variant="outlined"
+                        onChange={(e) => setSelectedTopic(e.target.value)}
+                        // {...register('topic')}
                         disabled={!topics.length}
                     >
                         {topics.map((topic, index) => (
@@ -292,6 +320,7 @@ const EditResource = () => {
                         variant="outlined" {...register('content')}
                     />
                 )}
+                {contentType === 'text' && errors.content && <p className="text-red-500">{errors.content.message}</p>}
                 {contentType === "image" && (
                     <div>
                         <Button
@@ -301,13 +330,18 @@ const EditResource = () => {
                             Upload Image
                             <input type="file" hidden accept="image/*" onChange={handleFileChange} />
                         </Button>
-                        {content && (
+                        {content ? (
                             <div>
                                 <Typography>{content.name}</Typography>
                                 <img src={URL.createObjectURL(content)} alt="" className="mt-4 w-32" />
                             </div>
-                        )}
-
+                        ) : resource?.content ? (
+                            <div>
+                                <Typography>Existing image</Typography>
+                                <img src={resource?.content as string} alt="" className="mt-4 w-32" />
+                            </div>
+                        ) : null}
+                        {errors.content && <p className="text-red-500">{errors.content.message}</p>}
                     </div>
 
                 )}
@@ -325,8 +359,8 @@ const EditResource = () => {
                                 <Typography>{content.name}</Typography>
                                 <video src={URL.createObjectURL(content)} controls className="mt-4 w-full h-auto"></video>
                             </div>
-
                         )}
+                        {errors.content && <p className="text-red-500">{errors.content.message}</p>}
                     </div>
                 )}
 

@@ -16,7 +16,7 @@ export type courseShemaType = z.infer<typeof courseSchema>
 
 const AddCourse = () => {
   const navigate = useNavigate()
-  const { register, handleSubmit, formState: { errors } } = useForm<courseShemaType>({
+  const { register, setValue ,handleSubmit, formState: { errors } } = useForm<courseShemaType>({
     resolver: zodResolver(courseSchema)
   });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -28,6 +28,7 @@ const AddCourse = () => {
   })
 
   const onSubmit = async (data: courseShemaType) => {
+   
     try {
       const curriculumData = [
         {
@@ -52,15 +53,14 @@ const AddCourse = () => {
       if (selectedImage) {
         formData.append('image', selectedImage)
       }
-      // for (let key of formData) {
-      //   console.log(key, '}}}}}}}}',formData[key]);
-      // }
+    
       const response = await addCourse(formData)
-      if (response?.data) {
+      
+      if (response?.status<400) {
         toast.success("Course added");
         navigate('/admin/courses')
       } else {
-        toast.error("Failed to add course");
+        toast.error(response.data.message ||"Failed to add course");
       }
     } catch (error) {
       toast.error("Failed to add course");
@@ -73,6 +73,7 @@ const AddCourse = () => {
 
     if (file) {
       setSelectedImage(file)
+      setValue('image', file)
       // setSelectedImage(URL.createObjectURL(file))
       // setImageFile(file)
     }
@@ -191,15 +192,20 @@ const AddCourse = () => {
             )}
           </div>
           <div className='flex gap-5'>
-            <Input label="Duration" customClasses="w-full" {...register("duration")} />
-            {errors.duration && <p className="text-red-500">{errors.duration.message}</p>}
+            <div className='w-1/2'>
+              <Input label="Duration (in month)" customClasses="w-full" {...register("duration")} />
+              {errors.duration && <p className="text-red-500">{errors.duration.message}</p>}
+            </div>
 
-            <Input label="Price" customClasses="w-full" {...register("price")} />
-            {errors.price && <p className="text-red-500">{errors.price.message}</p>}
+            <div className='w-1/2'>
+              <Input label="Price" customClasses="w-full" {...register("price")} />
+              {errors.price && <p className="text-red-500">{errors.price.message}</p>}
+            </div>
+
           </div>
 
 
-          <Button text="Add Course" type="submit" customClasses="bg-blue-400" />
+          <Button text="Add Course" type="submit" customClasses="bg-blue-400 mt-3" />
 
           <Link className="ml-3" to="/admin/courses">
             Back

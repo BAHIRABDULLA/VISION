@@ -21,8 +21,6 @@ interface User {
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
-  console.log(users, 'users');
-
   // const [searchQuery, setSearchQuery] = useState('');
 
   const allUsers = async () => {

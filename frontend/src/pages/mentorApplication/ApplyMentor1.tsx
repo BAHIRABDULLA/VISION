@@ -67,7 +67,6 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     const dispatch = useDispatch()
 
     const [imagePreview, setImagePreview] = useState<string | null>(null)
-    // console.log(imagePreview, 'imagePreview');
 
 
     const { register, handleSubmit, setValue, formState: { errors }, } = useForm<applyMentorSchemaType>({
@@ -107,8 +106,6 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     }, [])
 
     useEffect(() => {
-        console.log(firstComponentData?.file, 'firstComponentData file');
-
         if (firstComponentData?.file instanceof Blob) {
 
             const reader = new FileReader();
@@ -124,7 +121,6 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
-        console.log(file, '  file');
         setValue("file", file);
 
 

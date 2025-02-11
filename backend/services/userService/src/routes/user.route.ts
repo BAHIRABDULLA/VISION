@@ -13,6 +13,7 @@ const upload = multer({
 
 userRoute.post('/generate-signed-url', authenticateToken, userController.generateSignedUrl.bind(userController))
 userRoute.get('/users', userController.getAllUsers.bind(userController))
+userRoute.get('/count-user-mentor',userController.getCountUserAndMentor.bind(userController))
 userRoute.get('/users/:id', userController.getUserById.bind(userController))
 userRoute.patch('/:id/approval', userController.updateUserApprovalStatus.bind(userController));
 userRoute.patch('/:id/status',userController.updateUserStatus.bind(userController))

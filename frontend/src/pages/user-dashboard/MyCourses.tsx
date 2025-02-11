@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 const MyCourses = () => {
   const [myCourse, setMyCourse] = useState([])
-  console.log(myCourse, 'mycours in my course');
 
   useEffect(() => {
     fetchCourses()

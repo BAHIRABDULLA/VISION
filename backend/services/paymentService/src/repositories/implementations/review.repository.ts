@@ -22,4 +22,12 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
         }
     }
 
+    async findTopReviews(): Promise<IReview[]> {
+        try {
+            return await Review.find({rating:{$gte:3}}).populate('userId')
+        } catch (error) {
+            throw error
+        }
+    }
+
 }
