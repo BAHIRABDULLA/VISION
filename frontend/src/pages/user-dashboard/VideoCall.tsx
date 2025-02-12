@@ -39,9 +39,6 @@ const VideoCall = () => {
       }
     }
     const now = new Date();
-    console.log(sessionTime, 'sessiontime', sessionDate, 'session data');
-    const bb = new Date(sessionDate)
-    console.log(bb, 'bb = = = = =', now, 'now = =  == ')
     const sessionDateTime = new Date(sessionDate);
     // const sessionDateTime = new Date(`${sessionDate}T${sessionTime}`);
     const timeDiff = Math.abs(now.getTime() - sessionDateTime.getTime());
@@ -87,7 +84,6 @@ const VideoCall = () => {
     const validateSession = async () => {
       try {
         const response = await getBookingDetails(bookingId)
-        console.log(response, 'booking in validate session')
 
         const validation = validateSessionTime(response.data.booking.time, response.data.booking.date);
         setSessionStatus(validation);
@@ -138,14 +134,17 @@ const VideoCall = () => {
 
     pc.ontrack = (event) => {
       setRemoteStream(event.streams[0]);
+      // if(remoteVideoRef.current){
+      //   remoteVideoRef.current.srcObject = event.streams[0]
+      // }
     };
 
     pc.onicecandidate = (event) => {
       console.log('pc.onicecandidate = (event)');
 
       if (event.candidate && socketRef.current) {
-        console.log('event.candidate && socketRef.current');
-
+        const aa =  userId === mentorId ? menteeId : mentorId
+        console.log(aa,'-aa in -',userId,'-userId-',menteeId,'-menteeId-',mentorId,'-mentorId-')
         socketRef.current.emit('ice-candidate', {
           candidate: event.candidate,
           bookingId,
@@ -185,9 +184,6 @@ const VideoCall = () => {
 
         socket.on('connect', () => {
           console.log('Socket connected', socket.id);
-
-          console.log('Emitting video-join-room');
-
           socket.emit('video-join-room', { bookingId, userId });
           console.log('after emitting video-join-room');
 
@@ -200,7 +196,9 @@ const VideoCall = () => {
           await pc.setRemoteDescription(new RTCSessionDescription(offer));
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
-
+          const dd = userId === mentorId ? menteeId : mentorId
+          console.log(dd,'==dd==',userId,'--userid--',mentorId,'--mentorId--',menteeId,'--menteeId--');
+          
           socket.emit('call-accepted', {
             answer,
             bookingId,
@@ -256,7 +254,8 @@ const VideoCall = () => {
 
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
-
+      const bb =  userId === mentorId ? menteeId : mentorId
+      console.log(bb,'==bb==',userId,'==userIds== ', menteeId,'==menteeId==',mentorId,'==mentorId==')
       socketRef.current.emit('video-call-user', {
         offer,
         bookingId,
