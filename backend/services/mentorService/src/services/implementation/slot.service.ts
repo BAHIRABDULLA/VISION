@@ -119,6 +119,7 @@ export class SlotService implements ISlotService {
         try {
 
             const response = await this.bookingRepository.findById(bookingId)
+            console.log(response, ' response in get booking slot details ')
             return response
         } catch (error) {
             throw error

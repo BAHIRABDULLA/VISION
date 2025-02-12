@@ -22,31 +22,31 @@ const videoCallSocketHandler = (namespace: Namespace, socket: Socket) => {
 
     // Handle call initiation
     socket.on('video-call-user', ({ offer, bookingId, targetUserId }) => {
-        console.log('call user activated',  bookingId, targetUserId);
-
+        console.log('call user activated',  bookingId, 'booking Id',targetUserId);
+        const userId = targetUserId._id
         socket.to(bookingId).emit('video-call-user', {
             offer,
-            targetUserId
+            targetUserId:userId
         });
     });
 
     // Handle call acceptance
     socket.on('call-accepted', ({ answer, bookingId, targetUserId }) => {
-        console.log('call acccepted activated', bookingId, targetUserId);
-
+        console.log('call acccepted activated', bookingId,'booking Id', targetUserId);
+        const userId = targetUserId._id
         socket.to(bookingId).emit('call-accepted', {
             answer,
-            targetUserId
+            targetUserId : userId
         });
     });
 
     // Handle ICE candidates
     socket.on('ice-candidate', ({ candidate, bookingId, targetUserId }) => {
-        console.log('ice candidate activated', candidate, bookingId, targetUserId);
-
+        console.log('ice candidate activated', candidate,'candidate', bookingId,'booking Id', targetUserId);
+        const userId = targetUserId._id
         socket.to(bookingId).emit('ice-candidate', {
             candidate,
-            targetUserId
+            targetUserId:userId
         });
     });
 

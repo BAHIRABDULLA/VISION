@@ -21,7 +21,7 @@ const ChatInterface = ({
     state.menteeAuth.user || state.mentorAuth.user
   );
   const groupedMessages: Record<string, typeof messages> = messages.reduce((acc, msg) => {
-    const date = format(new Date(msg.timestamp), 'dd/MM/yyyy')
+    const date = format(new Date(msg.timestamp), 'MM/dd/yyyy')
     if (!acc[date]) acc[date] = [];
     acc[date].push(msg);
     return acc;

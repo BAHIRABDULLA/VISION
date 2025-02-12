@@ -43,8 +43,11 @@ export class UserService implements IUserService{
             })=>{
                 return role==='mentee'?x.menteeId==userId:x.mentorId==userId
             })
-            const uniqueUsers = getChatUsers.reduce((acc: any[],curr: { mentorId: { _id: any; }; })=>{
-                if(!acc.some((user:any)=>user.mentorId._id== curr.mentorId._id)){
+            const uniqueUsers = getChatUsers.reduce((acc: any[],curr:any)=>{
+                if(!acc.some((user:any)=>{
+                    return role==='mentee'?user.mentorId._id ==curr.mentorId._id:user.menteeId._id== curr.menteeId._id
+                }
+                )){
                     acc.push(curr)
                 }
                 return acc

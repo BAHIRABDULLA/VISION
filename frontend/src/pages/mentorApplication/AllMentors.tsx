@@ -231,7 +231,7 @@ const MentorPage: React.FC = () => {
                                         <img
                                             src={mentor.mentor.profile}
                                             alt={mentor.fullName}
-                                            className="w-full h-full object-cover"
+                                            className="w-full  object-cover"
                                         />
                                     </div>
 
