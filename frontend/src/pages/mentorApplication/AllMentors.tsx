@@ -22,7 +22,7 @@ const MentorPage: React.FC = () => {
         experience: 'any',
         expertise: 'any',
         rating: 'any',
-        location: 'any'
+        // location: 'any'
     });
     // const totalPages = 10
     // const handlePageChange = (page: number) => {
@@ -40,7 +40,6 @@ const MentorPage: React.FC = () => {
                 experience: filters.experience,
                 expertise: filters.expertise,
                 rating: filters.rating,
-                location: filters.location,
                 page: currentPage,
                 limit: 10
             }
@@ -175,7 +174,7 @@ const MentorPage: React.FC = () => {
                                     </select>
                                 </div>
 
-                                <div>
+                                {/* <div>
                                     <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">Location</label>
                                     <select
                                         className="w-full p-2  rounded bg-white dark:bg-gray-500 text-gray-700 dark:text-white"
@@ -188,7 +187,7 @@ const MentorPage: React.FC = () => {
                                         <option value="EU">Europe</option>
                                         <option value="ASIA">Asia</option>
                                     </select>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

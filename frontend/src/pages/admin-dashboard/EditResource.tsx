@@ -156,7 +156,7 @@ const EditResource = () => {
         const fetchCourses = async () => {
             const response = await getAllCourses();
             if (response?.data) {
-                setCourses(response.data.data);
+                setCourses(response.data.courses);
             }
         };
         fetchCourses();
@@ -213,8 +213,8 @@ const EditResource = () => {
                 return;
             }
             formData.append("course", selectedCourseObj._id);
-            formData.append("level", data.level);
-            formData.append("topic", data.topic);
+            formData.append("level", selectedLevel);
+            formData.append("topic", selectedTopic);
 
             if (contentType === 'text') {
                 formData.append("content", data.content as string);
@@ -354,12 +354,23 @@ const EditResource = () => {
                             Upload Video
                             <input type="file" hidden accept="video/*" onChange={handleFileChange} />
                         </Button>
-                        {content && (
+                        {content ? (
                             <div>
                                 <Typography>{content.name}</Typography>
                                 <video src={URL.createObjectURL(content)} controls className="mt-4 w-full h-auto"></video>
                             </div>
-                        )}
+                        ) : resource?.content ? (
+                            <div>
+                                <Typography>Existing Video</Typography>
+                                <video src={resource?.content as string} controls className="mt-4 w-full h-auto"></video>
+                            </div>
+                        ) : null}
+                        {/* {content && (
+                            <div>
+                                <Typography>{content.name}</Typography>
+                                <video src={URL.createObjectURL(content)} controls className="mt-4 w-full h-auto"></video>
+                            </div>
+                        )} */}
                         {errors.content && <p className="text-red-500">{errors.content.message}</p>}
                     </div>
                 )}

@@ -1,16 +1,10 @@
 import bcrypt from 'bcryptjs'
 import { inject, injectable } from 'inversify'
 import axios from 'axios'
-import { AdminRepository } from "../../repositories/implementation/admin.repository"
 import { TYPES } from '../../types'
 import { generateAccessToken } from '../../utils/token'
 import { IAdminService } from '../interface/IAdmin.service'
 import { IAdminRepository } from '../../repositories/interface/IAdmin.repository'
-import { ICategoryRepository } from '../../repositories/interface/ICategory.repository'
-import CustomError from '../../utils/custom.error'
-import { HttpStatus } from '../../enums/http.status'
-import { publishMessage } from '../../events/rabbitmq/producer'
-import { ERROR_MESSAGES, RABBITMQ_EXCHANGE } from '../../constants'
 
 const api = axios.create({
     baseURL: 'http://localhost:4000'
@@ -37,13 +31,10 @@ interface IPayment {
 @injectable()
 export class AdminService implements IAdminService {
     private adminRepository: IAdminRepository;
-    private categoryRepository: ICategoryRepository
     constructor(
         @inject(TYPES.AdminRepository) adminRepository: IAdminRepository,
-        @inject(TYPES.CategoryRepository) categoryRepository: ICategoryRepository
     ) {
         this.adminRepository = adminRepository
-        this.categoryRepository = categoryRepository
     }
 
     async login(email: string, password: string): Promise<{ token: string } | null> {
@@ -171,7 +162,6 @@ export class AdminService implements IAdminService {
     async getUser(id: string): Promise<{ user: object } | null> {
         try {
             const commonData = await api.get(`/user/users/${id}`)
-            console.log(commonData.data, 'common data .data');
 
             if (!commonData) {
                 return null
@@ -202,50 +192,6 @@ export class AdminService implements IAdminService {
     }
 
 
-    async getAllCategories() {
-        try {
-            const response = await this.categoryRepository.findAll()
-            return response
-        } catch (error) {
-            throw error
-        }
-    }
-
-
-    async addNewCategory(category: string, skills: string[]) {
-        try {
-            const findExistingCategory = await this.categoryRepository.findByCategoryName(category)
-            if (findExistingCategory) {
-                throw new CustomError(ERROR_MESSAGES.CATEGORY_ALREADY_EXISTS, HttpStatus.FORBIDDEN)
-            }
-            const data = {
-                name: category,
-                skills
-            }
-            const response = await this.categoryRepository.create(data)
-            await publishMessage(RABBITMQ_EXCHANGE.CATEGORY_EXCHANGE, response)
-            if (!response) {
-                throw new CustomError(ERROR_MESSAGES.ERROR_CREATING_CATEGORY, HttpStatus.FORBIDDEN)
-            }
-            return response
-        } catch (error) {
-            throw error
-        }
-    }
-
-    async updateCategory(id: string, category: string, skills: string[]) {
-        try {
-
-            const findCategory = await this.categoryRepository.findById(id)
-            if (!findCategory) {
-                throw new CustomError(ERROR_MESSAGES.CATEGORY_NOT_FOUND, HttpStatus.NOTFOUND)
-            }
-            const response = await this.categoryRepository.update(id, { name: category, skills })
-            await publishMessage(RABBITMQ_EXCHANGE.CATEGORY_EXCHANGE, response!)
-            return response
-        } catch (error) {
-            throw error
-        }
-    }
+    
 
 }

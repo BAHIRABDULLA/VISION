@@ -25,14 +25,19 @@ const CourseList: React.FC<CourseListProps> = ({ limit }: { limit?: number | nul
 
   useEffect(() => {
     const fetchCourseData = async () => {
-      const response = await getAllCourses()
-      if (response.status && response.status >= 400) {
-        toast.error('Cannot found courses')
-      } else if (response.status && response.status < 400) {
-        setCourses(response?.data.data)
-        setLoading(false)
-      }
+      try {
+        const response = await getAllCourses()        
+        if (response.status && response.status >= 400) {
+          toast.error('Cannot found courses')
+        } else {
+          setCourses(response?.data.courses || [])
+        }
+      } catch (error) {
+        toast.error('An error occurred while fetching courses');
 
+      } finally {
+        setLoading(false);
+      }
     }
     fetchCourseData()
   }, [])

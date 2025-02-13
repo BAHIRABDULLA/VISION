@@ -65,9 +65,9 @@ export class CourseController implements ICourseController {
     async editCourse(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
-            const { name, duration, overview, price, curriculum } = req.body
+            const { name, duration, overview, price,image, curriculum } = req.body
 
-            const data = { name, duration, overview, price, curriculum: JSON.parse(curriculum) }
+            const data = { name, duration, overview, price,image, curriculum: JSON.parse(curriculum) }
             const response = await this.courseService.editCourseData(data, id, req.file)
             if (!response) {
                 return errorResponse(res, HttpStatus.NOTFOUND, ERROR_MESSAGES.COURSE_NOT_FOUND)
@@ -75,7 +75,6 @@ export class CourseController implements ICourseController {
             return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.COURSE_UPDATED, response)
         } catch (error) {
             next(error)
-
         }
     }
 

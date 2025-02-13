@@ -1,13 +1,16 @@
-import { getAllCategories, saveNewCategory, updateCategory } from "@/services/adminApi";
+import { getAllCategories, saveNewCategory, updateCategory, updateCategoryStatus } from "@/services/adminApi";
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import Modal from 'react-modal'
 
 
+Modal.setAppElement("#root")
 
 interface Category {
-    id: string
+    _id: string
     name: string;
     skills: string[];
+    status: 'active' | 'block'
 };
 
 const CategoriesSkills: React.FC = () => {
@@ -31,25 +34,28 @@ const CategoriesSkills: React.FC = () => {
     const saveCategory = async () => {
         try {
             const data = { category: newCategory, skills };
-            
-    
+
+
             if (editingCategory) {
-                const id = editingCategory._id; 
+                const id = editingCategory._id;
                 const response = await updateCategory(id, data);
-                
+
                 if (response?.status < 400) {
-                    setCategories((prevCategories) =>
-                        prevCategories.map((cat) =>
-                            cat.id === id ? { ...cat, ...data } : cat
-                        )
-                    );
+                    // setCategories((prevCategories) =>
+                    //     prevCategories.map((cat) =>
+                    //         cat.id === id ? { ...cat, ...data } : cat
+                    //     )
+                    // );
+                    const updatedCategories = await getAllCategories();
+                    setCategories(updatedCategories.data.categories);
+
                     toast.success('Category updated successfully');
                 } else {
                     toast.error(response?.data?.message || 'Failed to update category');
                 }
             } else {
                 const response = await saveNewCategory(data);
-                
+
                 if (response?.status < 400 && response.data?._doc) {
                     setCategories((prevCategories) => [
                         ...prevCategories,
@@ -60,14 +66,14 @@ const CategoriesSkills: React.FC = () => {
                     toast.error(response?.data?.message || 'Failed to add new category');
                 }
             }
-    
+
             resetModal();
         } catch (error) {
             console.error('Error in saveCategory:', error);
             toast.error('An unexpected error occurred');
         }
     };
-    
+
 
 
 
@@ -99,7 +105,37 @@ const CategoriesSkills: React.FC = () => {
         fetchCategories();
     }, []);
 
+    const [selectedCategory, setSelectedCategory] = useState(null)
+    const [selectedStatus, setSelectedStatus] = useState<'active' | 'block'>("active")
+    const [statusModalOpen, setStatusModalOpen] = useState(false)
 
+    const openModal = (category: Category, status: 'active' | 'block') => {
+        setSelectedCategory(category)
+        setSelectedStatus(status)
+
+        setStatusModalOpen(true)
+    }
+    const closeModal = () => {
+
+        setStatusModalOpen(false)
+        setSelectedCategory(null)
+    }
+
+    const confirmStatusChange = async () => {
+
+        if (selectedCategory) {
+
+            const response = await updateCategoryStatus(selectedCategory._id, selectedStatus)
+            if (response?.status >= 400) {
+                toast.error(response?.data.message)
+            } else {
+                setCategories(prevCat => prevCat?.map(cat =>
+                    cat._id === selectedCategory._id ? { ...cat, status: selectedStatus } : cat))
+                toast.success('Status updated')
+            }
+            closeModal()
+        }
+    }
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
@@ -177,8 +213,8 @@ const CategoriesSkills: React.FC = () => {
                 </div>
             )}
 
-            {categories.map((category,index) => (
-                <div key={index} className="mb-6 mt-3 bg-white shadow p-4 rounded-lg">
+            {categories.map((category, index) => (
+                <div key={index} className=" mb-6 mt-3 bg-white shadow p-4 rounded-lg">
                     <h2 className="text-xl font-semibold mb-3">{category.name}</h2>
                     <ul className="list-disc pl-6">
                         {category.skills.map((skill, index) => (
@@ -192,14 +228,44 @@ const CategoriesSkills: React.FC = () => {
                             onClick={() => editCategory(category)} >
                             Edit
                         </button>
-                        <select className=" border border-gray-500 shadow-lg text-black rounded-lg p-1" >
+                        <select className=" border border-gray-500 shadow-lg text-black rounded-lg p-1"
+                            value={category.status} onChange={(e) => openModal(category, e.target.value as 'active' | 'block')} >
+                            <option hidden disabled>{category.status}</option>
                             <option value="active">Active</option>
                             <option value="block">Block</option>
                         </select>
                     </div>
                 </div>
+
             ))}
 
+            <Modal
+                isOpen={statusModalOpen}
+                onRequestClose={closeModal}
+                contentLabel="Confirm Status Change"
+                className="bg-white p-6 rounded shadow-lg max-w-md mx-auto"
+                overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+            >
+                <h2 className="text-lg font-semibold mb-4">Confirm Status Change</h2>
+                <p>
+                    Are you sure you want to change the status to <strong>{selectedStatus}</strong> for{" "}
+                    <strong>{selectedCategory?.name}</strong>?
+                </p>
+                <div className="mt-4 flex justify-end">
+                    <button
+                        onClick={confirmStatusChange}
+                        className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                    >
+                        Confirm
+                    </button>
+                    <button
+                        onClick={closeModal}
+                        className="bg-gray-300 px-4 py-2 rounded"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </Modal>
 
         </div>
     );

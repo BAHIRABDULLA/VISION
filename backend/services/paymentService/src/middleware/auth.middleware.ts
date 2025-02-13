@@ -1,6 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 import dotenv from 'dotenv'
+import { User } from '../models/user.model'
 dotenv.config()
 interface CustomeRequest extends Request {
     user?: string | JwtPayload
@@ -15,19 +16,31 @@ const authenticateToken = (req: CustomeRequest, res: Response, next: NextFunctio
         }
         const newToken = token?.split(' ')[1]
         const secret = process.env.ACCESS_TOKEN_SECRET
-        
+
         const decodedToken = jwt.decode(newToken, { complete: true });
 
         if (!secret) {
             throw new Error('Access token secret is not defined')
         }
-        jwt.verify(newToken, secret, (err, user) => {
+        jwt.verify(newToken, secret, async (err, user) => {
             if (err) {
-                console.log(err,'err',user,'user');
-                
+                console.log(err, 'err', user, 'user');
+
                 return res.status(401).json({ message: 'Invalid token' });
             }
             req.user = user as JwtPayload
+            const userId = req.user.id
+            if (!userId) {
+                return res.status(401).json({ message: 'Unauthorized' })
+            }
+            const userData = await User.findById(userId)
+            if (!userData) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            if (!userData.isActive) {
+                return res.status(403).json({ message: "Your account has been blocked. Please contact support." });
+            }
             next()
         })
 

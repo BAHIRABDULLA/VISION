@@ -13,6 +13,7 @@ const userSchema = new Schema<IUser>({
     },
     password: { type: String, required: true },
     isApproved: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    isActive: { type: Boolean, required: true, default: true },
     isMentorFormFilled:{type:Boolean},
     sessionCount:{type:Number,default:0},
 })

@@ -86,6 +86,17 @@ export const updateCategory = async (id: string, data: object) => {
     }
 }
 
+export const updateCategoryStatus = async (categoryId:string,status:'active'|'block') =>{
+    try {        
+        const response = await adminPrivateApi.patch(`/admin/category/status/${categoryId}`,{status})
+        return response
+    } catch (error) {
+        if(error instanceof AxiosError){
+            return error.response
+        }
+    }
+}
+
 export const getAdminDashbaordData = async () => {
     try {
         const resposne = await adminPrivateApi.get('/admin/dashboard')

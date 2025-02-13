@@ -1,6 +1,6 @@
 // src/pages/PersonalInformation.tsx
 
-import { Toaster } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import { useEffect, useState } from 'react';
 import { getUserDetails } from '@/services/userApi';
 import Loading from '@/components/Loading';
@@ -19,9 +19,17 @@ const Profile = () => {
         const fetchUserDetails = async () => {
             try {
                 const userDetails = await getUserDetails()
+                if (userDetails.status >= 400) {
+                    console.log(userDetails, 'user deta')
+                    throw new Error(userDetails?.data?.message || "An error occurred, please try again later");
+
+                }
                 setUserData(userDetails.data)
+
             } catch (error) {
                 console.error('Error founded in user details', error);
+                toast.error(error.message || "Something went wrong");
+
             } finally {
                 setLoading(false)
             }
@@ -29,7 +37,7 @@ const Profile = () => {
         fetchUserDetails()
     }, [])
 
-    if (!userData || loading) {
+    if (!userData && loading) {
         return <Loading />
     }
 

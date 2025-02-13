@@ -8,6 +8,8 @@ const Resources = () => {
     const { id } = useParams<{ id: string }>();
     const [activeLevel, setActiveLevel] = useState('Basic');
     const [resources, setResources] = useState([]);
+    console.log(resources,'resource');
+    
     const [loading,setLoading] = useState(false)
     const levels = ['Basic', 'Intermediate', 'Advanced'];
 
@@ -16,7 +18,7 @@ const Resources = () => {
             try {
                 setLoading(true)
                 const response = await getAllResourceWithCourseId(id);
-                setResources(response.data.response);
+                setResources(response.data.response|| []);
                 setLoading(false)
             } catch (error) {
                 console.error('Error fetching resources:', error);

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { privateApi } from './instance/axiosConfig';
 
 
@@ -66,7 +66,9 @@ export const getUserDetails = async () => {
         const response = await privateApi.get('/user')
         return response
     } catch (error) {
-        return error
+        if(error instanceof AxiosError){
+            return error.response
+        }
     }
 }
 

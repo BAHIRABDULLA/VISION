@@ -19,9 +19,6 @@ router.get('/refresh-token/', adminController.setNewAccessToken.bind(adminContro
 router.post('/logout',  adminController.logout.bind(adminController))
 
 
-router.get('/category',adminController.getAllCategories.bind(adminController))
-router.post('/category',authenticateToken,adminController.addNewCategory.bind(adminController))
-router.patch('/category/:id',authenticateToken,adminController.updateCategory.bind(adminController))
 
 router.patch('/:id/approval',authenticateToken,adminController.mentorApproval.bind(adminController))
 router.patch('/:id/status',authenticateToken,adminController.updateUserActiveStatus.bind(adminController))

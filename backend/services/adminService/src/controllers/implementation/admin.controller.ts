@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express'
-import { AdminService } from "../../services/implementation/admin.service";
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../types';
 import { errorResponse, successResponse } from '../../utils/response.helper';
@@ -151,34 +150,5 @@ export class AdminController implements IAdminController {
     }
 
 
-    async getAllCategories(req: Request, res: Response, next: NextFunction) {
-        try {
-            const response = await this.adminService.getAllCategories()
-            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_CATEGORYS_FETCHED, { categories: response })
-        } catch (error) {
-            next(error)
-        }
-    }
-
-    async addNewCategory(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { data } = req.body
-            const { category, skills } = req.body
-            const response = await this.adminService.addNewCategory(category, skills)
-            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.CATEGORY_CREATED, response)
-        } catch (error) {
-            next(error)
-        }
-    }
-
-    async updateCategory(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { id } = req.params
-            const { category, skills } = req.body
-            const response = await this.adminService.updateCategory(id, category, skills)
-            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.CATEGORY_UPDATED, response)
-        } catch (error) {
-            next(error)
-        }
-    }
+    
 }

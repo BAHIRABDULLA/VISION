@@ -16,7 +16,6 @@ interface ParamsData {
     experience: string;
     expertise: string;
     rating: number;
-    location: string;
     page: number;
     limit: number
 }
@@ -136,7 +135,7 @@ export class MentorController implements IMentorController {
     async getAllmentorWithMergedUserData(req: Request, res: Response, next: NextFunction) {
         try {
 
-            const { search = '', priceRange = '0', experience = '', expertise = '', rating = '0', location = '', page = '1', limit = '' } = req.query;
+            const { search = '', priceRange = '0', experience = '', expertise = '', rating = '0', page = '1', limit = '' } = req.query;
             // const params = req.query
             const params: ParamsData = {
                 search: search as string,
@@ -144,7 +143,6 @@ export class MentorController implements IMentorController {
                 experience: experience as string,
                 expertise: expertise as string,
                 rating: parseFloat(rating as string),
-                location: location as string,
                 page: parseInt(page as string, 10),
                 limit: parseInt(limit as string, 10),
             }

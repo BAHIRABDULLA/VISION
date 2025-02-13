@@ -7,6 +7,7 @@ export interface IUser extends Document{
     profile:string
     password:string;
     isApproved: 'pending' | 'approved' | 'rejected',
+    isActive: boolean
     isMentorFormFilled:boolean
     sessionCount:number
 }

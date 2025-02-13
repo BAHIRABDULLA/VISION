@@ -10,7 +10,5 @@ export interface IAdminController {
     setNewAccessToken(req: Request, res: Response, next: NextFunction): Promise<void>
     mentorApproval(req: Request, res: Response, next: NextFunction): Promise<void>
     updateUserActiveStatus(req: Request, res: Response, next: NextFunction): Promise<void>
-    getAllCategories(req: Request, res: Response, next: NextFunction): Promise<void>
-    addNewCategory(req: Request, res: Response, next: NextFunction): Promise<void>
-    updateCategory(req: Request, res: Response, next: NextFunction): Promise<void>
+   
 }

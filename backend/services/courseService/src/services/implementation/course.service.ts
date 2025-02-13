@@ -58,9 +58,9 @@ export class CourseService implements ICourseService {
 
     async getAllCourses() {
         try {
-            const data = await this.courseRepository.findAll()
-
-            return { success: true, message: SUCCESS_MESSAGES.ALL_COURSES_FETCHED, data }
+            const data = await this.courseRepository.findAll()            
+            const courses = data.filter(course=>course.status==='active')
+            return { success: true, message: SUCCESS_MESSAGES.ALL_COURSES_FETCHED, courses }
         } catch (error) {
             throw error
         }
@@ -88,6 +88,13 @@ export class CourseService implements ICourseService {
 
             if (!checkCourse) {
                 return null
+            }
+            console.log(data.image,'data.image  ')
+            if(data.image){
+                console.log('its entere here in edt course data');
+                
+                const response = await this.courseRepository.update(id,data)
+                return response
             }
 
             let s3FileUrl = ''

@@ -125,6 +125,7 @@ export class SlotService implements ISlotService {
             throw error
         }
     }
+    
 
     async getBookingSlot(userId: string, role: string): Promise<Partial<IBooking[]> | null> {
         try {
