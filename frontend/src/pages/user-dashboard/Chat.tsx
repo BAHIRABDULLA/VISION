@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { io, Socket } from 'socket.io-client'
 import { useSelector } from 'react-redux';
@@ -12,12 +12,13 @@ type Message = {
   text?: string;
   sender?: string;
   timestamp?: string;
-  
+
 };
 
-let socket: Socket | null = null
+// let socket: Socket | null = null
 
 const Chat = () => {
+  const socketRef = useRef<Socket | null>(null)
   const user = useSelector((state: RootState) =>
     state.menteeAuth.user || state.mentorAuth.user
   );
@@ -33,9 +34,9 @@ const Chat = () => {
   const userId: string | undefined = user?.id
 
 
-  const fetchMessages = async (userId,selectedUserId) => {
+  const fetchMessages = async (userId, selectedUserId) => {
     try {
-      const response = await getChatHistory(userId, selectedUserId)      
+      const response = await getChatHistory(userId, selectedUserId)
       if (response?.status >= 400) {
         toast.error(response.data.message || 'Failed to fetch users')
       } else {
@@ -43,13 +44,13 @@ const Chat = () => {
       }
     } catch (error) {
       console.error('Error fetching users:', error)
-      toast.error('Failed to fetch users')
+      // toast.error('Failed to fetch users')
     }
   }
 
   useEffect(() => {
-    if (!socket && userId) {
-      socket = io('https://apivision.bahirabdulla.online/messages/chat', {
+    if (!socketRef.current && userId) {
+      socketRef.current = io('https://apivision.bahirabdulla.online/messages/chat', {
         withCredentials: true,
         // path: '',
         transports: ['websocket', 'polling'],
@@ -57,14 +58,14 @@ const Chat = () => {
       });
     }
 
-    if (socket) {
-      socket.on('connect', () => {
+    if (socketRef.current) {
+      socketRef.current.on('connect', () => {
         setIsConnected(true)
 
-        socket.emit('chat-user_join', { userId })
+        socketRef.current?.emit('chat-user_join', { userId })
       })
 
-      socket.on('connect_error', (error) => {
+      socketRef.current.on('connect_error', (error) => {
         console.error('Connection error:', error)
         setIsConnected(false)
         toast.error('Failed to connect to chat server')
@@ -73,12 +74,12 @@ const Chat = () => {
       // socket.on('chat-private_message', (data) => {
       //   setMessages((prev) => [...prev, { message: data.message, received: true }])
       // })
-      socket.on('chat-private_message', (data) => {
+      socketRef.current.on('chat-private_message', (data) => {
         setMessages((prev) => [...prev, {
           text: data.message,
           sender: data.sender,
           timestamp: data.timestamp,
-          _id:Math.random().toString(36).substr(2, 9)
+          _id: Math.random().toString(36).substr(2, 9)
         }])
       })
 
@@ -103,52 +104,57 @@ const Chat = () => {
 
 
     return () => {
-      if (socket) {
-        socket.off('connect')
-        socket.off('connect_error')
-        socket.off('chat-private_message')
-        socket.disconnect()
-        socket = null
+      if (socketRef.current) {
+        socketRef.current.off('connect');
+        socketRef.current.off('connect_error');
+        socketRef.current.off('chat-private_message');
+        socketRef.current.disconnect();
+        socketRef.current = null;
       }
     }
   }, [userId])
 
 
   const sendMessage = () => {
-
-    if (!socket || !isConnected) {
-      toast.error('Not connected to chat server')
-      return
+    if (!socketRef.current || !isConnected) {
+      toast.error('Not connected to chat server');
+      return;
     }
 
     if (newMessage && selectedUser) {
-      const recipientId = role === 'mentee' ? selectedUser.mentorId._id : selectedUser.menteeId._id
+      const recipientId = role === 'mentee'
+        ? selectedUser?.mentorId?._id
+        : selectedUser?.menteeId?._id;
 
-      socket.emit('chat-private_message', {
-        to: recipientId,
-        message: newMessage
-      }, (acknowledgement) => {
+      if (!recipientId) {
+        toast.error('Invalid recipient');
+        return;
+      }
+
+      socketRef.current.emit('chat-private_message', { to: recipientId, message: newMessage }, (acknowledgement) => {
         if (acknowledgement?.error) {
-          toast.error('Failed to send message')
-          return
+          toast.error('Failed to send message');
+          return;
         }
-        const newMsg ={
-          sender:userId,
-          text:newMessage,
+        const newMsg = {
+          sender: userId,
+          text: newMessage,
           timestamp: new Date().toISOString(),
-          _id:Math.random().toString(36).substr(2, 9)
-        }
-        setMessages((prev) => [...prev, newMsg])
-        setNewMessage('')
-      })
+          _id: Math.random().toString(36).substr(2, 9)
+        };
+        setMessages((prev) => [...prev, newMsg]);
+        setNewMessage('');
+      });
     }
-  }
+  };
 
   const handleUserSelect = (user) => {
+    console.log(user,'user in handler user select');
     
     setSelectedUser(user)
-    const recipientId = role === 'mentee' ? selectedUser.mentorId._id : selectedUser.menteeId._id
-    
+    const recipientId = role === 'mentee' ? user.mentorId._id : user.menteeId._id
+    console.log(recipientId, 'reciepcent id');
+
     fetchMessages(userId, recipientId)
     // fetchMessages(userId, user.id)
   }
