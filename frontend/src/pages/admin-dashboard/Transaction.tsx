@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
-import { Card,  CardContent} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent } from '@mui/material';
 import { getAllTransaction } from '@/services/paymentApi';
+import Loading from '@/components/Loading';
 
 const Transaction = () => {
 
     const [transactions, setTransactions] = React.useState([]);
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
@@ -12,11 +14,12 @@ const Transaction = () => {
                 setTransactions(response.data.transactions);
             } catch (error) {
                 console.error(error);
+            } finally {
+                setLoading(false)
             }
         }
         fetchTransactions();
-    }
-        , []);
+    }, []);
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -39,6 +42,10 @@ const Transaction = () => {
                 return '💰';
         }
     };
+
+    if (loading) {
+        return <Loading />
+    }
 
     return (
         <>

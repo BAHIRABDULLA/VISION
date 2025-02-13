@@ -4,6 +4,7 @@ import { getBookings } from "@/services/mentorApi";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store/store";
 import SessionHistory from "@/features/user/dashboard/SessionHistory";
+import Loading from "@/components/Loading";
 
 const VideoCallList: React.FC = () => {
 
@@ -12,20 +13,32 @@ const VideoCallList: React.FC = () => {
         state.menteeAuth.user || state.mentorAuth.user
     );
     const userId = user.id
+    const [loading,setLoading] = useState(true)
     const [session, setSession] = useState([])
     const [pendingSessions,setPendingSessions]=useState([])
     console.log(session,'sessions s s ');
     
     useEffect(() => {
         const fechBookingParticipant = async () => {
-            const response = await getBookings()
-            const sessions = response.data.bookings.filter(session=>(session.status=='pending'|| session.status =='attending'))
-            setSession(response.data.bookings)
-            setPendingSessions(sessions)
+            try {
+                const response = await getBookings()
+                const sessions = response.data.bookings.filter(session=>(session.status=='pending'|| session.status =='attending'))
+                setSession(response.data.bookings)
+                setPendingSessions(sessions)
+            } catch (error) {
+                console.error('Error founded in fetch session booking',error);
+            }finally{
+                setLoading(false)
+            }
+          
         }
         fechBookingParticipant()
     }, [])
 
+
+    if(loading){
+        return <Loading/>
+    }
     return (
         <div className="relative min-h-screen p-5">
             <h1 className="text-3xl font-bold text-center mb-8">{role} Sessions</h1>

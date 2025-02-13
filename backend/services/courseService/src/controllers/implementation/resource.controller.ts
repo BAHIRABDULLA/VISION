@@ -7,6 +7,7 @@ import dotenv from 'dotenv'
 import { IResourceController } from "../interface/IResource.controller";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants";
 import { generateUploadPresignedUrl } from "../../utils/file.upload";
+import { ParamsData } from "./course.controller";
 dotenv.config()
 
 
@@ -37,23 +38,23 @@ export class ResourseController implements IResourceController {
                     message: 'fileName and fileType are required'
                 });
             }
-            const response = await generateUploadPresignedUrl(fileName,fileType)
-            res.status(HttpStatus.OK).json({ signedUrl:response.url, key: fileName })
+            const response = await generateUploadPresignedUrl(fileName, fileType)
+            res.status(HttpStatus.OK).json({ signedUrl: response.url, key: fileName })
         } catch (error) {
             next(error)
         }
     }
 
-    
+
 
     async editResource(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params
             console.log(id, 'id');
-            
+
             const data = req.body
-            console.log(data, 'data',req.body.title);
-            
+            console.log(data, 'data', req.body.title);
+
             const response = await this.resourceService.editResource(id, data)
             return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.RESOURCE_UPDATED, response)
         } catch (error) {
@@ -63,8 +64,14 @@ export class ResourseController implements IResourceController {
 
     async getResources(req: Request, res: Response, next: NextFunction) {
         try {
-            const response = await this.resourceService.getResources()
+            const { search = '', page = '1', limit = '' } = req.query;
+            const params: ParamsData = {
+                search: search as string,
+                page: parseInt(page as string, 10),
+                limit: parseInt(limit as string, 10),
+            }
 
+            const response = await this.resourceService.getResources(params)
             return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_RESOURCE_FETCHED, { resources: response })
         } catch (error) {
             next(error)
@@ -77,7 +84,7 @@ export class ResourseController implements IResourceController {
             console.log(content, 'content ');
 
             const response = await this.resourceService.createResourse(title, type, course, level, topic, content)
-            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.RESOURCE_CREATED,response)
+            return successResponse(res, HttpStatus.CREATED, SUCCESS_MESSAGES.RESOURCE_CREATED, response)
 
         } catch (error) {
             next(error)

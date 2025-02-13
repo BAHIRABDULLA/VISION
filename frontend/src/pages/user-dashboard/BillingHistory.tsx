@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp, Download } from 'lucide-react';
 import { getUserBillingHistory } from '@/services/paymentApi';
 import InvoiceDocument from '@/features/user/dashboard/InvoiceDocument';
 import { PDFDownloadLink } from '@react-pdf/renderer';
+import Loading from '@/components/Loading';
 
 type Payment = {
     _id: string;
@@ -23,6 +24,7 @@ type Payment = {
 const BillingHistory = () => {
     const [billingData, setBillingData] = useState<Payment[]>([]);
 
+    const [loading, setLoading] = useState(true)
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
     const fetchBillingHistory = async () => {
@@ -31,6 +33,8 @@ const BillingHistory = () => {
             setBillingData(response?.data?.transaction || []);
         } catch (error) {
             console.error('Error fetching billing history:', error);
+        }finally{
+            setLoading(false)
         }
     };
 
@@ -52,7 +56,9 @@ const BillingHistory = () => {
         return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
 
-
+    if(loading){
+        return <Loading/>
+    }
     return (
         <div className="mt-8">
             <h2 className="text-2xl font-bold text-center dark:text-white text-gray-800">Billing History</h2>
@@ -93,8 +99,8 @@ const BillingHistory = () => {
                                 <div className="flex items-center space-x-4">
                                     <span
                                         className={`px-3 py-1 rounded-full text-sm ${payment?.status === 'completed'
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-yellow-100 text-yellow-800'
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-yellow-100 text-yellow-800'
                                             }`}
                                     >
                                         {payment.status.charAt(0).toUpperCase() + payment?.status.slice(1)}

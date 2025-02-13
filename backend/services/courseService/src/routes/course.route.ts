@@ -13,6 +13,7 @@ const upload = multer({
 
 router.get('/user',authenticateToken,courseController.getPurchasedCourses.bind(courseController))
 router.patch('/status/:id',adminAuthenticateToken,courseController.editCourseStatus.bind(courseController))
+router.get('/all-courses',courseController.getAllCoursesWithParams.bind(courseController))
 router.patch('/:id',adminAuthenticateToken,upload.single('image'),courseController.editCourse.bind(courseController))
 router.get('/:id',courseController.getCourseDetails.bind(courseController))
 router.post('/',adminAuthenticateToken,upload.single('image'),courseController.createCourse.bind(courseController));

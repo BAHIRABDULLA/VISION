@@ -1,6 +1,7 @@
 
+import Loading from "@/components/Loading";
 import { getAdminDashbaordData } from "@/services/adminApi";
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -25,16 +26,23 @@ interface IDashboardData {
   totalUsers: number,
 }
 
-const Dashboard = () => {  
+const Dashboard = () => {
   const [dashboardData, setDashbaordData] = useState<IDashboardData>()
-  const [usersGrowthData,setUsersGrowthData] = useState([])
-  const [monthlyRevenueData,setMonthlyRevenueData ]  = useState([])
-
+  const [usersGrowthData, setUsersGrowthData] = useState([])
+  const [monthlyRevenueData, setMonthlyRevenueData] = useState([])
+  const [loading, setLoading] = useState(true)
   const fetchAdminDashboardData = async () => {
-    const response = await getAdminDashbaordData()
-    setDashbaordData(response?.data?.dashboardData?.dashBoardData)
-    setUsersGrowthData(response?.data?.dashboardData.userGrowthStats)
-    setMonthlyRevenueData(response?.data?.dashboardData.monthlyRevenueData)
+    try {
+      const response = await getAdminDashbaordData()
+      setDashbaordData(response?.data?.dashboardData?.dashBoardData)
+      setUsersGrowthData(response?.data?.dashboardData.userGrowthStats || [])
+      setMonthlyRevenueData(response?.data?.dashboardData.monthlyRevenueData || [])
+    } catch (error) {
+      console.error('Error founded in get dashbaord data', error);
+    } finally {
+      setLoading(false)
+    }
+
 
   }
   useEffect(() => {
@@ -51,6 +59,9 @@ const Dashboard = () => {
 
   // const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#845EC2"];
 
+  if (loading) {
+    return <Loading />
+  }
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
 

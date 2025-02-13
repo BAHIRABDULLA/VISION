@@ -49,7 +49,7 @@ const AddResources = () => {
 
 
 
-    const [filekey, setFileKey] = useState<string | null>(null);
+    // const [filekey, setFileKey] = useState<string | null>(null);
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<resourceSchemaType>({
         resolver: zodResolver(resourceSchema)
@@ -96,9 +96,9 @@ const AddResources = () => {
                 toast.error("Failed to get signed URL");
                 return;
               }
-              const { signedUrl } = signedUrlData;
+              const { signedUrl ,key} = signedUrlData;
             await uploadFileToS3(content, signedUrl)
-            data.content = filekey
+            data.content = key
 
         }
         const response = await addResource(data);
@@ -116,7 +116,7 @@ const AddResources = () => {
 
             if (response?.status && response.status === 200) {
                 const { signedUrl, key } = response.data
-                setFileKey(key)
+                // setFileKey(key)
                 return { signedUrl, key }
             } else {
                 toast.error('Failed to generate signed url')
@@ -147,11 +147,14 @@ const AddResources = () => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             setContent(file)
-            setValue("content", file)
+            setValue("content", file ,{ shouldValidate: true })
             // generateSignedUrl(file)
         }
     }
-
+    useEffect(()=>{
+        console.log(errors,'errors');
+        
+    })
 
 
 

@@ -7,6 +7,7 @@ import CustomError from "../../utils/custom.error";
 import { IResourseService } from "../interface/IResource.service";
 import { ERROR_MESSAGES } from "../../constants";
 import { generateDownloadPresignedUrl } from "../../utils/file.upload";
+import { ParamsData } from "../../controllers/implementation/course.controller";
 
 interface IFileContent {
     buffer: Buffer;
@@ -23,13 +24,21 @@ export class ResourceService implements IResourseService {
         this.courseRepository = courseRepository
     }
 
-    async getResources(): Promise<Partial<IResource[]> | null> {
+    async getResources(params:ParamsData){
         try {
-            const getResourceData = await this.resourceRepository.findAllWithPopulateCourse()
+            const { search, page, limit } = params            
+            const getResourceData = await this.resourceRepository.findAllWithPopulateCourse()            
             if (!getResourceData || getResourceData.length <= 0) {
                 throw new CustomError(ERROR_MESSAGES.RESOURCE_NOT_FOUND, HttpStatus.NOTFOUND)
             }
-            return getResourceData
+            const resourcesSearch = getResourceData.filter((resource) => {
+                return (!search || resource?.title.toLowerCase().includes(search.toLowerCase()))
+            })
+            const totalResult = getResourceData?.length || 0
+            const pageSize = limit || 10
+            const currentPage = page || 1
+            const paginatedResources = resourcesSearch?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+            return { getResourceData: paginatedResources, pagination: { totalResult, totalPages: Math.ceil(totalResult / pageSize), currentPage } }
         } catch (error) {
             throw error
         }

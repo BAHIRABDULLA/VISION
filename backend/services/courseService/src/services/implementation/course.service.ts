@@ -7,6 +7,7 @@ import { IPayment } from "../../models/payment.model";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants";
 import CustomError from "../../utils/custom.error";
 import { HttpStatus } from "../../enums/http.status";
+import { ParamsData } from "../../controllers/implementation/course.controller";
 interface courseData {
     _id: string
     name: string
@@ -81,6 +82,23 @@ export class CourseService implements ICourseService {
         }
     }
 
+
+    async getAllCoursesWithParams(params:ParamsData){
+        try {
+            const courses = await this.courseRepository.findAll()
+            const { search, page, limit } = params            
+            const coursesSearch = courses.filter((course) => {
+                return (!search || course?.name.toLowerCase().includes(search.toLowerCase()))
+            })
+            const totalResult = courses?.length || 0
+            const pageSize = limit || 10
+            const currentPage = page || 1
+            const paginatedCourses = coursesSearch?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+            return { courses: paginatedCourses, pagination: { totalResult, totalPages: Math.ceil(totalResult / pageSize), currentPage } }
+        } catch (error) {
+            throw error
+        }
+    }
 
     async editCourseData(data: courseData, id: string, imageFile?: Express.Multer.File): Promise<ICourse | null> {
         try {

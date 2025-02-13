@@ -13,10 +13,10 @@ const adminController  = container.get<AdminController>(TYPES.AdminController)
 router.post('/login',adminController.loginControl.bind(adminController))
 
 router.get('/dashboard',authenticateToken,adminController.getDashbaordData.bind(adminController))
-router.get('/users',adminController.getAllUsers.bind(adminController))
 router.get('/users/:id',authenticateToken,adminController.getUserById.bind(adminController))
 router.get('/refresh-token/', adminController.setNewAccessToken.bind(adminController))
 router.post('/logout',  adminController.logout.bind(adminController))
+router.get('/users',adminController.getAllUsers.bind(adminController))
 
 
 

@@ -7,14 +7,15 @@ import { MenteeDetails } from '@/interfaces/UserList';
 import { MentorDetails } from '@/interfaces/UserList';
 import { Card, CardContent } from '@mui/material';
 import {
-  Mail, User, Shield, Check, X, Calendar,  Building2,
+  Mail, User, Shield, Check, X, Calendar, Building2,
   MapPin, ChartBarStacked, Briefcase, ListTodo
 } from 'lucide-react';
 import { updateUserActiveStatus } from '@/services/adminApi';
+import Loading from '@/components/Loading';
 
 const ViewUser = () => {
   const [userDetails, setUserDetails] = useState<CommonDetails | MentorDetails | MenteeDetails | null>(null);
-
+  const [loading, setLoading] = useState(true)
 
   const { id } = useParams()
   // const role = id?.slice(0, 6)
@@ -27,9 +28,11 @@ const ViewUser = () => {
     const fetchUserDetails = async () => {
       try {
         const response = await userData(userId)
-        setUserDetails(response.data)
+        setUserDetails(response.data || {})
       } catch (error) {
         console.error('Failed to fetch user data:', error)
+      } finally {
+        setLoading(false)
       }
     }
     fetchUserDetails()
@@ -66,8 +69,8 @@ const ViewUser = () => {
   };
 
 
-  if (!userDetails) {
-    return <div>Loading user details...</div>;
+  if (!userDetails || loading) {
+    return <Loading />;
   }
 
   // const isMentor = (user: CommonDetails | MentorDetails | MenteeDetails): user is MentorDetails => {
@@ -231,28 +234,43 @@ const ViewUser = () => {
               {/* Social Media */}
               <div className="mb-4">
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Social Media:</h4>
-                <ul className="list-none text-blue-500">
-                  {Object.entries((userDetails as MentorDetails)?.socialMediaUrls || {}).map(([platform]) => (
-                    <li key={platform}>
-                      <a href={(userDetails as MentorDetails)?.socialMediaUrls[platform]} target="_blank" rel="noreferrer">{platform}</a>
-                    </li>
-                  ))}
+                <ul className="list-none ">
+                  {Object.entries((userDetails as MentorDetails)?.socialMediaUrls || {})
+                    .filter(([key, url]) => key !== '_id' && url)
+                    .map(([platform]) => (
+                      <li className='flex gap-2' key={platform}>
+                        <p className='text-black'>{platform}</p>
+                        <a href={(userDetails as MentorDetails)?.socialMediaUrls[platform]} className='text-blue-700'
+                          target="_blank" rel="noreferrer">{(userDetails as MentorDetails)?.socialMediaUrls[platform]}</a>
+                      </li>
+                    ))}
                 </ul>
               </div>
 
               {/* Additional Details */}
-              <p className="text-gray-700 mb-2">
-                <strong>Intro Video:</strong>{" "}
-                <a href={(userDetails as MentorDetails)?.introVideoUrl || "#"} className="text-blue-500">
-                  Watch Video
-                </a>
-              </p>
-              <p className="text-gray-700 mb-4">
-                <strong>Featured Article:</strong>{" "}
-                <a href={(userDetails as MentorDetails)?.featuredArticleUrl || "#"} className="text-blue-500">
-                  Read Article
-                </a>
-              </p>
+              {
+                (userDetails as MentorDetails)?.introVideoUrl &&
+                (userDetails as MentorDetails)?.introVideoUrl !== "undefined" && (
+                  <p className="text-gray-700 mb-2">
+                    <strong>Intro Video:</strong>{" "}
+                    <a href={(userDetails as MentorDetails)?.introVideoUrl || "#"} className="text-blue-500">
+                      Watch Video
+                    </a>
+                  </p>
+                )
+              }
+              {
+                (userDetails as MentorDetails)?.featuredArticleUrl &&
+                (userDetails as MentorDetails)?.featuredArticleUrl !== "undefined" && (
+                  <p className="text-gray-700 mb-4">
+                    <strong>Featured Article:</strong>{" "}
+                    <a href={(userDetails as MentorDetails)?.featuredArticleUrl || "#"} className="text-blue-500">
+                      Read Article
+                    </a>
+                  </p>
+                )
+              }
+
 
               <div className="mb-4 p-4 shadow rounded-md">
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Bio:</h4>

@@ -1,3 +1,4 @@
+import { ParamsData } from "../../controllers/implementation/course.controller";
 import { IResource } from "../../interfaces/IResource";
 import { Content } from "../implementation/resource.service";
 
@@ -5,7 +6,7 @@ import { Content } from "../implementation/resource.service";
 
 
 export interface IResourseService {
-    getResources(): Promise<Partial<IResource[]> | null>
+    getResources(params:ParamsData): Promise<any>
     createResourse(title: string, type: 'text' | 'image' | 'video', course: string,
         level: string, topic: string, content: string): Promise<IResource | undefined>
     // createResource(data:Partial<IResource>):Promise<IResource | undefined>

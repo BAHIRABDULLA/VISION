@@ -7,6 +7,12 @@ import { ICourseController } from "../interface/ICourse.controller";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants";
 
 
+export interface ParamsData {
+    search: string;
+    page: number;
+    limit: number
+}
+
 
 interface CustomeRequest extends Request {
     user?: string | JwtPayload,
@@ -61,6 +67,22 @@ export class CourseController implements ICourseController {
         }
     }
 
+
+    async getAllCoursesWithParams(req:Request,res:Response,next:NextFunction) {
+        try {
+            const { search = '',  page = '1', limit = '' } = req.query;
+            const params: ParamsData = {
+                search: search as string,
+                page: parseInt(page as string, 10),
+                limit: parseInt(limit as string, 10),
+            }
+
+            const response = await this.courseService.getAllCoursesWithParams(params)
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_COURSES_FETCHED, response)
+        } catch (error) {
+            next(error)
+        }
+    }
 
     async editCourse(req: Request, res: Response, next: NextFunction) {
         try {

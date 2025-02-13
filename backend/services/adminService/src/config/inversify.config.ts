@@ -20,8 +20,9 @@ import { ICategoryController } from "../controllers/interface/ICategory.controll
 
 import BaseRepository from "../repositories/implementation/base.repository";
 import { IBaseRepository } from "../repositories/interface/IBase.repository";
-import Category, { ICategory } from "../models/category.model";
+import Category from "../models/category.model";
 import { Model } from "mongoose";
+import { ICategory } from "../interface/ICategory";
 const container = new Container()
 
 container.bind<Model<ICategory>>(TYPES.Category).toConstantValue(Category)
