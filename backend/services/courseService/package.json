@@ -23,7 +23,7 @@
     "mongoose": "^8.7.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "rotating-file-stream": "^3.2.5"
+    "rotating-file-stream": "^3.2.6"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.6",

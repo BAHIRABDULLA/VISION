@@ -1,4 +1,4 @@
-import { ICategory } from "../../models/category.model";
+import { ICategory } from "../../interface/ICategory";
 import { IBaseRepository } from "./IBase.repository";
 
 
