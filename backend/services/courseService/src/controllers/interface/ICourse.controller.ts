@@ -12,4 +12,5 @@ export interface ICourseController {
     editCourse(req: Request, res: Response, next: NextFunction): Promise<void>
     editCourseStatus(req: Request, res: Response, next: NextFunction): Promise<void>
     getPurchasedCourses(req: CustomeRequest, res: Response, next: NextFunction): Promise<void>
+    getAllCoursesWithParams(req:Request,res:Response,next:NextFunction):Promise<void>
 }

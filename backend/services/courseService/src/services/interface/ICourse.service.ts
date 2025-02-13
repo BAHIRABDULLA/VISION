@@ -1,3 +1,4 @@
+import { ParamsData } from "../../controllers/implementation/course.controller";
 import ICourse from "../../interfaces/ICourse";
 import { IPayment } from "../../models/payment.model";
 
@@ -9,4 +10,5 @@ export interface ICourseService {
     editCourseData(data:object,id:string,imageFile?:Express.Multer.File):Promise<ICourse | null>
     courseStatusUpdate(id:string,status:'active'|'block'):Promise<ICourse | null>
     getPurchasedCourses(userId:string):Promise<IPayment[] | null>
+    getAllCoursesWithParams(params:ParamsData):Promise<any>
 }

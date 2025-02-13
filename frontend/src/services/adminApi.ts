@@ -17,8 +17,10 @@ export const loginApi = async (data: object) => {
     }
 }
 
-export const getAllUsers = async () => {
-    const response = await api.get('/users')
+export const getAllUsers = async (paramsData:object) => {
+    const response = await api.get('/users',{
+        params:paramsData
+    })
     return response
 }
 

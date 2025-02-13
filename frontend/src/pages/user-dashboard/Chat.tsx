@@ -6,6 +6,7 @@ import { RootState } from '@/redux/store/store';
 import { getAllUsers, getChatHistory } from '@/services/messageApi';
 import toast, { Toaster } from 'react-hot-toast';
 import ChatInterface from './ChatInterface';
+import Loading from '@/components/Loading';
 
 
 type Message = {
@@ -25,7 +26,7 @@ const Chat = () => {
 
   const role = user?.role === 'mentee' ? 'mentee' : 'mentor';
 
-
+  const [loading,setLoading] = useState(true)
   const [messages, setMessages] = useState<Message[]>([])
   const [selectedUser, setSelectedUser] = useState(null)
   const [newMessage, setNewMessage] = useState('')
@@ -45,6 +46,8 @@ const Chat = () => {
     } catch (error) {
       console.error('Error fetching users:', error)
       // toast.error('Failed to fetch users')
+    }finally{
+      setLoading(false)
     }
   }
 
@@ -96,6 +99,8 @@ const Chat = () => {
         } catch (error) {
           console.error('Error fetching users:', error)
           toast.error('Failed to fetch users')
+        }finally{
+          setLoading(false)
         }
       }
 
@@ -159,7 +164,9 @@ const Chat = () => {
     // fetchMessages(userId, user.id)
   }
 
-
+  if(loading){
+    return <Loading/>
+  }
 
   return (
     <div className="">

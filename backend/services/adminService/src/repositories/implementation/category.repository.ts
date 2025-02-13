@@ -1,9 +1,10 @@
 import { inject, injectable } from "inversify";
-import Cateogry, { ICategory } from "../../models/category.model";
+import Cateogry from "../../models/category.model";
 import { ICategoryRepository } from "../interface/ICategory.repository";
 import BaseRepository from "./base.repository";
 import { Model } from "mongoose";
 import { TYPES } from "../../types";
+import { ICategory } from "../../interface/ICategory";
 
 
 @injectable()

@@ -7,6 +7,7 @@ import { mentorSpecificData } from '@/services/mentorApi';
 import BookingSession from './BookingSession';
 import RatingAndReview from '@/components/RatingAndReview';
 import { Link } from 'react-router-dom';
+import Loading from '@/components/Loading';
 
 interface MentorData {
     jobTitle: string;
@@ -41,8 +42,8 @@ const MentorDetails: React.FC = () => {
     const [activeTab, setActiveTab] = useState('about');
     const { id } = useParams()
 
-    const [mentorData, setMentorData] = useState<MentorData | undefined>(undefined)
-    
+    const [mentorData, setMentorData] = useState<MentorData | null>(null)
+    const [loading,setLoading] = useState(true)
     const [groupedSlots, setGroupedSlots] = useState<Record<string, string[]>>({})
     // const [bookingData , setBookingData]  = useState<BookingData[]>([])
     useEffect(() => {
@@ -50,7 +51,6 @@ const MentorDetails: React.FC = () => {
             try {
                 if (id) {
                     const respnose = await mentorSpecificData(id)
-                    
                     const { mentor, slots} = respnose?.data || {}
                     // const formattedBookings  = bookingData.map(({date,time})=>({date,time}))
                     // setBookingData(formattedBookings)
@@ -78,14 +78,17 @@ const MentorDetails: React.FC = () => {
                 }
             } catch (error) {
                 console.error('Error founded in fetchmentor data', error);
-                
-
+            }finally{
+                setLoading(false)
             }
         }
         fetchMentorData()
     }, [])
 
 
+    if(loading){
+        return <Loading/>
+    }
 
     return (
         <div className="min-h-screen ">

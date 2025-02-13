@@ -11,6 +11,13 @@ import { IAdminController } from '../interface/IAdmin.controller';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../../constants';
 
 
+
+interface ParamsData {
+    search: string;
+    page: number;
+    limit: number
+}
+
 @injectable()
 export class AdminController implements IAdminController {
 
@@ -50,12 +57,18 @@ export class AdminController implements IAdminController {
 
     async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
-            const response = await this.adminService.users()
-            if (!response) {
-                return errorResponse(res, HttpStatus.NOTFOUND, ERROR_MESSAGES.USERS_NOT_FOUND)
+            const { search = '',  page = '1', limit = '' } = req.query;
+            // const params = req.query
+            const params: ParamsData = {
+                search: search as string,
+                page: parseInt(page as string, 10),
+                limit: parseInt(limit as string, 10),
             }
-            // res.json(response)
-            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_USERS_FETCHED, { users: response.users })
+
+            const response  = await this.adminService.getAllUsersWithQueryResponse(params)
+            // console.log(response,'response in admin controoler');
+            
+            return successResponse(res, HttpStatus.OK, SUCCESS_MESSAGES.ALL_USERS_FETCHED,response)
         } catch (error) {
             next(error)
         }

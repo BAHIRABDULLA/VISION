@@ -16,7 +16,7 @@ const MentorPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(0)
     const [searchQuery, setSearchQuery] = useState('');
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [filters, setFilters] = useState({
         priceRange: 200,
         experience: 'any',
@@ -69,9 +69,7 @@ const MentorPage: React.FC = () => {
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         handleSearchChangeDebounced(e.target.value)
     };
-    if (loading) {
-        <Loading />
-    }
+   
     const handleFilterChangeDebounced = useCallback(
         debounce((name: string, value: string | number) => {
             setFilters(prev => ({ ...prev, [name]: value }));
@@ -98,6 +96,10 @@ const MentorPage: React.FC = () => {
         }
         fetchCategories()
     }, [])
+
+    if (loading) {
+        return <Loading />
+    }
     return (
         <div className="min-h-screen ">
             <Header />

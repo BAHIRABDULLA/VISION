@@ -17,7 +17,7 @@ export const addCourse = async (data: object) => {
         const response = await adminPrivateApi.post(`${ROUTES.COURSE}`, data)
         return response
     } catch (error) {
-        if(error instanceof AxiosError){
+        if (error instanceof AxiosError) {
             return error.response
         }
     }
@@ -35,6 +35,21 @@ export const editCourse = async (data: object, id: string) => {
 export const getAllCourses = async () => {
     try {
         const response = await api.get('/')
+        return response
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            return error.response
+        }
+    }
+}
+
+export const getAllCoursesWithParams = async (paramsData: object) => {
+    try {
+        console.log(paramsData, 'params data');
+
+        const response = await api.get('/all-courses', {
+            params: paramsData
+        })
         return response
     } catch (error) {
         if (error instanceof AxiosError) {
@@ -61,9 +76,11 @@ export const updateCourseStatus = async (id: string, status: string) => {
     }
 }
 
-export const getResources = async () => {
+export const getResources = async (paramsData:object) => {
     try {
-        const response = await api.get('/resource')
+        const response = await api.get('/resource',{
+            params:paramsData
+        })
         return response
     } catch (error) {
         if (error instanceof AxiosError) return error.response

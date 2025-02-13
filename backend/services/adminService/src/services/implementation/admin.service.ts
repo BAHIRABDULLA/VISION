@@ -5,20 +5,23 @@ import { TYPES } from '../../types'
 import { generateAccessToken } from '../../utils/token'
 import { IAdminService } from '../interface/IAdmin.service'
 import { IAdminRepository } from '../../repositories/interface/IAdmin.repository'
+import IUser from '../../interface/IUser'
+import CustomError from '../../utils/custom.error'
+import { HttpStatus } from '../../enums/http.status'
 
 const api = axios.create({
     baseURL: 'https://apivision.bahirabdulla.online/api'
 })
 
 
-interface User {
-    role: 'mentor' | 'mentee';
-    isApproved?: 'approved' | 'rejected';
-    createAt: Date
-}
+// interface User {
+//     role: 'mentor' | 'mentee';
+//     isApproved?: 'approved' | 'rejected';
+//     createAt: Date
+// }
 
 interface GetAllUsersResponse {
-    users: User[];
+    users: IUser[];
 }
 
 interface IPayment {
@@ -27,6 +30,15 @@ interface IPayment {
     type: 'one_time_payment' | 'mentorship_subscription' | 'course_purchase'
     createdAt: Date
 }
+
+
+
+interface ParamsData {
+    search: string;
+    page: number;
+    limit: number
+}
+
 
 @injectable()
 export class AdminService implements IAdminService {
@@ -85,7 +97,7 @@ export class AdminService implements IAdminService {
             throw error
         }
     }
-    async userGrowthStats(users: User[]) {
+    async userGrowthStats(users: IUser[]) {
 
         const today = new Date();
         const sevenDaysBefore = new Date();
@@ -148,7 +160,7 @@ export class AdminService implements IAdminService {
         return chartData
     }
 
-    async users(): Promise<{ users: object[] } | null> {
+    async users(): Promise<{ users: IUser[] } | null> {
         try {
             const users = await api.get('/user/users')
             let userData = users.data
@@ -192,6 +204,27 @@ export class AdminService implements IAdminService {
     }
 
 
-    
+
+    async getAllUsersWithQueryResponse(params: ParamsData) {
+        try {
+            const getUsers = await this.users()
+            if (!getUsers) {
+                throw new CustomError('No users founded', HttpStatus.NOTFOUND)
+            }
+            const users = getUsers?.users
+            const { search, page, limit } = params
+            const usersSearch = users.filter((user) => {
+                return (!search || user?.fullName.toLowerCase().includes(search.toLowerCase()))
+            })
+            const totalResult = users?.length || 0
+            const pageSize = limit || 10
+            const currentPage = page || 1
+            const paginatedUsers = usersSearch?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+            return { users: paginatedUsers, pagination: { totalResult, totalPages: Math.ceil(totalResult / pageSize), currentPage } }
+        } catch (error) {
+            throw error
+        }
+    }
+
 
 }

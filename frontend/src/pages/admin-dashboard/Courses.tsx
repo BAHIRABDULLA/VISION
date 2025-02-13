@@ -1,8 +1,14 @@
-import { getAllCourses, updateCourseStatus } from '@/services/courseApi';
-import  { useEffect, useState } from 'react';
+import { getAllCoursesWithParams, updateCourseStatus } from '@/services/courseApi';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Modal from 'react-modal'
 import toast, { Toaster } from 'react-hot-toast';
+import { Pagination } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store/store';
+import Search from '@/components/Search';
+import Loading from '@/components/Loading';
+
 
 Modal.setAppElement("#root")
 
@@ -21,10 +27,40 @@ export interface CourseType {
 
 
 const Courses = () => {
-    const [courses, setCourses] = useState<CourseType[] | undefined>([]);    
+
+    const mode = useSelector((state: RootState) => state.theme.mode)
+
+    const [courses, setCourses] = useState<CourseType[] | undefined>([]);
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedCourse, setSelectedCourse] = useState<CourseType | null>(null)
     const [selectedStatus, setSelectedStatus] = useState<string>("")
+    const [loading, setLoading] = useState(true)
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(0)
+
+
+    useEffect(() => {
+        const fetchCourseData = async () => {
+            try {
+                const paramsData = {
+                    search: searchQuery,
+                    page: currentPage,
+                    limit: 10
+                }
+                const response = await getAllCoursesWithParams(paramsData)
+                setCourses(response?.data.courses || [])
+                setTotalPages(response.data.pagination.totalPages)
+            } catch (error) {
+                console.error('Erroro founded in fetch ocurse cata', error);
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchCourseData()
+    }, [searchQuery, currentPage])
+
     const openModal = (course: CourseType, status: string) => {
         setSelectedCourse(course)
         setSelectedStatus(status)
@@ -39,40 +75,38 @@ const Courses = () => {
 
 
     const confirmStatusChange = async () => {
-        
+
         if (selectedCourse) {
-            
-            const response = await updateCourseStatus(selectedCourse._id,selectedStatus)
-            if(response?.status>=400){
+
+            const response = await updateCourseStatus(selectedCourse._id, selectedStatus)
+            if (response?.status >= 400) {
                 toast.error(response?.data.message)
-            }else{
-                setCourses(prevCourses=>prevCourses?.map(course=>
-                    course._id===selectedCourse._id?{...course,status:selectedStatus}:course))
+            } else {
+                setCourses(prevCourses => prevCourses?.map(course =>
+                    course._id === selectedCourse._id ? { ...course, status: selectedStatus } : course))
                 toast.success('Status updated')
             }
             closeModal()
         }
     }
 
-    useEffect(() => {
-        const fetchCourseData = async () => {
-            const response = await getAllCourses()            
-            setCourses(response?.data.courses || [])
-
-        }
-        fetchCourseData()
-    }, [])
-
+    if (loading) {
+        return <Loading />
+    }
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
             {/* Header Section */}
-            <Toaster/>
+            <Toaster />
             <div className="flex justify-between items-center mb-8">
                 <h2 className="text-4xl font-bold text-gray-800">Courses List</h2>
+
+                <Search placeholder="Search Courses" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            </div>
+            <div className='mb-4'>
                 <Link
                     to="/admin/courses/add"
-                    className="px-4 py-2 hover:font-semibold border border-gray-500 shadow-lg text-black rounded-lg"
+                    className="px-4  py-2 hover:font-semibold border border-gray-500 shadow-lg text-black rounded-lg"
                 >
                     Add Course
                 </Link>
@@ -174,6 +208,31 @@ const Courses = () => {
                     </button>
                 </div>
             </Modal>
+            {/* Pagination */}
+            <div className='flex justify-center py-8'>
+                <Pagination
+                    count={totalPages}
+                    variant="outlined"
+                    size='large'
+                    page={currentPage}
+                    onChange={(_event, value) => setCurrentPage(value)}
+                    sx={{
+                        "& .MuiPaginationItem-root": {
+                            color: mode === 'dark' ? "white" : "purple",
+                            borderColor: mode === 'dark' ? "lightgray" : "purple",
+                        },
+                        "& .MuiPaginationItem-root:hover": {
+                            backgroundColor: mode === 'dark'
+                                ? "rgba(255, 255, 255, 0.2)"
+                                : "rgba(0, 0, 0, 0.1)",
+                        },
+                        "& .Mui-selected": {
+                            backgroundColor: mode === 'dark' ? "rgb(75 85 99)" : 'white',
+                            color: mode === 'dark' ? 'white' : 'purple',
+                        },
+                    }}
+                />
+            </div>
         </div>
     );
 };

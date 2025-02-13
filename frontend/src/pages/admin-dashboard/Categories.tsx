@@ -1,3 +1,4 @@
+import Loading from "@/components/Loading";
 import { getAllCategories, saveNewCategory, updateCategory, updateCategoryStatus } from "@/services/adminApi";
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -20,6 +21,7 @@ const CategoriesSkills: React.FC = () => {
     const [skills, setSkills] = useState<string[]>([])
     const [categories, setCategories] = useState<Category[]>([]);
     const [editingCategory, setEditingCategory] = useState<any | null>(null)
+    const [loading,setLoading] = useState(true)
 
     const addSkill = () => {
         if (newSkill.trim() && !skills.includes(newSkill.trim())) {
@@ -94,12 +96,18 @@ const CategoriesSkills: React.FC = () => {
 
     useEffect(() => {
         const fetchCategories = async () => {
+            try {
+                const response = await getAllCategories()
 
-            const response = await getAllCategories()
-
-            if (response) {
-                setCategories(response.data.categories)
+                if (response) {
+                    setCategories(response.data.categories || [])
+                }
+            } catch (error) {
+                console.error('Error founded in categories',error);
+            }finally{
+                setLoading(false)
             }
+           
         };
 
         fetchCategories();
@@ -135,6 +143,10 @@ const CategoriesSkills: React.FC = () => {
             }
             closeModal()
         }
+    }
+
+    if(loading){
+        return <Loading/>
     }
 
     return (

@@ -6,30 +6,50 @@ import Modal from 'react-modal'
 import { useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { Pagination } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store/store';
+import Search from '@/components/Search';
+import Loading from '@/components/Loading';
+
+
 
 const Resource: React.FC = () => {
 
+  const mode = useSelector((state: RootState) => state.theme.mode)
 
   const [resources, setResources] = useState([])
-
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
 
 
   useEffect(() => {
     const fetchResources = async () => {
       try {
-        const response = await getResources()
+        const paramsData = {
+          search: searchQuery,
+          page: currentPage,
+          limit: 10
+        }
+        const response = await getResources(paramsData)
         if (response?.status && response?.status >= 400) {
           toast.error(response?.data.message || 'An error occured')
         } else {
-          setResources(response?.data.resources)
+          setResources(response?.data.resources.getResourceData || [])
+          setTotalPages(response.data.resources.pagination.totalPages || 0)
         }
       } catch (error) {
+        setResources([])
         console.error('Error founded in fetch resource', error);
         toast.error('Internal server error')
+      } finally {
+        setLoading(false)
       }
     }
     fetchResources()
-  }, [])
+  }, [searchQuery, currentPage])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedResource, setSelectedResource] = useState(null)
 
@@ -61,11 +81,18 @@ const Resource: React.FC = () => {
       closeModal()
     }
   }
+
+  if (loading) {
+    return <Loading />
+  }
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-8">
         <Toaster />
         <h2 className="text-4xl font-bold text-gray-800">Resources List</h2>
+        <Search placeholder="Search Courses" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+      </div>
+      <div className='mb-4'>
         <Link
           to="/admin/resources/add"
           className="px-4 py-2 hover:font-semibold border border-gray-500 shadow-lg text-black rounded-lg"
@@ -154,6 +181,32 @@ const Resource: React.FC = () => {
           </button>
         </div>
       </Modal>
+
+      {/* Pagination */}
+      <div className='flex justify-center py-8'>
+        <Pagination
+          count={totalPages}
+          variant="outlined"
+          size='large'
+          page={currentPage}
+          onChange={(_event, value) => setCurrentPage(value)}
+          sx={{
+            "& .MuiPaginationItem-root": {
+              color: mode === 'dark' ? "white" : "purple",
+              borderColor: mode === 'dark' ? "lightgray" : "purple",
+            },
+            "& .MuiPaginationItem-root:hover": {
+              backgroundColor: mode === 'dark'
+                ? "rgba(255, 255, 255, 0.2)"
+                : "rgba(0, 0, 0, 0.1)",
+            },
+            "& .Mui-selected": {
+              backgroundColor: mode === 'dark' ? "rgb(75 85 99)" : 'white',
+              color: mode === 'dark' ? 'white' : 'purple',
+            },
+          }}
+        />
+      </div>
     </div>
 
   )
