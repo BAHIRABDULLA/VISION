@@ -121,6 +121,10 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
+        if (!file.type.startsWith("image/")) {
+            alert("Please upload an image file (JPG, PNG, etc.)");
+            return;
+        }
         setValue("file", file);
 
 
@@ -180,7 +184,7 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
                     </div>
                     <label className="block">
                         {/* <span className="sr-only">Choose profile photo</span> */}
-                        <input type="file" className="block w-full text-sm text-slate-500
+                        <input type="file" accept='image/*' className="block w-full text-sm text-slate-500
                             file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold
                              file:bg-violet-50 file:text-violet-700
                              hover:file:bg-violet-100w"   onChange={handleFileChange} />
