@@ -10,8 +10,4 @@ export interface IAdminService {
     updateApproval(id: string, isApproved: string): Promise<null>
     updateUserStatus(id: string, isActive: boolean): Promise<{ isActive: boolean; }>
 
-
-    getAllCategories(): Promise<Partial<ICategory[]> | null>
-    addNewCategory(category: string, skills: string[]): Promise<ICategory | null>
-    updateCategory(id: string, category: string, skills: string[]): Promise<ICategory | null>
 }

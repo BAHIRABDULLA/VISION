@@ -22,7 +22,6 @@ export interface mentorParamsData {
     experience: string;
     expertise: string;
     rating: number;
-    location: string;
     page: number;
     limit: number
 }
@@ -87,7 +86,8 @@ export class MentorService implements IMentorService {
 
     async registerUser(userData: object) {
         try {
-            const mentor = this.userRepository.create(userData)
+            // const mentor = this.userRepository.create(userData)
+            const mentor = await this.userRepository.findByIdAndUpdate(userData)
             if (!mentor) {
                 throw new CustomError(ERROR_MESSAGES.ERROR_UPDAING_MENTOR, HttpStatus.UNAUTHORIZED)
             }
@@ -197,7 +197,7 @@ export class MentorService implements IMentorService {
 
     async getAllmentorWithMergedUserData(params: mentorParamsData) {
         try {
-            const { search, priceRange, experience, expertise, rating, location, page, limit } = params;
+            const { search, priceRange, experience, expertise, rating, page, limit } = params;
 
 
             const mentors = await this.mentorRepoistory.findAllWithUserData() ?? []
@@ -233,9 +233,8 @@ export class MentorService implements IMentorService {
                         (experience === '4-7' && (mentor.experience ?? 0) >= 4 && (mentor.experience ?? 0) <= 7) ||
                         (experience === '8+' && (mentor.experience ?? 0) >= 8);
                     const mathesExpertise = expertise === 'any' || categoryNames.includes(expertise) && mentor.category === expertise
-                    const matchesLocation = location === 'any' || mentor.location.toLowerCase().includes(location.toLowerCase())
 
-                    return (mentorSearch && matchesPriceRange && matchesExperience && mathesExpertise && matchesLocation)
+                    return (mentorSearch && matchesPriceRange && matchesExperience && mathesExpertise )
                 }
 
             })
@@ -284,7 +283,12 @@ export class MentorService implements IMentorService {
     async getAllCategoris() {
         try {
             const response = await this.categoryRepository.findAll()
-            return response
+            console.log(response,'response ');
+            
+            const activeCategories = response.filter(cat=>cat.status==='active')
+            console.log('------',activeCategories,'active categories');
+            
+            return activeCategories
         } catch (error) {
             throw error
         }

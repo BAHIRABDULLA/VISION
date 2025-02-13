@@ -62,7 +62,7 @@ const AddResources = () => {
     const fetchCourses = async () => {
         const response = await getAllCourses()
         if (response?.data) {
-            setCourses(response.data.data)
+            setCourses(response.data.courses)
         }
     }
 

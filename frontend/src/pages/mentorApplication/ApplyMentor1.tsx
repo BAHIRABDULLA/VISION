@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { countries } from '@/constants/countries';
-import { getAllCategories } from '@/services/adminApi';
+import { getAllCategories } from '@/services/mentorApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store/store';
 import { resetSkills } from '@/redux/slices/mentorApplicationSlice';
@@ -99,7 +99,7 @@ const ApplyMentor1: React.FC<applyMentor1Props> = ({ onNext }) => {
     useEffect(() => {
         const fetchCategories = async () => {
             const response = await getAllCategories()
-            const categoriesData = response?.data.categories || [];
+            const categoriesData = response?.data.response || [];
             setCategories(categoriesData);
         }
         fetchCategories()

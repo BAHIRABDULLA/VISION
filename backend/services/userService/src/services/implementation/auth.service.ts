@@ -175,6 +175,9 @@ export class AuthService implements IAuthService {
             if (checkuser.isVerified === false) {
                 return { success: false, message: "User not verified" }
             }
+            if(checkuser.isActive===false){
+                return {success:false,message:"Your account has been blocked. Please contact support for assistance."}
+            }
             const passwordCheck = await bcrypt.compare(password, checkuser.password)
             if (!passwordCheck) {
                 return { success: false, message: ERROR_MESSAGES.INVALID_CREADENTIALS }

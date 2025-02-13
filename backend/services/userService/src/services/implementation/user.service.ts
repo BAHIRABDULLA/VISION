@@ -120,6 +120,10 @@ export class UserService implements IUserService {
     async updateUserStatus(id: string, isActive: boolean) {
         try {
             const response = await this.userRepository.update(id, { isActive: isActive })
+            if (!response) {
+                throw new Error(`User with id ${id} not found`);
+            }
+            await sendUserData('userExchange', response)
             return response
         } catch (error) {
             console.error("Error founded in update user status", error);

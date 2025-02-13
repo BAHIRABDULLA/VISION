@@ -1,6 +1,8 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import router from './routes/admin.route'
+import adminRouter from './routes/admin.route'
+import categoryRouter from './routes/category.route'
+import cors from 'cors'
 import connectMongodb from './config/db.config'
 import { rabbitmqConnect } from './config/rabbitmq'
 import errorHandler from './middleware/error.handler'
@@ -29,8 +31,8 @@ const accessLogStream = createStream('access.log', {
 
 app.use(morgan('combined',{stream:accessLogStream}))
 
-
-app.use('/', router)
+app.use('/category',categoryRouter)
+app.use('/', adminRouter)
 app.use(errorHandler)
 
 connectMongodb()

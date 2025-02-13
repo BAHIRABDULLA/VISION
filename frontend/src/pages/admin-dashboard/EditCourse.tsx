@@ -29,7 +29,7 @@ const EditCourse = () => {
   });
   useEffect(() => {
     console.log(errors, 'errorrrrr');
-  })
+  },[errors])
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -80,6 +80,8 @@ const EditCourse = () => {
       formData.append('price', String(data.price))
       if (selectedImage) {
         formData.append('image', selectedImage)
+      }else if (existingImage){
+        formData.append('image',existingImage)
       }
       
       if(params.id){

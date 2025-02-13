@@ -117,7 +117,7 @@ export class ResourceService implements IResourseService {
 
                     const generateImageUrl = resource?.type !== 'text' ?
                     await generateDownloadPresignedUrl(resource.content) 
-                    : null
+                    : resource.content
                     return {
 
                         ...resource.toObject(),
@@ -125,7 +125,8 @@ export class ResourceService implements IResourseService {
                     }
                 }).filter(Boolean)
             )
-            return resources
+            const activeResources = resources.filter(res=>res.status==='active')
+            return activeResources
         } catch (error) {
             throw error
         }

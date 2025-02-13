@@ -1,5 +1,6 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
+import { User } from '../model/user.model'
 
 
 interface CustomeRequest extends Request {
@@ -21,11 +22,23 @@ const authenticateToken = (req: CustomeRequest, res: Response, next: NextFunctio
         if (!secret) {
             throw new Error('Access token secret is not defined')
         }
-        jwt.verify(newToken, secret, (err, user) => {
+        jwt.verify(newToken, secret, async (err, user) => {
             if (err) {
                 return res.status(401).json({ message: 'Invalid token' });
             }
             req.user = user as JwtPayload
+            const userId = req.user.id
+            if (!userId) {
+                return res.status(401).json({ message: 'Unauthorized' })
+            }
+            const userData = await User.findById(userId)
+            if (!userData) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            if (!userData.isActive) {
+                return res.status(403).json({ message: "Your account has been blocked. Please contact support." });
+            }
             next()
         })
 

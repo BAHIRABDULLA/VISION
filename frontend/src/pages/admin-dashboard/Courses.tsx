@@ -21,7 +21,7 @@ export interface CourseType {
 
 
 const Courses = () => {
-    const [courses, setCourses] = useState<CourseType[] | undefined>([]);
+    const [courses, setCourses] = useState<CourseType[] | undefined>([]);    
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedCourse, setSelectedCourse] = useState<CourseType | null>(null)
     const [selectedStatus, setSelectedStatus] = useState<string>("")
@@ -56,8 +56,8 @@ const Courses = () => {
 
     useEffect(() => {
         const fetchCourseData = async () => {
-            const response = await getAllCourses()
-            setCourses(response?.data.data)
+            const response = await getAllCourses()            
+            setCourses(response?.data.courses || [])
 
         }
         fetchCourseData()

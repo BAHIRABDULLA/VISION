@@ -16,7 +16,8 @@ export class UserService implements IUserService{
 
     async saveUserData(data:object){
         try {
-            await this.userRepository.create(data)
+            // await this.userRepository.create(data)
+            await this.userRepository.findByIdAndUpdate(data)
         } catch (error) {
             console.error('Error founded in save user data',error);
         }
