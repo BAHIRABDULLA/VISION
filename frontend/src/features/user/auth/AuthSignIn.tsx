@@ -132,8 +132,8 @@ const AuthSignIn: React.FC = () => {
           <Link to="/forget-password" className="text-blue-500">Forgot Password?</Link>
           <p className="mt-2">
             Don’t have an account?{' '}
-            <Link to="/signup" className="text-blue-500">Sign up as mentee</Link> or{' '}
-            <Link to="/signup" className="text-blue-500">apply to be a mentor</Link>
+            <Link to="/signup" className="text-blue-500">Sign up</Link>
+            {/* <Link to="/signup" className="text-blue-500">apply to be a mentor</Link> */}
           </p>
         </div>
       </div>
