@@ -139,7 +139,7 @@ const Dashboard = () => {
               outerRadius={100}
               label
             >
-              {coursePopularityData.map((_entry, index) => (
+              {coursePopularityData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
