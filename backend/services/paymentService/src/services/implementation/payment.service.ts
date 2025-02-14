@@ -31,8 +31,10 @@ export class PaymentService implements IPaymentService {
         this.bookingRepository = bookingRepository
     }
 
-    async createSession(price: number, courseId: string, email: string, menteeId: string): Promise<{ id?: string; success: boolean; message: string } | null> {
+    async createSession(price: number, courseId: string,courseName:string, email: string, menteeId: string): Promise<{ id?: string; success: boolean; message: string } | null> {
         try {
+            console.log(courseName,'coursename');
+            
             const findUserBuyCourse = await this.paymentRepository.findOne({ courseId, menteeId })
             if (findUserBuyCourse?.status === 'completed') {
                 throw new CustomError(ERROR_MESSAGES.COURSE_ALREADY_EXISTS, HttpStatus.UNAUTHORIZED)
@@ -53,7 +55,7 @@ export class PaymentService implements IPaymentService {
                     price_data: {
                         currency: 'inr',
                         product_data: {
-                            name: `Course: ${courseId}`,
+                            name: `Course: ${courseName}`,
                         },
                         unit_amount: price * 100,
                     },
