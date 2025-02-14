@@ -11,6 +11,8 @@ import { IPayment } from "../../interfaces/IPayment";
 import { IBookingRepository } from "../../repositories/interface/IBooking.respository";
 import { IPaymentRepository } from "../../repositories/interface/IPayment.repository";
 import { ERROR_MESSAGES } from "../../constant";
+import axios from 'axios'
+
 
 export interface mentorshipPaymentData {
 
@@ -19,6 +21,9 @@ export interface mentorshipPaymentData {
     mentorId: string
 }
 
+const api = axios.create({
+    baseURL: 'http://localhost:4000'
+})
 
 export class PaymentService implements IPaymentService {
     private stripe: Stripe
@@ -31,10 +36,10 @@ export class PaymentService implements IPaymentService {
         this.bookingRepository = bookingRepository
     }
 
-    async createSession(price: number, courseId: string,courseName:string, email: string, menteeId: string): Promise<{ id?: string; success: boolean; message: string } | null> {
+    async createSession(price: number, courseId: string, courseName: string, email: string, menteeId: string): Promise<{ id?: string; success: boolean; message: string } | null> {
         try {
-            console.log(courseName,'coursename');
-            
+            console.log(courseName, 'coursename');
+
             const findUserBuyCourse = await this.paymentRepository.findOne({ courseId, menteeId })
             if (findUserBuyCourse?.status === 'completed') {
                 throw new CustomError(ERROR_MESSAGES.COURSE_ALREADY_EXISTS, HttpStatus.UNAUTHORIZED)
@@ -228,15 +233,36 @@ export class PaymentService implements IPaymentService {
         }
     }
 
-
     async getUserBillingHistory(userId: string, role: 'mentee' | 'mentor') {
         try {
-            const response = await this.paymentRepository.findUserPayments(userId, role)
-            return response
+            // Fetch user payments
+            const response = await this.paymentRepository.findUserPayments(userId, role);
+            // console.log(response, 'billing history response');
+
+            // Fetch all courses
+            const fetchCourses = await api.get('/course/');
+            // console.log(fetchCourses.data.courses, 'courses response');
+
+            // Create a mapping of courseId -> courseName
+            const courseMap = fetchCourses.data.courses.reduce((acc: { [x: string]: any; }, course: { _id: string | number; name: any; }) => {
+                acc[course._id] = course.name;
+                return acc;
+            }, {} as Record<string, string>);
+
+            
+            // Attach course names to relevant billing history items
+            const updatedResponse = response?.map(payment => ({
+                ...payment,
+                courseName: payment.courseId ? courseMap[payment.courseId] || 'Unknown Course' : null
+            }));
+            console.log(updatedResponse,'updated respo se')
+
+            return updatedResponse;
         } catch (error) {
-            throw error
+            throw error;
         }
     }
+
 
 }
 
