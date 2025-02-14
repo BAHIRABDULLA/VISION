@@ -22,7 +22,7 @@ export interface mentorshipPaymentData {
 }
 
 const api = axios.create({
-    baseURL: 'http://localhost:4000'
+    baseURL: 'https://apivision.bahirabdulla.online/api'
 })
 
 export class PaymentService implements IPaymentService {
