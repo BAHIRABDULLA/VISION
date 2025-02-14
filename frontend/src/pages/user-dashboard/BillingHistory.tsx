@@ -5,21 +5,21 @@ import InvoiceDocument from '@/features/user/dashboard/InvoiceDocument';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import Loading from '@/components/Loading';
 
-type Payment = {
-    _id: string;
-    userEmail: string;
-    amount: number;
-    status: 'pending' | 'completed';
-    type: 'course_purchase' | 'mentorship_subscription' | 'one_time_payment';
-    courseId?: string;
-    menteeId: string;
-    mentorId?: string;
-    subscriptionPeriod?: string;
-    stripeSessionId?: string;
-    stripePaymentIntentId?: string;
-    invoiceCode?: string;
-    createdAt: string;
-};
+// type Payment = {
+//     _id: string;
+//     userEmail: string;
+//     amount: number;
+//     status: 'pending' | 'completed';
+//     type: 'course_purchase' | 'mentorship_subscription' | 'one_time_payment';
+//     courseId?: string;
+//     menteeId: string;
+//     mentorId?: string;
+//     subscriptionPeriod?: string;
+//     stripeSessionId?: string;
+//     stripePaymentIntentId?: string;
+//     invoiceCode?: string;
+//     createdAt: string;
+// };
 
 const BillingHistory = () => {
     const [billingData, setBillingData] = useState<any>([]);
