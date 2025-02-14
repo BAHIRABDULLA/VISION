@@ -19,8 +19,10 @@ export const mentorSchema = z.object({
     // skills: z.array(z.string().min(1, { message: "Each skill must be at least 1 character long" })).nonempty({
     //     message: "At least one skill is required",
     // }),
-    skills: z.string().min(1, { message: "Skills are required" }),
-
+    // skills: z.string().min(1, { message: "Skills are required" }),
+    skills: z
+    .array(z.string().min(1, { message: "Skills are required" }))
+    .min(1, { message: "At least one skill is required" }),
     bio: z.string().min(1, { message: "Bio is required" }),
     socialMediaUrls: z.object({
         github: z.preprocess(

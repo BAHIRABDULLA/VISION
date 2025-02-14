@@ -234,17 +234,17 @@ const ViewUser = () => {
               {/* Social Media */}
               <div className="mb-4">
                 <h4 className="text-lg font-medium text-gray-700 mb-2">Social Media:</h4>
-                <ul className="list-none ">
+                <ul className="list-none">
                   {Object.entries((userDetails as MentorDetails)?.socialMediaUrls || {})
-                    .filter(([key, url]) => key !== '_id' && url)
-                    .map(([platform]) => (
+                    .filter(([key, url]) => key !== '_id' && url !== null && url !== undefined && url.trim() !== "")
+                    .map(([platform, url]) => (
                       <li className='flex gap-2' key={platform}>
-                        <p className='text-black'>{platform}</p>
-                        <a href={(userDetails as MentorDetails)?.socialMediaUrls[platform]} className='text-blue-700'
-                          target="_blank" rel="noreferrer">{(userDetails as MentorDetails)?.socialMediaUrls[platform]}</a>
+                        <p className='text-black capitalize'>{platform}</p>
+                        <a href={url} className='text-blue-700' target="_blank" rel="noreferrer">{url}</a>
                       </li>
                     ))}
                 </ul>
+
               </div>
 
               {/* Additional Details */}

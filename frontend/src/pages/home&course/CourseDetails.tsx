@@ -44,9 +44,9 @@ const CourseDetails = () => {
         const fetchPaymentDetails = async () => {
             if (id) {
                 const response = await getCoursePaymentDetails(id)
-                if(!response ||response?.status>=400){                    
+                if (!response || response?.status >= 400) {
                     setIsPurchase(true)
-                }else{
+                } else {
                     setIsPurchase(false)
                 }
             }
@@ -74,8 +74,9 @@ const CourseDetails = () => {
         }
         fetchCourseDetails()
     }, [id])
-    
+
     const handleEnroll = async () => {
+        
         const stripe = await stripePromise
         try {
             if (!course?.price) {
@@ -87,8 +88,9 @@ const CourseDetails = () => {
                 return
             }
             if (!course?.price) toast.error('Price is not defined for the course.')
+            if (!course?.name) toast.error('Course name is not defined')
 
-            const response = await createCheckoutSession({ price: course?.price, courseId: id })
+            const response = await createCheckoutSession({ price: course?.price, courseId: id, courseName: course?.name })
 
             if (response?.status >= 400) {
                 toast.error(response?.data.message)
@@ -177,7 +179,7 @@ const CourseDetails = () => {
                     {activeTab === 'reviews' && (
                         <div className="space-y-6">
                             {/* Reviews */}
-                            <RatingAndReview id={id}  reviewType='course' />
+                            <RatingAndReview id={id} reviewType='course' />
                         </div>
                     )}
                 </div>

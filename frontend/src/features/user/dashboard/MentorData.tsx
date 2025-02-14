@@ -1,7 +1,7 @@
-import { updateMentorData } from "@/services/mentorApi";
+import { getAllCategories, updateMentorData } from "@/services/mentorApi";
 import { mentorSchema, mentorSchemaType } from "@/utils/userValidator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -9,11 +9,16 @@ import toast from "react-hot-toast";
 interface MentorDataProps {
     userData: mentorSchemaType | null;
 }
-
+interface CategorySchema {
+    name: string;
+    skills: string[]
+}
 const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
+
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm<mentorSchemaType>({
         resolver: zodResolver(mentorSchema),
@@ -40,6 +45,68 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
         console.log(errors, "errors");
     }, []);
 
+    /////////////////////////////////////////////////
+
+    const [selectedCategory, setSelectedCategory] = useState(null)
+    const [selectedSkills, setSelectedSkills] = useState<string[]>([])
+    const [categories, setCategories] = useState<CategorySchema[]>([])
+    const [skills, setSkills] = useState<string[] | []>([])
+
+    useEffect(() => {
+        if (userData) {
+            setValue("jobTitle", userData.jobTitle || "");
+            setValue("skills", userData.skills || []);
+            setValue("location", userData.location || "");
+            setValue("company", userData.company || "");
+            setValue("category", userData.category || "");
+            setValue("bio", userData.bio || "");
+            setValue("whyBecomeMentor", userData.whyBecomeMentor || "");
+            setValue("greatestAchievement", userData.greatestAchievement || "");
+            setValue("socialMediaUrls.github", userData.socialMediaUrls.github || '');
+            setValue("socialMediaUrls.linkedin", userData.socialMediaUrls.linkedin || '');
+            setValue("socialMediaUrls.portfolio", userData.socialMediaUrls.portfolio || '');
+            setValue("socialMediaUrls.x", userData.socialMediaUrls.x || '');
+        }
+    }, [userData, setValue]);
+
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const response = await getAllCategories()
+            const categoriesData = response?.data.response || [];
+            setCategories(categoriesData);
+        }
+        fetchCategories()
+    }, [])
+
+    useEffect(() => {
+        if (selectedCategory) {
+            const category = categories.find(cat => cat.name === selectedCategory)
+            if (category && category.skills) {
+                setSkills(category.skills)
+            } else {
+                setSkills([])
+            }
+        }
+    }, [selectedCategory, categories])
+
+    const handleCategoryChange = (_event: any, value: string | null) => {
+        setSelectedCategory(value);
+        setSelectedSkills([]); 
+        setValue("category", value || "");
+        setValue("skills", []);
+
+        const category = categories.find(cat => cat.name === value);
+        setSkills(category?.skills || []);
+    };
+
+    const handleSkillsChange = (_event: any, value: string[]) => {
+        setSelectedSkills(value);
+        setValue("skills", value, { shouldValidate: true });
+    };
+
+    ///////////////////////////////////////////
+
     const [isEditingMentorData, setIsEditingMentorData] = useState(false);
 
     const toggleEditJobToWebsite = () => {
@@ -51,6 +118,8 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
 
     const handleMentorDataSubmit = async (data: mentorSchemaType) => {
         try {
+            console.log(data,'data in handle mentor data submit');
+            
             const response = await updateMentorData(userData?._id!, data);
             if (response?.data.success) {
                 toast.success(response.data.message);
@@ -101,7 +170,7 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                 {/* Additional fields for Job Title to Personal Website */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
                     <div>
-                        <TextField
+                        {/* <TextField
                             label="Category:"
                             defaultValue={userData?.category || ""}
                             variant="filled"
@@ -109,6 +178,17 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                             sx={{ backgroundColor: "white", borderRadius: "8px" }}
                             disabled={!isEditingMentorData}
                             {...register("category")}
+                        /> */}
+                        <Autocomplete
+                            disablePortal
+                            options={categories.map(category => category.name)}
+                            value={selectedCategory || userData.category || null}
+                            onChange={handleCategoryChange}
+                            disabled={!isEditingMentorData}
+                            renderInput={(params) => <TextField variant="filled"
+                                fullWidth
+                                sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                                {...params} label="Category" />}
                         />
                         {errors.category && (
                             <p className="text-red-500">{errors.category.message}</p>
@@ -167,7 +247,7 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
 
                 {/* skills */}
                 <div className="mb-3">
-                    <TextField
+                    {/* <TextField
                         label="Skills:"
                         defaultValue={userData?.skills || ""}
                         variant="filled"
@@ -176,6 +256,21 @@ const MentorData: React.FC<MentorDataProps> = ({ userData }) => {
                         sx={{ backgroundColor: "white", borderRadius: "8px" }}
                         disabled={!isEditingMentorData}
                         {...register("skills")}
+                    /> */}
+                    <Autocomplete
+                        multiple
+                        id="skills-select"
+                        options={skills}
+                        value={selectedSkills.length > 0 ? selectedSkills : userData?.skills || []}
+                        filterSelectedOptions
+                        onChange={handleSkillsChange}
+                        disabled={!isEditingMentorData}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Skills" variant="filled"
+                                fullWidth
+                                sx={{ backgroundColor: "white", borderRadius: "8px" }}
+                                placeholder="Select skills" />
+                        )}
                     />
                     {errors.skills && (
                         <p className="text-red-500">{errors.skills.message}</p>

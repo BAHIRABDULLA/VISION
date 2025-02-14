@@ -28,8 +28,9 @@ export class PaymentController implements IPaymentController {
             const user = req.user as JwtPayload
             const userEmail = user.email
             const menteeId = user.id
-            const { price, courseId } = req.body
-            const response = await this.paymentService.createSession(price, courseId, userEmail, menteeId)
+            const { price, courseId ,courseName} = req.body
+            console.log(courseName,'coursename')
+            const response = await this.paymentService.createSession(price, courseId,courseName, userEmail, menteeId)
             res.json(response)
         } catch (error) {
             next(error)

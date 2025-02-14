@@ -7,7 +7,7 @@ const api = axios.create({
 })
 
 
-export const createCheckoutSession = async (data: { price: number, courseId: string }) => {
+export const createCheckoutSession = async (data: { price: number, courseId: string ,courseName:string}) => {    
     try {
         const response = await privateApi.post('/payment/create-checkout-session', data)
         return response
