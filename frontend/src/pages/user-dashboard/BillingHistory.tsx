@@ -22,7 +22,7 @@ type Payment = {
 };
 
 const BillingHistory = () => {
-    const [billingData, setBillingData] = useState<Payment[]>([]);
+    const [billingData, setBillingData] = useState<any>([]);
 
     const [loading, setLoading] = useState(true)
     const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -30,10 +30,12 @@ const BillingHistory = () => {
     const fetchBillingHistory = async () => {
         try {
             const response = await getUserBillingHistory();
+            console.log(response, 'response ');
+
             setBillingData(response?.data?.transaction || []);
         } catch (error) {
             console.error('Error fetching billing history:', error);
-        }finally{
+        } finally {
             setLoading(false)
         }
     };
@@ -51,13 +53,13 @@ const BillingHistory = () => {
     };
 
     const sortedData = [...billingData].sort((a, b) => {
-        const dateA = new Date(a.createdAt).getTime();
-        const dateB = new Date(b.createdAt).getTime();
+        const dateA = new Date(a._doc.createdAt).getTime();
+        const dateB = new Date(b._doc.createdAt).getTime();
         return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
 
-    if(loading){
-        return <Loading/>
+    if (loading) {
+        return <Loading />
     }
     return (
         <div className="mt-8">
@@ -79,45 +81,45 @@ const BillingHistory = () => {
 
                 <div className="space-y-4">
                     {sortedData.map((payment) => (
-                        <div key={payment?._id} className="border rounded-lg overflow-hidden">
+                        <div key={payment?._doc?._id} className="border rounded-lg overflow-hidden">
                             <div
                                 className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-500"
-                                onClick={() => toggleExpand(payment?._id)}
+                                onClick={() => toggleExpand(payment?._doc?._id)}
                             >
                                 <div className="flex-1">
                                     <p className="font-medium text-gray-900 dark:text-white">
-                                        {new Date(payment?.createdAt).toISOString().split('T')[0]}
+                                        {new Date(payment?._doc?.createdAt).toISOString().split('T')[0]}
                                     </p>
                                     <p className="text-sm text-gray-500 dark:text-gray-300">
-                                        {payment?.type === 'course_purchase'
+                                        {payment?._doc?.type === 'course_purchase'
                                             ? `Course Purchase`
-                                            : payment?.type === 'mentorship_subscription'
+                                            : payment?._doc?.type === 'mentorship_subscription'
                                                 ? `Mentorship Payment`
                                                 : `One-Time Payment`}
                                     </p>
                                 </div>
                                 <div className="flex items-center space-x-4">
                                     <span
-                                        className={`px-3 py-1 rounded-full text-sm ${payment?.status === 'completed'
+                                        className={`px-3 py-1 rounded-full text-sm ${payment?._doc?.status === 'completed'
                                             ? 'bg-green-100 text-green-800'
                                             : 'bg-yellow-100 text-yellow-800'
                                             }`}
                                     >
-                                        {payment.status.charAt(0).toUpperCase() + payment?.status.slice(1)}
+                                        {payment?._doc.status.charAt(0).toUpperCase() + payment?._doc?.status.slice(1)}
                                     </span>
                                     <span className="font-medium text-gray-900 dark:text-white">
-                                        ₹ {payment.amount}
+                                        ₹ {payment?._doc.amount}
                                     </span>
                                     <button
                                         className="p-2 text-gray-500 dark:text-white hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-500 rounded-full"
                                     // onClick={(e) => {
                                     //     e.stopPropagation();
-                                    //     handleDownload(payment?.invoiceCode);
+                                    //     handleDownload(payment?._doc?.invoiceCode);
                                     // }}
                                     >
                                         <PDFDownloadLink
-                                            document={<InvoiceDocument invoice={payment} />}
-                                            fileName={`invoice-${payment?.invoiceCode}.pdf`}
+                                            document={<InvoiceDocument invoice={payment?._doc} />}
+                                            fileName={`invoice-${payment?._doc?.invoiceCode}.pdf`}
                                         >
                                             <Download className="w-5 h-5" />
 
@@ -126,32 +128,38 @@ const BillingHistory = () => {
                                 </div>
                             </div>
 
-                            {expandedId === payment?._id && (
+                            {expandedId === payment?._doc?._id && (
                                 <div className="border-t bg-gray-50 dark:bg-gray-500 p-4">
                                     <h4 className="text-sm font-medium text-gray-700 dark:text-white mb-2">
                                         Invoice Details
                                     </h4>
                                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                                        <strong>User Email:</strong> {payment?.userEmail}
+                                        <strong>User Email:</strong> {payment?._doc?.userEmail}
                                     </p>
-                                    {payment?.type === 'course_purchase' && (
-                                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                                            <strong>Course ID:</strong> {payment?.courseId || 'N/A'}
-                                        </p>
+                                    {payment?._doc?.type === 'course_purchase' && (
+                                        <div>
+                                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                                                <strong>Course ID:</strong> {payment?._doc?.courseId || 'N/A'}
+                                            </p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                                                <strong>Course Name:</strong> {payment?.courseName || 'N/A'}
+                                            </p>
+                                        </div>
+
                                     )}
-                                    {payment?.type === 'mentorship_subscription' && (
+                                    {payment?._doc?.type === 'mentorship_subscription' && (
                                         <>
                                             <p className="text-sm text-gray-600 dark:text-gray-300">
-                                                <strong>Mentor ID:</strong> {payment?.mentorId || 'N/A'}
+                                                <strong>Mentor ID:</strong> {payment?._doc?.mentorId || 'N/A'}
                                             </p>
                                             <p className="text-sm text-gray-600 dark:text-gray-300">
                                                 <strong>Subscription Period:</strong>{' '}
-                                                {payment?.subscriptionPeriod || 'N/A'}
+                                                {payment?._doc?.subscriptionPeriod || 'N/A'}
                                             </p>
                                         </>
                                     )}
                                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                                        <strong>Invoice Code:</strong> {payment?.invoiceCode || 'N/A'}
+                                        <strong>Invoice Code:</strong> {payment?._doc?.invoiceCode || 'N/A'}
                                     </p>
                                 </div>
                             )}
