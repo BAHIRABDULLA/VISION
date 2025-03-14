@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 export const connectDb = async () => {
     try {
         const connectionString = process.env.MONGO_URI
+        console.log(connectionString,'connection string in course service')
         if (!connectionString) {
             return
         }
