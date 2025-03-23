@@ -65,8 +65,8 @@ jobs:
         uses: 'google-github-actions/get-gke-credentials@v1'
         with:
           cluster_name: 'vision-cluster1'
-          location: 'asia-south1-a'
-          project_id: 'first-planet-444914-p6'
+          location: 'asia-south1'
+          project_id: 'vision-454406'
 
       - name: Deploy ${{ matrix.service }}
         run: |
