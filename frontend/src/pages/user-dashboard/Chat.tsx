@@ -53,7 +53,7 @@ const Chat = () => {
 
   useEffect(() => {
     if (!socketRef.current && userId) {
-      socketRef.current = io('https://apivision.bahirabdulla.online/messages/chat', {
+      socketRef.current = io('https://apivision.bahirabdulla.site/messages/chat', {
         withCredentials: true,
         // path: '',
         transports: ['websocket', 'polling'],

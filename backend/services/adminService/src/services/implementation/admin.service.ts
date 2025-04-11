@@ -10,7 +10,7 @@ import CustomError from '../../utils/custom.error'
 import { HttpStatus } from '../../enums/http.status'
 
 const api = axios.create({
-    baseURL: 'https://apivision.bahirabdulla.online/api'
+    baseURL: 'https://apivision.bahirabdulla.site/api'
 })
 
 

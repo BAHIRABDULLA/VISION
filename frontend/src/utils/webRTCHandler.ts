@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client'
 
-const socket = io('https://apivision.bahirabdulla.online', {
+const socket = io('https://apivision.bahirabdulla.site', {
     withCredentials: true,
     path: '/messages',
     transports: ['websocket', 'polling']

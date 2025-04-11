@@ -22,7 +22,7 @@ export interface mentorshipPaymentData {
 }
 
 const api = axios.create({
-    baseURL: 'https://apivision.bahirabdulla.online/api'
+    baseURL: 'https://apivision.bahirabdulla.site/api'
 })
 
 export class PaymentService implements IPaymentService {
@@ -68,8 +68,8 @@ export class PaymentService implements IPaymentService {
                 }],
                 mode: 'payment',
                 metadata: { courseId },
-                success_url: `https://vision.bahirabdulla.online/success?session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: 'https://vision.bahirabdulla.online/cancel',
+                success_url: `https://vision.bahirabdulla.site/success?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: 'https://vision.bahirabdulla.site/cancel',
             })
             const paymentData: Partial<IPayment> = {
                 userEmail: email,
@@ -154,8 +154,8 @@ export class PaymentService implements IPaymentService {
                             quantity: 1
                         }
                     ],
-                    success_url: `https://vision.bahirabdulla.online/success?session_id={CHECKOUT_SESSION_ID}`,
-                    cancel_url: 'https://vision.bahirabdulla.online/cancel',
+                    success_url: `https://vision.bahirabdulla.site/success?session_id={CHECKOUT_SESSION_ID}`,
+                    cancel_url: 'https://vision.bahirabdulla.site/cancel',
                 })
                 const data: Partial<IPayment> = {
                     userEmail,
@@ -186,8 +186,8 @@ export class PaymentService implements IPaymentService {
                     payment_method_types: ['card'],
                     mode: 'subscription',
                     line_items: [{ price: price.id, quantity: 1 }],
-                    success_url: `https://vision.bahirabdulla.online/success?session_id={CHECKOUT_SESSION_ID}`,
-                    cancel_url: 'https://vision.bahirabdulla.online/cancel',
+                    success_url: `https://vision.bahirabdulla.site/success?session_id={CHECKOUT_SESSION_ID}`,
+                    cancel_url: 'https://vision.bahirabdulla.site/cancel',
                 })
 
                 const data: Partial<IPayment> = {

@@ -45,7 +45,7 @@ app.use(morgan('combined',{stream:accessLogStream}))
 const server = http.createServer(app);
 const io = require('socket.io')(server, {
   cors: {
-    origin: 'https://vision.bahirabdulla.online',
+    origin: 'https://vision.bahirabdulla.site',
     methods: ['GET', 'POST'],
     credentials: true
   },

@@ -31,7 +31,7 @@ const limiter = rateLimit({
 // app.use(limiter)
 app.use(cookieParser())
 app.use(cors({
-    origin: 'https://vision.bahirabdulla.online',
+    origin: 'https://vision.bahirabdulla.site',
     credentials: true
 }))
 
